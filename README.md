@@ -1,21 +1,20 @@
 # Rarity Masterwork
 > ..masterwork item: a weapon, suit of armor, shield, or tool that conveys a bonus on its use through its exceptional craftsmanship.
 
-https://www.d20srd.org/srd/skills/craft.htm
-https://www.d20srd.org/srd/monsters/kobold.htm
+- https://www.d20srd.org/srd/skills/craft.htm
+- https://www.d20srd.org/srd/monsters/kobold.htm
 
 
 ## tasks
 - [ ] masterwork crafting
-  - [ ] events
+  - [x] events
   - [ ] tokenUri
   - [ ] masterwork component codex
 
 - [ ] masterwork mats
   - [ ] fight kobolds until you can't stand
+- [ ] review crafting feats
 
-- [ ] review feats
-- [ ] (RC I + RC II) item/codex aggregation
 
 
 ## Crafting Masterwork Items (Rarity)

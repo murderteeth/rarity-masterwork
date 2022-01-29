@@ -21,6 +21,9 @@ contract RarityMasterwork is ERC721Enumerable, IERC721Receiver {
     IGold gold = IGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
     ICrafting commonCrafting = ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
 
+    event Started(address indexed owner, uint crafter, uint commonItem, uint gold);
+    event Craft(address indexed owner, uint crafter, int check, uint mats, uint xp, uint m, uint n);
+
     uint public immutable APPRENTICE;
 
     constructor() ERC721("Rarity Masterwork Crafting", "RC(II)") {
@@ -45,16 +48,21 @@ contract RarityMasterwork is ERC721Enumerable, IERC721Receiver {
     mapping(uint => Project) public projects;
     mapping(uint => Component) public components;
 
-    function start(uint summoner, uint commonItem) external {
-        require(authorizeSummoner(summoner), "!authorizeSummoner");
+    function start(uint crafter, uint commonItem) external {
+        require(authorizeSummoner(crafter), "!authorizeSummoner");
         require(authorizeCommonItem(commonItem), "!authorizeCommonItem");
-        require(gold.transferFrom(APPRENTICE, summoner, APPRENTICE, rawMaterialCost(commonItem)), "!gold");
+
+        uint cost = rawMaterialCost(commonItem);
+        require(gold.transferFrom(APPRENTICE, crafter, APPRENTICE, cost), "!gold");
+
         owners[commonItem] = msg.sender;
         commonCrafting.safeTransferFrom(msg.sender, address(this), commonItem);
         // The onERC721Received implementation below gets called back at this point by the Crafting I contract
-        projects[nextToken] = Project(commonItem, 0, false, uint32(block.timestamp), summoner);
+        projects[nextToken] = Project(commonItem, 0, false, uint32(block.timestamp), crafter);
         _safeMint(msg.sender, nextToken);
         nextToken++;
+
+        emit Started(msg.sender, crafter, commonItem, cost);
     }
 
     function onERC721Received(
@@ -70,7 +78,7 @@ contract RarityMasterwork is ERC721Enumerable, IERC721Receiver {
     }
 
     function craft(uint tokenId, uint mats) external {
-        Project storage project = projects[tokenId];
+        Project memory project = projects[tokenId];
 
         // calculate dc
         // MASTERWORK_COMPONENT_DC - mat bonus
@@ -81,17 +89,19 @@ contract RarityMasterwork is ERC721Enumerable, IERC721Receiver {
         (uint m, uint n) = progress(tokenId);
         if(m < n) {
             rarity.spend_xp(project.crafter, XP_PER_DAY);
+            emit Craft(msg.sender, project.crafter, check, mats, XP_PER_DAY, m, n);
         } else {
             uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
             rarity.spend_xp(project.crafter, xp);
             project.complete = true;
             components[tokenId] = Component(uint32(block.timestamp), project.crafter);
             commonCrafting.safeTransferFrom(address(this), msg.sender, project.commonItem);
+            emit Craft(msg.sender, project.crafter, check, mats, xp, m, n);
         }
     }
 
     function progress(uint tokenId) public view returns (uint, uint) {
-        Project storage project = projects[tokenId];
+        Project memory project = projects[tokenId];
         if(project.complete) {
             return(1, 1);
         }
