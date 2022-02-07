@@ -1,7 +1,7 @@
 import { MockContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { parseEther } from 'ethers/lib/utils'
-import { Rarity, RarityAttributes, RarityAttributes__factory, RarityCrafting, RarityCraftingMaterials, RarityCraftingMaterials__factory, RarityCrafting__factory, RarityGold, RarityGold__factory, RarityMasterwork, RarityMasterwork__factory, RaritySkills, RaritySkills__factory, Rarity__factory } from '../../typechain'
+import { CodexMasterworkWeapons, CodexMasterworkWeapons__factory, Rarity, RarityAttributes, RarityAttributes__factory, RarityCrafting, RarityCraftingMaterials, RarityCraftingMaterials__factory, RarityCrafting__factory, RarityGold, RarityGold__factory, RarityMasterworkItem, RarityMasterworkItem__factory, RarityMasterworkProject, RarityMasterworkProject__factory, RaritySkills, RaritySkills__factory, Rarity__factory } from '../../typechain'
 import { skills as skillsenum, skillsArray } from './skills'
 
 export interface IMockRarityContracts {
@@ -13,19 +13,34 @@ export interface IMockRarityContracts {
   crafting: MockContract<RarityCrafting>
 }
 
-export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<MockContract<RarityMasterwork>> {
-  const result = await (await smock.mock<RarityMasterwork__factory>('RarityMasterwork')).deploy()
-  result.setVariable('rarity', rarity.core.address)
-  result.setVariable('attributes', rarity.attributes.address)
-  result.setVariable('gold', rarity.gold.address)
-  result.setVariable('skills', rarity.skills.address)
-  result.setVariable('commonCrafting', rarity.crafting.address)
-  await rarity.core.setVariable('_owners', { [(await result.APPRENTICE()).toNumber()]: result.address })
-  return result
+export interface IMockMasterworkContracts {
+  codex: {
+    weapons: MockContract<CodexMasterworkWeapons>
+  },
+  projects: MockContract<RarityMasterworkProject>,
+  items: MockContract<RarityMasterworkItem>
+}
+
+export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMockMasterworkContracts> {
+  const weapons = await (await smock.mock<CodexMasterworkWeapons__factory>('CodexMasterworkWeapons')).deploy()
+  const projects = await (await smock.mock<RarityMasterworkProject__factory>('RarityMasterworkProject')).deploy()
+  await projects.setVariable('rm', rarity.core.address)
+  await projects.setVariable('rarity', rarity.core.address)
+  await projects.setVariable('attributes', rarity.attributes.address)
+  await projects.setVariable('gold', rarity.gold.address)
+  await projects.setVariable('skills', rarity.skills.address)
+  await projects.setVariable('commonCrafting', rarity.crafting.address)
+  await projects.setVariable('masterworkWeaponsCodex', weapons.address)
+  await rarity.core.setVariable('_owners', { [(await projects.APPRENTICE()).toNumber()]: projects.address })
+  const items = await (await smock.mock<RarityMasterworkItem__factory>('RarityMasterworkItem')).deploy()
+  await items.setVariable('rarity', rarity.core.address)
+  await items.setVariable('projects', projects.address)
+  return { codex: { weapons }, projects, items }
 }
 
 export async function mockRarity() : Promise<IMockRarityContracts> {
   const core = await (await smock.mock<Rarity__factory>('rarity')).deploy()
+  await core.setVariable('next_summoner', 1)
   const attributes = await (await smock.mock<RarityAttributes__factory>('rarity_attributes')).deploy()
   await attributes.setVariable('rm', core.address)
   const gold = await (await smock.mock<RarityGold__factory>('rarity_gold')).deploy()
