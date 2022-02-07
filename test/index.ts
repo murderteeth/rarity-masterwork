@@ -43,12 +43,10 @@ describe('RarityMasterwork', function () {
     await expect(this.masterwork.items.claim(projectId)).to.be.reverted
     expect(await this.masterwork.items.balanceOf(this.signer.address)).to.eq(1)
 
-    const longsword = await this.masterwork.items.tokenOfOwnerByIndex(this.signer.address, 0)
-    console.log('longsword', await this.masterwork.items.items(longsword))
-
-  })
-
-  it('transfers projects', async function () {
+    const longsword = await this.masterwork.items.itemOfOwnerByIndex(this.signer.address, 0)
+    expect(longsword.baseType).to.eq(craftingBaseType.weapon)
+    expect(longsword.itemType).to.eq(weaponType.longsword)
+    expect(longsword.crafter).to.eq(this.crafter)
 
   })
 

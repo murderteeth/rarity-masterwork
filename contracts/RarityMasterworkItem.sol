@@ -11,7 +11,6 @@ import "./core/interfaces/ICrafting.sol";
 
 interface IProjects {
   struct Project {
-    uint crafter;
     uint8 baseType;
     uint8 itemType;
     uint check;
@@ -20,6 +19,7 @@ interface IProjects {
     uint32 completed;
   }
   function projects(uint) external view returns (Project memory);
+  function ownerOf(uint) external view returns (uint);
 }
 
 contract RarityMasterworkItem is ERC721Enumerable {
@@ -44,14 +44,21 @@ contract RarityMasterworkItem is ERC721Enumerable {
     require(!claimed[projectToken], "claimed");
     IProjects.Project memory project = projects.projects(projectToken);
     require(project.completed > 0, "!completed");
-    require(authorizeSummoner(project.crafter), "!authorizeSummoner");
+
+    uint crafter = projects.ownerOf(projectToken);
+    require(authorizeSummoner(crafter), "!authorizeSummoner");
 
     _safeMint(msg.sender, nextToken);
-    items[nextToken] = Item(project.baseType, project.itemType, uint32(block.timestamp), project.crafter);
+    items[nextToken] = Item(project.baseType, project.itemType, uint32(block.timestamp), crafter);
     claimed[projectToken] = true;
     emit Claimed(msg.sender, nextToken, projectToken);
 
     nextToken++;
+  }
+
+  function itemOfOwnerByIndex(address owner, uint index) external view returns (Item memory) {
+    uint token = tokenOfOwnerByIndex(owner, index);
+    return items[token];
   }
 
   function authorizeSummoner(uint summoner) internal view returns (bool) {
