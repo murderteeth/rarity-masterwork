@@ -6,15 +6,21 @@
 
 
 ## tasks
-- [ ] masterwork crafting
+- [x] crafting
   - [x] events
   - [ ] tokenUri
-  - [ ] masterwork component codex
+  - [ ] codex
 
-- [ ] masterwork mats
+- [ ] mats
   - [ ] fight kobolds until you can't stand
+
 - [ ] review crafting feats
 
+## review
+```
+(, int check) = commonCrafting.craft_skillcheck(project.crafter, MASTERWORK_COMPONENT_DC);
+project.check = project.check + uint(check);
+```
 
 
 ## Crafting Masterwork Items (Rarity)
