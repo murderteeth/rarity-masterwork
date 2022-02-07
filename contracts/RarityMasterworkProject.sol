@@ -34,7 +34,6 @@ contract RarityMasterworkProject is rERC721Enumerable {
   }
 
   struct Project {
-    uint crafter;
     uint8 baseType;
     uint8 itemType;
     uint check;
@@ -51,7 +50,7 @@ contract RarityMasterworkProject is rERC721Enumerable {
     require(gold.transferFrom(APPRENTICE, crafter, APPRENTICE, cost), "!gold");
 
     _safeMint(crafter, nextToken);
-    projects[nextToken] = Project(crafter, baseType, itemType, 0, 0, uint32(block.timestamp), 0);
+    projects[nextToken] = Project(baseType, itemType, 0, 0, uint32(block.timestamp), 0);
     emit Started(msg.sender, nextToken, crafter, baseType, itemType, cost);
 
     nextToken++;
@@ -60,25 +59,26 @@ contract RarityMasterworkProject is rERC721Enumerable {
   function craft(uint token, uint mats) external {
     Project storage project = projects[token];
     require(project.started > 0 && project.completed == 0, "!project started");
+    uint crafter = ownerOf(token);
 
     // calculate dc
     // MASTERWORK_COMPONENT_DC - mat bonus
 
-    (, int check) = commonCrafting.craft_skillcheck(project.crafter, MASTERWORK_COMPONENT_DC);
+    (, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
     project.check = project.check + uint(check);
 
-    (uint m, uint n) = progress(project.crafter);
+    (uint m, uint n) = progress(crafter);
     if(m < n) {
-      rarity.spend_xp(project.crafter, XP_PER_DAY);
+      rarity.spend_xp(crafter, XP_PER_DAY);
       project.xp = project.xp + XP_PER_DAY;
-      emit Craft(msg.sender, token, project.crafter, check, mats, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, check, mats, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
-      rarity.spend_xp(project.crafter, xp);
+      rarity.spend_xp(crafter, xp);
       project.xp = project.xp + xp;
       project.completed = uint32(block.timestamp);
-      emit Craft(msg.sender, token, project.crafter, check, mats, xp, m, n);
-      emit Crafted(msg.sender, token, project.crafter, project.baseType, project.itemType);
+      emit Craft(msg.sender, token, crafter, check, mats, xp, m, n);
+      emit Crafted(msg.sender, token, crafter, project.baseType, project.itemType);
     }
   }
 
