@@ -4,6 +4,10 @@ export const craftingBaseType = {
   weapon: 3
 }
 
+export const goodsType = {
+  crowbar: 4
+}
+
 export const armorType = {
   leather: 2,
   shield_light_wooden: 14
