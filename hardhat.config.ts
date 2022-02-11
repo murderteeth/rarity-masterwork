@@ -7,6 +7,7 @@ import "@typechain/hardhat";
 import '@typechain/hardhat/dist/type-extensions';
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import 'hardhat-interface-generator';
 
 dotenv.config();
 
@@ -49,11 +50,11 @@ const config: HardhatUserConfig = {
         url: "https://weathered-aged-mountain.fantom.quiknode.pro/f005eca18b3311849dab86cc1dd8fc7a6d54e611/"
       }
     },
-    mainnet: {
-      url: "https://rpc.ftm.tools",
-      accounts: [process.env.PRIVATE_KEY || ""],
-      timeout: 120_000
-    }
+    // mainnet: {
+      // url: "https://rpc.ftm.tools",
+      // accounts: [process.env.PRIVATE_KEY || ""],
+      // timeout: 120_000
+    // }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,

@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../core/interfaces/IRarity.sol";
@@ -11,45 +11,96 @@ import "../core/interfaces/IRarity.sol";
 */
 
 interface IERC721 {
-    event Transfer(uint indexed from, uint indexed to, uint256 indexed tokenId);
-    event Approval(uint indexed owner, uint indexed approved, uint256 indexed tokenId);
-    event ApprovalForAll(uint indexed owner, uint indexed operator, bool approved);
-    function balanceOf(uint owner) external view returns (uint256 balance);
-    function ownerOf(uint256 tokenId) external view returns (uint owner);
+    event Transfer(
+        uint256 indexed from,
+        uint256 indexed to,
+        uint256 indexed tokenId
+    );
+    event Approval(
+        uint256 indexed owner,
+        uint256 indexed approved,
+        uint256 indexed tokenId
+    );
+    event ApprovalForAll(
+        uint256 indexed owner,
+        uint256 indexed operator,
+        bool approved
+    );
+
+    function balanceOf(uint256 owner) external view returns (uint256 balance);
+
+    function ownerOf(uint256 tokenId) external view returns (uint256 owner);
+
     function transferFrom(
-        uint operator,
-        uint from,
-        uint to,
+        uint256 operator,
+        uint256 from,
+        uint256 to,
         uint256 tokenId
     ) external;
-    function approve(uint from, uint to, uint256 tokenId) external;
-    function getApproved(uint256 tokenId) external view returns (uint operator);
-    function setApprovalForAll(uint from, uint operator, bool _approved) external;
-    function isApprovedForAll(uint owner, uint operator) external view returns (bool);
+
+    function approve(
+        uint256 from,
+        uint256 to,
+        uint256 tokenId
+    ) external;
+
+    function getApproved(uint256 tokenId)
+        external
+        view
+        returns (uint256 operator);
+
+    function setApprovalForAll(
+        uint256 from,
+        uint256 operator,
+        bool _approved
+    ) external;
+
+    function isApprovedForAll(uint256 owner, uint256 operator)
+        external
+        view
+        returns (bool);
 }
 
 contract ERC721 is IERC721 {
     using Strings for uint256;
 
-    constructor(address _rarityAddr){
+    constructor(address _rarityAddr) {
         rm = IRarity(_rarityAddr);
     }
 
     IRarity public rm;
 
-    mapping(uint256 => uint) private _owners;
-    mapping(uint => uint256) private _balances;
-    mapping(uint256 => uint) private _tokenApprovals;
-    mapping(uint => mapping(uint => bool)) private _operatorApprovals;
+    mapping(uint256 => uint256) private _owners;
+    mapping(uint256 => uint256) private _balances;
+    mapping(uint256 => uint256) private _tokenApprovals;
+    mapping(uint256 => mapping(uint256 => bool)) private _operatorApprovals;
 
-    function balanceOf(uint owner) public view virtual override returns (uint256) {
-        require(owner != uint(0), "ERC721: balance query for the zero address");
+    function balanceOf(uint256 owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            owner != uint256(0),
+            "ERC721: balance query for the zero address"
+        );
         return _balances[owner];
     }
 
-    function ownerOf(uint256 tokenId) public view virtual override returns (uint) {
-        uint owner = _owners[tokenId];
-        require(owner != uint(0), "ERC721: owner query for nonexistent token");
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        uint256 owner = _owners[tokenId];
+        require(
+            owner != uint256(0),
+            "ERC721: owner query for nonexistent token"
+        );
         return owner;
     }
 
@@ -57,8 +108,12 @@ contract ERC721 is IERC721 {
         return "";
     }
 
-    function approve(uint from, uint to, uint256 tokenId) public virtual override {
-        uint owner = ERC721.ownerOf(tokenId);
+    function approve(
+        uint256 from,
+        uint256 to,
+        uint256 tokenId
+    ) public virtual override {
+        uint256 owner = ERC721.ownerOf(tokenId);
         require(_isApprovedOrOwnerOfSummoner(from), "not owner of summoner");
 
         require(
@@ -69,31 +124,56 @@ contract ERC721 is IERC721 {
         _approve(to, tokenId);
     }
 
-    function getApproved(uint256 tokenId) public view virtual override returns (uint) {
-        require(_exists(tokenId), "ERC721: approved query for nonexistent token");
+    function getApproved(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721: approved query for nonexistent token"
+        );
         return _tokenApprovals[tokenId];
     }
 
-    function setApprovalForAll(uint from, uint operator, bool approved) public virtual override {
+    function setApprovalForAll(
+        uint256 from,
+        uint256 operator,
+        bool approved
+    ) public virtual override {
         require(operator != from, "ERC721: approve to caller");
         require(_isApprovedOrOwnerOfSummoner(from), "not owner of summoner");
         _operatorApprovals[from][operator] = approved;
         emit ApprovalForAll(from, operator, approved);
     }
 
-    function isApprovedForAll(uint owner, uint operator) public view virtual override returns (bool) {
+    function isApprovedForAll(uint256 owner, uint256 operator)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _operatorApprovals[owner][operator];
     }
 
     function transferFrom(
-        uint operator,
-        uint from,
-        uint to,
+        uint256 operator,
+        uint256 from,
+        uint256 to,
         uint256 tokenId
     ) public virtual override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwnerOfSummoner(from), "ERC721: transfer caller is not owner nor approved");
-        require(_isApprovedOrOwner(operator, tokenId), "ERC721: transfer operator is not owner nor approved");
+        require(
+            _isApprovedOrOwnerOfSummoner(from),
+            "ERC721: transfer caller is not owner nor approved"
+        );
+        require(
+            _isApprovedOrOwner(operator, tokenId),
+            "ERC721: transfer operator is not owner nor approved"
+        );
         _transfer(from, to, tokenId);
     }
 
@@ -106,7 +186,7 @@ contract ERC721 is IERC721 {
      * and stop existing when they are burned (`_burn`).
      */
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return _owners[tokenId] != uint(0);
+        return _owners[tokenId] != uint256(0);
     }
 
     /**
@@ -116,14 +196,31 @@ contract ERC721 is IERC721 {
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(uint spender, uint256 tokenId) internal view virtual returns (bool) {
-        require(_exists(tokenId), "ERC721: operator query for nonexistent token");
-        uint owner = ERC721.ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
+    function _isApprovedOrOwner(uint256 spender, uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721: operator query for nonexistent token"
+        );
+        uint256 owner = ERC721.ownerOf(tokenId);
+        return (spender == owner ||
+            getApproved(tokenId) == spender ||
+            isApprovedForAll(owner, spender));
     }
 
-    function _isApprovedOrOwnerOfSummoner(uint _summoner) internal view returns (bool) {
-        return rm.getApproved(_summoner) == msg.sender || rm.ownerOf(_summoner) == msg.sender || rm.isApprovedForAll(rm.ownerOf(_summoner), msg.sender);
+    function _isApprovedOrOwnerOfSummoner(uint256 _summoner)
+        internal
+        view
+        returns (bool)
+    {
+        return
+            rm.getApproved(_summoner) == msg.sender ||
+            rm.ownerOf(_summoner) == msg.sender ||
+            rm.isApprovedForAll(rm.ownerOf(_summoner), msg.sender);
     }
 
     /**
@@ -135,7 +232,7 @@ contract ERC721 is IERC721 {
      *
      * Emits a {Transfer} event.
      */
-    function _safeMint(uint to, uint256 tokenId) internal virtual {
+    function _safeMint(uint256 to, uint256 tokenId) internal virtual {
         _safeMint(to, tokenId, "");
     }
 
@@ -143,7 +240,7 @@ contract ERC721 is IERC721 {
      * @dev Same as {xref-ERC721-_safeMint-address-uint256-}[`_safeMint`], with an additional `data` parameter.
      */
     function _safeMint(
-        uint to,
+        uint256 to,
         uint256 tokenId,
         bytes memory _data
     ) internal virtual {
@@ -162,16 +259,16 @@ contract ERC721 is IERC721 {
      *
      * Emits a {Transfer} event.
      */
-    function _mint(uint to, uint256 tokenId) internal virtual {
-        require(to != uint(0), "ERC721: mint to the zero address");
+    function _mint(uint256 to, uint256 tokenId) internal virtual {
+        require(to != uint256(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
 
-        _beforeTokenTransfer(uint(0), to, tokenId);
+        _beforeTokenTransfer(uint256(0), to, tokenId);
 
         _balances[to] += 1;
         _owners[tokenId] = to;
 
-        emit Transfer(uint(0), to, tokenId);
+        emit Transfer(uint256(0), to, tokenId);
     }
 
     /**
@@ -185,17 +282,17 @@ contract ERC721 is IERC721 {
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        uint owner = ERC721.ownerOf(tokenId);
+        uint256 owner = ERC721.ownerOf(tokenId);
 
-        _beforeTokenTransfer(owner, uint(0), tokenId);
+        _beforeTokenTransfer(owner, uint256(0), tokenId);
 
         // Clear approvals
-        _approve(uint(0), tokenId);
+        _approve(uint256(0), tokenId);
 
         _balances[owner] -= 1;
         delete _owners[tokenId];
 
-        emit Transfer(owner, uint(0), tokenId);
+        emit Transfer(owner, uint256(0), tokenId);
     }
 
     /**
@@ -210,17 +307,20 @@ contract ERC721 is IERC721 {
      * Emits a {Transfer} event.
      */
     function _transfer(
-        uint from,
-        uint to,
+        uint256 from,
+        uint256 to,
         uint256 tokenId
     ) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
-        require(to != uint(0), "ERC721: transfer to the zero address");
+        require(
+            ERC721.ownerOf(tokenId) == from,
+            "ERC721: transfer of token that is not own"
+        );
+        require(to != uint256(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
 
         // Clear approvals from the previous owner
-        _approve(uint(0), tokenId);
+        _approve(uint256(0), tokenId);
 
         _balances[from] -= 1;
         _balances[to] += 1;
@@ -234,7 +334,7 @@ contract ERC721 is IERC721 {
      *
      * Emits a {Approval} event.
      */
-    function _approve(uint to, uint256 tokenId) internal virtual {
+    function _approve(uint256 to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
         emit Approval(ERC721.ownerOf(tokenId), to, tokenId);
     }
@@ -254,8 +354,8 @@ contract ERC721 is IERC721 {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
-        uint from,
-        uint to,
+        uint256 from,
+        uint256 to,
         uint256 tokenId
     ) internal virtual {}
 }
@@ -274,7 +374,10 @@ interface IERC721Enumerable is IERC721 {
      * @dev Returns a token ID owned by `owner` at a given `index` of its token list.
      * Use along with {balanceOf} to enumerate all of ``owner``'s tokens.
      */
-    function tokenOfOwnerByIndex(uint owner, uint256 index) external view returns (uint256 tokenId);
+    function tokenOfOwnerByIndex(uint256 owner, uint256 index)
+        external
+        view
+        returns (uint256 tokenId);
 
     /**
      * @dev Returns a token ID at a given `index` of all the tokens stored by the contract.
@@ -289,9 +392,8 @@ interface IERC721Enumerable is IERC721 {
  * account.
  */
 abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
-
     // Mapping from owner to list of owned token IDs
-    mapping(uint => mapping(uint256 => uint256)) private _ownedTokens;
+    mapping(uint256 => mapping(uint256 => uint256)) private _ownedTokens;
 
     // Mapping from token ID to index of the owner tokens list
     mapping(uint256 => uint256) private _ownedTokensIndex;
@@ -305,8 +407,17 @@ abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
      */
-    function tokenOfOwnerByIndex(uint owner, uint256 index) public view virtual override returns (uint256) {
-        require(index < ERC721.balanceOf(owner), "ERC721Enumerable: owner index out of bounds");
+    function tokenOfOwnerByIndex(uint256 owner, uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            index < ERC721.balanceOf(owner),
+            "ERC721Enumerable: owner index out of bounds"
+        );
         return _ownedTokens[owner][index];
     }
 
@@ -320,8 +431,17 @@ abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
-        require(index < rERC721Enumerable.totalSupply(), "ERC721Enumerable: global index out of bounds");
+    function tokenByIndex(uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            index < rERC721Enumerable.totalSupply(),
+            "ERC721Enumerable: global index out of bounds"
+        );
         return _allTokens[index];
     }
 
@@ -341,18 +461,18 @@ abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
-        uint from,
-        uint to,
+        uint256 from,
+        uint256 to,
         uint256 tokenId
     ) internal virtual override {
         super._beforeTokenTransfer(from, to, tokenId);
 
-        if (from == uint(0)) {
+        if (from == uint256(0)) {
             _addTokenToAllTokensEnumeration(tokenId);
         } else if (from != to) {
             _removeTokenFromOwnerEnumeration(from, tokenId);
         }
-        if (to == uint(0)) {
+        if (to == uint256(0)) {
             _removeTokenFromAllTokensEnumeration(tokenId);
         } else if (to != from) {
             _addTokenToOwnerEnumeration(to, tokenId);
@@ -364,7 +484,7 @@ abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
      * @param to address representing the new owner of the given token ID
      * @param tokenId uint256 ID of the token to be added to the tokens list of the given address
      */
-    function _addTokenToOwnerEnumeration(uint to, uint256 tokenId) private {
+    function _addTokenToOwnerEnumeration(uint256 to, uint256 tokenId) private {
         uint256 length = ERC721.balanceOf(to);
         _ownedTokens[to][length] = tokenId;
         _ownedTokensIndex[tokenId] = length;
@@ -387,7 +507,9 @@ abstract contract rERC721Enumerable is ERC721, IERC721Enumerable {
      * @param from address representing the previous owner of the given token ID
      * @param tokenId uint256 ID of the token to be removed from the tokens list of the given address
      */
-    function _removeTokenFromOwnerEnumeration(uint from, uint256 tokenId) private {
+    function _removeTokenFromOwnerEnumeration(uint256 from, uint256 tokenId)
+        private
+    {
         // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
         // then delete the last slot (swap and pop).
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity ^0.8.0;
 
 import "./interfaces/IRarity.sol";
 
@@ -8,55 +8,72 @@ contract rarity_gold {
     string public constant symbol = "gold";
     uint8 public constant decimals = 18;
 
-    uint public totalSupply = 0;
+    uint256 public totalSupply = 0;
 
     IRarity rm = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
-    mapping(uint => mapping (uint => uint)) public allowance;
-    mapping(uint => uint) public balanceOf;
+    mapping(uint256 => mapping(uint256 => uint256)) public allowance;
+    mapping(uint256 => uint256) public balanceOf;
 
-    mapping(uint => uint) public claimed;
+    mapping(uint256 => uint256) public claimed;
 
-    event Transfer(uint indexed from, uint indexed to, uint amount);
-    event Approval(uint indexed from, uint indexed to, uint amount);
+    event Transfer(uint256 indexed from, uint256 indexed to, uint256 amount);
+    event Approval(uint256 indexed from, uint256 indexed to, uint256 amount);
 
-    function wealth_by_level(uint level) public pure returns (uint wealth) {
-        for (uint i = 1; i < level; i++) {
+    function wealth_by_level(uint256 level)
+        public
+        pure
+        returns (uint256 wealth)
+    {
+        for (uint256 i = 1; i < level; i++) {
             wealth += i * 1000e18;
         }
     }
 
-    function _isApprovedOrOwner(uint _summoner) internal view returns (bool) {
-        return rm.getApproved(_summoner) == msg.sender || rm.ownerOf(_summoner) == msg.sender;
+    function _isApprovedOrOwner(uint256 _summoner)
+        internal
+        view
+        returns (bool)
+    {
+        return
+            rm.getApproved(_summoner) == msg.sender ||
+            rm.ownerOf(_summoner) == msg.sender;
     }
 
-
-    function claimable(uint summoner) external view returns (uint amount) {
+    function claimable(uint256 summoner)
+        external
+        view
+        returns (uint256 amount)
+    {
         require(_isApprovedOrOwner(summoner));
-        uint _current_level = rm.level(summoner);
-        uint _claimed_for = claimed[summoner]+1;
-        for (uint i = _claimed_for; i <= _current_level; i++) {
+        uint256 _current_level = rm.level(summoner);
+        uint256 _claimed_for = claimed[summoner] + 1;
+        for (uint256 i = _claimed_for; i <= _current_level; i++) {
             amount += wealth_by_level(i);
         }
     }
 
-    function claim(uint summoner) external {
+    function claim(uint256 summoner) external {
         require(_isApprovedOrOwner(summoner));
-        uint _current_level = rm.level(summoner);
-        uint _claimed_for = claimed[summoner]+1;
-        for (uint i = _claimed_for; i <= _current_level; i++) {
+        uint256 _current_level = rm.level(summoner);
+        uint256 _claimed_for = claimed[summoner] + 1;
+        for (uint256 i = _claimed_for; i <= _current_level; i++) {
             _mint(summoner, wealth_by_level(i));
         }
         claimed[summoner] = _current_level;
     }
 
-    function _mint(uint dst, uint amount) internal {
+    function _mint(uint256 dst, uint256 amount) internal {
         totalSupply += amount;
         balanceOf[dst] += amount;
         emit Transfer(dst, dst, amount);
     }
 
-    function approve(uint from, uint spender, uint amount) external returns (bool) {
+    function approve(
+        uint256 from,
+        uint256 spender,
+        uint256 amount
+    ) external returns (bool) {
         require(_isApprovedOrOwner(from));
         allowance[from][spender] = amount;
 
@@ -64,19 +81,28 @@ contract rarity_gold {
         return true;
     }
 
-    function transfer(uint from, uint to, uint amount) external returns (bool) {
+    function transfer(
+        uint256 from,
+        uint256 to,
+        uint256 amount
+    ) external returns (bool) {
         require(_isApprovedOrOwner(from));
         _transferTokens(from, to, amount);
         return true;
     }
 
-    function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool) {
+    function transferFrom(
+        uint256 executor,
+        uint256 from,
+        uint256 to,
+        uint256 amount
+    ) external returns (bool) {
         require(_isApprovedOrOwner(executor));
-        uint spender = executor;
-        uint spenderAllowance = allowance[from][spender];
+        uint256 spender = executor;
+        uint256 spenderAllowance = allowance[from][spender];
 
-        if (spender != from && spenderAllowance != type(uint).max) {
-            uint newAllowance = spenderAllowance - amount;
+        if (spender != from && spenderAllowance != type(uint256).max) {
+            uint256 newAllowance = spenderAllowance - amount;
             allowance[from][spender] = newAllowance;
 
             emit Approval(from, spender, newAllowance);
@@ -86,7 +112,11 @@ contract rarity_gold {
         return true;
     }
 
-    function _transferTokens(uint from, uint to, uint amount) internal {
+    function _transferTokens(
+        uint256 from,
+        uint256 to,
+        uint256 amount
+    ) internal {
         balanceOf[from] -= amount;
         balanceOf[to] += amount;
 
