@@ -1,39 +1,29 @@
 //SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+
+import "./utils/RaritySkillCheck.sol";
+import "./utils/RarityOwnership.sol";
 
 import "./core/interfaces/IRarity.sol";
 import "./core/interfaces/IMaterials.sol";
 import "./core/interfaces/IAttributes.sol";
 
-interface IRaritySkillCheck {
-    function senseMotive(uint256) public view returns (int8);
-}
-
 contract KoboldBarn is ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private nextTokenId;
 
-    IRarity private constant RM =
-        IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
     IMaterials private constant MATERIALS =
         IMaterials(0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A);
     IAttributes private constant ATTRIBUTES =
         IAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
-    IRaritySkillCheck private SKILL_CHECK;
-    IRarityKoboldSalvage private KOBOLD_SALVAGE;
 
     // Helper constants
     uint256 private constant DAY = 1 days;
 
-    constructor(IRarityKoboldSalvage ks, IRaritySkillCheck sc)
-        ERC721("Rarity Kobold", "RK")
-    {
-        KOBOLD_SALVAGE = ks;
-        SKILL_CHECK = sc;
-    }
+    constructor() ERC721("Rarity Kobold", "RK") {}
 
     struct Kobold {
         uint8 health;
@@ -73,7 +63,7 @@ contract KoboldBarn is ERC721Enumerable {
     function _fight(Kobold memory kobold, uint256 summonerId) internal {
         //
         // If success...
-        KOBOLD_SALVAGE.mint(_msgSender(), 1);
+        // KOBOLD_SALVAGE.mint(_msgSender(), 1);
     }
 
     function _startFight(uint256 summonerId) internal returns (Kobold memory) {
@@ -100,7 +90,7 @@ contract KoboldBarn is ERC721Enumerable {
         view
         returns (uint8)
     {
-        if (SKILL_CHECK.senseMotive(summonerId) >= 15) {
+        if (RaritySkillCheck.senseMotive(summonerId) >= 15) {
             // Sneak attack!
             return 9;
         } else {
@@ -113,29 +103,17 @@ contract KoboldBarn is ERC721Enumerable {
         view
         returns (uint8)
     {
-        uint256 _level = RM.level(summonerId);
-        uint256 _class = RM.class(summonerId);
-        (, , uint32 _const, , , ) = ATTRIBUTES.ability_scores(_summoner);
+        uint256 _level = RarityOwnership.rm().level(summonerId);
+        uint256 _class = RarityOwnership.rm().class(summonerId);
+        (, , uint32 _const, , , ) = ATTRIBUTES.ability_scores(summonerId);
         return
             uint8(MATERIALS.health_by_class_and_level(_class, _level, _const));
-    }
-
-    // Helpers
-    function _isApprovedOrOwnerOfSummoner(uint256 _summonerId)
-        internal
-        view
-        returns (bool)
-    {
-        return
-            RM.getApproved(_summonerId) == msg.sender ||
-            RM.ownerOf(_summonerId) == msg.sender ||
-            RM.isApprovedForAll(RM.ownerOf(_summonerId), msg.sender);
     }
 
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (_isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (RarityOwnership._isApprovedOrOwnerOfSummoner(summonerId)) {
             revert("!approved");
         } else {
             _;

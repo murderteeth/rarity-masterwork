@@ -1,28 +1,43 @@
 //SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract RarityKoboldSalvage is AccessControl, ERC20 {
-    bytes32 public constant MINTER_ADMIN_ROLE = keccak256("MINTER_ADMIN_ROLE");
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
+import "./utils/RarityOwnership.sol";
 
-    constructor() ERC20("Rarity Kobold Salvage", "RKS") {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINTER_ADMIN_ROLE, msg.sender);
-        _setRoleAdmin(MINTER_ROLE, MINTER_ADMIN_ROLE);
-        _setRoleAdmin(BURNER_ROLE, MINTER_ADMIN_ROLE);
-    }
+interface IKoboldBarn {
+    function kobolds(uint256)
+        external
+        view
+        returns (
+            uint8 health,
+            uint256 koboldId,
+            uint8 summonerHealth,
+            uint256 armorId,
+            uint256 weaponId,
+            uint256 lastTurn,
+            bool masterwork
+        );
+}
 
-    function mint(address _to, uint256 _amount) public {
-        require(hasRole(MINTER_ROLE, msg.sender), "!minter");
-        _mint(_to, _amount);
-    }
+contract RarityKoboldSalvage is ERC20 {
+    mapping(uint256 => bool) public claimedKobolds;
 
-    function burn(address _account, uint256 _amount) public {
-        require(hasRole(BURNER_ROLE, msg.sender), "!burner");
-        _burn(_account, _amount);
+    constructor() ERC20("Rarity Kobold Salvage", "RKS") {}
+
+    function claim(uint256 summonerId, uint256 koboldId)
+        external
+        approvedForSummoner(summonerId)
+    {}
+
+    // Modifiers
+
+    modifier approvedForSummoner(uint256 summonerId) {
+        if (RarityOwnership._isApprovedOrOwnerOfSummoner(summonerId)) {
+            revert("!approved");
+        } else {
+            _;
+        }
     }
 }
