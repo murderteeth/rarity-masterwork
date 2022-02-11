@@ -103,9 +103,9 @@ contract RarityMasterworkProject is rERC721Enumerable {
         );
         uint256 crafter = ownerOf(token);
 
-        // calculate dc
-        // MASTERWORK_COMPONENT_DC - mat bonus
-
+        // TODO: no progress on check fail
+        // TODO: review check bonus progress
+        // TODO: adjust DC for mat bonus
         (, int256 check) = commonCrafting.craft_skillcheck(
             crafter,
             MASTERWORK_COMPONENT_DC
