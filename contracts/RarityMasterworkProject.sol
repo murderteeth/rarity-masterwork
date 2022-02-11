@@ -61,9 +61,9 @@ contract RarityMasterworkProject is rERC721Enumerable {
     require(project.started > 0 && project.completed == 0, "!project started");
     uint crafter = ownerOf(token);
 
-    // calculate dc
-    // MASTERWORK_COMPONENT_DC - mat bonus
-
+    // TODO: no progress on check fail
+    // TODO: review check bonus progress
+    // TODO: adjust DC for mat bonus
     (, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
     project.check = project.check + uint(check);
 

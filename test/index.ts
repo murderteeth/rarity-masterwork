@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
-import { craftingBaseType, weaponType } from './api/crafting'
+import { craftingBaseType, weaponType, goodsType } from './api/crafting'
 import { parseEther } from 'ethers/lib/utils'
-import { mockCrafter, mockMasterwork, mockRarity } from './api/mocks'
+import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem } from './api/mocks'
 
 describe('RarityMasterwork', function () {
   before(async function() {
@@ -11,6 +11,22 @@ describe('RarityMasterwork', function () {
     this.rarity = await mockRarity()
     this.masterwork = await mockMasterwork(this.rarity)
     this.crafter = await mockCrafter(this.rarity, this.signer)
+  })
+
+  it.only('exchanges common items for common artisan tools', async function () {
+    await this.rarity.core.approve(this.masterwork.commonTools.address, this.crafter)
+    const crowbar = await mockCommonItem(craftingBaseType.goods, goodsType.crowbar, this.crafter, this.rarity, this.signer)
+    const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
+    await this.rarity.crafting.approve(this.masterwork.commonTools.address, crowbar)
+    await this.rarity.crafting.approve(this.masterwork.commonTools.address, longsword)
+
+    const tools = await this.masterwork.commonTools.nextToken()
+    expect(await this.rarity.crafting.ownerOf(longsword)).to.eq(this.signer.address)
+    await expect(this.masterwork.commonTools.exchange(this.crafter, crowbar)).to.be.reverted
+    await this.masterwork.commonTools.exchange(this.crafter, longsword)
+    expect(await this.masterwork.commonTools.ownerOf(tools)).to.eq(this.signer.address)
+    await expect(this.masterwork.commonTools.exchange(this.crafter, longsword)).to.be.reverted
+    expect(await this.rarity.crafting.ownerOf(longsword)).to.not.eq(this.signer.address)
   })
 
   it('crafts masterwork swords', async function () {

@@ -1,8 +1,29 @@
 import { MockContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { parseEther } from 'ethers/lib/utils'
-import { CodexMasterworkWeapons, CodexMasterworkWeapons__factory, Rarity, RarityAttributes, RarityAttributes__factory, RarityCrafting, RarityCraftingMaterials, RarityCraftingMaterials__factory, RarityCrafting__factory, RarityGold, RarityGold__factory, RarityMasterworkItem, RarityMasterworkItem__factory, RarityMasterworkProject, RarityMasterworkProject__factory, RaritySkills, RaritySkills__factory, Rarity__factory } from '../../typechain'
 import { skills as skillsenum, skillsArray } from './skills'
+import { 
+  CodexMasterworkWeapons, 
+  CodexMasterworkWeapons__factory, 
+  Rarity, 
+  Rarity__factory,
+  RarityAttributes, 
+  RarityAttributes__factory, 
+  RarityCrafting, 
+  RarityCrafting__factory, 
+  RarityCraftingMaterials, 
+  RarityCraftingMaterials__factory, 
+  RarityGold, 
+  RarityGold__factory, 
+  RarityMasterworkItem, 
+  RarityMasterworkItem__factory, 
+  RarityMasterworkProject, 
+  RarityMasterworkProject__factory, 
+  RaritySkills, 
+  RaritySkills__factory,
+  RarityCommonTools,
+  RarityCommonTools__factory
+} from '../../typechain'
 
 export interface IMockRarityContracts {
   core: MockContract<Rarity>,
@@ -18,7 +39,8 @@ export interface IMockMasterworkContracts {
     weapons: MockContract<CodexMasterworkWeapons>
   },
   projects: MockContract<RarityMasterworkProject>,
-  items: MockContract<RarityMasterworkItem>
+  items: MockContract<RarityMasterworkItem>,
+  commonTools: MockContract<RarityCommonTools>
 }
 
 export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMockMasterworkContracts> {
@@ -35,7 +57,10 @@ export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMo
   const items = await (await smock.mock<RarityMasterworkItem__factory>('RarityMasterworkItem')).deploy()
   await items.setVariable('rarity', rarity.core.address)
   await items.setVariable('projects', projects.address)
-  return { codex: { weapons }, projects, items }
+  const commonTools = await (await smock.mock<RarityCommonTools__factory>('RarityCommonTools')).deploy()
+  await commonTools.setVariable('rarity', rarity.core.address)
+  await commonTools.setVariable('commonCrafting', rarity.crafting.address)
+  return { codex: { weapons }, projects, items, commonTools }
 }
 
 export async function mockRarity() : Promise<IMockRarityContracts> {
@@ -83,4 +108,14 @@ export async function mockCrafter(rarity: IMockRarityContracts, signer: SignerWi
     { index: skillsenum.craft, points: 8 }) })
   await rarity.mats.setVariable('balanceOf', { [summoner.toNumber()]: 1_000_000 })
   return summoner
+}
+
+export async function mockCommonItem(base_type: number, item_type: number, crafter: number, rarity: IMockRarityContracts, signer: SignerWithAddress) {
+  const item = await rarity.crafting.next_item()
+  const balance = await rarity.crafting.balanceOf(signer.address)
+  await rarity.crafting.setVariable('items', { [item.toNumber()]: { base_type, item_type, crafted: 0, crafter }})
+  await rarity.crafting.setVariable('_owners', { [item.toNumber()]: signer.address })
+  await rarity.crafting.setVariable('_balances', { [signer.address]: balance.add(1) })
+  await rarity.crafting.setVariable('next_item', item.add(1))
+  return item
 }
