@@ -8,6 +8,7 @@ import "./core/interfaces/IAttributes.sol";
 import "./core/interfaces/ISkills.sol";
 import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
+import "./utils/Rarity.sol";
 
 interface IProjects {
     struct Project {
@@ -26,7 +27,6 @@ interface IProjects {
 
 contract RarityMasterworkItem is ERC721Enumerable {
     uint256 public nextToken = 1;
-    IRarity rarity = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
     IProjects projects = IProjects(0x000000000000000000000000000000000000dEaD);
     event Claimed(address indexed owner, uint256 token, uint256 projectToken);
 
@@ -48,7 +48,10 @@ contract RarityMasterworkItem is ERC721Enumerable {
         require(project.completed > 0, "!completed");
 
         uint256 crafter = projects.ownerOf(projectToken);
-        require(authorizeSummoner(crafter), "!authorizeSummoner");
+        require(
+            Rarity._isApprovedOrOwnerOfSummoner(crafter),
+            "!authorizeSummoner"
+        );
 
         _safeMint(msg.sender, nextToken);
         items[nextToken] = Item(
@@ -70,13 +73,5 @@ contract RarityMasterworkItem is ERC721Enumerable {
     {
         uint256 token = tokenOfOwnerByIndex(owner, index);
         return items[token];
-    }
-
-    function authorizeSummoner(uint256 summoner) internal view returns (bool) {
-        address owner = rarity.ownerOf(summoner);
-        return
-            owner == msg.sender ||
-            rarity.getApproved(summoner) == msg.sender ||
-            rarity.isApprovedForAll(owner, msg.sender);
     }
 }
