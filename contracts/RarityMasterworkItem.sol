@@ -8,7 +8,7 @@ import "./core/interfaces/IAttributes.sol";
 import "./core/interfaces/ISkills.sol";
 import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
-import "./utils/Rarity.sol";
+import "./utils/RarityHelpers.sol";
 
 interface IProjects {
     struct Project {
@@ -49,7 +49,7 @@ contract RarityMasterworkItem is ERC721Enumerable {
 
         uint256 crafter = projects.ownerOf(projectToken);
         require(
-            Rarity._isApprovedOrOwnerOfSummoner(crafter),
+            RarityHelpers._isApprovedOrOwnerOfSummoner(crafter),
             "!authorizeSummoner"
         );
 

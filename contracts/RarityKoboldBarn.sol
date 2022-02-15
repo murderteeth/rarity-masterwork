@@ -7,23 +7,34 @@ import "./core/interfaces/ICodexItemsArmor.sol";
 import "./core/interfaces/ICodexItemsWeapons.sol";
 import "./core/interfaces/ICrafting.sol";
 
+import "./utils/RarityHelpers.sol";
 import "./utils/RaritySkillCheck.sol";
-import "./utils/Rarity.sol";
 
-contract KoboldBarn is ERC721Enumerable {
+contract RarityKoboldBarn is ERC721Enumerable {
     uint256 public nextToken = 1;
 
     // Helper constants
     uint256 private constant DAY = 1 days;
+    uint8 private constant SNEAK_DC = 15;
+    uint8 private constant KOBOLD_DC = 15;
 
-    mapping(address => ICrafting) private itemContracts;
+    struct ItemContract {
+        ICrafting theContract;
+        bool isMasterwork;
+    }
+
+    mapping(address => ItemContract) private itemContracts;
 
     constructor(ICrafting _masterworkItems) ERC721("Rarity Kobold", "RK") {
         // Create item whitelist
-        itemContracts[0xf41270836dF4Db1D28F7fd0935270e3A603e78cC] = ICrafting(
+        itemContracts[0xf41270836dF4Db1D28F7fd0935270e3A603e78cC]
+            .theContract = ICrafting(
             0xf41270836dF4Db1D28F7fd0935270e3A603e78cC
         );
-        itemContracts[address(_masterworkItems)] = ICrafting(_masterworkItems);
+        itemContracts[address(_masterworkItems)].theContract = ICrafting(
+            _masterworkItems
+        );
+        itemContracts[address(_masterworkItems)].isMasterwork = true;
     }
 
     struct Kobold {
@@ -38,8 +49,9 @@ contract KoboldBarn is ERC721Enumerable {
     }
 
     mapping(uint256 => uint256) public latestFight; // summonerId => koboldId
-    mapping(uint256 => Kobold) public kobolds;
-    mapping(uint256 => uint256) public lastAttack;
+    mapping(uint256 => Kobold) public kobolds; // tokenId => kobold
+    mapping(uint256 => uint256) public lastAttack; // summonerId => timestamp
+    mapping(uint256 => uint8) public koboldCount; // summonerId => count
 
     function enter(
         uint256 summonerId,
@@ -47,21 +59,18 @@ contract KoboldBarn is ERC721Enumerable {
         address weaponContract,
         uint256 armorId,
         address armorContract
-    )
-        external
-        approvedForSummoner(summonerId)
-        canAttackYet(summonerId)
-        validItem(weaponId, weaponContract, 3)
-        validItem(armorId, armorContract, 2)
-    {
-        Kobold memory kobold = _startFight(
+    ) external approvedForSummoner(summonerId) canAttackYet(summonerId) {
+        // validItem(weaponId, weaponContract, 3)
+        // validItem(armorId, armorContract, 2)
+        _startFight(
             summonerId,
             weaponId,
             ICrafting(weaponContract),
             armorId,
             ICrafting(armorContract)
         );
-        _fight(kobold, summonerId);
+        koboldCount[summonerId]++;
+        // _fight(kobold, summonerId);
     }
 
     // Attack to start or continue a fight
@@ -98,11 +107,38 @@ contract KoboldBarn is ERC721Enumerable {
 
     function _fight(Kobold memory kobold, uint256 summonerId) internal {
         lastAttack[summonerId] = block.timestamp;
-        // TODO determine winner
-        // TODO decrement loser health
-
         // If masterwork weapon, +1 attack bonus
         // if masterwork armor, +1 defense bonus
+        // A Kobold is a small humanoid (reptilian)
+        // Str 9, Dex 13, Con 10, Int 10, Wis 9, Cha 8
+        // Hit Dice: 1d8 (4hp)
+        // Initiative: +1
+        // Armor Class: 15
+        // Base Attack/Grapple: +1/-4
+        // Attack: Spear +1 melee (1d6-1/x3)
+        // Feat: Alertness
+        // uint256 _level = Rarity.level(summonerId);
+        // uint256 _class = Rarity.class(summonerId);
+        (uint32 _str, , , , , ) = RarityHelpers.abilityScores(summonerId);
+        uint32 damage = RaritySkillCheck.baseDamage(_str);
+        // int32 attackBonus = RaritySkillCheck.baseAttackBonus(
+        // _class,
+        // _str,
+        // _level
+        // );
+        int32 masterworkWeaponBonus = 0;
+        if (itemContracts[address(kobold.weaponContract)].isMasterwork) {
+            masterworkWeaponBonus = 1;
+        }
+        // bool canHit = (attackBonus + masterworkWeaponBonus) > 15;
+        bool didHit = true;
+        if (didHit) {
+            kobold.health -= uint8(damage);
+        }
+        bool gotHit = true;
+        if (kobold.health > 0 && gotHit) {
+            kobold.summonerHealth -= 1;
+        }
     }
 
     function _startFight(
@@ -124,7 +160,7 @@ contract KoboldBarn is ERC721Enumerable {
         kobolds[newTokenId].armorId = armorId;
         kobolds[newTokenId].armorContract = armorContract;
 
-        kobolds[newTokenId].summonerHealth = Rarity.health(summonerId);
+        kobolds[newTokenId].summonerHealth = RarityHelpers.health(summonerId);
 
         lastAttack[summonerId] = block.timestamp;
 
@@ -149,7 +185,7 @@ contract KoboldBarn is ERC721Enumerable {
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (Rarity._isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (RarityHelpers._isApprovedOrOwnerOfSummoner(summonerId)) {
             revert("!approved");
         } else {
             _;
@@ -157,7 +193,10 @@ contract KoboldBarn is ERC721Enumerable {
     }
 
     modifier canAttackYet(uint256 summonerId) {
-        if (block.timestamp > lastAttack[summonerId] + DAY) {
+        if (
+            block.timestamp > lastAttack[summonerId] + DAY &&
+            koboldCount[summonerId] < 11
+        ) {
             _;
         } else {
             revert("!turn");
@@ -170,13 +209,16 @@ contract KoboldBarn is ERC721Enumerable {
         uint256 requiredBase
     ) {
         (uint8 itemBase, uint8 itemType, , ) = itemContracts[itemContract]
+            .theContract
             .items(tokenId);
-        if (itemBase != requiredBase) {
-            revert("!base");
-        } else if (!itemContracts[itemContract].isValid(itemBase, itemType)) {
-            revert("!valiid");
+        if (
+            itemBase != requiredBase ||
+            !itemContracts[itemContract].theContract.isValid(itemBase, itemType)
+        ) {
+            revert("!type");
         } else if (
-            _msgSender() != itemContracts[itemContract].ownerOf(tokenId)
+            _msgSender() !=
+            itemContracts[itemContract].theContract.ownerOf(tokenId)
         ) {
             revert("!owner");
         } else {

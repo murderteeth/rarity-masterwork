@@ -10,28 +10,28 @@ library RaritySkillCheck {
     IAttributes private constant ATTRIBUTES =
         IAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
 
-    function survival(uint256 summonerId) public view returns (int8) {
+    function survival(uint256 summonerId) public view returns (int32) {
         int8 _survival = int8(SKILLS.get_skills(summonerId)[31]);
-        (, , , , uint256 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
+        (, , , , uint32 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
         return skillCheck(_survival, wisdom);
     }
 
-    function senseMotive(uint256 summonerId) public view returns (int8) {
-        int8 sm = int8(SKILLS.get_skills(summonerId)[27]);
-        (, , , , uint256 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
+    function senseMotive(uint256 summonerId) public view returns (int32) {
+        int32 sm = int32(int8(SKILLS.get_skills(summonerId)[27]));
+        (, , , , uint32 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
         return skillCheck(sm, wisdom);
     }
 
-    function skillCheck(int8 skill, uint256 ability)
+    function skillCheck(int32 skill, uint32 ability)
         public
         pure
-        returns (int8)
+        returns (int32)
     {
-        int8 _ability = int8(uint8(ability));
-        return skill + attributeModifier(_ability);
+        // int32 _ability = int32(uint32(ability));
+        return skill + attributeModifier(ability);
     }
 
-    function attributeModifier(int8 attribute) public pure returns (int8) {
+    function attributeModifier(uint32 attribute) public pure returns (int32) {
         // Ints round toward zero, so 9 would otherwise be 0
         //   if we don't manually set it
         // Anything above 9 will calculate correctly, because
@@ -39,6 +39,67 @@ library RaritySkillCheck {
         if (attribute == 9) {
             return -1;
         }
-        return (int8(attribute) - 10) / 2;
+        return (int32(attribute) - 10) / 2;
+    }
+
+    function baseDamage(uint32 str) public pure returns (uint32) {
+        int32 _mod = attributeModifier(str);
+        if (_mod <= 1) {
+            return 1;
+        } else {
+            return uint32(_mod);
+        }
+    }
+
+    function baseAttackBonusByClass(uint256 _class)
+        public
+        pure
+        returns (uint32 attack)
+    {
+        if (_class == 1) {
+            attack = 4;
+        } else if (_class == 2) {
+            attack = 3;
+        } else if (_class == 3) {
+            attack = 3;
+        } else if (_class == 4) {
+            attack = 3;
+        } else if (_class == 5) {
+            attack = 4;
+        } else if (_class == 6) {
+            attack = 3;
+        } else if (_class == 7) {
+            attack = 4;
+        } else if (_class == 8) {
+            attack = 4;
+        } else if (_class == 9) {
+            attack = 3;
+        } else if (_class == 10) {
+            attack = 2;
+        } else if (_class == 11) {
+            attack = 2;
+        }
+    }
+
+    function baseAttackBonusByClassAndLevel(uint256 _class, uint256 _level)
+        public
+        pure
+        returns (int32)
+    {
+        return
+            int32(
+                (int32(int256(_level)) *
+                    int32(baseAttackBonusByClass(_class))) / 4
+            );
+    }
+
+    function baseAttackBonus(
+        uint256 _class,
+        uint32 _str,
+        uint256 _level
+    ) public pure returns (int32) {
+        return
+            int32(baseAttackBonusByClassAndLevel(_class, _level)) +
+            attributeModifier(_str);
     }
 }

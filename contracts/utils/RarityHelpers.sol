@@ -5,7 +5,7 @@ import "../core/interfaces/IRarity.sol";
 import "../core/interfaces/IAttributes.sol";
 import "../core/interfaces/IMaterials.sol";
 
-library Rarity {
+library RarityHelpers {
     IRarity constant RM = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
     IAttributes private constant ATTRIBUTES =
