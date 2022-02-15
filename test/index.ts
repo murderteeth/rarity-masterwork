@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
-import { craftingBaseType, weaponType, goodsType } from './api/crafting'
+import { craftingBaseType, weaponType, goodsType, armorType } from './api/crafting'
 import { parseEther } from 'ethers/lib/utils'
 import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem } from './api/mocks'
 
@@ -13,7 +13,7 @@ describe('RarityMasterwork', function () {
     this.crafter = await mockCrafter(this.rarity, this.signer)
   })
 
-  it.only('exchanges common items for common artisan tools', async function () {
+  it('exchanges common items for common artisan tools', async function () {
     await this.rarity.core.approve(this.masterwork.commonTools.address, this.crafter)
     const crowbar = await mockCommonItem(craftingBaseType.goods, goodsType.crowbar, this.crafter, this.rarity, this.signer)
     const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
@@ -63,6 +63,25 @@ describe('RarityMasterwork', function () {
     expect(longsword.baseType).to.eq(craftingBaseType.weapon)
     expect(longsword.itemType).to.eq(weaponType.longsword)
     expect(longsword.crafter).to.eq(this.crafter)
+  })
+
+  it.only('fights a kobold', async function () {
+    const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
+    const leatherArmor = await mockCommonItem(craftingBaseType.armor, armorType.leather, this.crafter, this.rarity, this.signer)
+
+    await this.masterwork.barn.setVariable('itemContracts', { [this.rarity.crafting.address]: {
+      theContract: this.rarity.crafting.address,
+      isMasterwork: false
+    }})
+
+    await expect(this.masterwork.barn.enter(this.crafter, longsword, this.rarity.crafting.address, longsword, this.rarity.crafting.address)).to.be.revertedWith("!armor")
+
+    await this.masterwork.barn.enter(this.crafter, longsword, this.rarity.crafting.address, leatherArmor, this.rarity.crafting.address)
+    expect(await this.masterwork.barn.ownerOf(1)).to.eq(this.signer.address)
+    expect(await this.masterwork.barn.isWon(1)).to.eq(false)
+    expect(await this.masterwork.barn.isEnded(1)).to.eq(false)
+
+    console.log('this kobold', await this.masterwork.barn.kobolds(1))
 
   })
 
