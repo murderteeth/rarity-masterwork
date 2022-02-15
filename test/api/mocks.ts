@@ -22,7 +22,11 @@ import {
   RaritySkills, 
   RaritySkills__factory,
   RarityCommonTools,
-  RarityCommonTools__factory
+  RarityCommonTools__factory,
+  RarityKoboldBarn,
+  RarityKoboldBarn__factory,
+  RarityHelpers__factory,
+  RaritySkillCheck__factory
 } from '../../typechain'
 
 export interface IMockRarityContracts {
@@ -40,7 +44,8 @@ export interface IMockMasterworkContracts {
   },
   projects: MockContract<RarityMasterworkProject>,
   items: MockContract<RarityMasterworkItem>,
-  commonTools: MockContract<RarityCommonTools>
+  commonTools: MockContract<RarityCommonTools>,
+  barn: MockContract<RarityKoboldBarn>
 }
 
 export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMockMasterworkContracts> {
@@ -55,12 +60,19 @@ export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMo
   await projects.setVariable('masterworkWeaponsCodex', weapons.address)
   await rarity.core.setVariable('_owners', { [(await projects.APPRENTICE()).toNumber()]: projects.address })
   const items = await (await smock.mock<RarityMasterworkItem__factory>('RarityMasterworkItem')).deploy()
-  await items.setVariable('rarity', rarity.core.address)
   await items.setVariable('projects', projects.address)
   const commonTools = await (await smock.mock<RarityCommonTools__factory>('RarityCommonTools')).deploy()
-  await commonTools.setVariable('rarity', rarity.core.address)
   await commonTools.setVariable('commonCrafting', rarity.crafting.address)
-  return { codex: { weapons }, projects, items, commonTools }
+
+  const rarityHelpers = await (await smock.mock<RarityHelpers__factory>('RarityHelpers')).deploy()
+  const raritySkillCheck = await (await smock.mock<RaritySkillCheck__factory>('RaritySkillCheck')).deploy()
+  const barn = await (await smock.mock<RarityKoboldBarn__factory>('RarityKoboldBarn', {
+    libraries: {
+      RarityHelpers: rarityHelpers.address,
+      RaritySkillCheck: raritySkillCheck.address
+    }})).deploy(items.address)
+
+  return { codex: { weapons }, projects, items, commonTools, barn }
 }
 
 export async function mockRarity() : Promise<IMockRarityContracts> {

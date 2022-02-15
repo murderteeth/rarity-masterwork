@@ -6,15 +6,16 @@ import "../core/interfaces/IAttributes.sol";
 import "../core/interfaces/IMaterials.sol";
 
 library RarityHelpers {
-    IRarity constant RM = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+    IRarity public constant RM =
+        IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
-    IAttributes private constant ATTRIBUTES =
+    IAttributes public constant ATTRIBUTES =
         IAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
 
-    IMaterials private constant MATERIALS =
+    IMaterials public constant MATERIALS =
         IMaterials(0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A);
 
-    function health(uint256 summonerId) internal view returns (uint8) {
+    function health(uint256 summonerId) public view returns (uint8) {
         uint256 _level = level(summonerId);
         uint256 _class = class(summonerId);
         (, , uint32 _const, , , ) = abilityScores(summonerId);
@@ -23,7 +24,7 @@ library RarityHelpers {
     }
 
     function abilityScores(uint256 summonerId)
-        internal
+        public
         view
         returns (
             uint32,
@@ -37,11 +38,11 @@ library RarityHelpers {
         return ATTRIBUTES.ability_scores(summonerId);
     }
 
-    function level(uint256 summonerId) internal view returns (uint256) {
+    function level(uint256 summonerId) public view returns (uint256) {
         return RM.level(summonerId);
     }
 
-    function class(uint256 summonerId) internal view returns (uint256) {
+    function class(uint256 summonerId) public view returns (uint256) {
         return RM.class(summonerId);
     }
 

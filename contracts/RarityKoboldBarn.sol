@@ -59,10 +59,13 @@ contract RarityKoboldBarn is ERC721Enumerable {
         address weaponContract,
         uint256 armorId,
         address armorContract
-    ) external approvedForSummoner(summonerId) canAttackYet(summonerId) {
-        // validItem(weaponId, weaponContract, 3)
-        // validItem(armorId, armorContract, 2)
-        _startFight(
+    )
+        external
+        approvedForSummoner(summonerId)
+        canAttackYet(summonerId)
+        validItems(weaponId, weaponContract, armorId, armorContract)
+    {
+        Kobold memory kobold = _startFight(
             summonerId,
             weaponId,
             ICrafting(weaponContract),
@@ -70,7 +73,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
             ICrafting(armorContract)
         );
         koboldCount[summonerId]++;
-        // _fight(kobold, summonerId);
+        _fight(kobold, summonerId);
     }
 
     // Attack to start or continue a fight
@@ -203,11 +206,26 @@ contract RarityKoboldBarn is ERC721Enumerable {
         }
     }
 
-    modifier validItem(
+    modifier validItems(
+        uint256 weaponId,
+        address weaponContract,
+        uint256 armorId,
+        address armorContract
+    ) {
+        if (!validItem(weaponId, weaponContract, 3)) {
+            revert("!weapon");
+        } else if (!validItem(armorId, armorContract, 2)) {
+            revert("!armor");
+        } else {
+            _;
+        }
+    }
+
+    function validItem(
         uint256 tokenId,
         address itemContract,
         uint256 requiredBase
-    ) {
+    ) internal view returns (bool) {
         (uint8 itemBase, uint8 itemType, , ) = itemContracts[itemContract]
             .theContract
             .items(tokenId);
@@ -215,14 +233,14 @@ contract RarityKoboldBarn is ERC721Enumerable {
             itemBase != requiredBase ||
             !itemContracts[itemContract].theContract.isValid(itemBase, itemType)
         ) {
-            revert("!type");
+            return false;
         } else if (
             _msgSender() !=
             itemContracts[itemContract].theContract.ownerOf(tokenId)
         ) {
-            revert("!owner");
+            return false;
         } else {
-            _;
+            return true;
         }
     }
 }
