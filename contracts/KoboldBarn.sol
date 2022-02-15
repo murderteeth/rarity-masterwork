@@ -13,42 +13,29 @@ import "./utils/Rarity.sol";
 contract KoboldBarn is ERC721Enumerable {
     uint256 public nextToken = 1;
 
-    ICrafting private constant COMMON_CRAFTING =
-        ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-
-    // address private constant COMMON_ARMOR_ADDRESS =
-    // 0xf5114A952Aca3e9055a52a87938efefc8BB7878C;
-    // address private constant COMMON_WEAPONS_ADDRESS =
-    // 0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8;
-
-    // codex_items_weapons private constant COMMON_WEAPONS =
-    // codex_items_weapons(COMMON_WEAPONS_ADDRESS);
-    // codex_items_armor private constant COMMON_ARMOR =
-    // codex_items_armor(COMMON_ARMOR_ADDRESS);
-
-    // codex_items_weapons private constant MASTERWORK_WEAPONS =
-    // codex_items_weapons(COMMON_WEAPONS_ADDRESS);
-    // codex_items_armor private constant MASTERWORK_ARMOR =
-    // codex_items_armor(COMMON_ARMOR_ADDRESS);
-
     // Helper constants
     uint256 private constant DAY = 1 days;
 
-    constructor() ERC721("Rarity Kobold", "RK") {}
+    mapping(address => ICrafting) private itemContracts;
+
+    constructor(ICrafting _masterworkItems) ERC721("Rarity Kobold", "RK") {
+        // Create item whitelist
+        itemContracts[0xf41270836dF4Db1D28F7fd0935270e3A603e78cC] = ICrafting(
+            0xf41270836dF4Db1D28F7fd0935270e3A603e78cC
+        );
+        itemContracts[address(_masterworkItems)] = ICrafting(_masterworkItems);
+    }
 
     struct Kobold {
         uint8 health;
         uint256 summonerId;
         uint8 summonerHealth;
         uint256 armorId;
+        ICrafting armorContract;
         uint256 weaponId;
+        ICrafting weaponContract;
         uint256 enteredAt;
-        bool isMasterworkWeapon;
-        bool isMasterworkArmor;
     }
-
-    mapping(address => bool) private weapons;
-    mapping(address => bool) private armor;
 
     mapping(uint256 => uint256) public latestFight; // summonerId => koboldId
     mapping(uint256 => Kobold) public kobolds;
@@ -57,45 +44,22 @@ contract KoboldBarn is ERC721Enumerable {
     function enter(
         uint256 summonerId,
         uint256 weaponId,
-        bool isMasterworkWeapon,
+        address weaponContract,
         uint256 armorId,
-        bool isMasterworkArmor
-    ) external approvedForSummoner(summonerId) canAttackYet(summonerId) {
-        if (isMasterworkWeapon) {
-            require(false, "!masterwork weapon");
-        } else {
-            (uint8 weaponBase, uint8 weaponType, , ) = COMMON_CRAFTING.items(
-                weaponId
-            );
-            require(weaponBase == 3, "!armor");
-            require(COMMON_CRAFTING.isValid(weaponBase, weaponType), "!armor");
-            require(
-                _msgSender() == COMMON_CRAFTING.ownerOf(weaponId),
-                "!common weapon"
-            );
-        }
-        if (isMasterworkArmor) {
-            require(false, "!masterwork armor");
-        } else {
-            (uint8 armorBase, uint8 armorType, , ) = COMMON_CRAFTING.items(
-                armorId
-            );
-            require(armorBase == 2, "!armor");
-            require(
-                COMMON_CRAFTING.isValid(armorBase, armorType),
-                "!valid armor"
-            );
-            require(
-                _msgSender() == COMMON_CRAFTING.ownerOf(armorId),
-                "!common armor"
-            );
-        }
+        address armorContract
+    )
+        external
+        approvedForSummoner(summonerId)
+        canAttackYet(summonerId)
+        validItem(weaponId, weaponContract, 3)
+        validItem(armorId, armorContract, 2)
+    {
         Kobold memory kobold = _startFight(
             summonerId,
             weaponId,
-            isMasterworkWeapon,
+            ICrafting(weaponContract),
             armorId,
-            isMasterworkArmor
+            ICrafting(armorContract)
         );
         _fight(kobold, summonerId);
     }
@@ -144,9 +108,9 @@ contract KoboldBarn is ERC721Enumerable {
     function _startFight(
         uint256 summonerId,
         uint256 weaponId,
-        bool isMasterworkWeapon,
+        ICrafting weaponContract,
         uint256 armorId,
-        bool isMasterworkArmor
+        ICrafting armorContract
     ) internal returns (Kobold memory) {
         uint256 newTokenId = nextToken;
         _safeMint(_msgSender(), newTokenId);
@@ -156,9 +120,9 @@ contract KoboldBarn is ERC721Enumerable {
         kobolds[newTokenId].health = _koboldStartingHealth(summonerId);
         kobolds[newTokenId].summonerId = summonerId;
         kobolds[newTokenId].weaponId = weaponId;
-        kobolds[newTokenId].isMasterworkWeapon = isMasterworkWeapon;
+        kobolds[newTokenId].weaponContract = weaponContract;
         kobolds[newTokenId].armorId = armorId;
-        kobolds[newTokenId].isMasterworkArmor = isMasterworkArmor;
+        kobolds[newTokenId].armorContract = armorContract;
 
         kobolds[newTokenId].summonerHealth = Rarity.health(summonerId);
 
@@ -197,6 +161,26 @@ contract KoboldBarn is ERC721Enumerable {
             _;
         } else {
             revert("!turn");
+        }
+    }
+
+    modifier validItem(
+        uint256 tokenId,
+        address itemContract,
+        uint256 requiredBase
+    ) {
+        (uint8 itemBase, uint8 itemType, , ) = itemContracts[itemContract]
+            .items(tokenId);
+        if (itemBase != requiredBase) {
+            revert("!base");
+        } else if (!itemContracts[itemContract].isValid(itemBase, itemType)) {
+            revert("!valiid");
+        } else if (
+            _msgSender() != itemContracts[itemContract].ownerOf(tokenId)
+        ) {
+            revert("!owner");
+        } else {
+            _;
         }
     }
 }
