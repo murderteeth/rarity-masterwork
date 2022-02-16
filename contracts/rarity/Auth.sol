@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../core/interfaces/IRarity.sol";
 
-library RarityAuth {
+library Auth {
     IRarity public constant RM =
         IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 

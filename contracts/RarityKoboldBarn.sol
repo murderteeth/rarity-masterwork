@@ -1,16 +1,18 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 import "./core/interfaces/ICodexItemsArmor.sol";
 import "./core/interfaces/ICodexItemsWeapons.sol";
 import "./core/interfaces/ICrafting.sol";
 
-import "./utils/RarityAuth.sol";
-import "./utils/RarityCombat.sol";
-import "./utils/RaritySkillCheck.sol";
-import "./utils/RarityMonster.sol";
+import "./rarity/Armor.sol";
+import "./rarity/Auth.sol";
+import "./rarity/Combat.sol";
+import "./rarity/SkillCheck.sol";
+import "./rarity/Monster.sol";
 
 contract RarityKoboldBarn is ERC721Enumerable {
     uint256 public nextToken = 1;
@@ -67,7 +69,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         canAttackYet(summonerId)
         validItems(weaponId, weaponContract, armorId, armorContract)
     {
-        Kobold memory kobold = _startFight(
+        Kobold storage kobold = _startFight(
             summonerId,
             weaponId,
             ICrafting(weaponContract),
@@ -88,7 +90,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         uint256 koboldId = latestFight[summonerId];
         require(!isEnded(koboldId), "!ended");
 
-        Kobold memory latestKobold = kobolds[koboldId];
+        Kobold storage latestKobold = kobolds[koboldId];
 
         // TODO here's a weird scenario - what if this summoner is attacking this
         // kobold, but the kobold battle transferred to another wallet?
@@ -110,38 +112,60 @@ contract RarityKoboldBarn is ERC721Enumerable {
         return kobold.health == 0 || kobold.summonerHealth == 0;
     }
 
-    function _fight(Kobold memory kobold, uint256 summonerId) internal {
+    function _fight(Kobold storage kobold, uint256 summonerId) internal {
         lastAttack[summonerId] = block.timestamp;
         // SUMMONER DAMAGE TO KOBOLD
-        // 1. Base attack bonus by class and level
-        // 2. Strength modifier (for use later)
-        // 3. Attack score is 1 + 2 (+1 for masterwork)
-        // 4. Add strength modifier to attack score if weapon encumbrance > 0
-        // 5. Armor class of Kobold is 15
-        // 6. If attack roll is perfect (20) or attack score >= 15
-        // 7. Regular damage = 1 to (weapon damage stat) + strength modifier
-        // 8. Regular damage must be at least 1
-        // 9. If attack roll is 20 congrats - you got a critical hit
-        // 10. Confirm critical with d20 + base attack bonus
-        // 11. If critical success and weapon encumbrance > 0, add strength modifier to critical confirmation
-        // 12. If critical roll > 1 and confirmation >= 15 (Kobold AC)
-        //     Roll to determine critical damage and add it plus strength modifier as many times as the weapon's critical
-        // 13. HP of Kobold is reduced by regular damage plus critical damage
-
-        // IF KOBOLD IS STILL ALIVE
-        // Armor Class: 15
-        // Attack: Spear +1 melee (1d6-1/x3)
-        // 1. Base attack = level 1, sourcerer (10) 2
-        // 2. Str is 9, so modifier is 1
-        // 3. Attack score is 1 + 3 = 4
-        // 4. Weapon is a +1 spear
-        // 5. Armor class of summoner 0 if no armor, 10 + armor bonus + dexterity modifier (not above max as specified by the armor) (+1 for masterwork)
-        // 6. If attack roll is perfect or attack score > summoner AC, (1d6-1)*3
-        // 7. HP of summoner is reduced by this amount
-
-        int32 masterworkWeaponBonus = 0;
+        uint8 masterworkWeaponBonus = 0;
         if (itemContracts[address(kobold.weaponContract)].isMasterwork) {
             masterworkWeaponBonus = 1;
+        }
+        (
+            uint8 attackRoll,
+            uint8 attackScore,
+            uint8 damage,
+            uint8 criticalRoll,
+            uint8 criticalDamage
+        ) = Combat.basicFullAttack(
+                summonerId,
+                kobold.weaponId,
+                kobold.weaponContract,
+                15
+            );
+        // TODO: Emit Attack
+        uint8 fullDamage = damage + criticalDamage;
+        console.log("Kobold fwacked with damage", fullDamage);
+        if (fullDamage > kobold.summonerHealth) {
+            kobold.health = 0;
+        } else {
+            kobold.health -= fullDamage;
+        }
+
+        if (kobold.health > 0) {
+            uint8 summonerAC = Armor.class(
+                summonerId,
+                kobold.armorId,
+                kobold.armorContract
+            );
+            uint8 masterworkArmorBonus = 0;
+            if (itemContracts[address(kobold.armorContract)].isMasterwork) {
+                masterworkArmorBonus = 1;
+            }
+
+            // Attack: Spear +1 melee (1d6-1/x3)
+            (uint8 kRoll, uint8 kScore, uint8 kDamage) = Monster.basicAttack(
+                1,
+                1,
+                summonerAC + masterworkArmorBonus,
+                1,
+                6,
+                -1,
+                3
+            );
+            console.log("Summoner fwacked with damage", kDamage);
+            if (kobold.summonerHealth >= kDamage) {
+                kobold.summonerHealth -= kDamage;
+            }
+            // TODO: emit kobold attack. ouch!
         }
     }
 
@@ -151,7 +175,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         ICrafting weaponContract,
         uint256 armorId,
         ICrafting armorContract
-    ) internal returns (Kobold memory) {
+    ) internal returns (Kobold storage) {
         uint256 newTokenId = nextToken;
         _safeMint(_msgSender(), newTokenId);
 
@@ -164,9 +188,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         kobolds[newTokenId].armorId = armorId;
         kobolds[newTokenId].armorContract = armorContract;
 
-        kobolds[newTokenId].summonerHealth = RarityCombat.summonerHp(
-            summonerId
-        );
+        kobolds[newTokenId].summonerHealth = Combat.summonerHp(summonerId);
         kobolds[newTokenId].enteredAt = block.timestamp;
 
         lastAttack[summonerId] = block.timestamp;
@@ -181,8 +203,8 @@ contract RarityKoboldBarn is ERC721Enumerable {
         view
         returns (uint8)
     {
-        uint8 hp = RarityMonster.hp(1, 8, 4);
-        if (RaritySkillCheck.senseMotive(summonerId, 15)) {
+        uint8 hp = Monster.hp(1, 8, 4);
+        if (SkillCheck.senseMotive(summonerId, 15)) {
             return hp - 1;
         } else {
             return hp;
@@ -192,7 +214,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (RarityAuth.isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
             _;
         } else {
             revert("!approved");

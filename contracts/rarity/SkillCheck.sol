@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "../core/interfaces/ISkills.sol";
 import "../core/interfaces/IAttributes.sol";
-import "./RarityRandom.sol";
+import "./Random.sol";
 
-library RaritySkillCheck {
+library SkillCheck {
     ISkills private constant SKILLS =
         ISkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
     IAttributes private constant ATTRIBUTES =
@@ -18,7 +18,7 @@ library RaritySkillCheck {
     {
         int32 sm = int32(int8(SKILLS.get_skills(summonerId)[27]));
         (, , , , uint32 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
-        int32 roll = int32(int8(RarityRandom.dn(summonerId, dc, 20)));
+        int32 roll = int32(int8(Random.dn(summonerId, dc, 20)));
         return (roll + skillCheck(sm, wisdom)) >= int8(dc);
     }
 

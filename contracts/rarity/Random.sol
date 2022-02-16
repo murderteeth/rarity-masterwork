@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library RarityRandom {
+library Random {
     function dn(
         uint256 a,
         uint256 b,

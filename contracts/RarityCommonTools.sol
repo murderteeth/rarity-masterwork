@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./core/interfaces/ICrafting.sol";
-import "./utils/RarityAuth.sol";
+import "./rarity/Auth.sol";
 
 contract RarityCommonTools is ERC721Enumerable {
     uint8 public constant baseType = 4;
@@ -77,10 +77,10 @@ contract RarityCommonTools is ERC721Enumerable {
     // TODO: tokenURI
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (!RarityAuth.isApprovedOrOwnerOfSummoner(summonerId)) {
-            revert("!approved");
-        } else {
+        if (!Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
             _;
+        } else {
+            revert("!approved");
         }
     }
 }
