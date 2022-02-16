@@ -5,22 +5,12 @@
 - https://www.d20srd.org/srd/monsters/kobold.htm
 
 
-## tasks
-- [x] crafting
-  - [x] events
-  - [ ] tokenUri
-  - [ ] codex
+## Used with many thanks
+- rERC721Enumerable
 
-- [ ] mats
-  - [ ] fight kobolds until you can't stand
-
-- [ ] review crafting feats
-
-## review
-```
-(, int check) = commonCrafting.craft_skillcheck(project.crafter, MASTERWORK_COMPONENT_DC);
-project.check = project.check + uint(check);
-```
+## And with many more thanks to our sponsors
+- Shuraba
+- 
 
 
 ## Crafting Masterwork Items (Rarity)

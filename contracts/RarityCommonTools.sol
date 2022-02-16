@@ -27,6 +27,11 @@ contract RarityCommonTools is ERC721Enumerable {
 
   mapping(uint => Item) public items;
 
+  function craftBonus(uint token) public view returns (uint) {
+    require(authorizeToken(token), "!authorizeToken");
+    return 0;
+  }
+
   function exchange(uint summoner, uint itemToExchange) external {
     require(authorizeSummoner(summoner), "!authorizeSummoner");
 
@@ -43,6 +48,11 @@ contract RarityCommonTools is ERC721Enumerable {
   }
 
   // TODO: tokenURI
+
+  function authorizeToken(uint token) internal view returns (bool) {
+    address owner = ownerOf(token);
+    return owner == msg.sender || getApproved(token) == msg.sender || isApprovedForAll(owner, msg.sender);
+  }
 
   function authorizeSummoner(uint summoner) internal view returns (bool) {
     address owner = rarity.ownerOf(summoner);

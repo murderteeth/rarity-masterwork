@@ -9,6 +9,10 @@ import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
 import "./core/interfaces/ICodexItemsWeapons.sol";
 
+interface ICraftBonus {
+  function craftBonus(uint token) public view returns (uint);
+}
+
 contract RarityMasterworkProject is rERC721Enumerable {
   string public constant name = "Rarity Masterwork Project";
   string public constant symbol = "RC(II) Project";
@@ -25,7 +29,7 @@ contract RarityMasterworkProject is rERC721Enumerable {
   codex_items_weapons masterworkWeaponsCodex = codex_items_weapons(0x000000000000000000000000000000000000dEaD);
 
   event Started(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType, uint gold);
-  event Craft(address indexed owner, uint tokenId, uint crafter, int check, uint mats, uint xp, uint m, uint n);
+  event Craft(address indexed owner, uint tokenId, uint crafter, uint mats, uint tools, address toolsContract, int check, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType);
 
   constructor() ERC721(address(rarity)) {
@@ -56,22 +60,63 @@ contract RarityMasterworkProject is rERC721Enumerable {
     nextToken++;
   }
 
-  function craft(uint token, uint mats) external {
+  function craftBonus(uint crafter, uint mats) external view returns (uint) {
+    uint craftSkill = uint(skills.get_skills(crafter)[5]);
+    if(craftSkill == 0) return 0;
+    uint result = craftSkill;
+
+    (,,,uint intelligence,,) = attributes.ability_scores(crafter);
+    if(intelligence < 10) {
+      result = result - 1;
+    } else {
+      result = result + (intelligence - 10) / 2;
+    }
+
+    // TODO: artisan tools bonus
+    // TODO: mats bonus
+
+    return result;
+  }
+
+  // function craft_skillcheck(uint _summoner, uint _dc) public view returns (bool crafted, int check) {
+  //   check = int(uint(_skills.get_skills(_summoner)[5]));
+  //   if (check == 0) {
+  //     return (false, 0);
+  //   }
+  //   (,,,uint _int,,) = _attr.ability_scores(_summoner);
+  //   check += modifier_for_attribute(_int);
+  //   if (check <= 0) {
+  //     return (false, 0);
+  //   }
+  //   check += int(_random.d20(_summoner));
+  //   return (check >= int(_dc), check);
+  // }
+
+  function craft(uint token, uint mats, uint tools, address toolsContract) external {
     Project storage project = projects[token];
     require(project.started > 0 && project.completed == 0, "!project started");
     uint crafter = ownerOf(token);
 
-    // TODO: no progress on check fail
-    // TODO: review check bonus progress
-    // TODO: adjust DC for mat bonus
-    (, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
+    // TODO: burn mats
+    // TODO: ICraftBonus(toolsContract).craftBonus(tools);
+    // TODO: IModifiers(toolsContract).getModifier(tools, Modifiers.Craft);
+    // TODO: IModifiers(toolsContract).getModifiers(tools, [Modifiers.Craft, Modifiers.Diplomacy, ...]);
+    (bool success, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
+
+    if(!success) {
+      (uint m, uint n) = progress(token);
+      emit Craft(msg.sender, token, crafter, mats, tools, toolsContract, check, XP_PER_DAY, m, n);
+      return;
+    }
+
+    // TODO: review check progress rules
     project.check = project.check + uint(check);
 
-    (uint m, uint n) = progress(crafter);
+    (uint m, uint n) = progress(token);
     if(m < n) {
       rarity.spend_xp(crafter, XP_PER_DAY);
       project.xp = project.xp + XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, check, mats, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, mats, tools, toolsContract, check, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
       rarity.spend_xp(crafter, xp);
