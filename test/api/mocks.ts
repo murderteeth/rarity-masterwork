@@ -25,11 +25,13 @@ import {
   RarityCommonTools__factory,
   RarityKoboldBarn,
   RarityKoboldBarn__factory,
-  RaritySkillCheck__factory,
-  RarityRandom__factory,
-  RarityMonster__factory,
-  RarityCombat__factory,
-  RarityAuth__factory
+  SkillCheck__factory,
+  Random__factory,
+  Monster__factory,
+  Combat__factory,
+  Auth__factory,
+  Armor__factory,
+  Attributes__factory
 } from '../../typechain'
 
 export interface IMockRarityContracts {
@@ -64,43 +66,54 @@ export async function mockMasterwork(rarity: IMockRarityContracts) : Promise<IMo
   await projects.setVariable('masterworkWeaponsCodex', weapons.address)
   await rarity.core.setVariable('_owners', { [(await projects.APPRENTICE()).toNumber()]: projects.address })
 
-  // fakeRarity.ownerOf.whenCalledWith(1).returns(signer.address)
-  const rarityAuth = await (await smock.mock<RarityAuth__factory>('RarityAuth')).deploy()
+  const rarityAuth = await (await smock.mock<Auth__factory>('Auth')).deploy()
+  const rarityAttributes = await (await smock.mock<Attributes__factory>('Attributes')).deploy()
+  const rarityArmor = await (await smock.mock<Armor__factory>('Armor', {
+    libraries: {
+      Attributes: rarityAttributes.address
+    }
+  })).deploy()
 
   const items = await (await smock.mock<RarityMasterworkItem__factory>('RarityMasterworkItem', {
     libraries: {
-      RarityAuth: rarityAuth.address
+      Auth: rarityAuth.address
     }
   }
   )).deploy()
   await items.setVariable('projects', projects.address)
   const commonTools = await (await smock.mock<RarityCommonTools__factory>('RarityCommonTools', {
     libraries: {
-      RarityAuth: rarityAuth.address
+      Auth: rarityAuth.address
     }
   })).deploy()
   await commonTools.setVariable('commonCrafting', rarity.crafting.address)
 
-  const rarityRandom = await (await smock.mock<RarityRandom__factory>('RarityRandom')).deploy()
-  const rarityCombat = await (await smock.mock<RarityCombat__factory>('RarityCombat')).deploy()
-
-  const rarityMonster = await (await smock.mock<RarityMonster__factory>('RarityMonster', {
+  const rarityRandom = await (await smock.mock<Random__factory>('Random')).deploy()
+  const rarityCombat = await (await smock.mock<Combat__factory>('Combat', {
     libraries: {
-      RarityRandom: rarityRandom.address
+      Attributes: rarityAttributes.address,
+      Random: rarityRandom.address
     }
   })).deploy()
 
-  const raritySkillCheck = await (await smock.mock<RaritySkillCheck__factory>('RaritySkillCheck', {
+  const rarityMonster = await (await smock.mock<Monster__factory>('Monster', {
     libraries: {
-      RarityRandom: rarityRandom.address
+      Random: rarityRandom.address
+    }
+  })).deploy()
+
+  const raritySkillCheck = await (await smock.mock<SkillCheck__factory>('SkillCheck', {
+    libraries: {
+      Random: rarityRandom.address
     }
   })).deploy()
   const barn = await (await smock.mock<RarityKoboldBarn__factory>('RarityKoboldBarn', {
     libraries: {
-      RaritySkillCheck: raritySkillCheck.address,
-      RarityMonster: rarityMonster.address,
-      RarityCombat: rarityCombat.address,
-      RarityAuth: rarityAuth.address
+      SkillCheck: raritySkillCheck.address,
+      Monster: rarityMonster.address,
+      Combat: rarityCombat.address,
+      Auth: rarityAuth.address,
+      Armor: rarityArmor.address
       // RarityRandom: rarityRandom.address
     }})).deploy(items.address)
 
