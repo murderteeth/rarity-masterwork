@@ -69,6 +69,10 @@ describe('RarityMasterwork', function () {
     const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
     const leatherArmor = await mockCommonItem(craftingBaseType.armor, armorType.leather, this.crafter, this.rarity, this.signer)
 
+    this.rarity.fakeCore.ownerOf.whenCalledWith(1).returns(this.signer.address)
+    this.rarity.fakeCore.level.returns(5)
+    this.rarity.fakeCore.class.returns(1)
+
     await this.masterwork.barn.setVariable('itemContracts', { [this.rarity.crafting.address]: {
       theContract: this.rarity.crafting.address,
       isMasterwork: false

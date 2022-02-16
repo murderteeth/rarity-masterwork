@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../core/interfaces/ISkills.sol";
 import "../core/interfaces/IAttributes.sol";
+import "./RarityRandom.sol";
 
 library RaritySkillCheck {
     ISkills private constant SKILLS =
@@ -10,16 +11,15 @@ library RaritySkillCheck {
     IAttributes private constant ATTRIBUTES =
         IAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
 
-    function survival(uint256 summonerId) public view returns (int32) {
-        int8 _survival = int8(SKILLS.get_skills(summonerId)[31]);
-        (, , , , uint32 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
-        return skillCheck(_survival, wisdom);
-    }
-
-    function senseMotive(uint256 summonerId) public view returns (int32) {
+    function senseMotive(uint256 summonerId, uint8 dc)
+        public
+        view
+        returns (bool)
+    {
         int32 sm = int32(int8(SKILLS.get_skills(summonerId)[27]));
         (, , , , uint32 wisdom, ) = ATTRIBUTES.ability_scores(summonerId);
-        return skillCheck(sm, wisdom);
+        int32 roll = int32(int8(RarityRandom.dn(summonerId, dc, 20)));
+        return (roll + skillCheck(sm, wisdom)) >= int8(dc);
     }
 
     function skillCheck(int32 skill, uint32 ability)

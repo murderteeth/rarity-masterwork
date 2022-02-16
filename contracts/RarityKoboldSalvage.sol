@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./utils/RarityHelpers.sol";
+import "./utils/RarityAuth.sol";
 
 interface IKoboldBarn {
     function summonerOf(uint256) external view returns (uint256);
@@ -34,7 +34,7 @@ contract RarityKoboldSalvage is ERC20 {
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (RarityHelpers._isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (!RarityAuth.isApprovedOrOwnerOfSummoner(summonerId)) {
             revert("!approved");
         } else {
             _;
