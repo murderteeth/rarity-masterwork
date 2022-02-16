@@ -443,10 +443,10 @@ contract rarity_crafting is ERC721Enumerable {
     IGold _gold = IGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
     ISkills _skills = ISkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
 
-    codex_base_random constant _random = codex_base_random(0x7426dBE5207C2b5DaC57d8e55F0959fcD99661D4);
-    codex_items_goods constant _goods = codex_items_goods(0x0C5C1CC0A7AE65FE372fbb08FF16578De4b980f3);
-    codex_items_armor constant _armor = codex_items_armor(0xf5114A952Aca3e9055a52a87938efefc8BB7878C);
-    codex_items_weapons constant _weapons = codex_items_weapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
+    codex_base_random _random = codex_base_random(0x7426dBE5207C2b5DaC57d8e55F0959fcD99661D4);
+    codex_items_goods _goods = codex_items_goods(0x0C5C1CC0A7AE65FE372fbb08FF16578De4b980f3);
+    codex_items_armor _armor = codex_items_armor(0xf5114A952Aca3e9055a52a87938efefc8BB7878C);
+    codex_items_weapons _weapons = codex_items_weapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
     string constant public name = "Rarity Crafting (I)";
     string constant public symbol = "RC(I)";
@@ -475,12 +475,12 @@ contract rarity_crafting is ERC721Enumerable {
         return 20;
     }
 
-    function get_armor_dc(uint _item_id) public pure returns (uint dc) {
+    function get_armor_dc(uint _item_id) public view returns (uint dc) {
         (,,,,uint _armor_bonus,,,,,) = _armor.item_by_id(_item_id);
         return 20 + _armor_bonus;
     }
 
-    function get_weapon_dc(uint _item_id) public pure returns (uint dc) {
+    function get_weapon_dc(uint _item_id) public view returns (uint dc) {
         codex_items_weapons.weapon memory _weapon = _weapons.item_by_id(_item_id);
         if (_weapon.proficiency == 1) {
             return 20;
@@ -491,7 +491,7 @@ contract rarity_crafting is ERC721Enumerable {
         }
     }
 
-    function get_dc(uint _base_type, uint _item_id) public pure returns (uint dc) {
+    function get_dc(uint _base_type, uint _item_id) public view returns (uint dc) {
         if (_base_type == 1) {
             return get_goods_dc();
         } else if (_base_type == 2) {
@@ -501,7 +501,7 @@ contract rarity_crafting is ERC721Enumerable {
         }
     }
 
-    function get_item_cost(uint _base_type, uint _item_type) public pure returns (uint cost) {
+    function get_item_cost(uint _base_type, uint _item_type) public view returns (uint cost) {
         if (_base_type == 1) {
             (,cost,,,) = _goods.item_by_id(_item_type);
         } else if (_base_type == 2) {
@@ -512,7 +512,7 @@ contract rarity_crafting is ERC721Enumerable {
         }
     }
 
-    function modifier_for_attribute(uint _attribute) public pure returns (int _modifier) {
+    function modifier_for_attribute(uint _attribute) public view returns (int _modifier) {
         if (_attribute == 9) {
             return -1;
         }
