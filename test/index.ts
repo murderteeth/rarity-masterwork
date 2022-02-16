@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { craftingBaseType, weaponType, goodsType, armorType } from './api/crafting'
 import { parseEther } from 'ethers/lib/utils'
-import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem } from './api/mocks'
+import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem, mockMasterworkProject, useRandomMock } from './api/mocks'
 
 describe('RarityMasterwork', function () {
   before(async function() {
@@ -29,15 +29,54 @@ describe('RarityMasterwork', function () {
     expect(await this.rarity.crafting.ownerOf(longsword)).to.not.eq(this.signer.address)
   })
 
+  it.only('Reduces bonus by -2 when crafting with "improvised" tools', async function () {
+    await this.rarity.attributes.increase_intelligence(this.crafter)
+    const craftBonus = (await this.masterwork.projects.craftBonus(this.crafter, 0)).toNumber()
+    console.log('craftBonus', craftBonus)
+    expect(craftBonus).to.eq(12)
+  })
+
+  it.only('Bonus stays the same when crafting with common tools', async function () {
+    expect(false)
+  })
+
+  it.only('Improves bonus by +2 when crafting with masterwork tools', async function () {
+    expect(false)
+  })
+
+  it('makes no progress if you fail a craft check', async function () {
+    const craftBonus = (await this.masterwork.projects.craftBonus(this.crafter, 0)).toNumber()
+    const highestRollThatStillFails = 20 - (craftBonus + 1)
+    useRandomMock(this, this.rarity.crafting, '_random', highestRollThatStillFails, async () => {
+      await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
+      const project = await mockMasterworkProject(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.masterwork)
+      const tx = await(await this.masterwork.projects.craft(project, 0)).wait()
+      const { check, m } = tx.events[0].args
+      expect(check).to.eq(19)
+      expect(m).to.eq(0)
+    })
+  })
+
+  // it('breaks your common artisan tools if you crit fail a craft check', async function () {
+  //   await this.rarity.random.setVariable('__mock_enabled', true)
+  //   await this.rarity.random.setVariable('__mock_result', 20)
+  //   await this.rarity.crafting.setVariable('_random', this.rarity.random.address)
+
+  //   await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
+  //   const project = await mockMasterworkProject(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.masterwork)
+  //   const tx = await(await this.masterwork.projects.craft(project, 0)).wait()
+  //   const { check } = tx.events[0].args
+  //   // console.log('check', check)
+
+  // })
+
   it('crafts masterwork swords', async function () {
     const cost = await this.masterwork.projects.getRawMaterialCost(craftingBaseType.weapon, weaponType.longsword)
     await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
     await this.rarity.gold.approve(this.crafter, await this.masterwork.projects.APPRENTICE(), parseEther(cost.toString()))
-    await this.masterwork.projects.start(this.crafter, craftingBaseType.weapon, weaponType.longsword)
-    const projectId = await this.masterwork.projects.tokenOfOwnerByIndex(this.crafter, 0)
+    const startTx = await(await this.masterwork.projects.start(this.crafter, craftingBaseType.weapon, weaponType.longsword)).wait()
+    const projectId = startTx.events[3].args.tokenId
 
-    expect(await this.masterwork.projects.balanceOf(this.crafter)).to.eq(1)
-    expect(await this.masterwork.items.balanceOf(this.signer.address)).to.eq(0)
     {
       const [m, n] = await this.masterwork.projects.progress(projectId)
       expect(m.div(n)).to.eq(0)
@@ -55,11 +94,13 @@ describe('RarityMasterwork', function () {
     const xpCost = xpBefore.sub(xpAfter)
     expect(xpCost.gt(0)).to.be.true
 
-    await this.masterwork.items.claim(projectId)
-    await expect(this.masterwork.items.claim(projectId)).to.be.reverted
-    expect(await this.masterwork.items.balanceOf(this.signer.address)).to.eq(1)
+    const claimTx = await(await this.masterwork.items.claim(projectId)).wait()
+    const itemId = claimTx.events[0].args.tokenId
 
-    const longsword = await this.masterwork.items.itemOfOwnerByIndex(this.signer.address, 0)
+    await expect(this.masterwork.items.claim(projectId)).to.be.reverted
+    expect(await this.masterwork.items.ownerOf(itemId)).to.eq(this.signer.address)
+
+    const longsword = await this.masterwork.items.items(itemId)
     expect(longsword.baseType).to.eq(craftingBaseType.weapon)
     expect(longsword.itemType).to.eq(weaponType.longsword)
     expect(longsword.crafter).to.eq(this.crafter)

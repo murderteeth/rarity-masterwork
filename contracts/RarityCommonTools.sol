@@ -34,14 +34,13 @@ contract RarityCommonTools is ERC721Enumerable {
 
     mapping(uint256 => Item) public items;
 
-    function exchange(uint256 summoner, uint256 itemToExchange)
-        external
-        approvedForSummoner(summoner)
-    {
-        (
-            uint8 itemToExchangeBaseType,
-            uint8 itemToExchangeItemType,
-            ,
+  function craftBonus(uint token) public view returns (uint) {
+    require(authorizeToken(token), "!authorizeToken");
+    return 0;
+  }
+
+  function exchange(uint summoner, uint itemToExchange) external {
+    require(authorizeSummoner(summoner), "!authorizeSummoner");
 
         ) = commonCrafting.items(itemToExchange);
         uint256 itemToExchangeCost = commonCrafting.get_item_cost(
@@ -76,11 +75,14 @@ contract RarityCommonTools is ERC721Enumerable {
 
     // TODO: tokenURI
 
-    modifier approvedForSummoner(uint256 summonerId) {
-        if (!Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
-            _;
-        } else {
-            revert("!approved");
-        }
-    }
+  function authorizeToken(uint token) internal view returns (bool) {
+    address owner = ownerOf(token);
+    return owner == msg.sender || getApproved(token) == msg.sender || isApprovedForAll(owner, msg.sender);
+  }
+
+  function authorizeSummoner(uint summoner) internal view returns (bool) {
+    address owner = rarity.ownerOf(summoner);
+    return owner == msg.sender || rarity.getApproved(summoner) == msg.sender || rarity.isApprovedForAll(owner, msg.sender);
+  }
+
 }
