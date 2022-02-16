@@ -7,8 +7,10 @@ import "./core/interfaces/ICodexItemsArmor.sol";
 import "./core/interfaces/ICodexItemsWeapons.sol";
 import "./core/interfaces/ICrafting.sol";
 
-import "./utils/RarityHelpers.sol";
+import "./utils/RarityAuth.sol";
+import "./utils/RarityCombat.sol";
 import "./utils/RaritySkillCheck.sol";
+import "./utils/RarityMonster.sol";
 
 contract RarityKoboldBarn is ERC721Enumerable {
     uint256 public nextToken = 1;
@@ -110,37 +112,36 @@ contract RarityKoboldBarn is ERC721Enumerable {
 
     function _fight(Kobold memory kobold, uint256 summonerId) internal {
         lastAttack[summonerId] = block.timestamp;
-        // If masterwork weapon, +1 attack bonus
-        // if masterwork armor, +1 defense bonus
-        // A Kobold is a small humanoid (reptilian)
-        // Str 9, Dex 13, Con 10, Int 10, Wis 9, Cha 8
-        // Hit Dice: 1d8 (4hp)
-        // Initiative: +1
+        // SUMMONER DAMAGE TO KOBOLD
+        // 1. Base attack bonus by class and level
+        // 2. Strength modifier (for use later)
+        // 3. Attack score is 1 + 2 (+1 for masterwork)
+        // 4. Add strength modifier to attack score if weapon encumbrance > 0
+        // 5. Armor class of Kobold is 15
+        // 6. If attack roll is perfect (20) or attack score >= 15
+        // 7. Regular damage = 1 to (weapon damage stat) + strength modifier
+        // 8. Regular damage must be at least 1
+        // 9. If attack roll is 20 congrats - you got a critical hit
+        // 10. Confirm critical with d20 + base attack bonus
+        // 11. If critical success and weapon encumbrance > 0, add strength modifier to critical confirmation
+        // 12. If critical roll > 1 and confirmation >= 15 (Kobold AC)
+        //     Roll to determine critical damage and add it plus strength modifier as many times as the weapon's critical
+        // 13. HP of Kobold is reduced by regular damage plus critical damage
+
+        // IF KOBOLD IS STILL ALIVE
         // Armor Class: 15
-        // Base Attack/Grapple: +1/-4
         // Attack: Spear +1 melee (1d6-1/x3)
-        // Feat: Alertness
-        // uint256 _level = Rarity.level(summonerId);
-        // uint256 _class = Rarity.class(summonerId);
-        (uint32 _str, , , , , ) = RarityHelpers.abilityScores(summonerId);
-        uint32 damage = RaritySkillCheck.baseDamage(_str);
-        // int32 attackBonus = RaritySkillCheck.baseAttackBonus(
-        // _class,
-        // _str,
-        // _level
-        // );
+        // 1. Base attack = level 1, sourcerer (10) 2
+        // 2. Str is 9, so modifier is 1
+        // 3. Attack score is 1 + 3 = 4
+        // 4. Weapon is a +1 spear
+        // 5. Armor class of summoner 0 if no armor, 10 + armor bonus + dexterity modifier (not above max as specified by the armor) (+1 for masterwork)
+        // 6. If attack roll is perfect or attack score > summoner AC, (1d6-1)*3
+        // 7. HP of summoner is reduced by this amount
+
         int32 masterworkWeaponBonus = 0;
         if (itemContracts[address(kobold.weaponContract)].isMasterwork) {
             masterworkWeaponBonus = 1;
-        }
-        // bool canHit = (attackBonus + masterworkWeaponBonus) > 15;
-        bool didHit = true;
-        if (didHit) {
-            kobold.health -= uint8(damage);
-        }
-        bool gotHit = true;
-        if (kobold.health > 0 && gotHit) {
-            kobold.summonerHealth -= 1;
         }
     }
 
@@ -163,7 +164,10 @@ contract RarityKoboldBarn is ERC721Enumerable {
         kobolds[newTokenId].armorId = armorId;
         kobolds[newTokenId].armorContract = armorContract;
 
-        kobolds[newTokenId].summonerHealth = RarityHelpers.health(summonerId);
+        kobolds[newTokenId].summonerHealth = RarityCombat.summonerHp(
+            summonerId
+        );
+        kobolds[newTokenId].enteredAt = block.timestamp;
 
         lastAttack[summonerId] = block.timestamp;
 
@@ -177,21 +181,21 @@ contract RarityKoboldBarn is ERC721Enumerable {
         view
         returns (uint8)
     {
-        if (RaritySkillCheck.senseMotive(summonerId) >= 15) {
-            // Sneak attack!
-            return 9;
+        uint8 hp = RarityMonster.hp(1, 8, 4);
+        if (RaritySkillCheck.senseMotive(summonerId, 15)) {
+            return hp - 1;
         } else {
-            return 10;
+            return hp;
         }
     }
 
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (RarityHelpers._isApprovedOrOwnerOfSummoner(summonerId)) {
-            revert("!approved");
-        } else {
+        if (RarityAuth.isApprovedOrOwnerOfSummoner(summonerId)) {
             _;
+        } else {
+            revert("!approved");
         }
     }
 
