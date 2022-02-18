@@ -1,9 +1,20 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Attributes.sol";
 import "./Random.sol";
 
 library Monster {
+    /*
+     * Monster initiative is a simple roll with their dexterity modifier and any bonuses
+     * as described in their stat sheet
+     */
+    function initiative(uint8 dex, int8 bonus) public view returns (int8) {
+        int8 dMod = Attributes.computeModifier(dex);
+        uint8 roll = Random.dn(8, 9, 20);
+        return int8(roll) + int8(dMod) + bonus;
+    }
+
     /*
      * Monster health is usually given in the format "1d8 (4 hp)"
      * This means 1 roll of a dice with 8 sides plus 4hp
