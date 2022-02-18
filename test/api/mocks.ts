@@ -35,6 +35,8 @@ import {
   Armor__factory,
   Attributes__factory
 } from '../../typechain'
+import { CodexCommonTools__factory } from '../../typechain/factories/CodexCommonTools__factory'
+import { CodexCommonTools } from '../../typechain/CodexCommonTools'
 
 export interface IMockRarityContracts {
   core: MockContract<Rarity>,
@@ -182,14 +184,26 @@ export async function mockCommonItem(base_type: number, item_type: number, craft
   return item
 }
 
-export async function mockMasterworkProject(baseType: number, itemType: number, crafter: number, masterwork: IMockMasterworkContracts) {
+export async function mockMasterworkProject(crafter: number, baseType: number, itemType: number, tools: number, toolsContract: string, masterwork: IMockMasterworkContracts) {
   const project = await masterwork.projects.nextToken()
   const balance = await masterwork.projects.balanceOf(crafter)
-  await masterwork.projects.setVariable('projects', { [project.toNumber()]: { baseType, itemType, check: 0, xp: 0, started: 1, completed: 0 }})
+  await masterwork.projects.setVariable('projects', { [project.toNumber()]: { 
+    baseType, itemType, tools, toolsContract, check: 0, xp: 0, started: 1, completed: 0 }})
   await masterwork.projects.setVariable('_owners', { [project.toNumber()]: crafter })
   await masterwork.projects.setVariable('_balances', { [crafter]: balance.add(1) })
   await masterwork.projects.setVariable('nextToken', project.add(1))
   return project
+}
+
+export async function mockCommonTools(crafter: number, masterwork: IMockMasterworkContracts, signer: SignerWithAddress) {
+  const tools = await masterwork.commonTools.nextToken()
+  const balance = await masterwork.commonTools.balanceOf(signer.address)
+  await masterwork.commonTools.setVariable('items', { [tools.toNumber()]: { 
+    base_type: 4, item_type: 1, crafted: 0, crafter }})
+  await masterwork.projects.setVariable('_owners', { [tools.toNumber()]: signer.address })
+  await masterwork.projects.setVariable('_balances', { [signer.address]: balance.add(1) })
+  await masterwork.projects.setVariable('nextToken', tools.add(1))
+  return tools
 }
 
 export async function useRandomMock(context: Mocha.Context, contract: MockContract, contractVariable: string, mockResult: number, fn: () => {}) {

@@ -9,8 +9,8 @@ import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
 import "./core/interfaces/ICodexItemsWeapons.sol";
 
-interface ICraftBonus {
-  function craftBonus(uint token) public view returns (uint);
+interface IEffects {
+  function skill_bonus(uint token, uint8 skill) external view returns (int);
 }
 
 contract RarityMasterworkProject is rERC721Enumerable {
@@ -28,8 +28,8 @@ contract RarityMasterworkProject is rERC721Enumerable {
   ICrafting commonCrafting = ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
   codex_items_weapons masterworkWeaponsCodex = codex_items_weapons(0x000000000000000000000000000000000000dEaD);
 
-  event Started(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType, uint gold);
-  event Craft(address indexed owner, uint tokenId, uint crafter, uint mats, uint tools, address toolsContract, int check, uint xp, uint m, uint n);
+  event Started(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType, uint tools, address toolsContract, uint gold);
+  event Craft(address indexed owner, uint tokenId, uint crafter, uint mats, int check, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType);
 
   constructor() ERC721(address(rarity)) {
@@ -40,6 +40,8 @@ contract RarityMasterworkProject is rERC721Enumerable {
   struct Project {
     uint8 baseType;
     uint8 itemType;
+    uint tools;
+    address toolsContract;
     uint check;
     uint xp;
     uint32 started;
@@ -48,31 +50,43 @@ contract RarityMasterworkProject is rERC721Enumerable {
 
   mapping(uint => Project) public projects;
 
-  function start(uint crafter, uint8 baseType, uint8 itemType) external {
+  function start(uint crafter, uint8 baseType, uint8 itemType, uint tools, address toolsContract) external {
     require(authorizeSummoner(crafter), "!authorizeSummoner");
+    //TODO: Validate base and type
+    //TODO: Validate tools and toolsContract
+    //TODO: Check tools whitelist
+    //TODO: Authorize tools
+    //TODO: Check that tools aren't already in use
     uint cost = getRawMaterialCost(baseType, itemType);
     require(gold.transferFrom(APPRENTICE, crafter, APPRENTICE, cost), "!gold");
 
     _safeMint(crafter, nextToken);
-    projects[nextToken] = Project(baseType, itemType, 0, 0, uint32(block.timestamp), 0);
-    emit Started(msg.sender, nextToken, crafter, baseType, itemType, cost);
+    projects[nextToken] = Project(baseType, itemType, tools, toolsContract, 0, 0, uint32(block.timestamp), 0);
+    emit Started(msg.sender, nextToken, crafter, baseType, itemType, tools, toolsContract, cost);
 
     nextToken++;
   }
 
-  function craftBonus(uint crafter, uint mats) external view returns (uint) {
+  function craftingBonus(uint token, uint mats) external view returns (int) {
+    uint crafter = ownerOf(token);
     uint craftSkill = uint(skills.get_skills(crafter)[5]);
     if(craftSkill == 0) return 0;
-    uint result = craftSkill;
+    int result = int(craftSkill);
 
     (,,,uint intelligence,,) = attributes.ability_scores(crafter);
     if(intelligence < 10) {
       result = result - 1;
     } else {
-      result = result + (intelligence - 10) / 2;
+      result = result + (int(intelligence) - 10) / 2;
     }
 
-    // TODO: artisan tools bonus
+    Project memory project = projects[token];
+    if(project.tools == 0) {
+      result = result - 2;
+    } else {
+      result = result + IEffects(project.toolsContract).skill_bonus(project.tools, 5);
+    }
+
     // TODO: mats bonus
 
     return result;
@@ -92,20 +106,17 @@ contract RarityMasterworkProject is rERC721Enumerable {
   //   return (check >= int(_dc), check);
   // }
 
-  function craft(uint token, uint mats, uint tools, address toolsContract) external {
+  function craft(uint token, uint mats) external {
     Project storage project = projects[token];
     require(project.started > 0 && project.completed == 0, "!project started");
     uint crafter = ownerOf(token);
 
     // TODO: burn mats
-    // TODO: ICraftBonus(toolsContract).craftBonus(tools);
-    // TODO: IModifiers(toolsContract).getModifier(tools, Modifiers.Craft);
-    // TODO: IModifiers(toolsContract).getModifiers(tools, [Modifiers.Craft, Modifiers.Diplomacy, ...]);
     (bool success, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
 
     if(!success) {
       (uint m, uint n) = progress(token);
-      emit Craft(msg.sender, token, crafter, mats, tools, toolsContract, check, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, mats, check, XP_PER_DAY, m, n);
       return;
     }
 
@@ -116,13 +127,13 @@ contract RarityMasterworkProject is rERC721Enumerable {
     if(m < n) {
       rarity.spend_xp(crafter, XP_PER_DAY);
       project.xp = project.xp + XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, mats, tools, toolsContract, check, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, mats, check, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
       rarity.spend_xp(crafter, xp);
       project.xp = project.xp + xp;
       project.completed = uint32(block.timestamp);
-      emit Craft(msg.sender, token, crafter, check, mats, xp, m, n);
+      emit Craft(msg.sender, token, crafter, mats, check, xp, m, n);
       emit Crafted(msg.sender, token, crafter, project.baseType, project.itemType);
     }
 
