@@ -51,7 +51,9 @@ export interface IMockRarityContracts {
 
 export interface IMockMasterworkContracts {
   codex: {
-    weapons: MockContract<CodexMasterworkWeapons>
+    weapons: MockContract<CodexMasterworkWeapons>,
+    commonTools: MockContract<CodexCommonTools>,
+    tools: MockContract<CodexMasterworkTools>
   },
   projects: MockContract<RarityMasterworkProject>,
   items: MockContract<RarityMasterworkItem>,
@@ -199,10 +201,21 @@ export async function mockCommonTools(crafter: number, masterwork: IMockMasterwo
   const tools = await masterwork.commonTools.nextToken()
   const balance = await masterwork.commonTools.balanceOf(signer.address)
   await masterwork.commonTools.setVariable('items', { [tools.toNumber()]: { 
-    base_type: 4, item_type: 1, crafted: 0, crafter }})
-  await masterwork.projects.setVariable('_owners', { [tools.toNumber()]: signer.address })
-  await masterwork.projects.setVariable('_balances', { [signer.address]: balance.add(1) })
-  await masterwork.projects.setVariable('nextToken', tools.add(1))
+    base_type: 4, item_type: 2, crafted: 0, crafter }})
+  await masterwork.commonTools.setVariable('_owners', { [tools.toNumber()]: signer.address })
+  await masterwork.commonTools.setVariable('_balances', { [signer.address]: balance.add(1) })
+  await masterwork.commonTools.setVariable('nextToken', tools.add(1))
+  return tools
+}
+
+export async function mockMasterworkTools(crafter: number, masterwork: IMockMasterworkContracts, signer: SignerWithAddress) {
+  const tools = await masterwork.items.nextToken()
+  const balance = await masterwork.items.balanceOf(signer.address)
+  await masterwork.items.setVariable('items', { [tools.toNumber()]: {
+    baseType: 4, itemType: 2, crafted: 0, crafter }})
+  await masterwork.items.setVariable('_owners', { [tools.toNumber()]: signer.address })
+  await masterwork.items.setVariable('_balances', { [signer.address]: balance.add(1) })
+  await masterwork.items.setVariable('nextToken', tools.add(1))
   return tools
 }
 

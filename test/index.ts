@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { craftingBaseType, weaponType, goodsType, armorType } from './api/crafting'
 import { parseEther } from 'ethers/lib/utils'
-import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem, mockMasterworkProject, useRandomMock, mockCommonTools } from './api/mocks'
+import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem, mockMasterworkProject, useRandomMock, mockCommonTools, mockMasterworkTools } from './api/mocks'
 
 describe('RarityMasterwork', function () {
   before(async function() {
@@ -45,8 +45,13 @@ describe('RarityMasterwork', function () {
     expect(craftingBonus).to.eq(12)
   })
 
-  it('improves bonus by +2 when crafting with masterwork tools', async function () {
-    expect(false)
+  it.only('improves bonus by +2 when crafting with masterwork tools', async function () {
+    const tools = await mockMasterworkTools(this.crafter, this.masterwork, this.signer)
+    const project = await mockMasterworkProject(
+      this.crafter, craftingBaseType.weapon, weaponType.longsword,
+      tools.toNumber(), this.masterwork.items.address, this.masterwork)
+    const craftingBonus = (await this.masterwork.projects.craftingBonus(project, 0)).toNumber()
+    expect(craftingBonus).to.eq(14)
   })
 
   it('makes no progress if you fail a craft check', async function () {
