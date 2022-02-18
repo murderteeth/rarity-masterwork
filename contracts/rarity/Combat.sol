@@ -14,6 +14,16 @@ library Combat {
     codex_items_weapons internal constant WEAPON_CODEX =
         codex_items_weapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
+    function initiative(uint256 summonerId, int8 bonus)
+        public
+        view
+        returns (int8)
+    {
+        int8 dMod = Attributes.dexterityModifier(summonerId);
+        uint8 roll = Random.dn(8, 8, 20);
+        return int8(roll) + int8(dMod) + bonus;
+    }
+
     function basicFullAttack(
         uint256 summonerId,
         uint256 weaponId,
@@ -38,13 +48,19 @@ library Combat {
         attackScore = _baseAttack + attackRoll;
         if (attackRoll == 20 || attackScore >= targetAC) {
             int8 strModifier = Attributes.strengthModifier(summonerId);
-            (, uint256 itemType, , ) = weaponContract.items(weaponId);
-            codex_items_weapons.weapon memory _weapon = WEAPON_CODEX.item_by_id(
-                itemType
-            );
-            int8 weaponDamage = int8(
-                Random.dn(_weapon.damage, 2, uint8(_weapon.damage))
-            ) + strModifier;
+            int8 weaponDamage = strModifier;
+            uint256 weaponBaseDamage = 0;
+            uint256 weaponCritical = 0;
+            if (weaponId > 0) {
+                (, uint256 itemType, , ) = weaponContract.items(weaponId);
+                codex_items_weapons.weapon memory _weapon = WEAPON_CODEX
+                    .item_by_id(itemType);
+                weaponBaseDamage = _weapon.damage;
+                weaponCritical = _weapon.critical;
+                weaponDamage += int8(
+                    Random.dn(_weapon.damage, 2, uint8(_weapon.damage))
+                );
+            }
             if (weaponDamage < 0) {
                 damage = 0;
             } else {
@@ -54,9 +70,9 @@ library Combat {
                 // Critical?
                 criticalRoll = Random.dn(20, 1, 20) + _baseAttack;
                 if (criticalRoll >= targetAC) {
-                    for (uint8 i = 0; i < _weapon.critical; i++) {
+                    for (uint8 i = 0; i < weaponCritical; i++) {
                         weaponDamage =
-                            int8(Random.dn(1, i, uint8(_weapon.damage))) +
+                            int8(Random.dn(1, i, uint8(weaponBaseDamage))) +
                             strModifier;
                         if (weaponDamage > 0) {
                             criticalDamage += uint8(weaponDamage);
