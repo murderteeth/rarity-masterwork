@@ -5,75 +5,80 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./core/interfaces/ICrafting.sol";
 import "./rarity/Auth.sol";
 
-contract RarityCommonTools is ERC721Enumerable {
-    uint8 public constant baseType = 4;
-    uint8 public constant itemType = 1;
-    uint256 public constant cost = 5e18;
-    uint256 public nextToken = 1;
+interface IToolsCodex {
+  struct effects_struct {
+    int[36] skill_bonus;
+  }
 
-    ICrafting commonCrafting =
-        ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+  function item_by_id(uint _id) external pure returns(
+    uint8 id,
+    uint cost,
+    uint weight,
+    string memory name,
+    string memory description,
+    effects_struct memory effects
+  );
 
-    event Exchanged(
-        address indexed owner,
-        uint256 tokenId,
-        uint256 summoner,
-        uint8 baseType,
-        uint8 itemType,
-        uint256 exchangedItem
-    );
+  function artisans_tools() external pure returns (
+    uint8 id,
+    uint cost,
+    uint weight,
+    string memory name,
+    string memory description,
+    effects_struct memory effects
+  );
+}
 
-    constructor() ERC721("Rarity Common Tools", "RC(I) Tools") {}
+interface IEffects {
+  function skill_bonus(uint token, uint8 skill) external view returns (int);
+}
 
-    struct Item {
-        uint8 base_type;
-        uint8 item_type;
-        uint32 crafted;
-        uint256 crafter;
-    }
+// TODO: Rename CommonArtisanTools
+contract RarityCommonTools is ERC721Enumerable, IEffects {
+  uint8 public constant baseType = 4; //tools
+  uint public nextToken = 1;
 
-    mapping(uint256 => Item) public items;
+  IRarity rarity = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+  ICrafting commonCrafting = ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+  IToolsCodex toolsCodex = IToolsCodex(0x000000000000000000000000000000000000dEaD);
 
-  function craftBonus(uint token) public view returns (uint) {
-    require(authorizeToken(token), "!authorizeToken");
-    return 0;
+  event Exchanged(address indexed owner, uint tokenId, uint summoner, uint8 baseType, uint8 itemType, uint exchangedItem);
+
+  constructor() ERC721("Rarity Common Tools", "RC(I) Tools") {}
+
+  struct Item {
+    uint8 base_type;
+    uint8 item_type;
+    uint32 crafted;
+    uint crafter;
+  }
+
+  mapping(uint => Item) public items;
+
+  function skill_bonus(uint token, uint8 skill) override external view returns (int) {
+    Item memory item = items[token];
+    (,,,,,IToolsCodex.effects_struct memory effects) = toolsCodex.item_by_id(item.item_type);
+    return effects.skill_bonus[skill];
   }
 
   function exchange(uint summoner, uint itemToExchange) external {
     require(authorizeSummoner(summoner), "!authorizeSummoner");
 
-        ) = commonCrafting.items(itemToExchange);
-        uint256 itemToExchangeCost = commonCrafting.get_item_cost(
-            itemToExchangeBaseType,
-            itemToExchangeItemType
-        );
-        require(itemToExchangeCost >= (3 * cost), "! >= 3*cost");
+    (uint8 toolsId, uint toolsCost,,,,) = toolsCodex.artisans_tools();
 
-        commonCrafting.safeTransferFrom(
-            msg.sender,
-            address(0x000000000000000000000000000000000000dEaD),
-            itemToExchange
-        );
-        _safeMint(msg.sender, nextToken);
-        items[nextToken] = Item(
-            baseType,
-            baseType,
-            uint32(block.timestamp),
-            summoner
-        );
-        emit Exchanged(
-            msg.sender,
-            nextToken,
-            summoner,
-            baseType,
-            itemType,
-            itemToExchange
-        );
+    (uint8 itemToExchangeBaseType, uint8 itemToExchangeItemType,,) = commonCrafting.items(itemToExchange);
+    uint itemToExchangeCost = commonCrafting.get_item_cost(itemToExchangeBaseType, itemToExchangeItemType);
+    require(itemToExchangeCost >= (3 * toolsCost), "! >= 3*toolsCost");
 
-        nextToken++;
-    }
+    commonCrafting.safeTransferFrom(msg.sender, address(0x000000000000000000000000000000000000dEaD), itemToExchange);
+    _safeMint(msg.sender, nextToken);
+    items[nextToken] = Item(baseType, toolsId, uint32(block.timestamp), summoner);
+    emit Exchanged(msg.sender, nextToken, summoner, baseType, toolsId, itemToExchange);
 
-    // TODO: tokenURI
+    nextToken++;
+  }
+
+  // TODO: tokenURI
 
   function authorizeToken(uint token) internal view returns (bool) {
     address owner = ownerOf(token);

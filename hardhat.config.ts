@@ -47,7 +47,7 @@ const config: HardhatUserConfig = {
       loggingEnabled: false,
       allowUnlimitedContractSize: true,
       forking: {
-        url: "https://weathered-aged-mountain.fantom.quiknode.pro/f005eca18b3311849dab86cc1dd8fc7a6d54e611/"
+        url: "https://rpc.ftm.tools"
       }
     },
     // mainnet: {
