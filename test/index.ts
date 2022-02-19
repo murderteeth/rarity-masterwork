@@ -13,7 +13,7 @@ describe('RarityMasterwork', function () {
     this.crafter = await mockCrafter(this.rarity, this.signer)
   })
 
-  it.only('exchanges common items for common artisan tools', async function () {
+  it('exchanges common items for common artisan tools', async function () {
     await this.rarity.core.approve(this.masterwork.commonTools.address, this.crafter)
     const crowbar = await mockCommonItem(craftingBaseType.goods, goodsType.crowbar, this.crafter, this.rarity, this.signer)
     const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
@@ -29,37 +29,38 @@ describe('RarityMasterwork', function () {
     expect(await this.rarity.crafting.ownerOf(longsword)).to.not.eq(this.signer.address)
   })
 
-  it.only('reduces bonus by -2 when crafting with "improvised" tools', async function () {
+  it('reduces bonus by -2 when crafting with "improvised" tools', async function () {
     const project = await mockMasterworkProject(
       this.crafter, craftingBaseType.weapon, weaponType.longsword, 0, '0x0000000000000000000000000000000000000000', this.masterwork)
-    const craftingBonus = (await this.masterwork.projects.craftingBonus(project, 0)).toNumber()
-    expect(craftingBonus).to.eq(10)
+    const {crafter, eligible, bonus} = await this.masterwork.projects.craftingBonus(project, 0)
+    expect(bonus).to.eq(10)
   })
 
-  it.only('gives no bonus when crafting with common tools', async function () {
+  it('gives no bonus when crafting with common tools', async function () {
     const tools = await mockCommonTools(this.crafter, this.masterwork, this.signer)
     const project = await mockMasterworkProject(
       this.crafter, craftingBaseType.weapon, weaponType.longsword,
       tools.toNumber(), this.masterwork.commonTools.address, this.masterwork)
-    const craftingBonus = (await this.masterwork.projects.craftingBonus(project, 0)).toNumber()
-    expect(craftingBonus).to.eq(12)
+      const {crafter, eligible, bonus} = await this.masterwork.projects.craftingBonus(project, 0)
+    expect(bonus).to.eq(12)
   })
 
-  it.only('improves bonus by +2 when crafting with masterwork tools', async function () {
+  it('improves bonus by +2 when crafting with masterwork tools', async function () {
     const tools = await mockMasterworkTools(this.crafter, this.masterwork, this.signer)
     const project = await mockMasterworkProject(
       this.crafter, craftingBaseType.weapon, weaponType.longsword,
       tools.toNumber(), this.masterwork.items.address, this.masterwork)
-    const craftingBonus = (await this.masterwork.projects.craftingBonus(project, 0)).toNumber()
-    expect(craftingBonus).to.eq(14)
+      const {crafter, eligible, bonus} = await this.masterwork.projects.craftingBonus(project, 0)
+    expect(bonus).to.eq(14)
   })
 
   it('makes no progress if you fail a craft check', async function () {
-    const craftBonus = (await this.masterwork.projects.craftBonus(this.crafter, 0)).toNumber()
-    const highestRollThatStillFails = 20 - (craftBonus + 1)
-    useRandomMock(this, this.rarity.crafting, '_random', highestRollThatStillFails, async () => {
-      await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
-      const project = await mockMasterworkProject(this.crafter, craftingBaseType.weapon, weaponType.longsword, 0, '0x0000000000000000000000000000000000000000', this.masterwork)
+    await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
+    const project = await mockMasterworkProject(
+      this.crafter, craftingBaseType.weapon, weaponType.longsword, 0, '0x0000000000000000000000000000000000000000', this.masterwork)
+    const {crafter, eligible, bonus} = await this.masterwork.projects.craftingBonus(project, 0)
+    const highestRollThatStillFails = 20 - (bonus.add(1))
+    useRandomMock(this, this.masterwork.projects, 'random', highestRollThatStillFails, async () => {
       const tx = await(await this.masterwork.projects.craft(project, 0)).wait()
       const { check, m } = tx.events[0].args
       expect(check).to.eq(19)
@@ -84,7 +85,8 @@ describe('RarityMasterwork', function () {
     const cost = await this.masterwork.projects.getRawMaterialCost(craftingBaseType.weapon, weaponType.longsword)
     await this.rarity.core.approve(this.masterwork.projects.address, this.crafter)
     await this.rarity.gold.approve(this.crafter, await this.masterwork.projects.APPRENTICE(), parseEther(cost.toString()))
-    const startTx = await(await this.masterwork.projects.start(this.crafter, craftingBaseType.weapon, weaponType.longsword)).wait()
+    const startTx = await(await this.masterwork.projects.start(
+      this.crafter, craftingBaseType.weapon, weaponType.longsword, 0, '0x0000000000000000000000000000000000000000')).wait()
     const projectId = startTx.events[3].args.tokenId
 
     {
