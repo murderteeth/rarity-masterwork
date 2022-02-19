@@ -8,6 +8,7 @@ import "./core/interfaces/IAttributes.sol";
 import "./core/interfaces/ISkills.sol";
 import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
+import "./core/interfaces/ICodexItemsWeapons.sol";
 
 interface IProjects {
   struct Project {
@@ -39,8 +40,20 @@ interface IToolsCodex {
   );
 }
 
+interface IWeaponsCodex {
+  struct effects_struct {
+    int[8] roll_bonus;
+  }
+
+  function item_by_id(uint256 _id) external pure returns (
+    codex_items_weapons.weapon memory _weapon,
+    effects_struct memory effects
+  );
+}
+
 interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
+  function roll_bonus(uint token, uint8 roll_type) external view returns (int);
 }
 
 contract RarityMasterworkItem is ERC721Enumerable, IEffects {
@@ -48,6 +61,7 @@ contract RarityMasterworkItem is ERC721Enumerable, IEffects {
   IRarity rarity = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IProjects projects = IProjects(0x000000000000000000000000000000000000dEaD);
   IToolsCodex toolsCodex = IToolsCodex(0x000000000000000000000000000000000000dEaD);
+  IWeaponsCodex weaponsCodex = IWeaponsCodex(0x000000000000000000000000000000000000dEaD);
   event Claimed(address indexed owner, uint token, uint projectToken);
 
   constructor() ERC721("Rarity Masterwork Item", "RC(II)") {}
@@ -80,10 +94,20 @@ contract RarityMasterworkItem is ERC721Enumerable, IEffects {
 
   // TODO: tokenURI
 
-  function skill_bonus(uint token, uint8 skill) override external view returns (int) {
+  function skill_bonus(uint token, uint8 skill) override external view returns (int bonus) {
     Item memory item = items[token];
-    (,,,,,IToolsCodex.effects_struct memory effects) = toolsCodex.item_by_id(item.itemType);
-    return effects.skill_bonus[skill];
+    if(item.baseType == 4) {
+      (,,,,,IToolsCodex.effects_struct memory effects) = toolsCodex.item_by_id(item.itemType);
+      bonus = effects.skill_bonus[skill];
+    }
+  }
+
+  function roll_bonus(uint token, uint8 roll_type) override external view returns (int bonus) {
+    Item memory item = items[token];
+    if(item.baseType == 3) {
+      (,IWeaponsCodex.effects_struct memory effects) = weaponsCodex.item_by_id(item.itemType);
+      bonus = effects.roll_bonus[roll_type];
+    }
   }
 
   function itemOfOwnerByIndex(address owner, uint index) external view returns (Item memory) {
