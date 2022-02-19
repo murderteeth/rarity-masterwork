@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "./core/interfaces/IRarity.sol";
 import "./core/interfaces/ICrafting.sol";
-import "./rarity/Auth.sol";
 
 interface IToolsCodex {
   struct effects_struct {
@@ -33,7 +33,6 @@ interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
 }
 
-// TODO: Rename CommonArtisanTools
 contract RarityCommonTools is ERC721Enumerable, IEffects {
   uint8 public constant baseType = 4; //tools
   uint public nextToken = 1;

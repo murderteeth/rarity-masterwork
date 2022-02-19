@@ -2,14 +2,15 @@ import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { craftingBaseType, weaponType, goodsType, armorType } from './api/crafting'
 import { parseEther } from 'ethers/lib/utils'
-import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem, mockMasterworkProject, useRandomMock, mockCommonTools, mockMasterworkTools } from './api/mocks'
+import { mockCrafter, mockMasterwork, mockRarity, mockCommonItem, mockMasterworkProject, useRandomMock, mockCommonTools, mockMasterworkTools, mockLibrary } from './api/mocks'
 
 describe('RarityMasterwork', function () {
   before(async function() {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
+    this.library = await mockLibrary()
     this.rarity = await mockRarity()
-    this.masterwork = await mockMasterwork(this.rarity)
+    this.masterwork = await mockMasterwork(this.library, this.rarity)
     this.crafter = await mockCrafter(this.rarity, this.signer)
   })
 
@@ -118,7 +119,7 @@ describe('RarityMasterwork', function () {
     expect(longsword.crafter).to.eq(this.crafter)
   })
 
-  it.only('fights a kobold', async function () {
+  it('fights a kobold', async function () {
     const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
     const leatherArmor = await mockCommonItem(craftingBaseType.armor, armorType.leather, this.crafter, this.rarity, this.signer)
 
