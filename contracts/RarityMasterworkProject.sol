@@ -92,7 +92,7 @@ contract RarityMasterworkProject is rERC721Enumerable {
     }
 
     // TODO: mats bonus
-    mats; //silence!
+    mats; //lint silencio!
 
     return (crafter, true, result);
   }
@@ -111,12 +111,11 @@ contract RarityMasterworkProject is rERC721Enumerable {
     require(project.started > 0 && project.completed == 0, "!project started");
     uint crafter = ownerOf(token);
 
+    (uint roll, int check, bool success) = craft_skillcheck(token, mats, MASTERWORK_COMPONENT_DC);
     // TODO: burn mats
     // TODO: review check progress rules
-    (uint roll, int check, bool success) = craft_skillcheck(token, mats, MASTERWORK_COMPONENT_DC);
     if(success) project.check = project.check + uint(check);
     (uint m, uint n) = progress(token);
-
     if(!success) {
       emit Craft(msg.sender, token, crafter, mats, roll, check, XP_PER_DAY, m, n);
       return;
@@ -136,45 +135,34 @@ contract RarityMasterworkProject is rERC721Enumerable {
     }
   }
 
+  function progress(uint token) public view returns (uint, uint) {
+    Project memory project = projects[token];
+    if(project.completed > 0) {
+      return(1, 1);
+    }
+    uint costInSilver = getItemCost(project.baseType, project.itemType) * 10;
+    return(project.check * MASTERWORK_COMPONENT_DC * 1e18, costInSilver);
+  }
+
+  function getRawMaterialCost(uint8 baseType, uint8 itemType) public view returns (uint) {
+    return(getItemCost(baseType, itemType) / 3);
+  }
+
+  function getItemCost(uint8 baseType, uint8 itemType) public view returns (uint cost) {
+    if(baseType == 1) {
+      return(0);
+    } else if(baseType == 2) {
+      return(0);
+    } else if(baseType == 3) {
+      return masterworkWeaponsCodex.item_by_id(itemType).cost;
+    }
+  }
+
   // TODO: tokenURI
 
-    function progress(uint256 token) public view returns (uint256, uint256) {
-        Project memory project = projects[token];
-        if (project.completed > 0) {
-            return (1, 1);
-        }
-        uint256 costInSilver = getItemCost(project.baseType, project.itemType) *
-            10;
-        return (project.check * MASTERWORK_COMPONENT_DC * 1e18, costInSilver);
-    }
+  function authorizeSummoner(uint summoner) internal view returns (bool) {
+    address owner = rarity.ownerOf(summoner);
+    return owner == msg.sender || rarity.getApproved(summoner) == msg.sender || rarity.isApprovedForAll(owner, msg.sender);
+  }
 
-    function getRawMaterialCost(uint8 baseType, uint8 itemType)
-        public
-        view
-        returns (uint256)
-    {
-        return (getItemCost(baseType, itemType) / 3);
-    }
-
-    function getItemCost(uint8 baseType, uint8 itemType)
-        public
-        view
-        returns (uint256 cost)
-    {
-        if (baseType == 1) {
-            return (0);
-        } else if (baseType == 2) {
-            return (0);
-        } else if (baseType == 3) {
-            return masterworkWeaponsCodex.item_by_id(itemType).cost;
-        }
-    }
-
-    function authorizeSummoner(uint256 summoner) internal view returns (bool) {
-        address owner = rarity.ownerOf(summoner);
-        return
-            owner == msg.sender ||
-            rarity.getApproved(summoner) == msg.sender ||
-            rarity.isApprovedForAll(owner, msg.sender);
-    }
 }

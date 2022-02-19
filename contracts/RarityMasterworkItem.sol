@@ -8,7 +8,6 @@ import "./core/interfaces/IAttributes.sol";
 import "./core/interfaces/ISkills.sol";
 import "./core/interfaces/IGold.sol";
 import "./core/interfaces/ICrafting.sol";
-import "./rarity/Auth.sol";
 
 interface IProjects {
   struct Project {
@@ -51,48 +50,33 @@ contract RarityMasterworkItem is ERC721Enumerable, IEffects {
   IToolsCodex toolsCodex = IToolsCodex(0x000000000000000000000000000000000000dEaD);
   event Claimed(address indexed owner, uint token, uint projectToken);
 
-    function ownerOf(uint256) external view returns (uint256);
-}
+  constructor() ERC721("Rarity Masterwork Item", "RC(II)") {}
 
-contract RarityMasterworkItem is ERC721Enumerable {
-    uint256 public nextToken = 1;
-    IProjects projects = IProjects(0x000000000000000000000000000000000000dEaD);
-    event Claimed(address indexed owner, uint256 token, uint256 projectToken);
+  struct Item {
+    uint8 baseType;
+    uint8 itemType;
+    uint32 crafted;
+    uint crafter;
+  }
 
-    constructor() ERC721("Rarity Masterwork Item", "RC(II)") {}
+  mapping(uint => bool) public claimed;
+  mapping(uint => Item) public items;
 
-    struct Item {
-        uint8 baseType;
-        uint8 itemType;
-        uint32 crafted;
-        uint256 crafter;
-    }
+  function claim(uint projectToken) external {
+    require(!claimed[projectToken], "claimed");
+    IProjects.Project memory project = projects.projects(projectToken);
+    require(project.completed > 0, "!completed");
 
-    mapping(uint256 => bool) public claimed;
-    mapping(uint256 => Item) public items;
+    uint crafter = projects.ownerOf(projectToken);
+    require(authorizeSummoner(crafter), "!authorizeSummoner");
 
-    function claim(uint256 projectToken) external {
-        require(!claimed[projectToken], "claimed");
-        IProjects.Project memory project = projects.projects(projectToken);
-        require(project.completed > 0, "!completed");
+    _safeMint(msg.sender, nextToken);
+    items[nextToken] = Item(project.baseType, project.itemType, uint32(block.timestamp), crafter);
+    claimed[projectToken] = true;
+    emit Claimed(msg.sender, nextToken, projectToken);
 
-        uint256 crafter = projects.ownerOf(projectToken);
-        require(
-            Auth.isApprovedOrOwnerOfSummoner(crafter),
-            "!authorizeSummoner"
-        );
-
-        _safeMint(msg.sender, nextToken);
-        items[nextToken] = Item(
-            project.baseType,
-            project.itemType,
-            uint32(block.timestamp),
-            crafter
-        );
-        claimed[projectToken] = true;
-        emit Claimed(msg.sender, nextToken, projectToken);
-        nextToken++;
-    }
+    nextToken++;
+  }
 
   // TODO: tokenURI
 
@@ -107,12 +91,9 @@ contract RarityMasterworkItem is ERC721Enumerable {
     return items[token];
   }
 
-  function itemOfOwnerByIndex(address owner, uint256 index)
-    external
-    view
-    returns (Item memory)
-  {
-    uint256 token = tokenOfOwnerByIndex(owner, index);
-    return items[token];
+  function authorizeSummoner(uint summoner) internal view returns (bool) {
+    address owner = rarity.ownerOf(summoner);
+    return owner == msg.sender || rarity.getApproved(summoner) == msg.sender || rarity.isApprovedForAll(owner, msg.sender);
   }
+
 }
