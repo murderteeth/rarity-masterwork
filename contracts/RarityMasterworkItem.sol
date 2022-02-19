@@ -11,14 +11,18 @@ import "./core/interfaces/ICrafting.sol";
 import "./rarity/Auth.sol";
 
 interface IProjects {
-    struct Project {
-        uint8 baseType;
-        uint8 itemType;
-        uint256 check;
-        uint256 xp;
-        uint32 started;
-        uint32 completed;
-    }
+  struct Project {
+    uint8 baseType;
+    uint8 itemType;
+    uint tools;
+    address toolsContract;
+    uint check;
+    uint xp;
+    uint32 started;
+    uint32 completed;
+  }
+  function projects(uint) external view returns (Project memory);
+  function ownerOf(uint) external view returns (uint);
 }
 
 interface IToolsCodex {
@@ -89,6 +93,8 @@ contract RarityMasterworkItem is ERC721Enumerable {
         emit Claimed(msg.sender, nextToken, projectToken);
         nextToken++;
     }
+
+  // TODO: tokenURI
 
   function skill_bonus(uint token, uint8 skill) override external view returns (int) {
     Item memory item = items[token];

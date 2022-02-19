@@ -13,6 +13,10 @@ interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
 }
 
+interface codex_base_random {
+  function d20(uint _summoner) external view returns (uint);
+}
+
 contract RarityMasterworkProject is rERC721Enumerable {
   string public constant name = "Rarity Masterwork Project";
   string public constant symbol = "RC(II) Project";
@@ -25,11 +29,11 @@ contract RarityMasterworkProject is rERC721Enumerable {
   IAttributes attributes = IAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
   ISkills skills = ISkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
   IGold gold = IGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
-  ICrafting commonCrafting = ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+  codex_base_random random = codex_base_random(0x7426dBE5207C2b5DaC57d8e55F0959fcD99661D4);
   codex_items_weapons masterworkWeaponsCodex = codex_items_weapons(0x000000000000000000000000000000000000dEaD);
 
   event Started(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType, uint tools, address toolsContract, uint gold);
-  event Craft(address indexed owner, uint tokenId, uint crafter, uint mats, int check, uint xp, uint m, uint n);
+  event Craft(address indexed owner, uint tokenId, uint crafter, uint mats, uint roll, int check, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint tokenId, uint crafter, uint8 baseType, uint8 itemType);
 
   constructor() ERC721(address(rarity)) {
@@ -67,10 +71,10 @@ contract RarityMasterworkProject is rERC721Enumerable {
     nextToken++;
   }
 
-  function craftingBonus(uint token, uint mats) external view returns (int) {
-    uint crafter = ownerOf(token);
+  function craftingBonus(uint token, uint mats) public view returns (uint crafter, bool eligible, int bonus) {
+    crafter = ownerOf(token);
     uint craftSkill = uint(skills.get_skills(crafter)[5]);
-    if(craftSkill == 0) return 0;
+    if(craftSkill == 0) return (crafter, false, 0);
     int result = int(craftSkill);
 
     (,,,uint intelligence,,) = attributes.ability_scores(crafter);
@@ -88,23 +92,19 @@ contract RarityMasterworkProject is rERC721Enumerable {
     }
 
     // TODO: mats bonus
+    mats; //silence!
 
-    return result;
+    return (crafter, true, result);
   }
 
-  // function craft_skillcheck(uint _summoner, uint _dc) public view returns (bool crafted, int check) {
-  //   check = int(uint(_skills.get_skills(_summoner)[5]));
-  //   if (check == 0) {
-  //     return (false, 0);
-  //   }
-  //   (,,,uint _int,,) = _attr.ability_scores(_summoner);
-  //   check += modifier_for_attribute(_int);
-  //   if (check <= 0) {
-  //     return (false, 0);
-  //   }
-  //   check += int(_random.d20(_summoner));
-  //   return (check >= int(_dc), check);
-  // }
+  function craft_skillcheck(uint token, uint mats, uint dc) public view returns (uint roll, int check, bool success) {
+    (uint crafter, bool eligible, int bonus) = craftingBonus(token, mats);
+    if(!eligible) return (0, 0, false);
+    check = bonus;
+    roll = random.d20(crafter);
+    check += int(roll);
+    return (roll, check, check >= int(dc));
+  }
 
   function craft(uint token, uint mats) external {
     Project storage project = projects[token];
@@ -112,114 +112,31 @@ contract RarityMasterworkProject is rERC721Enumerable {
     uint crafter = ownerOf(token);
 
     // TODO: burn mats
-    (bool success, int check) = commonCrafting.craft_skillcheck(crafter, MASTERWORK_COMPONENT_DC);
+    // TODO: review check progress rules
+    (uint roll, int check, bool success) = craft_skillcheck(token, mats, MASTERWORK_COMPONENT_DC);
+    if(success) project.check = project.check + uint(check);
+    (uint m, uint n) = progress(token);
 
     if(!success) {
-      (uint m, uint n) = progress(token);
-      emit Craft(msg.sender, token, crafter, mats, check, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, mats, roll, check, XP_PER_DAY, m, n);
       return;
     }
 
-    // TODO: review check progress rules
-    project.check = project.check + uint(check);
-
-    (uint m, uint n) = progress(token);
     if(m < n) {
       rarity.spend_xp(crafter, XP_PER_DAY);
       project.xp = project.xp + XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, mats, check, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, mats, roll, check, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
       rarity.spend_xp(crafter, xp);
       project.xp = project.xp + xp;
       project.completed = uint32(block.timestamp);
-      emit Craft(msg.sender, token, crafter, mats, check, xp, m, n);
+      emit Craft(msg.sender, token, crafter, mats, roll, check, xp, m, n);
       emit Crafted(msg.sender, token, crafter, project.baseType, project.itemType);
     }
+  }
 
-    struct Project {
-        uint8 baseType;
-        uint8 itemType;
-        uint256 check;
-        uint256 xp;
-        uint32 started;
-        uint32 completed;
-    }
-
-    mapping(uint256 => Project) public projects;
-
-    function start(
-        uint256 crafter,
-        uint8 baseType,
-        uint8 itemType
-    ) external {
-        require(authorizeSummoner(crafter), "!authorizeSummoner");
-        uint256 cost = getRawMaterialCost(baseType, itemType);
-        require(
-            gold.transferFrom(APPRENTICE, crafter, APPRENTICE, cost),
-            "!gold"
-        );
-
-        _safeMint(crafter, nextToken);
-        projects[nextToken] = Project(
-            baseType,
-            itemType,
-            0,
-            0,
-            uint32(block.timestamp),
-            0
-        );
-        emit Started(msg.sender, nextToken, crafter, baseType, itemType, cost);
-
-        nextToken++;
-    }
-
-    function craft(uint256 token, uint256 mats) external {
-        Project storage project = projects[token];
-        require(
-            project.started > 0 && project.completed == 0,
-            "!project started"
-        );
-        uint256 crafter = ownerOf(token);
-
-        // TODO: no progress on check fail
-        // TODO: review check bonus progress
-        // TODO: adjust DC for mat bonus
-        (, int256 check) = commonCrafting.craft_skillcheck(
-            crafter,
-            MASTERWORK_COMPONENT_DC
-        );
-        project.check = project.check + uint256(check);
-
-        (uint256 m, uint256 n) = progress(crafter);
-        if (m < n) {
-            rarity.spend_xp(crafter, XP_PER_DAY);
-            project.xp = project.xp + XP_PER_DAY;
-            emit Craft(
-                msg.sender,
-                token,
-                crafter,
-                check,
-                mats,
-                XP_PER_DAY,
-                m,
-                n
-            );
-        } else {
-            uint256 xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
-            rarity.spend_xp(crafter, xp);
-            project.xp = project.xp + xp;
-            project.completed = uint32(block.timestamp);
-            emit Craft(msg.sender, token, crafter, check, mats, xp, m, n);
-            emit Crafted(
-                msg.sender,
-                token,
-                crafter,
-                project.baseType,
-                project.itemType
-            );
-        }
-    }
+  // TODO: tokenURI
 
     function progress(uint256 token) public view returns (uint256, uint256) {
         Project memory project = projects[token];
