@@ -19,10 +19,10 @@ Try Masterwork here:
 
 ## Kobolds in the Barn (mechancis)
 
-## 💥 IEffects
+## rERC??? - 💥 Effects
 ```
 effects_struct {
-  int[8] rolls;
+  int[8] roll_bonus;
   int[36] skill_bonus;
 }
 ```
