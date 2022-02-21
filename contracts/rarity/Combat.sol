@@ -26,9 +26,11 @@ library Combat {
 
     function basicFullAttack(
         uint256 summonerId,
+        bool hasWeapon,
         uint256 weaponId,
         ICrafting weaponContract,
-        uint8 targetAC
+        uint8 targetAC,
+        uint8 weaponBonus
     )
         public
         view
@@ -44,14 +46,13 @@ library Combat {
         if (attackRoll == 1) {
             return (1, 0, 0, 0, 0);
         }
-        uint8 _baseAttack = baseAttack(summonerId);
-        attackScore = _baseAttack + attackRoll;
+        attackScore = baseAttack(summonerId) + attackRoll;
         if (attackRoll == 20 || attackScore >= targetAC) {
             int8 strModifier = Attributes.strengthModifier(summonerId);
             int8 weaponDamage = strModifier;
-            uint256 weaponBaseDamage = 0;
+            uint256 weaponBaseDamage = weaponBonus;
             uint256 weaponCritical = 0;
-            if (weaponId > 0) {
+            if (hasWeapon) {
                 (, uint256 itemType, , ) = weaponContract.items(weaponId);
                 codex_items_weapons.weapon memory _weapon = WEAPON_CODEX
                     .item_by_id(itemType);
@@ -68,7 +69,7 @@ library Combat {
             }
             if (attackRoll == 20) {
                 // Critical?
-                criticalRoll = Random.dn(20, 1, 20) + _baseAttack;
+                criticalRoll = Random.dn(20, 1, 20) + baseAttack(summonerId);
                 if (criticalRoll >= targetAC) {
                     for (uint8 i = 0; i < weaponCritical; i++) {
                         weaponDamage =

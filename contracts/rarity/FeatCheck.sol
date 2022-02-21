@@ -5,11 +5,13 @@ import "../core/interfaces/IFeats.sol";
 
 library FeatCheck {
     IFeats private constant FEATS =
-        IFeats(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
+        IFeats(0x4F51ee975c01b0D6B29754657d7b3cC182f20d8a);
 
     function initiative(uint256 summonerId) public view returns (uint8) {
         bool[100] memory feats = FEATS.get_feats(summonerId);
-        if (feats[64]) {
+        // Per the first codex, improved initiative is ID 59
+        // https://ftmscan.com/address/0x88db734E9f64cA71a24d8e75986D964FFf7a1E10#code
+        if (feats[59]) {
             return 4;
         } else {
             return 0;
