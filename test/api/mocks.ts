@@ -46,7 +46,9 @@ import {
   SkillCheck,
   CodexCommonTools,
   CodexMasterworkTools,
-  FeatCheck__factory
+  FeatCheck__factory,
+  RarityKoboldSalvage,
+  RarityKoboldSalvage__factory
 } from '../../typechain'
 
 export interface IMockLibrary {
@@ -80,7 +82,8 @@ export interface IMockMasterworkContracts {
   projects: MockContract<RarityMasterworkProject>,
   items: MockContract<RarityMasterworkItem>,
   commonTools: MockContract<RarityCommonTools>,
-  barn: MockContract<RarityKoboldBarn>
+  barn: MockContract<RarityKoboldBarn>,
+  salvage: MockContract<RarityKoboldSalvage>
 }
 
 export async function mockLibrary() : Promise<IMockLibrary> {
@@ -134,11 +137,16 @@ export async function mockMasterwork(library: IMockLibrary, rarity: IMockRarityC
       // RarityRandom: rarityRandom.address
     }
   })).deploy(items.address)
+  const salvage = await (await smock.mock<RarityKoboldSalvage__factory>('RarityKoboldSalvage', {
+    libraries: {
+      Auth: library.auth.address
+    }
+  })).deploy(barn.address)
   return { codex: { 
     weapons: weaponsCodex, 
     commonTools: commonToolsCodex,
     tools: toolsCodex
-  }, projects, items, commonTools, barn }
+  }, projects, items, commonTools, barn, salvage }
 }
 
 export async function mockRarity() : Promise<IMockRarityContracts> {
