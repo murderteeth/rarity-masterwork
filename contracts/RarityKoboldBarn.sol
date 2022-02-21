@@ -170,14 +170,12 @@ contract RarityKoboldBarn is ERC721Enumerable {
         _fight(instances[summonerInstances[summonerId]], summonerId);
     }
 
-    function summonerOf(uint256 instanceId) public view returns (uint256) {
-        return instances[instanceId].summonerId;
+    function monsterCount(uint256 instanceId) public view returns (uint256) {
+        return instances[instanceId].monsterCount;
     }
 
-    function isWon(uint256 instanceId) public view returns (bool) {
-        return
-            instances[instanceId].enteredAt > 0 &&
-            instances[instanceId].health == 0;
+    function summonerOf(uint256 instanceId) public view returns (uint256) {
+        return instances[instanceId].summonerId;
     }
 
     function isEnded(uint256 instanceId) public view returns (bool) {

@@ -9,7 +9,9 @@ import "./rarity/Auth.sol";
 interface IKoboldBarn {
     function summonerOf(uint256) external view returns (uint256);
 
-    function isWon(uint256) external view returns (bool);
+    function isEnded(uint256) external view returns (bool);
+
+    function monsterCount(uint256) external view returns (uint256);
 }
 
 contract RarityKoboldSalvage is ERC20 {
@@ -21,14 +23,15 @@ contract RarityKoboldSalvage is ERC20 {
         koboldBarn = barn;
     }
 
-    function claim(uint256 summonerId, uint256 koboldId)
+    function claim(uint256 summonerId, uint256 instanceId)
         external
         approvedForSummoner(summonerId)
     {
-        require(claimedKobolds[koboldId] == false, "!claimed");
-        require(koboldBarn.summonerOf(koboldId) == summonerId, "!summoner");
-        require(koboldBarn.isWon(koboldId), "!won");
-        _mint(_msgSender(), 1);
+        require(claimedKobolds[instanceId] == false, "!claimed");
+        require(koboldBarn.summonerOf(instanceId) == summonerId, "!summoner");
+        require(koboldBarn.isEnded(instanceId), "!ended");
+        _mint(_msgSender(), koboldBarn.monsterCount(instanceId) * 1e18);
+        claimedKobolds[instanceId] = true;
     }
 
     // Modifiers

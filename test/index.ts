@@ -137,7 +137,6 @@ describe('RarityMasterwork', function () {
     await this.masterwork.barn.enter(this.crafter, true, longsword, this.rarity.crafting.address, true, leatherArmor, this.rarity.crafting.address)
 
     expect(await this.masterwork.barn.ownerOf(1)).to.eq(this.signer.address)
-    expect(await this.masterwork.barn.isWon(1)).to.eq(false)
     expect(await this.masterwork.barn.isEnded(1)).to.eq(false)
 
     console.log('instance begin', await this.masterwork.barn.instances(1))
@@ -148,6 +147,22 @@ describe('RarityMasterwork', function () {
       await this.masterwork.barn.attack(1)
     }
     console.log('first kobold dead', await this.masterwork.barn.instances(1))
+
+    while(true) {
+      const isEnded = await this.masterwork.barn.isEnded(1)
+      if (isEnded) break;
+      await network.provider.send("evm_increaseTime", [24 * 60 * 61])
+      await this.masterwork.barn.attack(1)
+    }
+
+    console.log('game over', await this.masterwork.barn.instances(1))
+
+    const monsterCount = await this.masterwork.barn.monsterCount(1)
+    await this.masterwork.salvage.claim(this.crafter, 1)
+
+    const balance = await this.masterwork.salvage.balanceOf(this.signer.address)
+
+    expect(balance).to.equal(parseEther(monsterCount.toString()))
 
     // Test scenarios
     // Cannot enter the barn with a summoner that is not yours
