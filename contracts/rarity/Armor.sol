@@ -14,33 +14,19 @@ library Armor {
         uint256 armorId,
         ICrafting armorContract
     ) public view returns (uint8) {
-        if (armorId > 0) {
-            (, uint256 itemType, , ) = armorContract.items(armorId);
+        (, uint256 itemType, , ) = armorContract.items(armorId);
 
-            (
-                ,
-                ,
-                ,
-                ,
-                uint256 armorBonus,
-                uint256 maxDexBonus,
-                ,
-                ,
-                ,
+        (, , , , uint256 armorBonus, uint256 maxDexBonus, , , , ) = ARMOR_CODEX
+            .item_by_id(itemType);
 
-            ) = ARMOR_CODEX.item_by_id(itemType);
+        int8 dexModifier = Attributes.dexterityModifier(summonerId);
 
-            int8 dexModifier = Attributes.dexterityModifier(summonerId);
-
-            int8 result = 10 + int8(uint8(armorBonus));
-            if (dexModifier > int256(maxDexBonus)) {
-                result += int8(uint8(maxDexBonus));
-            } else {
-                result += dexModifier;
-            }
-            return uint8(result);
+        int8 result = 10 + int8(uint8(armorBonus));
+        if (dexModifier > int256(maxDexBonus)) {
+            result += int8(uint8(maxDexBonus));
         } else {
-            return 0;
+            result += dexModifier;
         }
+        return uint8(result);
     }
 }

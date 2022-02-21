@@ -119,7 +119,7 @@ describe('RarityMasterwork', function () {
     expect(longsword.crafter).to.eq(this.crafter)
   })
 
-  it('fights a kobold', async function () {
+  it.only('fights 10 kobolds and claims rewards', async function () {
     const longsword = await mockCommonItem(craftingBaseType.weapon, weaponType.longsword, this.crafter, this.rarity, this.signer)
     const leatherArmor = await mockCommonItem(craftingBaseType.armor, armorType.leather, this.crafter, this.rarity, this.signer)
 
@@ -132,14 +132,32 @@ describe('RarityMasterwork', function () {
       isMasterwork: false
     }})
 
-    await expect(this.masterwork.barn.enter(this.crafter, longsword, this.rarity.crafting.address, longsword, this.rarity.crafting.address)).to.be.revertedWith("!armor")
+    await expect(this.masterwork.barn.enter(this.crafter, true, longsword, this.rarity.crafting.address, true, longsword, this.rarity.crafting.address)).to.be.revertedWith("!items")
 
-    await this.masterwork.barn.enter(this.crafter, longsword, this.rarity.crafting.address, leatherArmor, this.rarity.crafting.address)
+    await this.masterwork.barn.enter(this.crafter, true, longsword, this.rarity.crafting.address, true, leatherArmor, this.rarity.crafting.address)
+
     expect(await this.masterwork.barn.ownerOf(1)).to.eq(this.signer.address)
     expect(await this.masterwork.barn.isWon(1)).to.eq(false)
     expect(await this.masterwork.barn.isEnded(1)).to.eq(false)
 
-    console.log('this kobold', await this.masterwork.barn.kobolds(1))
+    console.log('instance begin', await this.masterwork.barn.instances(1))
+    while (true) {
+      const health = (await this.masterwork.barn.instances(1)).health
+      if (health == 0) break;
+      await network.provider.send("evm_increaseTime", [24 * 60 * 61])
+      await this.masterwork.barn.attack(1)
+    }
+    console.log('first kobold dead', await this.masterwork.barn.instances(1))
+
+    // Test scenarios
+    // Cannot enter the barn with a summoner that is not yours
+    // Cannot attack in an instance that is not yours
+
+    // Entering the barn with a masterwork items gives bonuses
+    // Entering the barn with a common items gives no bonuses
+
+    // Winning the barn allows reward claim
+    // Losing the barn does not allow reward claim
 
   })
 
