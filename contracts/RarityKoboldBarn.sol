@@ -52,7 +52,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         itemContracts[address(_masterworkItems)].isMasterwork = true;
     }
 
-    struct Instance {
+    struct Encounter {
         uint8 health;
         uint256 summonerId;
         uint8 summonerHealth;
@@ -68,8 +68,8 @@ contract RarityKoboldBarn is ERC721Enumerable {
         uint8 monsterCount;
     }
 
-    mapping(uint256 => Instance) public instances;
-    mapping(uint256 => uint256) public summonerInstances;
+    mapping(uint256 => Encounter) public encounters;
+    mapping(uint256 => uint256) public summonerEncounters;
 
     event Entered(
         address owner,
@@ -115,7 +115,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         uint256 armorId,
         address armorContract
     ) external approvedForSummoner(summonerId) {
-        require(summonerInstances[summonerId] == 0, "!instance");
+        require(summonerEncounters[summonerId] == 0, "!encounter");
         require(
             validItems(
                 hasWeapon,
@@ -127,7 +127,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
             ),
             "!items"
         );
-        Instance storage instance = _createInstance(
+        Encounter storage encounter = _createEncounter(
             summonerId,
             hasWeapon,
             weaponId,
@@ -136,19 +136,19 @@ contract RarityKoboldBarn is ERC721Enumerable {
             armorId,
             ICrafting(armorContract)
         );
-        _fight(instance, summonerId);
+        _fight(encounter, summonerId, true);
     }
 
     /*
-    Remove the summoner from its instance
+    Remove the summoner from its encounter
     This will set the summoner's health to 0, as if it lost
      */
     function leave(uint256 summonerId)
         external
         approvedForSummoner(summonerId)
     {
-        require(summonerInstances[summonerId] != 0, "!instance");
-        instances[summonerInstances[summonerId]].summonerHealth = 0;
+        require(summonerEncounters[summonerId] != 0, "!encounter");
+        encounters[summonerEncounters[summonerId]].summonerHealth = 0;
     }
 
     /*
@@ -158,70 +158,77 @@ contract RarityKoboldBarn is ERC721Enumerable {
         approvedForSummoner(summonerId)
         canAttackYet(summonerId)
     {
-        require(!isEnded(summonerInstances[summonerId]), "!ended");
+        require(!isEnded(summonerEncounters[summonerId]), "!ended");
 
         // TODO here's a weird scenario - what if this summoner is attacking this
         // kobold, but the kobold battle transferred to another wallet?
         require(
-            _isApprovedOrOwner(_msgSender(), summonerInstances[summonerId]),
-            "!instance"
+            _isApprovedOrOwner(_msgSender(), summonerEncounters[summonerId]),
+            "!encounter"
         );
 
-        _fight(instances[summonerInstances[summonerId]], summonerId);
+        _fight(encounters[summonerEncounters[summonerId]], summonerId, false);
     }
 
-    function monsterCount(uint256 instanceId) public view returns (uint256) {
-        return instances[instanceId].monsterCount;
+    function monsterCount(uint256 encounterId) public view returns (uint256) {
+        return encounters[encounterId].monsterCount;
     }
 
-    function summonerOf(uint256 instanceId) public view returns (uint256) {
-        return instances[instanceId].summonerId;
+    function summonerOf(uint256 encounterId) public view returns (uint256) {
+        return encounters[encounterId].summonerId;
     }
 
-    function isEnded(uint256 instanceId) public view returns (bool) {
-        console.log("Monster count", instances[instanceId].monsterCount);
-        console.log("Summoner health", instances[instanceId].summonerHealth);
+    function isEnded(uint256 encounterId) public view returns (bool) {
+        console.log("Monster count", encounters[encounterId].monsterCount);
+        console.log("Summoner health", encounters[encounterId].summonerHealth);
         return
-            instances[instanceId].monsterCount == 10 ||
-            instances[instanceId].summonerHealth == 0;
+            encounters[encounterId].monsterCount == 10 ||
+            encounters[encounterId].summonerHealth == 0;
     }
 
-    function _fight(Instance storage instance, uint256 summonerId) internal {
-        instance.lastAttack = block.timestamp;
+    function _fight(
+        Encounter storage encounter,
+        uint256 summonerId,
+        bool firstEncounter
+    ) internal {
+        encounter.lastAttack = block.timestamp;
         uint8 monsterAC = MONSTER_AC;
 
-        if (instance.health == 0) {
-            _nextMonster(instance);
-            if (SkillCheck.senseMotive(summonerId, SENSE_MOTIVE_DC)) {
+        if (encounter.health == 0) {
+            _nextMonster(encounter);
+            if (
+                firstEncounter &&
+                SkillCheck.senseMotive(summonerId, SENSE_MOTIVE_DC)
+            ) {
                 monsterAC -= 1;
             }
         }
 
-        if (instance.summonerInitiative) {
-            _summonerAttack(instance, summonerId, monsterAC);
-            _monsterAttack(instance, summonerId);
+        if (encounter.summonerInitiative) {
+            _summonerAttack(encounter, summonerId, monsterAC);
+            _monsterAttack(encounter, summonerId);
         } else {
-            _monsterAttack(instance, summonerId);
-            _summonerAttack(instance, summonerId, monsterAC);
+            _monsterAttack(encounter, summonerId);
+            _summonerAttack(encounter, summonerId, monsterAC);
         }
     }
 
-    function _monsterAttack(Instance storage instance, uint256 summonerId)
+    function _monsterAttack(Encounter storage encounter, uint256 summonerId)
         internal
     {
-        if (instance.health > 0) {
+        if (encounter.health > 0) {
             uint8 summonerAC = 0;
-            if (instance.hasArmor) {
+            if (encounter.hasArmor) {
                 summonerAC = Armor.class(
                     summonerId,
-                    instance.armorId,
-                    instance.armorContract
+                    encounter.armorId,
+                    encounter.armorContract
                 );
             }
             uint8 masterworkArmorBonus = 0;
             if (
-                instance.hasArmor &&
-                itemContracts[address(instance.armorContract)].isMasterwork
+                encounter.hasArmor &&
+                itemContracts[address(encounter.armorContract)].isMasterwork
             ) {
                 masterworkArmorBonus = 1;
             }
@@ -236,31 +243,31 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 -1,
                 3
             );
-            if (instance.summonerHealth <= kDamage) {
-                instance.summonerHealth = 0;
+            if (encounter.summonerHealth <= kDamage) {
+                encounter.summonerHealth = 0;
             } else {
-                instance.summonerHealth -= kDamage;
+                encounter.summonerHealth -= kDamage;
             }
             emit MonsterAttack(
                 summonerId,
                 kRoll,
                 kScore,
                 kDamage,
-                instance.summonerHealth
+                encounter.summonerHealth
             );
         }
     }
 
     function _summonerAttack(
-        Instance storage instance,
+        Encounter storage encounter,
         uint256 summonerId,
         uint8 monsterAC
     ) internal {
-        if (instance.health > 0) {
+        if (encounter.health > 0) {
             uint8 masterworkWeaponBonus = 0;
             if (
-                instance.hasWeapon &&
-                itemContracts[address(instance.weaponContract)].isMasterwork
+                encounter.hasWeapon &&
+                itemContracts[address(encounter.weaponContract)].isMasterwork
             ) {
                 masterworkWeaponBonus = 1;
             }
@@ -272,16 +279,16 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 uint8 criticalDamage
             ) = Combat.basicFullAttack(
                     summonerId,
-                    instance.hasWeapon,
-                    instance.weaponId,
-                    instance.weaponContract,
+                    encounter.hasWeapon,
+                    encounter.weaponId,
+                    encounter.weaponContract,
                     monsterAC,
                     masterworkWeaponBonus
                 );
-            if (instance.health <= (damage + criticalDamage)) {
-                instance.health = 0;
+            if (encounter.health <= (damage + criticalDamage)) {
+                encounter.health = 0;
             } else {
-                instance.health -= (damage + criticalDamage);
+                encounter.health -= (damage + criticalDamage);
             }
             emit SummonerAttack(
                 summonerId,
@@ -290,23 +297,17 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 damage,
                 criticalRoll,
                 criticalDamage,
-                instance.health
+                encounter.health
             );
         }
     }
 
-    function _nextMonster(Instance storage instance) internal {
-        instance.monsterCount += 1;
-        instance.health = _monsterStartingHealth();
-        instance.summonerInitiative =
-            Combat.initiative(
-                instance.summonerId,
-                int8(FeatCheck.initiative(instance.summonerId))
-            ) >=
-            Monster.initiative(MONSTER_DEX, MONSTER_INITIATIVE_BONUS);
+    function _nextMonster(Encounter storage encounter) internal {
+        encounter.monsterCount += 1;
+        encounter.health = _monsterStartingHealth();
     }
 
-    function _createInstance(
+    function _createEncounter(
         uint256 summonerId,
         bool hasWeapon,
         uint256 weaponId,
@@ -314,30 +315,36 @@ contract RarityKoboldBarn is ERC721Enumerable {
         bool hasArmor,
         uint256 armorId,
         ICrafting armorContract
-    ) internal returns (Instance storage) {
+    ) internal returns (Encounter storage) {
         require(
-            instances[summonerInstances[summonerId]].enteredAt == 0,
+            encounters[summonerEncounters[summonerId]].enteredAt == 0,
             "!alreadyEntered"
         );
 
         uint256 newTokenId = nextToken;
         _safeMint(_msgSender(), newTokenId);
-        summonerInstances[summonerId] = newTokenId;
+        summonerEncounters[summonerId] = newTokenId;
 
-        instances[newTokenId].summonerId = summonerId;
-        instances[newTokenId].hasWeapon = hasWeapon;
-        instances[newTokenId].weaponId = weaponId;
-        instances[newTokenId].weaponContract = weaponContract;
-        instances[newTokenId].hasArmor = hasArmor;
-        instances[newTokenId].armorId = armorId;
-        instances[newTokenId].armorContract = armorContract;
+        encounters[newTokenId].summonerId = summonerId;
+        encounters[newTokenId].hasWeapon = hasWeapon;
+        encounters[newTokenId].weaponId = weaponId;
+        encounters[newTokenId].weaponContract = weaponContract;
+        encounters[newTokenId].hasArmor = hasArmor;
+        encounters[newTokenId].armorId = armorId;
+        encounters[newTokenId].armorContract = armorContract;
+        encounters[newTokenId].summonerInitiative =
+            Combat.initiative(
+                summonerId,
+                int8(FeatCheck.initiative(summonerId))
+            ) >=
+            Monster.initiative(MONSTER_DEX, MONSTER_INITIATIVE_BONUS);
 
-        instances[newTokenId].summonerHealth = Combat.summonerHp(summonerId);
-        instances[newTokenId].enteredAt = block.timestamp;
+        encounters[newTokenId].summonerHealth = Combat.summonerHp(summonerId);
+        encounters[newTokenId].enteredAt = block.timestamp;
 
         nextToken += 1;
 
-        return instances[newTokenId];
+        return encounters[newTokenId];
     }
 
     function _monsterStartingHealth() internal view returns (uint8) {
@@ -407,7 +414,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
     modifier canAttackYet(uint256 summonerId) {
         if (
             block.timestamp >=
-            instances[summonerInstances[summonerId]].lastAttack + DAY
+            encounters[summonerEncounters[summonerId]].lastAttack + DAY
         ) {
             _;
         } else {
