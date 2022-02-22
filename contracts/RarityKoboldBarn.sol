@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 import "./core/interfaces/ICodexItemsArmor.sol";
@@ -28,10 +27,11 @@ contract RarityKoboldBarn is ERC721Enumerable {
     uint8 public constant MONSTER_DEX = 13;
     int8 public constant MONSTER_INITIATIVE_BONUS = 1;
 
-    // Item contracts for armor and weapons. The items must implement
-    // the standard rarity codexes, specifically weapon and armor.
-    // We've added an extra boolean to the whitelist to differentiate
-    // between standard weapons and masterwork weapons
+    /* Item contracts for armor and weapons. The items must implement
+     * the standard rarity codexes, specifically weapon and armor.
+     * We've added an extra boolean to the whitelist to differentiate
+     * between standard weapons and masterwork weapons
+     */
     struct ItemContract {
         ICrafting theContract;
         bool isMasterwork;
@@ -39,9 +39,10 @@ contract RarityKoboldBarn is ERC721Enumerable {
     mapping(address => ItemContract) private itemContracts;
 
     constructor(ICrafting _masterworkItems) ERC721("Rarity Kobold", "RK") {
-        //    Create the item whitelist
-        //    Your dungeon could make this list dynamic with an owner function
-        //    In our example we keep this static
+        /* Create the item whitelist
+         * Your dungeon could make this list dynamic with an owner function
+         * In our example we keep this static
+         */
         itemContracts[0xf41270836dF4Db1D28F7fd0935270e3A603e78cC]
             .theContract = ICrafting(
             0xf41270836dF4Db1D28F7fd0935270e3A603e78cC
@@ -53,12 +54,12 @@ contract RarityKoboldBarn is ERC721Enumerable {
     }
 
     struct Encounter {
-        uint8 health;
-        uint256 summonerId;
-        uint8 summonerHealth;
-        bool hasArmor;
-        uint256 armorId;
-        ICrafting armorContract;
+        uint8 health; // Health of the monster that is currently engaged with
+        uint256 summonerId; // ID of the summoner in this encounter
+        uint8 summonerHealth; // Summoner health
+        bool hasArmor; // If the summoner was sent with armor
+        uint256 armorId; // The armor token ID
+        ICrafting armorContract; // Armor contract must comply with ICrafting
         bool hasWeapon;
         uint256 weaponId;
         ICrafting weaponContract;
@@ -140,8 +141,8 @@ contract RarityKoboldBarn is ERC721Enumerable {
     }
 
     /*
-    Remove the summoner from its encounter
-    This will set the summoner's health to 0, as if it lost
+     * Remove the summoner from its encounter
+     * This will set the summoner's health to 0, as if it lost
      */
     function leave(uint256 summonerId)
         external
@@ -152,6 +153,8 @@ contract RarityKoboldBarn is ERC721Enumerable {
     }
 
     /*
+     * The main attack function. Since any summoner can only have a single encounter,
+     * we only need to know the summoner token id.
      */
     function attack(uint256 summonerId)
         external
@@ -160,8 +163,9 @@ contract RarityKoboldBarn is ERC721Enumerable {
     {
         require(!isEnded(summonerEncounters[summonerId]), "!ended");
 
-        // TODO here's a weird scenario - what if this summoner is attacking this
-        // kobold, but the kobold battle transferred to another wallet?
+        // A bit of a race condition for people who sell/transfer their
+        // summoner if in the middle of an encounter may well not be able
+        // to finish, since the encounter is not automatically transferred
         require(
             _isApprovedOrOwner(_msgSender(), summonerEncounters[summonerId]),
             "!encounter"
@@ -170,17 +174,25 @@ contract RarityKoboldBarn is ERC721Enumerable {
         _fight(encounters[summonerEncounters[summonerId]], summonerId, false);
     }
 
+    /*
+     * Helper - How many monsters have been defeated in this encounter?
+     */
     function monsterCount(uint256 encounterId) public view returns (uint256) {
         return encounters[encounterId].monsterCount;
     }
 
+    /*
+     * Helper - Whose summoner is this encounter?
+     */
     function summonerOf(uint256 encounterId) public view returns (uint256) {
         return encounters[encounterId].summonerId;
     }
 
+    /*
+     * Helper - The encounter is over once the summoner has defeated 10
+     * kobold monsters or the summoner has been knocked out.
+     */
     function isEnded(uint256 encounterId) public view returns (bool) {
-        console.log("Monster count", encounters[encounterId].monsterCount);
-        console.log("Summoner health", encounters[encounterId].summonerHealth);
         return
             encounters[encounterId].monsterCount == 10 ||
             encounters[encounterId].summonerHealth == 0;
