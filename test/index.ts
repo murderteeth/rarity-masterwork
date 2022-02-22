@@ -139,14 +139,14 @@ describe('RarityMasterwork', function () {
     expect(await this.masterwork.barn.ownerOf(1)).to.eq(this.signer.address)
     expect(await this.masterwork.barn.isEnded(1)).to.eq(false)
 
-    console.log('instance begin', await this.masterwork.barn.instances(1))
+    console.log('encounter begin', await this.masterwork.barn.encounters(1))
     while (true) {
-      const health = (await this.masterwork.barn.instances(1)).health
+      const health = (await this.masterwork.barn.encounters(1)).health
       if (health == 0) break;
       await network.provider.send("evm_increaseTime", [24 * 60 * 61])
       await this.masterwork.barn.attack(1)
     }
-    console.log('first kobold dead', await this.masterwork.barn.instances(1))
+    console.log('first kobold dead', await this.masterwork.barn.encounters(1))
 
     while(true) {
       const isEnded = await this.masterwork.barn.isEnded(1)
@@ -155,7 +155,7 @@ describe('RarityMasterwork', function () {
       await this.masterwork.barn.attack(1)
     }
 
-    console.log('game over', await this.masterwork.barn.instances(1))
+    console.log('game over', await this.masterwork.barn.encounters(1))
 
     const monsterCount = await this.masterwork.barn.monsterCount(1)
     await this.masterwork.salvage.claim(this.crafter, 1)

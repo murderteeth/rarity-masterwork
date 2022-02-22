@@ -23,15 +23,15 @@ contract RarityKoboldSalvage is ERC20 {
         koboldBarn = barn;
     }
 
-    function claim(uint256 summonerId, uint256 instanceId)
+    function claim(uint256 summonerId, uint256 encounterId)
         external
         approvedForSummoner(summonerId)
     {
-        require(claimedKobolds[instanceId] == false, "!claimed");
-        require(koboldBarn.summonerOf(instanceId) == summonerId, "!summoner");
-        require(koboldBarn.isEnded(instanceId), "!ended");
-        _mint(_msgSender(), koboldBarn.monsterCount(instanceId) * 1e18);
-        claimedKobolds[instanceId] = true;
+        require(claimedKobolds[encounterId] == false, "!claimed");
+        require(koboldBarn.summonerOf(encounterId) == summonerId, "!summoner");
+        require(koboldBarn.isEnded(encounterId), "!ended");
+        _mint(_msgSender(), koboldBarn.monsterCount(encounterId) * 1e18);
+        claimedKobolds[encounterId] = true;
     }
 
     // Modifiers
