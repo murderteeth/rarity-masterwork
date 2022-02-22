@@ -17,4 +17,46 @@ library FeatCheck {
             return 0;
         }
     }
+
+    function armorLight(uint256 summonerId) public view returns (bool) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        return feats[5];
+    }
+
+    function armorMedium(uint256 summonerId) public view returns (bool) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        return feats[6];
+    }
+
+    function armorHeavy(uint256 summonerId) public view returns (bool) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        return feats[7];
+    }
+
+    function simpleWeapon(uint256 summonerId) public view returns (uint8) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        if (feats[91]) {
+            return 4;
+        } else {
+            return 0;
+        }
+    }
+
+    function martialWeapon(uint256 summonerId) public view returns (uint8) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        if (feats[75]) {
+            return 4;
+        } else {
+            return 0;
+        }
+    }
+
+    function exoticWeapon(uint256 summonerId) public view returns (uint8) {
+        bool[100] memory feats = FEATS.get_feats(summonerId);
+        if (feats[34]) {
+            return 4;
+        } else {
+            return 0;
+        }
+    }
 }

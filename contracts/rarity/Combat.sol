@@ -54,8 +54,9 @@ library Combat {
             uint256 weaponCritical = 0;
             if (hasWeapon) {
                 (, uint256 itemType, , ) = weaponContract.items(weaponId);
-                codex_items_weapons.weapon memory _weapon = WEAPON_CODEX
-                    .item_by_id(itemType);
+                codex_items_weapons.weapon memory _weapon = weaponFromCodex(
+                    itemType
+                );
                 weaponBaseDamage = _weapon.damage;
                 weaponCritical = _weapon.critical;
                 weaponDamage += int8(
@@ -82,6 +83,14 @@ library Combat {
                 }
             }
         }
+    }
+
+    function weaponFromCodex(uint256 itemType)
+        public
+        pure
+        returns (codex_items_weapons.weapon memory)
+    {
+        return WEAPON_CODEX.item_by_id(itemType);
     }
 
     function summonerHp(uint256 summonerId) public view returns (uint8) {

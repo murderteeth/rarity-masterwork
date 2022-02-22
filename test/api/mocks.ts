@@ -44,6 +44,8 @@ import {
   Combat,
   Monster,
   SkillCheck,
+  Proficiency,
+  Proficiency__factory,
   CodexCommonTools,
   CodexMasterworkTools,
   FeatCheck__factory,
@@ -60,6 +62,7 @@ export interface IMockLibrary {
   monster: MockContract<Monster>
   skillCheck: MockContract<SkillCheck>
   featCheck: MockContract<FeatCheck>
+  proficiency: MockContract<Proficiency>
 }
 
 export interface IMockRarityContracts {
@@ -92,11 +95,6 @@ export async function mockLibrary (): Promise<IMockLibrary> {
   const attributes = await (
     await smock.mock<Attributes__factory>('Attributes')
   ).deploy()
-  const armor = await (
-    await smock.mock<Armor__factory>('Armor', {
-      libraries: { Attributes: attributes.address }
-    })
-  ).deploy()
   const random = await (await smock.mock<Random__factory>('Random')).deploy()
   const combat = await (
     await smock.mock<Combat__factory>('Combat', {
@@ -116,6 +114,22 @@ export async function mockLibrary (): Promise<IMockLibrary> {
   const featCheck = await (
     await smock.mock<FeatCheck__factory>('FeatCheck')
   ).deploy()
+  const proficiency = await (
+    await smock.mock<Proficiency__factory>('Proficiency', {
+      libraries: {
+        Combat: combat.address,
+        FeatCheck: featCheck.address
+      }
+    })
+  ).deploy()
+  const armor = await (
+    await smock.mock<Armor__factory>('Armor', {
+      libraries: {
+        Attributes: attributes.address,
+        Proficiency: proficiency.address
+      }
+    })
+  ).deploy()
   return {
     auth,
     attributes,
@@ -124,7 +138,8 @@ export async function mockLibrary (): Promise<IMockLibrary> {
     combat,
     monster,
     skillCheck,
-    featCheck
+    featCheck,
+    proficiency
   }
 }
 
