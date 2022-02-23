@@ -8,9 +8,9 @@ import "./core/interfaces/ICodexItemsWeapons.sol";
 import "./core/interfaces/ICrafting.sol";
 
 import "./rarity/Armor.sol";
-import "./rarity/Auth.sol";
 import "./rarity/Combat.sol";
 import "./rarity/FeatCheck.sol";
+import "./rarity/RarityBase.sol";
 import "./rarity/SkillCheck.sol";
 import "./rarity/Monster.sol";
 
@@ -88,7 +88,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
     event SummonerAttack(
         uint256 summonerId,
         uint8 attackRoll,
-        uint8 attackScore,
+        int8 attackScore,
         uint8 damage,
         uint8 criticalRoll,
         uint8 criticalDamage,
@@ -276,7 +276,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
         uint8 monsterAC
     ) internal {
         if (encounter.health > 0) {
-            uint8 masterworkWeaponBonus = 0;
+            int8 masterworkWeaponBonus = 0;
             if (
                 encounter.hasWeapon &&
                 itemContracts[address(encounter.weaponContract)].isMasterwork
@@ -285,15 +285,13 @@ contract RarityKoboldBarn is ERC721Enumerable {
             }
             (
                 uint8 attackRoll,
-                uint8 attackScore,
+                int8 attackScore,
                 uint8 damage,
                 uint8 criticalRoll,
                 uint8 criticalDamage
-            ) = Combat.basicFullAttack(
+            ) = _basicFullAttack(
                     summonerId,
-                    encounter.hasWeapon,
-                    encounter.weaponId,
-                    encounter.weaponContract,
+                    encounter,
                     monsterAC,
                     masterworkWeaponBonus
                 );
@@ -312,6 +310,40 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 encounter.health
             );
         }
+    }
+
+    function _basicFullAttack(
+        uint256 summonerId,
+        Encounter memory encounter,
+        uint8 targetAC,
+        int8 weaponBonus
+    )
+        internal
+        view
+        returns (
+            uint8 attackRoll,
+            int8 attackScore,
+            uint8 damage,
+            uint8 criticalRoll,
+            uint8 criticalDamage
+        )
+    {
+        int8 armorProficiencyBonus = Armor.proficiencyBonus(
+            summonerId,
+            encounter.hasArmor,
+            encounter.armorId,
+            encounter.armorContract
+        );
+        return
+            Combat.basicFullAttack(
+                summonerId,
+                encounter.hasWeapon,
+                encounter.weaponId,
+                encounter.weaponContract,
+                targetAC,
+                weaponBonus,
+                armorProficiencyBonus
+            );
     }
 
     function _nextMonster(Encounter storage encounter) internal {
@@ -347,7 +379,13 @@ contract RarityKoboldBarn is ERC721Enumerable {
         encounters[newTokenId].summonerInitiative =
             Combat.initiative(
                 summonerId,
-                int8(FeatCheck.initiative(summonerId))
+                int8(FeatCheck.initiative(summonerId)),
+                Armor.proficiencyBonus(
+                    summonerId,
+                    hasArmor,
+                    armorId,
+                    armorContract
+                )
             ) >=
             Monster.initiative(MONSTER_DEX, MONSTER_INITIATIVE_BONUS);
 
@@ -416,7 +454,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (RarityBase.isApprovedOrOwnerOfSummoner(summonerId)) {
             _;
         } else {
             revert("!approved");

@@ -1,25 +1,21 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../core/interfaces/IRarity.sol";
-import "../core/interfaces/IMaterials.sol";
 import "../core/interfaces/ICodexItemsWeapons.sol";
+import "../core/interfaces/IMaterials.sol";
 import "../core/interfaces/ICrafting.sol";
 import "./Attributes.sol";
 import "./Random.sol";
+import "./RarityBase.sol";
+import "./Weapon.sol";
 
 library Combat {
-    IRarity public constant RM =
-        IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
-    codex_items_weapons internal constant WEAPON_CODEX =
-        codex_items_weapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
-
-    function initiative(uint256 summonerId, int8 bonus)
-        public
-        view
-        returns (int8)
-    {
-        int8 dMod = Attributes.dexterityModifier(summonerId);
+    function initiative(
+        uint256 summonerId,
+        int8 bonus,
+        int8 dexModifier
+    ) public view returns (int8) {
+        int8 dMod = Attributes.dexterityModifier(summonerId) + dexModifier;
         uint8 roll = Random.dn(8, 8, 20);
         return int8(roll) + int8(dMod) + bonus;
     }
@@ -30,13 +26,14 @@ library Combat {
         uint256 weaponId,
         ICrafting weaponContract,
         uint8 targetAC,
-        uint8 weaponBonus
+        int8 weaponBonus,
+        int8 _strModifier
     )
         public
         view
         returns (
             uint8 attackRoll,
-            uint8 attackScore,
+            int8 attackScore,
             uint8 damage,
             uint8 criticalRoll,
             uint8 criticalDamage
@@ -46,23 +43,30 @@ library Combat {
         if (attackRoll == 1) {
             return (1, 0, 0, 0, 0);
         }
-        attackScore = baseAttack(summonerId) + attackRoll;
-        if (attackRoll == 20 || attackScore >= targetAC) {
-            int8 strModifier = Attributes.strengthModifier(summonerId);
-            int8 weaponDamage = strModifier;
-            uint256 weaponBaseDamage = weaponBonus;
-            uint256 weaponCritical = 0;
-            if (hasWeapon) {
-                (, uint256 itemType, , ) = weaponContract.items(weaponId);
-                codex_items_weapons.weapon memory _weapon = weaponFromCodex(
-                    itemType
-                );
-                weaponBaseDamage = _weapon.damage;
-                weaponCritical = _weapon.critical;
-                weaponDamage += int8(
-                    Random.dn(_weapon.damage, 2, uint8(_weapon.damage))
-                );
-            }
+
+        attackScore =
+            int8(baseAttack(summonerId)) +
+            int8(attackRoll) +
+            weaponBonus;
+        int8 strModifier = Attributes.strengthModifier(summonerId) +
+            _strModifier;
+        int8 weaponDamage = strModifier;
+        uint256 weaponCritical = 0;
+
+        if (hasWeapon) {
+            (, uint256 itemType, , ) = weaponContract.items(weaponId);
+            codex_items_weapons.weapon memory _weapon = Weapon.fromCodex(
+                itemType
+            );
+            weaponCritical = _weapon.critical;
+            weaponDamage += int8(
+                Random.dn(_weapon.damage, 2, uint8(_weapon.damage))
+            );
+        }
+        if (
+            attackRoll == 20 ||
+            (attackScore > 0 && uint8(attackScore) >= targetAC)
+        ) {
             if (weaponDamage < 0) {
                 damage = 0;
             } else {
@@ -74,7 +78,7 @@ library Combat {
                 if (criticalRoll >= targetAC) {
                     for (uint8 i = 0; i < weaponCritical; i++) {
                         weaponDamage =
-                            int8(Random.dn(1, i, uint8(weaponBaseDamage))) +
+                            int8(Random.dn(1, i, uint8(weaponDamage))) +
                             strModifier;
                         if (weaponDamage > 0) {
                             criticalDamage += uint8(weaponDamage);
@@ -85,17 +89,9 @@ library Combat {
         }
     }
 
-    function weaponFromCodex(uint256 itemType)
-        public
-        pure
-        returns (codex_items_weapons.weapon memory)
-    {
-        return WEAPON_CODEX.item_by_id(itemType);
-    }
-
     function summonerHp(uint256 summonerId) public view returns (uint8) {
-        uint256 _level = level(summonerId);
-        uint256 _class = class(summonerId);
+        uint256 _level = RarityBase.level(summonerId);
+        uint256 _class = RarityBase.class(summonerId);
         Attributes.Abilities memory abilities = Attributes.abilityScores(
             summonerId
         );
@@ -107,14 +103,6 @@ library Combat {
                     uint32(abilities.constitution)
                 )
             );
-    }
-
-    function level(uint256 summonerId) internal view returns (uint256) {
-        return RM.level(summonerId);
-    }
-
-    function class(uint256 summonerId) internal view returns (uint256) {
-        return RM.class(summonerId);
     }
 
     function healthByClass(uint256 _class)
@@ -148,8 +136,8 @@ library Combat {
     }
 
     function baseAttack(uint256 summonerId) internal view returns (uint8) {
-        uint256 _level = level(summonerId);
-        uint256 _class = class(summonerId);
+        uint256 _level = RarityBase.level(summonerId);
+        uint256 _class = RarityBase.class(summonerId);
         return uint8(baseAttackBonusByClassAndLevel(_class, _level));
     }
 

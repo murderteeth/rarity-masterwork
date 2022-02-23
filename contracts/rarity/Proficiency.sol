@@ -1,8 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./Combat.sol";
 import "./FeatCheck.sol";
+import "./RarityBase.sol";
+import "./Weapon.sol";
 
 library Proficiency {
     /*
@@ -46,8 +47,8 @@ library Proficiency {
         uint256 proficiencyReq,
         uint256 armorType
     ) public view returns (bool) {
-        // TODO: Tower shield feat (96)
-        uint256 class = Combat.class(summonerId);
+        // TODO: Tower shield feat 96, armor type 18
+        uint256 class = RarityBase.class(summonerId);
         if (class == 1) {
             // Barbarian
             if (proficiencyReq == 1 || proficiencyReq == 2) {
@@ -112,8 +113,8 @@ library Proficiency {
         view
         returns (int8)
     {
-        uint256 class = Combat.class(summonerId);
-        uint256 proficiency = Combat.weaponFromCodex(weaponType).proficiency;
+        uint256 class = RarityBase.class(summonerId);
+        uint256 proficiency = Weapon.fromCodex(weaponType).proficiency;
         if (class == 1 || class == 5 || class == 7 || class == 8) {
             // Barbarian, Fighter, Paladin, Ranger
             if (proficiency == 1 || proficiency == 2) {

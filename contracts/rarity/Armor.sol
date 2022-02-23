@@ -23,7 +23,8 @@ library Armor {
         (, , , , uint256 armorBonus, uint256 maxDexBonus, , , , ) = ARMOR_CODEX
             .item_by_id(itemType);
 
-        int8 dexModifier = Attributes.dexterityModifier(summonerId);
+        int8 dexModifier = Attributes.dexterityModifier(summonerId) +
+            proficiencyBonus(summonerId, true, armorId, armorContract);
 
         int8 result = 10 + int8(uint8(armorBonus));
         if (dexModifier > int256(maxDexBonus)) {
@@ -40,9 +41,13 @@ library Armor {
      */
     function proficiencyBonus(
         uint256 summonerId,
+        bool hasArmor,
         uint256 armorId,
         ICrafting armorContract
     ) public view returns (int8) {
+        if (!hasArmor) {
+            return 0;
+        }
         (, uint256 itemType, , ) = armorContract.items(armorId);
         (, , uint256 _proficiency, , , , int256 penalty, , , ) = ARMOR_CODEX
             .item_by_id(itemType);
