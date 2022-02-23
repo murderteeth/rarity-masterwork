@@ -31,13 +31,13 @@ import {
   Random__factory,
   Monster__factory,
   Combat__factory,
-  Auth__factory,
+  RarityBase__factory,
   Armor__factory,
   Attributes__factory,
   CodexMasterworkTools__factory,
   CodexCommonTools__factory,
   FeatCheck,
-  Auth,
+  RarityBase,
   Attributes,
   Armor,
   Random,
@@ -50,11 +50,13 @@ import {
   CodexMasterworkTools,
   FeatCheck__factory,
   RarityKoboldSalvage,
-  RarityKoboldSalvage__factory
+  RarityKoboldSalvage__factory,
+  Weapon,
+  Weapon__factory
 } from '../../typechain'
 
 export interface IMockLibrary {
-  auth: MockContract<Auth>
+  rarity: MockContract<RarityBase>
   attributes: MockContract<Attributes>
   armor: MockContract<Armor>
   random: MockContract<Random>
@@ -63,6 +65,7 @@ export interface IMockLibrary {
   skillCheck: MockContract<SkillCheck>
   featCheck: MockContract<FeatCheck>
   proficiency: MockContract<Proficiency>
+  weapon: MockContract<Weapon>
 }
 
 export interface IMockRarityContracts {
@@ -91,16 +94,15 @@ export interface IMockMasterworkContracts {
 }
 
 export async function mockLibrary (): Promise<IMockLibrary> {
-  const auth = await (await smock.mock<Auth__factory>('Auth')).deploy()
+  const weapon = await (await smock.mock<Weapon__factory>('Weapon')).deploy()
+  const rarity = await (
+    await smock.mock<RarityBase__factory>('RarityBase')
+  ).deploy()
   const attributes = await (
     await smock.mock<Attributes__factory>('Attributes')
   ).deploy()
   const random = await (await smock.mock<Random__factory>('Random')).deploy()
-  const combat = await (
-    await smock.mock<Combat__factory>('Combat', {
-      libraries: { Attributes: attributes.address, Random: random.address }
-    })
-  ).deploy()
+
   const monster = await (
     await smock.mock<Monster__factory>('Monster', {
       libraries: { Attributes: attributes.address, Random: random.address }
@@ -117,8 +119,17 @@ export async function mockLibrary (): Promise<IMockLibrary> {
   const proficiency = await (
     await smock.mock<Proficiency__factory>('Proficiency', {
       libraries: {
-        Combat: combat.address,
+        Weapon: weapon.address,
         FeatCheck: featCheck.address
+      }
+    })
+  ).deploy()
+  const combat = await (
+    await smock.mock<Combat__factory>('Combat', {
+      libraries: {
+        Attributes: attributes.address,
+        Random: random.address,
+        Weapon: weapon.address
       }
     })
   ).deploy()
@@ -131,7 +142,7 @@ export async function mockLibrary (): Promise<IMockLibrary> {
     })
   ).deploy()
   return {
-    auth,
+    rarity,
     attributes,
     armor,
     random,
@@ -139,7 +150,8 @@ export async function mockLibrary (): Promise<IMockLibrary> {
     monster,
     skillCheck,
     featCheck,
-    proficiency
+    proficiency,
+    weapon
   }
 }
 
@@ -188,7 +200,7 @@ export async function mockMasterwork (
         SkillCheck: library.skillCheck.address,
         Monster: library.monster.address,
         Combat: library.combat.address,
-        Auth: library.auth.address,
+        RarityBase: library.rarity.address,
         Armor: library.armor.address,
         FeatCheck: library.featCheck.address
         // RarityRandom: rarityRandom.address
@@ -198,7 +210,7 @@ export async function mockMasterwork (
   const salvage = await (
     await smock.mock<RarityKoboldSalvage__factory>('RarityKoboldSalvage', {
       libraries: {
-        Auth: library.auth.address
+        RarityBase: library.rarity.address
       }
     })
   ).deploy(barn.address)
