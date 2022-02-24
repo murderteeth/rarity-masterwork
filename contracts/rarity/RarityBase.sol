@@ -18,11 +18,11 @@ library RarityBase {
             RM.isApprovedForAll(RM.ownerOf(_summonerId), msg.sender);
     }
 
-    function level(uint256 summonerId) internal view returns (uint256) {
+    function level(uint256 summonerId) public view returns (uint256) {
         return RM.level(summonerId);
     }
 
-    function class(uint256 summonerId) internal view returns (uint256) {
+    function class(uint256 summonerId) public view returns (uint256) {
         return RM.class(summonerId);
     }
 }

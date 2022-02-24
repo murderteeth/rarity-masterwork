@@ -16,9 +16,10 @@ import {
   useRandomMock,
   mockCommonTools,
   mockMasterworkTools,
-  mockLibrary,
   mockMasterworkItem
 } from './api/mocks'
+
+import { mockLibrary } from './rarity_libraries/api/mocks'
 
 describe('RarityMasterwork', function () {
   before(async function () {
@@ -240,7 +241,7 @@ describe('RarityMasterwork', function () {
     expect(longsword.crafter).to.eq(this.crafter)
   })
 
-  it.only('fights kobolds until death and claims rewards', async function () {
+  it('fights kobolds until death and claims rewards', async function () {
     const longsword = await mockCommonItem(
       craftingBaseType.weapon,
       weaponType.longsword,
@@ -256,7 +257,9 @@ describe('RarityMasterwork', function () {
       this.signer
     )
 
-    this.rarity.fakeCore.ownerOf.whenCalledWith(1).returns(this.signer.address)
+    this.library.rarityFakeCore.ownerOf
+      .whenCalledWith(1)
+      .returns(this.signer.address)
 
     // If you want to muck around with scenarios, the easiest way to win
     // is with a high level summoner, (plus weapon and armor) since they have a ton of health
@@ -265,9 +268,9 @@ describe('RarityMasterwork', function () {
 
     // A level 10 barbarian with 20 strength can win the encounter
     // A level 6 barbarian
-    this.rarity.fakeCore.level.returns(10)
-    this.rarity.fakeCore.class.returns(1)
-    this.rarity.fakeAttributes.ability_scores
+    this.library.rarityFakeCore.level.returns(10)
+    this.library.rarityFakeCore.class.returns(1)
+    this.library.rarityFakeAttributes.ability_scores
       .whenCalledWith(this.crafter)
       .returns([20, 10, 10, 10, 10, 10])
 
@@ -335,10 +338,10 @@ describe('RarityMasterwork', function () {
       await network.provider.send('evm_increaseTime', [24 * 60 * 61])
       await this.masterwork.barn.attack(1)
     }
-    console.log(
-      'howd we do against the first one',
-      await this.masterwork.barn.encounters(1)
-    )
+    // console.log(
+    // 'howd we do against the first one',
+    // await this.masterwork.barn.encounters(1)
+    // )
 
     // Can't attack so fast, friend!
     await expect(this.masterwork.barn.attack(1)).to.be.revertedWith('!turn')
@@ -353,7 +356,7 @@ describe('RarityMasterwork', function () {
       await this.masterwork.barn.attack(1)
     }
 
-    console.log('game over', await this.masterwork.barn.encounters(1))
+    // console.log('game over', await this.masterwork.barn.encounters(1))
 
     const monsterCount = await this.masterwork.barn.monsterCount(1)
     expect(monsterCount).to.equal(10)

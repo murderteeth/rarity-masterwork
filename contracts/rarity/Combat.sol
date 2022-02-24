@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../core/interfaces/ICodexItemsWeapons.sol";
-import "../core/interfaces/IMaterials.sol";
 import "../core/interfaces/ICrafting.sol";
 import "./Attributes.sol";
 import "./Random.sol";

@@ -2,6 +2,7 @@ import { MockContract, smock, FakeContract } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { parseEther } from 'ethers/lib/utils'
 import { skills as skillsenum, skillsArray } from './skills'
+import { IMockLibrary } from '../rarity_libraries/api/mocks'
 import {
   CodexMasterworkWeapons,
   CodexMasterworkWeapons__factory,
@@ -27,53 +28,18 @@ import {
   RarityCommonTools__factory,
   RarityKoboldBarn,
   RarityKoboldBarn__factory,
-  SkillCheck__factory,
-  Random__factory,
-  Monster__factory,
-  Combat__factory,
-  RarityBase__factory,
-  Armor__factory,
-  Attributes__factory,
   CodexMasterworkTools__factory,
   CodexCommonTools__factory,
-  FeatCheck,
-  RarityBase,
-  Attributes,
-  Armor,
-  Random,
-  Combat,
-  Monster,
-  SkillCheck,
-  Proficiency,
-  Proficiency__factory,
   CodexCommonTools,
   CodexMasterworkTools,
-  FeatCheck__factory,
   RarityKoboldSalvage,
-  RarityKoboldSalvage__factory,
-  Weapon,
-  Weapon__factory
+  RarityKoboldSalvage__factory
 } from '../../typechain'
-
-export interface IMockLibrary {
-  rarity: MockContract<RarityBase>
-  attributes: MockContract<Attributes>
-  armor: MockContract<Armor>
-  random: MockContract<Random>
-  combat: MockContract<Combat>
-  monster: MockContract<Monster>
-  skillCheck: MockContract<SkillCheck>
-  featCheck: MockContract<FeatCheck>
-  proficiency: MockContract<Proficiency>
-  weapon: MockContract<Weapon>
-}
 
 export interface IMockRarityContracts {
   core: MockContract<Rarity>
-  fakeCore: FakeContract<Rarity>
   random: MockContract<CodexBaseRandomMockable>
   attributes: MockContract<RarityAttributes>
-  fakeAttributes: FakeContract<RarityAttributes>
   gold: MockContract<RarityGold>
   skills: MockContract<RaritySkills>
   mats: MockContract<RarityCraftingMaterials>
@@ -91,68 +57,6 @@ export interface IMockMasterworkContracts {
   commonTools: MockContract<RarityCommonTools>
   barn: MockContract<RarityKoboldBarn>
   salvage: MockContract<RarityKoboldSalvage>
-}
-
-export async function mockLibrary (): Promise<IMockLibrary> {
-  const weapon = await (await smock.mock<Weapon__factory>('Weapon')).deploy()
-  const rarity = await (
-    await smock.mock<RarityBase__factory>('RarityBase')
-  ).deploy()
-  const attributes = await (
-    await smock.mock<Attributes__factory>('Attributes')
-  ).deploy()
-  const random = await (await smock.mock<Random__factory>('Random')).deploy()
-
-  const monster = await (
-    await smock.mock<Monster__factory>('Monster', {
-      libraries: { Attributes: attributes.address, Random: random.address }
-    })
-  ).deploy()
-  const skillCheck = await (
-    await smock.mock<SkillCheck__factory>('SkillCheck', {
-      libraries: { Random: random.address }
-    })
-  ).deploy()
-  const featCheck = await (
-    await smock.mock<FeatCheck__factory>('FeatCheck')
-  ).deploy()
-  const proficiency = await (
-    await smock.mock<Proficiency__factory>('Proficiency', {
-      libraries: {
-        Weapon: weapon.address,
-        FeatCheck: featCheck.address
-      }
-    })
-  ).deploy()
-  const combat = await (
-    await smock.mock<Combat__factory>('Combat', {
-      libraries: {
-        Attributes: attributes.address,
-        Random: random.address,
-        Weapon: weapon.address
-      }
-    })
-  ).deploy()
-  const armor = await (
-    await smock.mock<Armor__factory>('Armor', {
-      libraries: {
-        Attributes: attributes.address,
-        Proficiency: proficiency.address
-      }
-    })
-  ).deploy()
-  return {
-    rarity,
-    attributes,
-    armor,
-    random,
-    combat,
-    monster,
-    skillCheck,
-    featCheck,
-    proficiency,
-    weapon
-  }
 }
 
 export async function mockMasterwork (
@@ -264,19 +168,11 @@ export async function mockRarity (): Promise<IMockRarityContracts> {
   await crafting.setVariable('_craft_i', mats.address)
   await crafting.setVariable('_gold', gold.address)
   await crafting.setVariable('_skills', skills.address)
-  const fakeCore = await smock.fake<Rarity>('rarity', {
-    address: '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb'
-  })
-  const fakeAttributes = await smock.fake<RarityAttributes>(
-    'rarity_attributes',
-    { address: '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1' }
-  )
+
   return {
     core,
-    fakeCore,
     random,
     attributes,
-    fakeAttributes,
     gold,
     skills,
     mats,
