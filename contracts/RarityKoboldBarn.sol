@@ -234,7 +234,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 summonerAC = Armor.class(
                     summonerId,
                     encounter.armorId,
-                    encounter.armorContract
+                    address(encounter.armorContract)
                 );
             }
             uint8 masterworkArmorBonus = 0;
@@ -332,7 +332,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
             summonerId,
             encounter.hasArmor,
             encounter.armorId,
-            encounter.armorContract
+            address(encounter.armorContract)
         );
         return
             Combat.basicFullAttack(
@@ -384,7 +384,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
                     summonerId,
                     hasArmor,
                     armorId,
-                    armorContract
+                    address(armorContract)
                 )
             ) >=
             Monster.initiative(MONSTER_DEX, MONSTER_INITIATIVE_BONUS);
