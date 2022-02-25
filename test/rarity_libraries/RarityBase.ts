@@ -10,7 +10,7 @@ describe('RarityBase', function () {
     this.library = await mockLibrary()
   })
 
-  it.only('isApprovedOrOwnerOfSummoner', async function () {
+  it('isApprovedOrOwnerOfSummoner', async function () {
     expect(await this.library.rarity.isApprovedOrOwnerOfSummoner(1)).to.be.false
     this.library.rarityFakeCore.ownerOf
       .whenCalledWith(1)
@@ -18,11 +18,11 @@ describe('RarityBase', function () {
     expect(await this.library.rarity.isApprovedOrOwnerOfSummoner(1)).to.be.true
   })
 
-  it.only('level', async function () {
+  it('level', async function () {
     this.library.rarityFakeCore.level.whenCalledWith(1).returns(1)
     expect(await this.library.rarity.level(1)).to.equal(1)
   })
-  it.only('class', async function () {
+  it('class', async function () {
     this.library.rarityFakeCore.class.whenCalledWith(1).returns(1)
     expect(await this.library.rarity.class(1)).to.equal(1)
   })

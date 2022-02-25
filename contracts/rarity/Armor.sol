@@ -13,12 +13,12 @@ library Armor {
     function class(
         uint256 summonerId,
         uint256 armorId,
-        ICrafting armorContract
+        address armorContract
     ) public view returns (uint8) {
         // TODO: Monks should get a wisdom bonus and level bonus
         // http://www.d20srd.org/srd/classes/monk.htm
 
-        (, uint256 itemType, , ) = armorContract.items(armorId);
+        (, uint256 itemType, , ) = ICrafting(armorContract).items(armorId);
 
         (, , , , uint256 armorBonus, uint256 maxDexBonus, , , , ) = ARMOR_CODEX
             .item_by_id(itemType);
@@ -43,12 +43,12 @@ library Armor {
         uint256 summonerId,
         bool hasArmor,
         uint256 armorId,
-        ICrafting armorContract
+        address armorContract
     ) public view returns (int8) {
         if (!hasArmor) {
             return 0;
         }
-        (, uint256 itemType, , ) = armorContract.items(armorId);
+        (, uint256 itemType, , ) = ICrafting(armorContract).items(armorId);
         (, , uint256 _proficiency, , , , int256 penalty, , , ) = ARMOR_CODEX
             .item_by_id(itemType);
 
