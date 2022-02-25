@@ -22,7 +22,7 @@ library Combat {
         uint256 summonerId,
         bool hasWeapon,
         uint256 weaponId,
-        ICrafting weaponContract,
+        address weaponContract,
         uint8 targetAC,
         int8 weaponBonus,
         int8 _strModifier
@@ -52,7 +52,9 @@ library Combat {
         uint256 weaponCritical = 0;
 
         if (hasWeapon) {
-            (, uint256 itemType, , ) = weaponContract.items(weaponId);
+            (, uint256 itemType, , ) = ICrafting(weaponContract).items(
+                weaponId
+            );
             codex_items_weapons.weapon memory _weapon = Weapon.fromCodex(
                 itemType
             );

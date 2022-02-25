@@ -19,11 +19,11 @@ describe('Armor', function () {
     )
   })
 
-  it.only('class', async function () {
-    // 10 dex
+  it('class', async function () {
+    // 12 dex
     this.library.rarityFakeAttributes.ability_scores
       .whenCalledWith(1)
-      .returns([0, 10, 0, 0, 0, 0])
+      .returns([0, 12, 0, 0, 0, 0])
 
     // Item type: leather armor (2)
     this.mockArmorContract.items.whenCalledWith(1).returns([0, 2, 0, 0])
@@ -33,10 +33,23 @@ describe('Armor', function () {
       1,
       this.mockArmorContract.address
     )
-    // 2 armor bonus using leather armor, 0 dex bonus for 10 dex
+    // 2 armor bonus using leather armor, 1 dex bonus for 12 dex
     // even if not proficient, leather does not have a penalty
-    expect(res).to.equal(12)
+    expect(res).to.equal(13)
   })
 
-  it('proficiencyBonus', async function () {})
+  it('proficiencyBonus', async function () {
+    // Item type: scale mail (6)
+    this.mockArmorContract.items.whenCalledWith(1).returns([0, 6, 0, 0])
+
+    const res = await this.library.armor.proficiencyBonus(
+      1,
+      true,
+      1,
+      this.mockArmorContract.address
+    )
+
+    // Scale mail proficiency penalty is -4
+    expect(res).to.equal(-4)
+  })
 })

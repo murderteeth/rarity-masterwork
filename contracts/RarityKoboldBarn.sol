@@ -339,7 +339,7 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 summonerId,
                 encounter.hasWeapon,
                 encounter.weaponId,
-                encounter.weaponContract,
+                address(encounter.weaponContract),
                 targetAC,
                 weaponBonus,
                 armorProficiencyBonus
