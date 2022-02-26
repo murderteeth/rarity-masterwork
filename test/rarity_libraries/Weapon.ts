@@ -10,7 +10,7 @@ describe('Weapon', function () {
     this.library = await mockLibrary()
   })
 
-  it.only('fromCodex', async function () {
+  it('fromCodex', async function () {
     const result = await this.library.weapon.fromCodex(25) // battle axe
     expect(result.damage).to.equal(8)
     expect(result.critical).to.equal(3)

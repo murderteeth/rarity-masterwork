@@ -147,11 +147,11 @@ library Combat {
         uint32 _const
     ) internal pure returns (uint256 health) {
         int256 _mod = computeModifier(_const);
-        int256 _base_health = int256(healthByClass(_class)) + _mod;
-        if (_base_health <= 0) {
-            _base_health = 1;
+        int256 _baseHealth = int256(healthByClass(_class)) + _mod;
+        if (_baseHealth <= 0) {
+            _baseHealth = 1;
         }
-        health = uint256(_base_health) * _level;
+        health = uint256(_baseHealth) * _level;
     }
 
     function baseAttackBonusByClass(uint256 _class)
