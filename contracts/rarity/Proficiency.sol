@@ -65,7 +65,7 @@ library Proficiency {
             if (proficiencyReq == 1 || proficiencyReq == 2) {
                 return true;
             } else if (
-                (proficiencyReq == 2 && FeatCheck.armorMedium(summonerId)) ||
+                (FeatCheck.armorMedium(summonerId)) ||
                 (proficiencyReq == 3 && FeatCheck.armorHeavy(summonerId))
             ) {
                 return true;
