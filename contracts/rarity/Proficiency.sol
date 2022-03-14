@@ -183,6 +183,7 @@ library Proficiency {
                     weaponType == 48 || // kama
                     weaponType == 49 || // nunchaku
                     weaponType == 11 || // quarterstaff
+                    weaponType == 50 || // sia
                     weaponType == 51 || // siangham
                     weaponType == 17) // sling
             ) {
