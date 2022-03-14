@@ -10,12 +10,12 @@ import "./Weapon.sol";
 library Combat {
     function initiative(
         uint256 summonerId,
-        int8 bonus,
-        int8 dexModifier
+        int8 initiativeBonus,
+        int8 dexterityBonus
     ) public view returns (int8) {
-        int8 dMod = Attributes.dexterityModifier(summonerId) + dexModifier;
+        int8 dexModifier = Attributes.dexterityModifier(summonerId) + dexterityBonus;
         uint8 roll = Random.dn(8, 8, 20);
-        return int8(roll) + int8(dMod) + bonus;
+        return int8(roll) + int8(dexModifier) + initiativeBonus;
     }
 
     function basicFullAttack(
@@ -25,7 +25,7 @@ library Combat {
         address weaponContract,
         uint8 targetAC,
         int8 weaponBonus,
-        int8 _strModifier
+        int8 strengthBonus
     )
         public
         view
@@ -47,7 +47,7 @@ library Combat {
             int8(attackRoll) +
             weaponBonus;
         int8 strModifier = Attributes.strengthModifier(summonerId) +
-            _strModifier;
+            strengthBonus;
         int8 weaponDamage = strModifier;
         uint256 weaponCritical = 0;
 
