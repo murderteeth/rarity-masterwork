@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../interfaces/IRarity.sol";
 import "../interfaces/IRarityCraftingCommon.sol";
-import "hardhat/console.sol";
+import "../library/ForSummoners.sol";
 
 interface IToolsCodex {
   struct effects_struct {
@@ -34,7 +34,7 @@ interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
 }
 
-contract rarity_crafting_tools is ERC721Enumerable, IEffects {
+contract rarity_crafting_tools is ForSummoners, ERC721Enumerable, IEffects {
   uint8 public constant base_type = 4; //tools
   uint public next_token = 1;
 
@@ -61,9 +61,7 @@ contract rarity_crafting_tools is ERC721Enumerable, IEffects {
     return effects.skill_bonus[skill];
   }
 
-  function exchange(uint summoner, uint item_to_exchange) external {
-    require(authorizeSummoner(summoner), "!authorizeSummoner");
-
+  function exchange(uint summoner, uint item_to_exchange) external approvedForSummoner(summoner) {
     (uint8 tools_id, uint tools_cost,,,,) = tools_codex.artisans_tools();
 
     (uint8 item_to_exchange_base_type, uint8 item_to_exchange_item_type,,) = common_crafting.items(item_to_exchange);
@@ -79,15 +77,5 @@ contract rarity_crafting_tools is ERC721Enumerable, IEffects {
   }
 
   // TODO: tokenURI
-
-  function authorizeToken(uint token) internal view returns (bool) {
-    address owner = ownerOf(token);
-    return owner == msg.sender || getApproved(token) == msg.sender || isApprovedForAll(owner, msg.sender);
-  }
-
-  function authorizeSummoner(uint summoner) internal view returns (bool) {
-    address owner = rarity.ownerOf(summoner);
-    return owner == msg.sender || rarity.getApproved(summoner) == msg.sender || rarity.isApprovedForAll(owner, msg.sender);
-  }
 
 }
