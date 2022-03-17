@@ -1,11 +1,11 @@
 import chai, { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { baseType, goodsType, weaponType } from './lib/crafting'
-import { randomId } from './lib'
-import { Rarity, RarityCrafting, RarityCraftingTools__factory } from '../typechain'
+import { baseType, goodsType, weaponType } from './util/crafting'
+import { randomId } from './util'
+import { Rarity, RarityCrafting, RarityCraftingTools__factory, Summoner__factory } from '../typechain'
 
-chai.use(smock.matchers);
+chai.use(smock.matchers)
 
 describe('Crafting: Common Artisan\'s Tools', function () {
   before(async function () {
@@ -25,7 +25,11 @@ describe('Crafting: Common Artisan\'s Tools', function () {
       common: await smock.fake<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting', { 
         address: '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC' 
       }),
-      commonTools: await(await smock.mock<RarityCraftingTools__factory>('contracts/core/rarity_crafting_common_tools.sol:rarity_crafting_tools')).deploy()
+      commonTools: await(await smock.mock<RarityCraftingTools__factory>('contracts/core/rarity_crafting_common_tools.sol:rarity_crafting_tools', {
+        libraries: {
+          Summoner: (await(await smock.mock<Summoner__factory>('contracts/library/Summoner.sol:Summoner')).deploy()).address
+        }
+      })).deploy()
     }
 
     await this.crafting.commonTools.setVariable('tools_codex', this.codex.commonTools.address)
@@ -33,7 +37,6 @@ describe('Crafting: Common Artisan\'s Tools', function () {
     this.rarity.ownerOf
     .whenCalledWith(this.crafter)
     .returns(this.signer.address)
-
   })
 
   it('accepts exchange for common items worth at least 15 gp', async function () {
