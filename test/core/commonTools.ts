@@ -4,7 +4,7 @@ import { smock } from '@defi-wonderland/smock'
 import { baseType, goodsType, weaponType } from '../util/crafting'
 import { randomId } from '../util'
 import { Rarity, RarityCrafting, RarityCraftingTools__factory } from '../../typechain/core'
-import { Summoner__factory } from '../../typechain/library'
+import { Rarity__factory } from '../../typechain/library'
 
 chai.use(smock.matchers)
 
@@ -28,7 +28,7 @@ describe('Crafting: Common Artisan\'s Tools', function () {
       }),
       commonTools: await(await smock.mock<RarityCraftingTools__factory>('contracts/core/rarity_crafting_common_tools.sol:rarity_crafting_tools', {
         libraries: {
-          Summoner: (await(await smock.mock<Summoner__factory>('contracts/library/Summoner.sol:Summoner')).deploy()).address
+          Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
         }
       })).deploy()
     }

@@ -5,7 +5,7 @@ import { randomId } from '../util'
 import { Rarity } from '../../typechain/core'
 import { Summoner__factory } from '../../typechain/library'
 
-describe('Library: Summoner', function () {
+describe('Library: Rarity', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
@@ -19,7 +19,7 @@ describe('Library: Summoner', function () {
     })
 
     this.library = {
-      summoner: await(await smock.mock<Summoner__factory>('contracts/library/Summoner.sol:Summoner')).deploy()
+      rarity: await(await smock.mock<Summoner__factory>('contracts/library/Rarity.sol:Rarity')).deploy()
     }
 
     this.rarity.ownerOf
@@ -36,22 +36,22 @@ describe('Library: Summoner', function () {
   })
 
   it('rejects randos', async function () {
-    const contract = await this.library.summoner.connect(this.rando.address)
+    const contract = await this.library.rarity.connect(this.rando.address)
     expect(await contract.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.false
   })
 
   it('authorizes the owner of a summoner', async function () {
-    expect(await this.library.summoner.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
+    expect(await this.library.rarity.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
   })
 
   it('authorizes address approved for a summoner', async function () {
-    const contract = await this.library.summoner.connect(this.approved.address)
-    expect(await this.library.summoner.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
+    const contract = await this.library.rarity.connect(this.approved.address)
+    expect(await contract.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
   })
 
   it('authorizes address approved for all of the owner\'s summoners', async function () {
-    const contract = await this.library.summoner.connect(this.approvedForAll.address)
-    expect(await this.library.summoner.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
+    const contract = await this.library.rarity.connect(this.approvedForAll.address)
+    expect(await contract.isApprovedOrOwnerOfSummoner(this.summoner)).to.be.true
   })
 
 })
