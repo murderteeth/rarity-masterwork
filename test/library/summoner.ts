@@ -2,7 +2,8 @@ import chai, { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { randomId } from '../util'
-import { Rarity, Summoner__factory } from '../../typechain'
+import { Rarity } from '../../typechain/core'
+import { Summoner__factory } from '../../typechain/library'
 
 describe('Library: Summoner', function () {
   before(async function () {

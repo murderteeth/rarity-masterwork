@@ -1,9 +1,10 @@
 import chai, { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { baseType, goodsType, weaponType } from './util/crafting'
-import { randomId } from './util'
-import { Rarity, RarityCrafting, RarityCraftingTools__factory, Summoner__factory } from '../typechain'
+import { baseType, goodsType, weaponType } from '../util/crafting'
+import { randomId } from '../util'
+import { Rarity, RarityCrafting, RarityCraftingTools__factory } from '../../typechain/core'
+import { Summoner__factory } from '../../typechain/library'
 
 chai.use(smock.matchers)
 
