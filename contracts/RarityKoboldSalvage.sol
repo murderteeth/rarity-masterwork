@@ -4,12 +4,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./rarity/Auth.sol";
+import "./rarity/RarityBase.sol";
 
 interface IKoboldBarn {
     function summonerOf(uint256) external view returns (uint256);
 
-    function isWon(uint256) external view returns (bool);
+    function isEnded(uint256) external view returns (bool);
+
+    function monsterCount(uint256) external view returns (uint256);
 }
 
 contract RarityKoboldSalvage is ERC20 {
@@ -21,20 +23,21 @@ contract RarityKoboldSalvage is ERC20 {
         koboldBarn = barn;
     }
 
-    function claim(uint256 summonerId, uint256 koboldId)
+    function claim(uint256 summonerId, uint256 encounterId)
         external
         approvedForSummoner(summonerId)
     {
-        require(claimedKobolds[koboldId] == false, "!claimed");
-        require(koboldBarn.summonerOf(koboldId) == summonerId, "!summoner");
-        require(koboldBarn.isWon(koboldId), "!won");
-        _mint(_msgSender(), 1);
+        require(claimedKobolds[encounterId] == false, "!claimed");
+        require(koboldBarn.summonerOf(encounterId) == summonerId, "!summoner");
+        require(koboldBarn.isEnded(encounterId), "!ended");
+        _mint(_msgSender(), koboldBarn.monsterCount(encounterId) * 1e18);
+        claimedKobolds[encounterId] = true;
     }
 
     // Modifiers
 
     modifier approvedForSummoner(uint256 summonerId) {
-        if (Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
+        if (RarityBase.isApprovedOrOwnerOfSummoner(summonerId)) {
             _;
         } else {
             revert("!approved");

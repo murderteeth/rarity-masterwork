@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 import "./core/interfaces/ICodexItemsArmor.sol";
@@ -9,9 +8,9 @@ import "./core/interfaces/ICodexItemsWeapons.sol";
 import "./core/interfaces/ICrafting.sol";
 
 import "./rarity/Armor.sol";
-import "./rarity/Auth.sol";
 import "./rarity/Combat.sol";
 import "./rarity/FeatCheck.sol";
+import "./rarity/RarityBase.sol";
 import "./rarity/SkillCheck.sol";
 import "./rarity/Monster.sol";
 
@@ -20,12 +19,19 @@ contract RarityKoboldBarn is ERC721Enumerable {
 
     uint256 private constant DAY = 1 days;
     uint8 private constant SENSE_MOTIVE_DC = 15;
-    uint8 private constant MONSTER_AC = 15;
 
-    // Item contracts for armor and weapons. The items must implement
-    // the standard rarity codexes, specifically weapon and armor.
-    // We've added an extra boolean to the whitelist to differentiate
-    // between standard weapons and masterwork weapons
+    uint8 public constant MONSTER_AC = 15;
+    uint8 public constant MONSTER_HIT_DICE_ROLLS = 1;
+    uint8 public constant MONSTER_HIT_DICE_SIDES = 8;
+    uint8 public constant MONSTER_HIT_DICE_BONUS = 4;
+    uint8 public constant MONSTER_DEX = 13;
+    int8 public constant MONSTER_INITIATIVE_BONUS = 1;
+
+    /* Item contracts for armor and weapons. The items must implement
+     * the standard rarity codexes, specifically weapon and armor.
+     * We've added an extra boolean to the whitelist to differentiate
+     * between standard weapons and masterwork weapons
+     */
     struct ItemContract {
         ICrafting theContract;
         bool isMasterwork;
@@ -33,9 +39,10 @@ contract RarityKoboldBarn is ERC721Enumerable {
     mapping(address => ItemContract) private itemContracts;
 
     constructor(ICrafting _masterworkItems) ERC721("Rarity Kobold", "RK") {
-        //    Create the item whitelist
-        //    Your dungeon could make this list dynamic with an owner function
-        //    In our example we keep this static
+        /* Create the item whitelist
+         * Your dungeon could make this list dynamic with an owner function
+         * In our example we keep this static
+         */
         itemContracts[0xf41270836dF4Db1D28F7fd0935270e3A603e78cC]
             .theContract = ICrafting(
             0xf41270836dF4Db1D28F7fd0935270e3A603e78cC
@@ -46,109 +53,194 @@ contract RarityKoboldBarn is ERC721Enumerable {
         itemContracts[address(_masterworkItems)].isMasterwork = true;
     }
 
-    struct Kobold {
-        uint8 health;
-        uint256 summonerId;
-        uint8 summonerHealth;
-        uint256 armorId;
-        ICrafting armorContract;
+    struct Encounter {
+        uint8 health; // Health of the monster that is currently engaged with
+        uint256 summonerId; // ID of the summoner in this encounter
+        uint8 summonerHealth; // Summoner health
+        bool hasArmor; // If the summoner was sent with armor
+        uint256 armorId; // The armor token ID
+        ICrafting armorContract; // Armor contract must comply with ICrafting
+        bool hasWeapon;
         uint256 weaponId;
         ICrafting weaponContract;
         uint256 enteredAt;
+        uint256 lastAttack;
         bool summonerInitiative;
+        uint8 monsterCount;
     }
 
-    mapping(uint256 => uint256) public latestFight; // summonerId => koboldId
-    mapping(uint256 => Kobold) public kobolds; // tokenId => kobold
-    mapping(uint256 => uint256) public lastAttack; // summonerId => timestamp
-    mapping(uint256 => uint8) public koboldCount; // summonerId => count
+    mapping(uint256 => Encounter) public encounters;
+    mapping(uint256 => uint256) public summonerEncounters;
+
+    event Entered(
+        address owner,
+        uint256 summonerId,
+        uint8 summonerHealth,
+        uint8 monsterHealth,
+        bool hasWeapon,
+        uint256 weaponId,
+        address weaponContract,
+        bool hasArmor,
+        uint256 armorId,
+        address armorContract
+    );
+
+    event SummonerAttack(
+        uint256 summonerId,
+        uint8 attackRoll,
+        int8 attackScore,
+        uint8 damage,
+        uint8 criticalRoll,
+        uint8 criticalDamage,
+        uint8 remainingHealth
+    );
+
+    event MonsterAttack(
+        uint256 summonerId,
+        uint8 attackRoll,
+        uint8 attackScore,
+        uint8 damage,
+        uint8 remainingHealth
+    );
 
     /*
-     * Enter the barn to fight a Kobold
+     * Enter the barn to fight Kobolds
      * Send a weapon and/or armor with your summoner to help
      */
     function enter(
         uint256 summonerId,
+        bool hasWeapon,
         uint256 weaponId,
         address weaponContract,
+        bool hasArmor,
         uint256 armorId,
         address armorContract
-    )
-        external
-        approvedForSummoner(summonerId)
-        canAttackYet(summonerId)
-        validItems(weaponId, weaponContract, armorId, armorContract)
-    {
-        Kobold storage kobold = _startFight(
+    ) external approvedForSummoner(summonerId) {
+        require(summonerEncounters[summonerId] == 0, "!encounter");
+        require(
+            validItems(
+                hasWeapon,
+                weaponId,
+                weaponContract,
+                hasArmor,
+                armorId,
+                armorContract
+            ),
+            "!items"
+        );
+        Encounter storage encounter = _createEncounter(
             summonerId,
+            hasWeapon,
             weaponId,
             ICrafting(weaponContract),
+            hasArmor,
             armorId,
             ICrafting(armorContract)
         );
-        koboldCount[summonerId]++;
-        _fight(kobold, summonerId, true);
+        _fight(encounter, summonerId, true);
     }
 
-    // Attack to start or continue a fight
+    /*
+     * Remove the summoner from its encounter
+     * This will set the summoner's health to 0, as if it lost
+     */
+    function leave(uint256 summonerId)
+        external
+        approvedForSummoner(summonerId)
+    {
+        require(summonerEncounters[summonerId] != 0, "!encounter");
+        encounters[summonerEncounters[summonerId]].summonerHealth = 0;
+    }
+
+    /*
+     * The main attack function. Since any summoner can only have a single encounter,
+     * we only need to know the summoner token id.
+     */
     function attack(uint256 summonerId)
         external
         approvedForSummoner(summonerId)
         canAttackYet(summonerId)
     {
-        // Get the summoner's latest kobold
-        uint256 koboldId = latestFight[summonerId];
-        require(!isEnded(koboldId), "!ended");
+        require(!isEnded(summonerEncounters[summonerId]), "!ended");
 
-        Kobold storage latestKobold = kobolds[koboldId];
+        // A bit of a race condition for people who sell/transfer their
+        // summoner if in the middle of an encounter may well not be able
+        // to finish, since the encounter is not automatically transferred
+        require(
+            _isApprovedOrOwner(_msgSender(), summonerEncounters[summonerId]),
+            "!encounter"
+        );
 
-        // TODO here's a weird scenario - what if this summoner is attacking this
-        // kobold, but the kobold battle transferred to another wallet?
-        require(_isApprovedOrOwner(_msgSender(), koboldId), "!kobold");
-
-        _fight(latestKobold, summonerId, false);
+        _fight(encounters[summonerEncounters[summonerId]], summonerId, false);
     }
 
-    function summonerOf(uint256 koboldId) public view returns (uint256) {
-        return kobolds[koboldId].summonerId;
+    /*
+     * Helper - How many monsters have been defeated in this encounter?
+     */
+    function monsterCount(uint256 encounterId) public view returns (uint256) {
+        return encounters[encounterId].monsterCount;
     }
 
-    function isWon(uint256 koboldId) public view returns (bool) {
-        return kobolds[koboldId].health == 0;
+    /*
+     * Helper - Whose summoner is this encounter?
+     */
+    function summonerOf(uint256 encounterId) public view returns (uint256) {
+        return encounters[encounterId].summonerId;
     }
 
-    function isEnded(uint256 koboldId) public view returns (bool) {
-        Kobold memory kobold = kobolds[koboldId];
-        return kobold.health == 0 || kobold.summonerHealth == 0;
+    /*
+     * Helper - The encounter is over once the summoner has defeated 10
+     * kobold monsters or the summoner has been knocked out.
+     */
+    function isEnded(uint256 encounterId) public view returns (bool) {
+        return
+            encounters[encounterId].monsterCount == 10 ||
+            encounters[encounterId].summonerHealth == 0;
     }
 
     function _fight(
-        Kobold storage kobold,
+        Encounter storage encounter,
         uint256 summonerId,
-        bool firstAttack
+        bool firstEncounter
     ) internal {
-        lastAttack[summonerId] = block.timestamp;
+        encounter.lastAttack = block.timestamp;
+        uint8 monsterAC = MONSTER_AC;
 
-        if (kobold.summonerInitiative) {
-            _summonerAttack(kobold, summonerId, firstAttack);
-            _koboldAttack(kobold, summonerId);
+        if (encounter.health == 0) {
+            _nextMonster(encounter);
+            if (
+                firstEncounter &&
+                SkillCheck.senseMotive(summonerId, SENSE_MOTIVE_DC)
+            ) {
+                monsterAC -= 1;
+            }
+        }
+
+        if (encounter.summonerInitiative) {
+            _summonerAttack(encounter, summonerId, monsterAC);
+            _monsterAttack(encounter, summonerId);
         } else {
-            _koboldAttack(kobold, summonerId);
-            _summonerAttack(kobold, summonerId, firstAttack);
+            _monsterAttack(encounter, summonerId);
+            _summonerAttack(encounter, summonerId, monsterAC);
         }
     }
 
-    function _koboldAttack(Kobold storage kobold, uint256 summonerId) internal {
-        if (kobold.health > 0) {
-            uint8 summonerAC = Armor.class(
-                summonerId,
-                kobold.armorId,
-                kobold.armorContract
-            );
+    function _monsterAttack(Encounter storage encounter, uint256 summonerId)
+        internal
+    {
+        if (encounter.health > 0) {
+            uint8 summonerAC = 0;
+            if (encounter.hasArmor) {
+                summonerAC = Armor.class(
+                    summonerId,
+                    encounter.armorId,
+                    address(encounter.armorContract)
+                );
+            }
             uint8 masterworkArmorBonus = 0;
             if (
-                kobold.armorId != 0 &&
-                itemContracts[address(kobold.armorContract)].isMasterwork
+                encounter.hasArmor &&
+                itemContracts[address(encounter.armorContract)].isMasterwork
             ) {
                 masterworkArmorBonus = 1;
             }
@@ -163,128 +255,171 @@ contract RarityKoboldBarn is ERC721Enumerable {
                 -1,
                 3
             );
-            console.log("Summoner fwacked with damage", kDamage);
-            if (kobold.summonerHealth >= kDamage) {
-                kobold.summonerHealth -= kDamage;
+            if (encounter.summonerHealth <= kDamage) {
+                encounter.summonerHealth = 0;
+            } else {
+                encounter.summonerHealth -= kDamage;
             }
-            // TODO: emit kobold attack. ouch!
+            emit MonsterAttack(
+                summonerId,
+                kRoll,
+                kScore,
+                kDamage,
+                encounter.summonerHealth
+            );
         }
     }
 
     function _summonerAttack(
-        Kobold storage kobold,
+        Encounter storage encounter,
         uint256 summonerId,
-        bool firstAttack
+        uint8 monsterAC
     ) internal {
-        uint8 _monsterAC = MONSTER_AC;
-        if (
-            firstAttack && SkillCheck.senseMotive(summonerId, SENSE_MOTIVE_DC)
-        ) {
-            _monsterAC -= 1;
-        }
-        if (kobold.health > 0) {
-            uint8 masterworkWeaponBonus = 0;
+        if (encounter.health > 0) {
+            int8 masterworkWeaponBonus = 0;
             if (
-                kobold.weaponId != 0 &&
-                itemContracts[address(kobold.weaponContract)].isMasterwork
+                encounter.hasWeapon &&
+                itemContracts[address(encounter.weaponContract)].isMasterwork
             ) {
                 masterworkWeaponBonus = 1;
             }
             (
                 uint8 attackRoll,
-                uint8 attackScore,
+                int8 attackScore,
                 uint8 damage,
                 uint8 criticalRoll,
                 uint8 criticalDamage
-            ) = Combat.basicFullAttack(
+            ) = _basicFullAttack(
                     summonerId,
-                    kobold.weaponId,
-                    kobold.weaponContract,
-                    _monsterAC
+                    encounter,
+                    monsterAC,
+                    masterworkWeaponBonus
                 );
-            // TODO: Emit Attack
-            uint8 fullDamage = damage + criticalDamage;
-            console.log("Kobold fwacked with damage", fullDamage);
-            if (fullDamage > kobold.summonerHealth) {
-                kobold.health = 0;
+            if (encounter.health <= (damage + criticalDamage)) {
+                encounter.health = 0;
             } else {
-                kobold.health -= fullDamage;
+                encounter.health -= (damage + criticalDamage);
             }
+            emit SummonerAttack(
+                summonerId,
+                attackRoll,
+                attackScore,
+                damage,
+                criticalRoll,
+                criticalDamage,
+                encounter.health
+            );
         }
     }
 
-    function _startFight(
+    function _basicFullAttack(
         uint256 summonerId,
+        Encounter memory encounter,
+        uint8 targetAC,
+        int8 weaponBonus
+    )
+        internal
+        view
+        returns (
+            uint8 attackRoll,
+            int8 attackScore,
+            uint8 damage,
+            uint8 criticalRoll,
+            uint8 criticalDamage
+        )
+    {
+        int8 armorProficiencyBonus = Armor.proficiencyBonus(
+            summonerId,
+            encounter.hasArmor,
+            encounter.armorId,
+            address(encounter.armorContract)
+        );
+        return
+            Combat.basicFullAttack(
+                summonerId,
+                encounter.hasWeapon,
+                encounter.weaponId,
+                address(encounter.weaponContract),
+                targetAC,
+                weaponBonus,
+                armorProficiencyBonus
+            );
+    }
+
+    function _nextMonster(Encounter storage encounter) internal {
+        encounter.monsterCount += 1;
+        encounter.health = _monsterStartingHealth();
+    }
+
+    function _createEncounter(
+        uint256 summonerId,
+        bool hasWeapon,
         uint256 weaponId,
         ICrafting weaponContract,
+        bool hasArmor,
         uint256 armorId,
         ICrafting armorContract
-    ) internal returns (Kobold storage) {
-        require(koboldCount[summonerId] < 11, "!max");
+    ) internal returns (Encounter storage) {
+        require(
+            encounters[summonerEncounters[summonerId]].enteredAt == 0,
+            "!alreadyEntered"
+        );
+
         uint256 newTokenId = nextToken;
         _safeMint(_msgSender(), newTokenId);
+        summonerEncounters[summonerId] = newTokenId;
 
-        // Sneak attack means the kobold could start with 9 health
-        latestFight[summonerId] = newTokenId;
-        kobolds[newTokenId].health = _koboldStartingHealth();
-        kobolds[newTokenId].summonerId = summonerId;
-        kobolds[newTokenId].weaponId = weaponId;
-        kobolds[newTokenId].weaponContract = weaponContract;
-        kobolds[newTokenId].armorId = armorId;
-        kobolds[newTokenId].armorContract = armorContract;
-
-        kobolds[newTokenId].summonerHealth = Combat.summonerHp(summonerId);
-        kobolds[newTokenId].enteredAt = block.timestamp;
-
-        kobolds[newTokenId].summonerInitiative =
+        encounters[newTokenId].summonerId = summonerId;
+        encounters[newTokenId].hasWeapon = hasWeapon;
+        encounters[newTokenId].weaponId = weaponId;
+        encounters[newTokenId].weaponContract = weaponContract;
+        encounters[newTokenId].hasArmor = hasArmor;
+        encounters[newTokenId].armorId = armorId;
+        encounters[newTokenId].armorContract = armorContract;
+        encounters[newTokenId].summonerInitiative =
             Combat.initiative(
                 summonerId,
-                int8(FeatCheck.initiative(summonerId))
+                int8(FeatCheck.initiative(summonerId)),
+                Armor.proficiencyBonus(
+                    summonerId,
+                    hasArmor,
+                    armorId,
+                    address(armorContract)
+                )
             ) >=
-            Monster.initiative(13, 1); // Kobolds have 13 dex, +1 initiative bonus
+            Monster.initiative(MONSTER_DEX, MONSTER_INITIATIVE_BONUS);
 
-        lastAttack[summonerId] = block.timestamp;
+        encounters[newTokenId].summonerHealth = Combat.summonerHp(summonerId);
+        encounters[newTokenId].enteredAt = block.timestamp;
 
         nextToken += 1;
 
-        return kobolds[newTokenId];
+        return encounters[newTokenId];
     }
 
-    function _koboldStartingHealth() internal view returns (uint8) {
-        uint8 hp = Monster.hp(1, 8, 4);
+    function _monsterStartingHealth() internal view returns (uint8) {
+        uint8 hp = Monster.hp(
+            MONSTER_HIT_DICE_ROLLS,
+            MONSTER_HIT_DICE_SIDES,
+            MONSTER_HIT_DICE_BONUS
+        );
         return hp;
     }
 
-    // Modifiers
-
-    modifier approvedForSummoner(uint256 summonerId) {
-        if (Auth.isApprovedOrOwnerOfSummoner(summonerId)) {
-            _;
-        } else {
-            revert("!approved");
-        }
-    }
-
-    modifier canAttackYet(uint256 summonerId) {
-        if (block.timestamp > lastAttack[summonerId] + DAY) {
-            _;
-        } else {
-            revert("!turn");
-        }
-    }
-
-    modifier validItems(
+    function validItems(
+        bool hasWeapon,
         uint256 weaponId,
         address weaponContract,
+        bool hasArmor,
         uint256 armorId,
         address armorContract
-    ) {
-        if (!validItem(weaponId, weaponContract, 3)) {
-            revert("!weapon");
-        } else if (!validItem(armorId, armorContract, 2)) {
-            revert("!armor");
+    ) internal view returns (bool) {
+        if (hasWeapon && !validItem(weaponId, weaponContract, 3)) {
+            return false;
+        } else if (hasArmor && !validItem(armorId, armorContract, 2)) {
+            return false;
         } else {
-            _;
+            return true;
         }
     }
 
@@ -298,9 +433,6 @@ contract RarityKoboldBarn is ERC721Enumerable {
         address itemContract,
         uint256 requiredBase
     ) internal view returns (bool) {
-        if (tokenId == 0) {
-            return true; // None sent, that's fine
-        }
         (uint8 itemBase, uint8 itemType, , ) = itemContracts[itemContract]
             .theContract
             .items(tokenId);
@@ -316,6 +448,27 @@ contract RarityKoboldBarn is ERC721Enumerable {
             return false;
         } else {
             return true;
+        }
+    }
+
+    // Modifiers
+
+    modifier approvedForSummoner(uint256 summonerId) {
+        if (RarityBase.isApprovedOrOwnerOfSummoner(summonerId)) {
+            _;
+        } else {
+            revert("!approved");
+        }
+    }
+
+    modifier canAttackYet(uint256 summonerId) {
+        if (
+            block.timestamp >=
+            encounters[summonerEncounters[summonerId]].lastAttack + DAY
+        ) {
+            _;
+        } else {
+            revert("!turn");
         }
     }
 }

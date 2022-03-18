@@ -32,7 +32,11 @@ const config: HardhatUserConfig = {
         "*": {
           "*": ["storageLayout"]
         }
-      }
+      },
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
     }
   },
   paths: {
