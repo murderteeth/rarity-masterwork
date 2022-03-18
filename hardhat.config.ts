@@ -1,12 +1,14 @@
 import * as dotenv from "dotenv";
 
 import { HardhatUserConfig, task, subtask } from "hardhat/config";
-import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
+import { TASK_CLEAN, TASK_COMPILE_SOLIDITY_COMPILE_JOBS, TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "hardhat-abi-exporter";
+import { promise as glob } from 'glob-promise'
+import shell from 'shelljs'
 
 dotenv.config();
 
@@ -17,6 +19,39 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS)
   });
   return paths;
 });
+
+async function makeTypes(subfolder: string) {
+  const temp = '.temp'
+  shell.mkdir('-p', temp)
+  const files = await glob(`artifacts/contracts/${subfolder}/**/+([a-zA-Z0-9_]).json`)
+  files.forEach(file => {
+    shell.cp(file, `${temp}/`)    
+  })
+  shell.exec(`npx typechain --target ethers-v5 --out-dir typechain/${subfolder} ${temp}/*`)
+  shell.rm('-rf', temp)
+}
+
+subtask(TASK_COMPILE_SOLIDITY_COMPILE_JOBS).setAction(
+  async (taskArgs, { run }, runSuper) => {
+    const compileSolOutput = await runSuper(taskArgs)
+    if(compileSolOutput.artifactsEmittedPerJob.length > 0) {
+      await makeTypes('core')
+      await makeTypes('interfaces')
+      await makeTypes('library')
+    }
+    return compileSolOutput
+  },
+)
+
+task(TASK_CLEAN,
+  async ({ global }: { global: boolean }, { config }, runSuper) => {
+    if (global) {
+      return
+    }
+    shell.rm('-rf', './typechain')
+    await runSuper()
+  },
+)
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -48,10 +83,6 @@ const config: HardhatUserConfig = {
   paths: {
     sources: "./contracts"
   },
-  typechain: {
-    outDir: "./typechain",
-    target: "ethers-v5"
-  },
   networks: {
     hardhat: {
       loggingEnabled: false,
@@ -68,6 +99,11 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.FTMSCAN_API_KEY,
   },
+  abiExporter: {
+    path: '.abis',
+    runOnCompile: true,
+    clear: true
+  }
 };
 
 export default config;
