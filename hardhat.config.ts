@@ -81,6 +81,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('core', 'skills.sol/rarity_skills.json', 'IRaritySkills')
   makeInterface('core', 'wRGLD.sol/wrapped_rarity_gold.json', 'IRarityWGold')
 
+  makeInterface('codex', 'codex-base-random-2.sol/codex.json', 'IRarityCodexBaseRandom2')
   makeInterface('codex', 'codex-base-random.sol/codex.json', 'IRarityCodexBaseRandom')
   makeInterface('codex', 'codex-class-skills.sol/codex.json', 'IRarityCodexClassSkills')
   makeInterface('codex', 'codex-conditions.sol/codex.json', 'IRarityCodexConditions')
