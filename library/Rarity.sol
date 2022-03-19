@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "../interfaces/IRarity.sol";
+import "../interfaces/core/IRarity.sol";
 
 library Rarity {
   IRarity public constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);

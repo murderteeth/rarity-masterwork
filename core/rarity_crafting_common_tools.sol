@@ -2,33 +2,10 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "../interfaces/IRarity.sol";
-import "../interfaces/IRarityCraftingCommon.sol";
+import "../interfaces/codex/IRarityCodexCommonTools.sol";
+import "../interfaces/core/IRarity.sol";
+import "../interfaces/core/IRarityCommonCrafting.sol";
 import "../library/ForSummoners.sol";
-
-interface IToolsCodex {
-  struct effects_struct {
-    int[36] skill_bonus;
-  }
-
-  function item_by_id(uint _id) external pure returns(
-    uint8 id,
-    uint cost,
-    uint weight,
-    string memory name,
-    string memory description,
-    effects_struct memory effects
-  );
-
-  function artisans_tools() external pure returns (
-    uint8 id,
-    uint cost,
-    uint weight,
-    string memory name,
-    string memory description,
-    effects_struct memory effects
-  );
-}
 
 interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
@@ -39,8 +16,8 @@ contract rarity_crafting_tools is ForSummoners, ERC721Enumerable, IEffects {
   uint public next_token = 1;
 
   IRarity rarity = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
-  IRarityCraftingCommon common_crafting = IRarityCraftingCommon(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-  IToolsCodex tools_codex = IToolsCodex(0x000000000000000000000000000000000000dEaD);
+  IRarityCommonCrafting common_crafting = IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+  IRarityCodexCommonTools tools_codex = IRarityCodexCommonTools(0x000000000000000000000000000000000000dEaD);
 
   event Exchanged(address indexed owner, uint token_id, uint summoner, uint8 base_type, uint8 item_type, uint exchanged_item);
 
@@ -57,7 +34,7 @@ contract rarity_crafting_tools is ForSummoners, ERC721Enumerable, IEffects {
 
   function skill_bonus(uint token, uint8 skill) override external view returns (int) {
     Item memory item = items[token];
-    (,,,,,IToolsCodex.effects_struct memory effects) = tools_codex.item_by_id(item.item_type);
+    (,,,,,codex.effects_struct memory effects) = tools_codex.item_by_id(item.item_type);
     return effects.skill_bonus[skill];
   }
 
