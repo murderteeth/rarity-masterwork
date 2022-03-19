@@ -4,7 +4,7 @@ import { Attributes, Rarity } from '../../typechain/core'
 import { Attributes__factory } from '../../typechain/library/factories/Attributes__factory'
 import { randomId } from '../util'
 
-describe.only('Library: Attributes', function () {
+describe('Library: Attributes', function () {
   before(async function () {
     this.summoner = randomId()
 
