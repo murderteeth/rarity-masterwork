@@ -11,7 +11,7 @@ interface IEffects {
   function skill_bonus(uint token, uint8 skill) external view returns (int);
 }
 
-contract rarity_crafting_tools is ForSummoners, ERC721Enumerable, IEffects {
+contract rarity_crafting_tools is ERC721Enumerable, IEffects, ForSummoners {
   uint8 public constant base_type = 4; //tools
   uint public next_token = 1;
 

@@ -15,8 +15,8 @@ library Rarity {
   }
 
   function isApprovedOrOwnerOfSummoner(uint256 summoner) public view returns (bool) {
-    return RARITY.getApproved(summoner) == msg.sender ||
-      RARITY.ownerOf(summoner) == msg.sender ||
-      RARITY.isApprovedForAll(RARITY.ownerOf(summoner), msg.sender);
+    return RARITY.getApproved(summoner) == msg.sender
+      || RARITY.ownerOf(summoner) == msg.sender
+      || RARITY.isApprovedForAll(RARITY.ownerOf(summoner), msg.sender);
   }
 }
