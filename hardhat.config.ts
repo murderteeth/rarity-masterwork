@@ -8,7 +8,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-abi-exporter";
 import { promise as glob } from 'glob-promise'
-import shell from 'shelljs'
+import shell, { ShellString } from 'shelljs'
 
 dotenv.config();
 
@@ -36,7 +36,6 @@ subtask(TASK_COMPILE_SOLIDITY_COMPILE_JOBS).setAction(
     const compileSolOutput = await runSuper(taskArgs)
     if(compileSolOutput.artifactsEmittedPerJob.length > 0) {
       await makeTypes('core')
-      await makeTypes('interfaces')
       await makeTypes('library')
     }
     return compileSolOutput
@@ -62,6 +61,38 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
+
+function makeInterface(subfolder: string, abiPath: string, interfaceName: string) {
+  shell.mkdir('-p', `contracts/interfaces/${subfolder}`)
+  const flatJson = JSON.stringify(JSON.parse(shell.cat(`.abis/contracts/${subfolder}/${abiPath}`)))
+  new ShellString(flatJson).exec(`npx abi-to-sol ${interfaceName}`).to(`contracts/interfaces/${subfolder}/${interfaceName}.sol`)
+}
+
+task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction(async () => {
+  makeInterface('core', 'attributes.sol/rarity_attributes.json', 'IRarityAttributes')
+  makeInterface('core', 'base.sol/codex.json', 'IRarityBase')
+  makeInterface('core', 'feats.sol/rarity_feats.json', 'IRarityFeats')
+  makeInterface('core', 'gold.sol/rarity_gold.json', 'IRarityGold')
+  makeInterface('core', 'namesv2.sol/rarity_names.json', 'IRarityNames2')
+  makeInterface('core', 'rarity_crafting_common_tools.sol/rarity_crafting_tools.json', 'IRarityCommonTools')
+  makeInterface('core', 'rarity_crafting_common.sol/rarity_crafting.json', 'IRarityCommonCrafting')
+  makeInterface('core', 'rarity_crafting-materials-1.sol/rarity_crafting_materials.json', 'IRarityCommonMaterials')
+  makeInterface('core', 'rarity.sol/rarity.json', 'IRarity')
+  makeInterface('core', 'skills.sol/rarity_skills.json', 'IRaritySkills')
+  makeInterface('core', 'wRGLD.sol/wrapped_rarity_gold.json', 'IRarityWGold')
+
+  makeInterface('codex', 'codex-base-random.sol/codex.json', 'IRarityCodexBaseRandom')
+  makeInterface('codex', 'codex-class-skills.sol/codex.json', 'IRarityCodexClassSkills')
+  makeInterface('codex', 'codex-conditions.sol/codex.json', 'IRarityCodexConditions')
+  makeInterface('codex', 'codex-feats-1.sol/codex.json', 'IRarityCodexFeats1')
+  makeInterface('codex', 'codex-feats-2.sol/codex.json', 'IRarityCodexFeats2')
+  makeInterface('codex', 'codex-gambits.sol/gambits.json', 'IRarityCodexGambits')
+  makeInterface('codex', 'codex-items-armor.sol/codex.json', 'IRarityCodexCommonArmor')
+  makeInterface('codex', 'codex-items-goods.sol/codex.json', 'IRarityCodexCommonGoods')
+  makeInterface('codex', 'codex-items-tools.sol/codex.json', 'IRarityCodexCommonTools')
+  makeInterface('codex', 'codex-items-weapons.sol/codex.json', 'IRarityCodexCommonWeapons')
+  makeInterface('codex', 'codex-skills.sol/codex.json', 'IRarityCodexSkills')
+})
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
