@@ -1,9 +1,9 @@
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { randomId } from '../util'
 import { Rarity } from '../../typechain/core'
-import { Summoner__factory } from '../../typechain/library'
+import { Rarity__factory } from '../../typechain/library'
 
 describe('Library: Rarity', function () {
   before(async function () {
@@ -19,7 +19,7 @@ describe('Library: Rarity', function () {
     })
 
     this.library = {
-      rarity: await(await smock.mock<Summoner__factory>('contracts/library/Rarity.sol:Rarity')).deploy()
+      rarity: await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()
     }
 
     this.rarity.ownerOf

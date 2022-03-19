@@ -8,7 +8,7 @@ import { Rarity__factory } from '../../typechain/library'
 
 chai.use(smock.matchers)
 
-describe('Crafting: Common Artisan\'s Tools', function () {
+describe('Core: Common Artisan\'s Tools', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
