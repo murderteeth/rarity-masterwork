@@ -4,7 +4,8 @@
     "test": "npx hardhat test",
     "test-fast": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "gas-report": "REPORT_GAS=true npx hardhat test",
-    "start-fork": "npx hardhat node --hostname 0.0.0.0 --fork https://rpc.ftm.tools"
+    "start-fork": "npx hardhat node --hostname 0.0.0.0 --fork https://rpc.ftm.tools",
+    "random-uint256": "npx ts-node scripts/randomUint256.ts"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.0.7",
