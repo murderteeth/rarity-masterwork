@@ -33,7 +33,7 @@ describe('Core: Common Artisan\'s Tools', function () {
       })).deploy()
     }
 
-    await this.crafting.commonTools.setVariable('tools_codex', this.codex.commonTools.address)
+    await this.crafting.commonTools.setVariable('COMMON_TOOLS_CODEX', this.codex.commonTools.address)
 
     this.rarity.ownerOf
     .whenCalledWith(this.crafter)

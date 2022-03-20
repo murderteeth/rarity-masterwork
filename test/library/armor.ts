@@ -4,9 +4,6 @@ import { randomId } from '../util'
 import { armorType, baseType } from '../util/crafting'
 import { RarityAttributes, RarityCrafting } from '../../typechain/core'
 import { Armor__factory } from '../../typechain/library/factories/Armor__factory'
-import { Proficiency__factory } from '../../typechain/library/factories/Proficiency__factory'
-import { Rarity__factory } from '../../typechain/library'
-import { Feats__factory } from '../../typechain/library/factories/Feats__factory'
 
 describe('Library: Armor', function () {
   before(async function () {
@@ -24,20 +21,12 @@ describe('Library: Armor', function () {
     this.library = {
       armor: await(await smock.mock<Armor__factory>('contracts/library/Armor.sol:Armor', {
         libraries: {
-          Attributes: (await (await smock.mock<Armor__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
-          Proficiency: (await (await smock.mock<Proficiency__factory>('contracts/library/Proficiency.sol:Proficiency', {
-            libraries: {
-              Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
-              Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address
-            }
-          })).deploy()).address
+          Attributes: (await (await smock.mock<Armor__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address
         }
       })).deploy()
     }
   })
 
-  // 2 armor bonus using leather armor, 1 dex bonus for 12 dex
-  // All character classes are proficient with leather (light) armor
   it('computes armor class', async function () {
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
