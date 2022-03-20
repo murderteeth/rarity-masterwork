@@ -36,6 +36,8 @@ subtask(TASK_COMPILE_SOLIDITY_COMPILE_JOBS).setAction(
     const compileSolOutput = await runSuper(taskArgs)
     if(compileSolOutput.artifactsEmittedPerJob.length > 0) {
       await makeTypes('core')
+      await makeTypes('interfaces/codex')
+      await makeTypes('interfaces/core')
       await makeTypes('library')
     }
     return compileSolOutput
