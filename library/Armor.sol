@@ -9,8 +9,8 @@ import "./Proficiency.sol";
 // TODO: Monks should get a wisdom and level bonus
 // http://www.d20srd.org/srd/classes/monk.htm
 library Armor {
-  IRarityCodexCommonArmor internal constant ARMOR_CODEX =
-    IRarityCodexCommonArmor(0xf5114A952Aca3e9055a52a87938efefc8BB7878C);
+  IRarityCodexCommonArmor internal constant ARMOR_CODEX 
+    = IRarityCodexCommonArmor(0xf5114A952Aca3e9055a52a87938efefc8BB7878C);
 
   function class(
     uint256 summoner,

@@ -4,7 +4,8 @@ pragma solidity ^0.8.7;
 import "../interfaces/core/IRarityAttributes.sol";
 
 library Attributes {
-  IRarityAttributes private constant ATTRIBUTES = IRarityAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
+  IRarityAttributes private constant ATTRIBUTES 
+    = IRarityAttributes(0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1);
 
   struct Abilities {
     uint32 strength;

@@ -6,8 +6,8 @@ import "./Rarity.sol";
 import "./Feats.sol";
 
 library Proficiency {
-  IRarityCodexCommonWeapons public constant CODEX_COMMON_WEAPONS =
-    IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
+  IRarityCodexCommonWeapons public constant CODEX_COMMON_WEAPONS 
+    = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
   // TODO: Tower shield feat 96, armor type 18
   function isProficientWithArmor(
