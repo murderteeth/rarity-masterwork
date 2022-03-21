@@ -3,8 +3,9 @@ import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { baseType, goodsType, weaponType } from '../util/crafting'
 import { randomId } from '../util'
-import { Rarity, RarityCrafting, RarityCraftingTools__factory } from '../../typechain/core'
+import { RarityCrafting, RarityCraftingTools__factory } from '../../typechain/core'
 import { Rarity__factory } from '../../typechain/library'
+import { fakeRarity } from '../util/fakes'
 
 chai.use(smock.matchers)
 
@@ -15,12 +16,10 @@ describe('Core: Common Artisan\'s Tools', function () {
     this.crafter = randomId()
 
     this.codex = {
-      commonTools: await (await await smock.mock('contracts/codex/codex-items-tools.sol:codex')).deploy()
+      commonTools: await (await smock.mock('contracts/codex/codex-items-tools.sol:codex')).deploy()
     }
 
-    this.rarity = await smock.fake<Rarity>('contracts/core/rarity.sol:rarity', { 
-      address: '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb' 
-    })
+    this.rarity = await fakeRarity()
 
     this.crafting = {
       common: await smock.fake<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting', { 

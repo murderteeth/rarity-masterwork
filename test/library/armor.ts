@@ -2,21 +2,16 @@ import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { randomId } from '../util'
 import { armorType, baseType } from '../util/crafting'
-import { RarityAttributes, RarityCrafting } from '../../typechain/core'
 import { Armor__factory } from '../../typechain/library/factories/Armor__factory'
+import { fakeAttributes, fakeCommonCrafting } from '../util/fakes'
 
 describe('Library: Armor', function () {
   before(async function () {
     this.summoner = randomId()
     this.leatherArmor = randomId()
 
-    this.attributes = await smock.fake<RarityAttributes>('contracts/core/attributes.sol:rarity_attributes', { 
-      address: '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
-    })
-
-    this.commonCrafting = await smock.fake<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting', { 
-      address: '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC'
-    })
+    this.attributes = await fakeAttributes()
+    this.commonCrafting = await fakeCommonCrafting()
 
     this.library = {
       armor: await(await smock.mock<Armor__factory>('contracts/library/Armor.sol:Armor', {

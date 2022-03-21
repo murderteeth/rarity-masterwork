@@ -2,8 +2,8 @@ import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { randomId } from '../util'
-import { Rarity } from '../../typechain/core'
 import { Rarity__factory } from '../../typechain/library'
+import { fakeRarity } from '../util/fakes'
 
 describe('Library: Rarity', function () {
   before(async function () {
@@ -14,9 +14,7 @@ describe('Library: Rarity', function () {
     this.rando = this.signers[3]
     this.summoner = randomId()
 
-    this.rarity = await smock.fake<Rarity>('contracts/core/rarity.sol:rarity', { 
-      address: '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb' 
-    })
+    this.rarity = await fakeRarity()
 
     this.library = {
       rarity: await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()

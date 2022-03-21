@@ -1,16 +1,14 @@
 import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
-import { Attributes, Rarity } from '../../typechain/core'
 import { Attributes__factory } from '../../typechain/library/factories/Attributes__factory'
 import { randomId } from '../util'
+import { fakeAttributes } from '../util/fakes'
 
 describe('Library: Attributes', function () {
   before(async function () {
     this.summoner = randomId()
 
-    this.attributes = await smock.fake<Attributes>('contracts/core/attributes.sol:rarity_attributes', { 
-      address: '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
-    })
+    this.attributes = await fakeAttributes()
 
     this.library = {
       attributes: await(await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()
