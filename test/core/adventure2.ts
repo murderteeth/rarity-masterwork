@@ -10,7 +10,7 @@ import { feats } from '../util/feats'
 
 chai.use(smock.matchers)
 
-describe('Core: Adventure (II)', function () {
+describe.only('Core: Adventure (II)', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
@@ -53,14 +53,14 @@ describe('Core: Adventure (II)', function () {
     const summoner = this.summoner()
     const token = await this.adventure.next_token()
     await expect(this.adventure.start(summoner)).to.not.be.reverted
-    expect((await this.adventure.adventures(token))['startedOn']).to.be.gt(0)
-    expect(await this.adventure.activeAdventures(summoner)).to.eq(token)
+    expect((await this.adventure.adventures(token))['started']).to.be.gt(0)
+    expect(await this.adventure.active_adventures(summoner)).to.eq(token)
   })
 
-  it('prevents summoners from starting simultaneous adventures', async function () {
+  it('reverts if you start more than one active adventure', async function () {
     const summoner = this.summoner()
     await expect(this.adventure.start(summoner)).to.not.be.reverted
-    await expect(this.adventure.start(summoner)).to.be.revertedWith('activeAdventures[summoner] != 0')
+    await expect(this.adventure.start(summoner)).to.be.revertedWith('active_adventures[summoner] != 0')
   })
 
   it('authorizes the owner of an adventure', async function () {
@@ -94,16 +94,24 @@ describe('Core: Adventure (II)', function () {
     expect(await signersConnection.isApprovedOrOwnerOfAdventure(token)).to.be.true
   })
 
-  it('senses the farmer\'s motives', async function () {
+  it('fails to sense the farmer\'s motives', async function () {
     const summoner = this.summoner()
-
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
-    expect((await this.adventure.adventures(token)).farmersKey).to.be.false
 
     await expect(this.adventure.sense_farmers_motive(token))
     .to.emit(this.adventure, 'SenseFarmersMotive')
     .withArgs(token, 1, 0)
+
+    const adventure = await this.adventure.adventures(token)
+    expect(adventure.farmers_bluff_checked).to.be.true
+    expect(adventure.farmers_key).to.be.false
+  })
+
+  it('senses the farmer\'s motives', async function () {
+    const summoner = this.summoner()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
 
     this.core.attributes.ability_scores
     .whenCalledWith(summoner)
@@ -127,50 +135,60 @@ describe('Core: Adventure (II)', function () {
     .to.emit(this.adventure, 'SenseFarmersMotive')
     .withArgs(token, 17, 20)
 
-    expect((await this.adventure.adventures(token)).farmersKey).to.be.true
+    const adventure = await this.adventure.adventures(token)
+    expect(adventure.farmers_bluff_checked).to.be.true
+    expect(adventure.farmers_key).to.be.true
   })
 
-  it('prevents sensing the farmer\'s motives after combat has begun', async function () {
-
+  it('reverts if you sense motive more than once per adventure', async function (){
+    const summoner = this.summoner()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
+    await expect(this.adventure.sense_farmers_motive(token)).to.not.be.reverted
+    await expect(this.adventure.sense_farmers_motive(token)).to.be.revertedWith('farmers_bluff_checked == true')
   })
 
-  it('equips weapons and armor', async function () {
-
+  it.skip('prevents sensing the farmer\'s motives after combat has begun', async function () {
+    // TODO
   })
 
-  it('prevents equipping if the adventure hasn\'t begun', async function () {
-
-  })
-
-  it('prevents equipping if combat has begun', async function () {
-
-  })
-
-  it('enters the barn', async function () {
-
-  })
-
-  it('prevents entering the barn more than once', async function () {
+  it.skip('equips weapons and armor', async function () {
 
   })
 
-  it('spawns a kobold party leveled to summoners level 3-7', async function () {
+  it.skip('prevents equipping if the adventure hasn\'t begun', async function () {
 
   })
 
-  it('catchs the kobolds flat-footed with the farmer\'s key', async function () {
+  it.skip('prevents equipping if combat has begun', async function () {
 
   })
 
-  it('defeats the kobolds', async function () {
+  it.skip('enters the barn', async function () {
 
   })
 
-  it('flees from the kobolds', async function () {
+  it.skip('prevents entering the barn more than once', async function () {
 
   })
 
-  it('waits at least one day before starting a new adventure', async function () {
+  it.skip('spawns a kobold party leveled to summoners level 3-7', async function () {
+
+  })
+
+  it.skip('catchs the kobolds flat-footed with the farmer\'s key', async function () {
+
+  })
+
+  it.skip('defeats the kobolds', async function () {
+
+  })
+
+  it.skip('flees from the kobolds', async function () {
+
+  })
+
+  it.skip('waits at least one day before starting a new adventure', async function () {
 
   })
 })
