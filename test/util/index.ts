@@ -6,3 +6,8 @@ export function randomId() {
   }
   return result
 }
+
+export const equipmentType = {
+  weapon: 0,
+  armor: 1
+}

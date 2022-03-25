@@ -1,6 +1,9 @@
-import { smock } from '@defi-wonderland/smock'
+import { FakeContract, smock } from '@defi-wonderland/smock'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { randomId } from '.'
 import { Rarity, RarityAttributes, RarityCrafting, RarityFeats, RaritySkills } from '../../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../../typechain/interfaces/codex'
+import { armorType, baseType, weaponType } from './crafting'
 
 export async function fakeRarity() {
   return await smock.fake<Rarity>('contracts/core/rarity.sol:rarity', { 
@@ -47,4 +50,26 @@ export async function fakeRandom() {
   })
   result.dn.returns(1)
   return result
+}
+
+export function fakeCraft(crafting: FakeContract, baseType: number, itemType: number, crafter: number, signer: SignerWithAddress) {
+  const id = randomId()
+
+  crafting.items
+  .whenCalledWith(id)
+  .returns([baseType, itemType, 0, crafter])
+
+  crafting.ownerOf
+  .whenCalledWith(id)
+  .returns(signer.address)
+
+  return id
+}
+
+export function fakeLongsword(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.weapon, weaponType.longsword, crafter, signer)
+}
+
+export function fakeLeatherArmor(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.armor, armorType.leather, crafter, signer)
 }

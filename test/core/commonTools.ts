@@ -5,7 +5,7 @@ import { baseType, goodsType, weaponType } from '../util/crafting'
 import { randomId } from '../util'
 import { RarityCrafting, RarityCraftingTools__factory } from '../../typechain/core'
 import { Rarity__factory } from '../../typechain/library'
-import { fakeRarity } from '../util/fakes'
+import { fakeCommonCrafting, fakeRarity } from '../util/fakes'
 
 chai.use(smock.matchers)
 
@@ -22,9 +22,7 @@ describe('Core: Common Artisan\'s Tools', function () {
     this.rarity = await fakeRarity()
 
     this.crafting = {
-      common: await smock.fake<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting', { 
-        address: '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC' 
-      }),
+      common: await fakeCommonCrafting(),
       commonTools: await(await smock.mock<RarityCraftingTools__factory>('contracts/core/rarity_crafting_common_tools.sol:rarity_crafting_tools', {
         libraries: {
           Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
