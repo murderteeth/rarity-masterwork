@@ -3,7 +3,7 @@ import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
 import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills } from '../util/fakes'
-import { Armor__factory, Feats__factory, Random__factory, Rarity__factory, SkillCheck__factory, Skills__factory } from '../../typechain/library'
+import { Armor__factory, Feats__factory, Random__factory, Rarity__factory, Roll__factory, SkillCheck__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
 import { feats } from '../util/feats'
@@ -34,6 +34,7 @@ describe('Core: Adventure (II)', function () {
     this.adventure = await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
       libraries: {
         Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
+        Attributes: (await (await smock.mock<Armor__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
         SkillCheck: (await(await smock.mock<SkillCheck__factory>('contracts/library/SkillCheck.sol:SkillCheck', {
           libraries: {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
@@ -42,7 +43,14 @@ describe('Core: Adventure (II)', function () {
             Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address
           }
         })).deploy()).address,
-        Crafting: (await(await smock.mock<Crafting__factory>('contracts/library/Crafting.sol:Crafting')).deploy()).address
+        Crafting: (await(await smock.mock<Crafting__factory>('contracts/library/Crafting.sol:Crafting')).deploy()).address,
+        Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
+          libraries: {
+            Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+            Attributes: (await (await smock.mock<Armor__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+            Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address
+          }
+        })).deploy()).address,
       }
     })).deploy()
 
@@ -78,13 +86,13 @@ describe('Core: Adventure (II)', function () {
     beforeEach(async function(){
       this.summoner = this.summon()
       this.token = await this.adventure.next_token()
-      this.adventure.start(this.summoner)
+      await this.adventure.start(this.summoner)
     })
 
     it('authorizes the owner of an adventure', async function () {
       expect(await this.adventure.isApprovedOrOwnerOfAdventure(this.token)).to.be.true
     })
-  
+
     it('authorizes address approved for an adventure', async function () {
       const approvedSigner = this.signers[1]
       const signersConnection = await this.adventure.connect(approvedSigner)
@@ -92,7 +100,7 @@ describe('Core: Adventure (II)', function () {
       await this.adventure.approve(approvedSigner.address, this.token)
       expect(await signersConnection.isApprovedOrOwnerOfAdventure(this.token)).to.be.true
     })
-  
+
     it('authorizes address approved for all of the owner\'s adventures', async function () {
       const approvedSigner = this.signers[1]
       const signersConnection = await this.adventure.connect(approvedSigner)
@@ -106,7 +114,7 @@ describe('Core: Adventure (II)', function () {
     beforeEach(async function(){
       this.summoner = this.summon()
       this.token = await this.adventure.next_token()
-      this.adventure.start(this.summoner)
+      await this.adventure.start(this.summoner)
     })
 
     it('fails to sense the farmer\'s motives', async function () {
@@ -153,15 +161,15 @@ describe('Core: Adventure (II)', function () {
     })
   
     it.skip('can\'t sense motive if combat has begun', async function () {
-      // TODO
+
     })
   })
 
-  describe('Eqipment', async function() {
+  describe('Equipment', async function() {
     beforeEach(async function(){
       this.summoner = this.summon()
       this.token = await this.adventure.next_token()
-      this.adventure.start(this.summoner)
+      await this.adventure.start(this.summoner)
     })
 
     it('equips summoners with weapons and armor', async function () {
@@ -244,28 +252,52 @@ describe('Core: Adventure (II)', function () {
     })
   })
 
-  it.skip('enters the barn', async function () {
+  describe.only('Kobold encounter', async function() {
+    beforeEach(async function(){
+      this.summoner = this.summon()
+      this.token = await this.adventure.next_token()
+      await this.adventure.start(this.summoner)
+    })
 
-  })
+    it('enters the barn', async function () {
+      await this.adventure.enter_the_barn(this.token)
+      const adventure = await this.adventure.adventures(this.token)
+      expect(adventure.barn_entered).to.be.true
+      expect(adventure.round).to.eq(0)
+      expect(adventure.kobolds).to.eq(1)
+    })
 
-  it.skip('can\'t enter the barn more than once', async function () {
+    it('sorts combatants by initiative', async function () {
+      const featFlags = Array(100).fill(false)
+      featFlags[feats.improved_initiative] = true
+      this.core.feats.get_feats
+      .whenCalledWith(this.summoner)
+      .returns(featFlags)
 
-  })
+      await this.adventure.enter_the_barn(this.token)
+      expect((await this.adventure.turn_orders(this.token, 0)).summoner).to.be.true
+      expect((await this.adventure.turn_orders(this.token, 1)).summoner).to.be.false
+    })
 
-  it.skip('spawns a kobold party leveled to summoners level 3-7', async function () {
+    it.skip('can\'t enter the barn more than once', async function () {
 
-  })
+    })
 
-  it.skip('catchs the kobolds flat-footed with the farmer\'s key', async function () {
-
-  })
-
-  it.skip('defeats the kobolds', async function () {
-
-  })
-
-  it.skip('flees from the kobolds', async function () {
-
+    it.skip('spawns a kobold party leveled for summoners level 3-7', async function () {
+  
+    })
+  
+    it.skip('catchs the kobolds flat-footed with the farmer\'s key', async function () {
+  
+    })
+  
+    it.skip('defeats the kobolds', async function () {
+  
+    })
+  
+    it.skip('flees from the kobolds', async function () {
+  
+    })
   })
 
   it.skip('waits at least one day before starting a new adventure', async function () {
