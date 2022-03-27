@@ -6,11 +6,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../interfaces/core/IRarity.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
+import "../library/Attributes.sol";
 import "../library/Crafting.sol";
 import "../library/SkillCheck.sol";
+import "../library/Roll.sol";
 
 contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, ForItems {
   uint public next_token = 1;
+  uint public next_combatant = 1;
   uint private constant DAY = 1 days;
   uint8 public constant FARMERS_KEY_DC = 20;
   uint8 public constant EQUIPMENT_SLOTS = 2;
@@ -29,24 +32,42 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
   event SenseFarmersMotive(uint token, uint8 roll, uint8 score);
+  event RollInitiative(uint token, uint8 roll, int8 score);
+
+  struct Adventure {
+    uint summoner;
+    uint started;
+    uint ended;
+    uint8 kobolds;
+    uint8 round;
+    bool farmers_bluff_challenged;
+    bool farmers_key;
+    bool barn_entered;
+  }
 
   struct EquipmentSlot {
     address item_contract;
     uint item;
   }
 
-  struct Adventure {
-    uint summoner;
-    uint started;
-    uint ended;
-    bool farmers_bluff_challenged;
-    bool farmers_key;
+  struct Initiative {
+    uint8 roll;
+    int8 score;
+  }
+
+  struct Combatant {
+    uint token;
+    Initiative initiative;
+    int16 hit_points;
+    uint8 armor_class;
+    bool summoner;
   }
 
   mapping(uint => Adventure) public adventures;
   mapping(uint => uint) public active_adventures;
   mapping(uint => EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
   mapping(address => mapping(uint => uint)) public equipment_index;
+  mapping(uint => Combatant[]) public turn_orders;
 
   function onERC721Received(
     address operator,
@@ -111,6 +132,77 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       } else {
         delete slot.item_contract;
         delete slot.item;
+      }
+    }
+  }
+
+  function enter_the_barn(uint token) public approvedForAdventure(token) {
+    Adventure storage adventure = adventures[token];
+    adventure.barn_entered = true;
+    adventure.kobolds = 1;
+    uint8 number_of_combatants = adventure.kobolds + 1;
+
+    Combatant[] memory combatants = new Combatant[](number_of_combatants);
+    combatants[0] = combatant_summoner(adventure.summoner);
+    for(uint i = 0; i < adventure.kobolds; i ++) {
+      combatants[i + 1] = combatant_kobold();
+    }
+
+    combatants = sort_combatants_by_initiative(combatants);
+    Combatant[] storage turn_order = turn_orders[token];
+    for(uint i = 0; i < number_of_combatants; i++) {
+      turn_order.push(combatants[i]);
+    }
+  }
+
+  function combatant_summoner(uint summoner) internal returns(Combatant memory combatant) {
+    (uint8 roll, int8 score) = Roll.initiative(summoner);
+    emit RollInitiative(summoner, roll, score);
+    combatant = Combatant({
+      token: next_combatant,
+      initiative: Initiative(roll, score),
+      hit_points: 0,
+      armor_class: 0,
+      summoner: true
+    });
+    next_combatant += 1;
+  }
+
+  function combatant_kobold() internal returns(Combatant memory combatant) {
+    (uint8 roll, int8 initiative) = Roll.initiative(
+      next_combatant, 
+      Attributes.computeModifier(MONSTER_DEX), 
+      MONSTER_INITIATIVE_BONUS
+    );
+    combatant = Combatant({
+      token: next_combatant,
+      initiative: Initiative(roll, initiative),
+      hit_points: 0,
+      armor_class: 0,
+      summoner: false
+    });
+    next_combatant += 1;
+  }
+
+  function sort_combatants_by_initiative(Combatant[] memory combatants) internal pure returns(Combatant[] memory sorted) {
+    uint length = combatants.length;
+    sorted = new Combatant[](length);
+    for(uint i = 0; i < length; i++) {
+      for(uint j = i + 1; j < length; j++) {
+        Combatant memory i_combatant = combatants[i];
+        Combatant memory j_combatant = combatants[j];
+        if(i_combatant.initiative.score < j_combatant.initiative.score) {
+          sorted[i] = j_combatant;
+          sorted[j] = i_combatant;
+        } else if(i_combatant.initiative.score == j_combatant.initiative.score) {
+          if(i_combatant.initiative.roll > j_combatant.initiative.roll) {
+            sorted[i] = j_combatant;
+            sorted[j] = i_combatant;
+          }
+        } else {
+          sorted[i] = i_combatant;
+          sorted[j] = j_combatant;
+        }
       }
     }
   }
