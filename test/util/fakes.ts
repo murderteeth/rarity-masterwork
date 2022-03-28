@@ -73,3 +73,7 @@ export function fakeLongsword(crafting: FakeContract, crafter: number, signer: S
 export function fakeLeatherArmor(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.leather, crafter, signer)
 }
+
+export function fakeFullPlateArmor(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.armor, armorType.fullPlate, crafter, signer)
+}

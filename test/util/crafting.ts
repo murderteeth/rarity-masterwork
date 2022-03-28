@@ -10,7 +10,8 @@ export const goodsType = {
 }
 
 export const armorType = {
-  leather: 2
+  leather: 2,
+  fullPlate: 12
 }
 
 export const weaponType = {
