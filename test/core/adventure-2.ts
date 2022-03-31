@@ -1,9 +1,9 @@
 import chai, { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
 import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills } from '../util/fakes'
-import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, SkillCheck__factory, Skills__factory } from '../../typechain/library'
+import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
 import { feats } from '../util/feats'
@@ -76,7 +76,7 @@ describe('Core: Adventure II', function () {
     const token = await this.adventure.next_token()
     await expect(this.adventure.start(summoner)).to.not.be.reverted
     expect((await this.adventure.adventures(token))['started']).to.be.gt(0)
-    expect(await this.adventure.active_adventures(summoner)).to.eq(token)
+    expect(await this.adventure.latest_adventures(summoner)).to.eq(token)
     expect(this.core.rarity['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.adventure.address,
@@ -87,7 +87,7 @@ describe('Core: Adventure II', function () {
   it('can\'t start more than one active adventure per summoner', async function () {
     const summoner = this.summon()
     await expect(this.adventure.start(summoner)).to.not.be.reverted
-    await expect(this.adventure.start(summoner)).to.be.revertedWith('active_adventures[summoner] != 0')
+    await expect(this.adventure.start(summoner)).to.be.revertedWith('!latest_adventure.ended')
   })
 
   describe('Token AUTH', async function() {
@@ -171,6 +171,11 @@ describe('Core: Adventure II', function () {
     it('can\'t skill check if combat has started', async function () {
       await this.adventure.enter_dungeon(this.token)
       await expect(this.adventure.sense_motive(this.token)).to.be.revertedWith('dungeon_entered')
+    })
+
+    it('can\'t skill check after adventure\'s end', async function () {
+      await this.adventure.end(this.token)
+      await expect(this.adventure.sense_motive(this.token)).to.be.revertedWith('adventure.ended')
     })
   })
 
@@ -271,6 +276,13 @@ describe('Core: Adventure II', function () {
         this.token, equipmentType.weapon, 0, ethers.constants.AddressZero
       )).to.be.revertedWith('dungeon_entered')
     })
+
+    it('can\'t equip after adventure\'s end', async function () {
+      await this.adventure.end(this.token)
+      await expect(this.adventure.equip(
+        this.token, equipmentType.weapon, 0, ethers.constants.AddressZero
+      )).to.be.revertedWith('adventure.ended')
+    })
   })
 
   describe('Dungeon', async function() {
@@ -291,6 +303,11 @@ describe('Core: Adventure II', function () {
     it('can only enter dungeon once', async function () {
       await expect(this.adventure.enter_dungeon(this.token)).to.not.be.reverted
       await expect(this.adventure.enter_dungeon(this.token)).to.be.revertedWith('dungeon_entered')
+    })
+
+    it('can\'t enter dungeon after adventure\'s end', async function () {
+      await this.adventure.end(this.token)
+      await expect(this.adventure.enter_dungeon(this.token)).to.be.revertedWith('adventure.ended')
     })
 
     it('orders combatants by initiative', async function () {
@@ -414,6 +431,13 @@ describe('Core: Adventure II', function () {
       await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.summoner')
     })
 
+    it('can\'t attack after adventure\'s end', async function () {
+      await this.adventure.enter_dungeon(this.token)
+      await this.adventure.end(this.token)
+      const target = await this.adventure.next_able_monster(this.token)
+      await expect(this.adventure.attack(this.token, target)).to.be.revertedWith('adventure.ended')
+    })
+
     it('flees combat', async function () {
       this.codex.random.dn.returns(1)
       await this.adventure.enter_dungeon(this.token)
@@ -433,13 +457,74 @@ describe('Core: Adventure II', function () {
       await expect(this.adventure.flee(this.token)).to.not.be.reverted
       await expect(this.adventure.flee(this.token)).to.be.revertedWith('combat_ended')
     })
+
+    it('can\'t flee after adventure\'s end', async function () {
+      await this.adventure.enter_dungeon(this.token)
+      await this.adventure.end(this.token)
+      await expect(this.adventure.flee(this.token)).to.be.revertedWith('adventure.ended')
+    })
   })
 
-  it.skip('ends the adventure', async function () {
+  it('ends the adventure', async function () {
+    const summoner = this.summon()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
 
+    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
+    const fullPlate = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
+    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
+    await this.adventure.equip(token, equipmentType.armor, fullPlate, this.crafting.common.address)
+
+    await this.adventure.end(token)
+
+    expect(this.core.rarity['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+      this.adventure.address,
+      this.signer.address,
+      summoner
+    )
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+      this.adventure.address,
+      this.signer.address,
+      longsword
+    )
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+      this.adventure.address,
+      this.signer.address,
+      fullPlate
+    )
+
+    const adventure = await this.adventure.adventures(token)
+    expect(adventure.ended).to.be.gt(0)
   })
 
-  it.skip('waits at least one day before starting a new adventure', async function () {
+  it('only ends the adventure once', async function () {
+    const summoner = this.summon()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
+    await this.adventure.end(token)
+    await expect(this.adventure.end(token)).to.be.revertedWith('adventure.ended')
+  })
 
+  it('computes time to next adventure', async function () {
+    const summoner = this.summon()
+    await this.adventure.start(summoner)
+    expect(await this.adventure.time_to_next_adventure(summoner)).to.eq(1 * 24 * 60 * 60)
+    await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
+    await network.provider.send("evm_mine");
+    expect(await this.adventure.time_to_next_adventure(summoner)).to.eq(0)
+    await network.provider.send("evm_increaseTime", [100 * 24 * 60 * 60]);
+    await network.provider.send("evm_mine");
+    expect(await this.adventure.time_to_next_adventure(summoner)).to.eq(0)
+  })
+
+  it('waits at least one day before starting a new adventure', async function () {
+    const summoner = this.summon()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
+    await this.adventure.end(token)
+    await expect(this.adventure.start(summoner)).to.be.revertedWith('!1day')
+    await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
+    await network.provider.send("evm_mine");
+    await expect(this.adventure.start(summoner)).to.not.be.reverted
   })
 })

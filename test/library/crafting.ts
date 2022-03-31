@@ -34,21 +34,21 @@ describe('Library: Crafting', function () {
 
   it('rejects randos', async function () {
     const library = await this.library.crafting.connect(this.rando.address)
-    expect(await library.isApprovedOrOwnerOfItem(this.crafting.common.address, this.craft)).to.be.false
+    expect(await library.isApprovedOrOwnerOfItem(this.craft, this.crafting.common.address)).to.be.false
   })
 
-  it('authorizes the owner of a craft', async function () {
-    expect(await this.library.crafting.isApprovedOrOwnerOfItem(this.crafting.common.address, this.craft)).to.be.true
+  it('authorizes the owner of an item', async function () {
+    expect(await this.library.crafting.isApprovedOrOwnerOfItem(this.craft, this.crafting.common.address)).to.be.true
   })
 
-  it('authorizes address approved for a craft', async function () {
+  it('authorizes address approved for an item', async function () {
     const library = await this.library.crafting.connect(this.approved.address)
-    expect(await library.isApprovedOrOwnerOfItem(this.crafting.common.address, this.craft)).to.be.true
+    expect(await library.isApprovedOrOwnerOfItem(this.craft, this.crafting.common.address)).to.be.true
   })
 
-  it('authorizes address approved for all of the owner\'s crafts', async function () {
+  it('authorizes address approved for all of the owner\'s items', async function () {
     const library = await this.library.crafting.connect(this.approvedForAll.address)
-    expect(await library.isApprovedOrOwnerOfItem(this.crafting.common.address, this.craft)).to.be.true
+    expect(await library.isApprovedOrOwnerOfItem(this.craft, this.crafting.common.address)).to.be.true
   })
 
 })
