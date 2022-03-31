@@ -17,7 +17,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint public next_token = 1;
   uint public next_combatant = 1;
 
-  uint private constant DAY = 1 days;
   uint8 public constant SKILL_CHECK_DC = 20;
   uint8 public constant EQUIPMENT_SLOTS = 2;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
@@ -84,7 +83,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   mapping(uint => Adventure) public adventures;
-  mapping(uint => uint) public active_adventures;
+  mapping(uint => uint) public latest_adventures;
   mapping(uint => EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
   mapping(address => mapping(uint => uint)) public equipment_index;
   mapping(uint => Combatant[]) public turn_orders;
@@ -101,11 +100,28 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return this.onERC721Received.selector;
   }
 
+  function time_to_next_adventure(uint summoner) public view returns (uint time) {
+    uint latest_adventure_token = latest_adventures[summoner];
+    if(latest_adventure_token != 0) {
+      Adventure memory latest_adventure = adventures[latest_adventure_token];
+      uint next_adventure = latest_adventure.started + 1 days;
+      if(next_adventure > block.timestamp) {
+        time = next_adventure - block.timestamp;
+      }
+    }
+  }
+
   function start(uint summoner) public approvedForSummoner(summoner) {
-    require(active_adventures[summoner] == 0, "active_adventures[summoner] != 0");
+    uint latest_adventure_token = latest_adventures[summoner];
+    if(latest_adventure_token != 0) {
+      Adventure memory latest_adventure = adventures[latest_adventure_token];
+      require(latest_adventure.ended > 0, "!latest_adventure.ended");
+      require(block.timestamp >= (latest_adventure.started + 1 days), "!1day");
+    }
+
     adventures[next_token].summoner = summoner;
     adventures[next_token].started = block.timestamp;
-    active_adventures[summoner] = next_token;
+    latest_adventures[summoner] = next_token;
     RARITY.safeTransferFrom(msg.sender, address(this), summoner);
     _safeMint(_msgSender(), next_token);
     next_token += 1;
@@ -115,7 +131,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Adventure storage adventure = adventures[token];
     require(!adventure.skill_check_rolled, "skill_check_rolled");
     require(!adventure.dungeon_entered, "dungeon_entered");
-    require(adventure.ended == 0, "ended");
+    require(adventure.ended == 0, "adventure.ended");
     (uint8 roll, uint8 score) = Roll.sense_motive(adventure.summoner);
     adventure.skill_check_succeeded = score >= SKILL_CHECK_DC;
     adventure.skill_check_rolled = true;
@@ -129,12 +145,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     address item_contract
     ) public 
     approvedForAdventure(token)
-    approvedForItem(item_contract, item)
+    approvedForItem(item, item_contract)
   {
     Adventure memory adventure = adventures[token];
     require(equipment_type < 2, "!equipment_type");
     require(!adventure.dungeon_entered, "dungeon_entered");
-    require(adventure.ended == 0, "ended");
+    require(adventure.ended == 0, "adventure.ended");
 
     if(item_contract != address(0)) {
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
@@ -167,6 +183,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function enter_dungeon(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
     require(!adventure.dungeon_entered, "dungeon_entered");
+    require(adventure.ended == 0, "adventure.ended");
     adventure.dungeon_entered = true;
     adventure.monster_count = 2;
     uint8 number_of_combatants = adventure.monster_count + 1;
@@ -202,6 +219,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Adventure storage adventure = adventures[token];
     require(adventure.dungeon_entered, "!dungeon_entered");
     require(!adventure.combat_ended, "combat_ended");
+    require(adventure.ended == 0, "adventure.ended");
 
     uint summoners_turn = summoners_turns[token];
     uint current_turn = current_turns[token];
@@ -235,12 +253,28 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Adventure storage adventure = adventures[token];
     require(adventure.dungeon_entered, "!dungeon_entered");
     require(!adventure.combat_ended, "combat_ended");
+    require(adventure.ended == 0, "adventure.ended");
     adventure.combat_ended = true;
   }
 
-  // function end(uint token) public approvedForAdventure(token) {
+  function end(uint token) public approvedForAdventure(token) {
+    Adventure storage adventure = adventures[token];
+    require(adventure.ended == 0, "adventure.ended != 0");
 
-  // }
+    RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
+
+    EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+    if(weapon_slot.item_contract != address(0)) {
+      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), msg.sender, weapon_slot.item);
+    }
+
+    EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    if(armor_slot.item_contract != address(0)) {
+      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), msg.sender, armor_slot.item);
+    }
+
+    adventure.ended = block.timestamp;
+  }
 
   function summoner_combatant(uint token, uint summoner) internal returns(Combatant memory combatant) {
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];

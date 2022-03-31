@@ -10,10 +10,10 @@ interface ICrafting {
 }
 
 library Crafting {
-  function isApprovedOrOwnerOfItem(address craftingAddress, uint craft) public view returns (bool) {
-    ICrafting crafting = ICrafting(craftingAddress);
-    return crafting.getApproved(craft) == msg.sender
-      || crafting.ownerOf(craft) == msg.sender
-      || crafting.isApprovedForAll(crafting.ownerOf(craft), msg.sender);
+  function isApprovedOrOwnerOfItem(uint item, address itemContract) public view returns (bool) {
+    ICrafting crafting = ICrafting(itemContract);
+    return crafting.getApproved(item) == msg.sender
+      || crafting.ownerOf(item) == msg.sender
+      || crafting.isApprovedForAll(crafting.ownerOf(item), msg.sender);
   }
 }
