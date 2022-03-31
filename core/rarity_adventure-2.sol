@@ -52,7 +52,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     uint8 monster_count;
     uint8 monsters_defeated;
     uint8 combat_round;
-    bool combat_started;
+    bool dungeon_entered;
     bool combat_ended;
     bool skill_check_rolled;
     bool skill_check_succeeded;
@@ -114,7 +114,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function sense_motive(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
     require(!adventure.skill_check_rolled, "skill_check_rolled");
-    require(!adventure.combat_started, "combat_started");
+    require(!adventure.dungeon_entered, "dungeon_entered");
     require(adventure.ended == 0, "ended");
     (uint8 roll, uint8 score) = Roll.sense_motive(adventure.summoner);
     adventure.skill_check_succeeded = score >= SKILL_CHECK_DC;
@@ -133,7 +133,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   {
     Adventure memory adventure = adventures[token];
     require(equipment_type < 2, "!equipment_type");
-    require(!adventure.combat_started, "combat_started");
+    require(!adventure.dungeon_entered, "dungeon_entered");
     require(adventure.ended == 0, "ended");
 
     if(item_contract != address(0)) {
@@ -164,17 +164,17 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function start_combat(uint token) public approvedForAdventure(token) {
+  function enter_dungeon(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
-    require(!adventure.combat_started, "combat_started");
-    adventure.combat_started = true;
+    require(!adventure.dungeon_entered, "dungeon_entered");
+    adventure.dungeon_entered = true;
     adventure.monster_count = 2;
     uint8 number_of_combatants = adventure.monster_count + 1;
 
     Combatant[] memory combatants = new Combatant[](number_of_combatants);
-    combatants[0] = combatant_summoner(token, adventure.summoner);
+    combatants[0] = summoner_combatant(token, adventure.summoner);
     for(uint i = 0; i < adventure.monster_count; i ++) {
-      combatants[i + 1] = combatant_kobold();
+      combatants[i + 1] = monster_combatant();
     }
 
     sort_combatants_by_initiative(combatants);
@@ -200,7 +200,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function attack(uint token, uint target) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
-    require(adventure.combat_started, "!combat_started");
+    require(adventure.dungeon_entered, "!dungeon_entered");
     require(!adventure.combat_ended, "combat_ended");
 
     uint summoners_turn = summoners_turns[token];
@@ -210,8 +210,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combatant[] storage turn_order = turn_orders[token];
     Combatant storage summoner = turn_order[summoners_turn];
     uint turn_count = turn_order.length;
+    require(target < turn_count, "target out of bounds");
 
     Combatant storage monster = turn_order[target];
+    require(!monster.summoner, "monster.summoner");
     require(monster.hit_points > -1, "monster.hit_points < 0");
 
     attack_combatant(token, summoner, monster);
@@ -229,15 +231,18 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  // function flee(uint token) public approvedForAdventure(token) {
-    
-  // }
+  function flee(uint token) public approvedForAdventure(token) {
+    Adventure storage adventure = adventures[token];
+    require(adventure.dungeon_entered, "!dungeon_entered");
+    require(!adventure.combat_ended, "combat_ended");
+    adventure.combat_ended = true;
+  }
 
   // function end(uint token) public approvedForAdventure(token) {
 
   // }
 
-  function combatant_summoner(uint token, uint summoner) internal returns(Combatant memory combatant) {
+  function summoner_combatant(uint token, uint summoner) internal returns(Combatant memory combatant) {
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
@@ -277,7 +282,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return codex.weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
   }
 
-  function combatant_kobold() internal returns(Combatant memory combatant) {
+  function monster_combatant() internal returns(Combatant memory combatant) {
     codex.weapon memory weapon_codex = COMMON_WEAPONS_CODEX.spear();
     (uint8 roll, int8 initiative) = Roll.initiative(next_combatant, Attributes.computeModifier(MONSTER_DEX), 0);
     combatant = Combatant({
