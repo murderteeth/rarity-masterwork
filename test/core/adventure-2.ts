@@ -169,8 +169,8 @@ describe('Core: Adventure II', function () {
     })
 
     it('can\'t skill check if combat has started', async function () {
-      await this.adventure.start_combat(this.token)
-      await expect(this.adventure.sense_motive(this.token)).to.be.revertedWith('combat_started')
+      await this.adventure.enter_dungeon(this.token)
+      await expect(this.adventure.sense_motive(this.token)).to.be.revertedWith('dungeon_entered')
     })
   })
 
@@ -237,6 +237,10 @@ describe('Core: Adventure II', function () {
       )).to.not.be.reverted
     })
 
+    it.skip('only equips common and masterwork items', async function () {
+
+    })
+
     it('can\'t equip items in the wrong slot', async function () {
       const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
       await expect(
@@ -261,15 +265,11 @@ describe('Core: Adventure II', function () {
       )).to.be.revertedWith('!item available')
     })
 
-    it.skip('can\'t equip items that aren\'t common or masterwork', async function () {
-
-    })
-
-    it('can\'t equip if combat has begun', async function () {
-      await this.adventure.start_combat(this.token)
+    it('can\'t equip if dungeon entered', async function () {
+      await this.adventure.enter_dungeon(this.token)
       await expect(this.adventure.equip(
         this.token, equipmentType.weapon, 0, ethers.constants.AddressZero
-      )).to.be.revertedWith('combat_started')
+      )).to.be.revertedWith('dungeon_entered')
     })
   })
 
@@ -280,17 +280,17 @@ describe('Core: Adventure II', function () {
       await this.adventure.start(this.summoner)
     })
 
-    it('starts combat', async function () {
-      await this.adventure.start_combat(this.token)
+    it('enters dungeon', async function () {
+      await this.adventure.enter_dungeon(this.token)
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.combat_started).to.be.true
+      expect(adventure.dungeon_entered).to.be.true
       expect(adventure.combat_round).to.eq(1)
       expect(adventure.monster_count).to.eq(2)
     })
 
-    it('can only start combat once', async function () {
-      await expect(this.adventure.start_combat(this.token)).to.not.be.reverted
-      await expect(this.adventure.start_combat(this.token)).to.be.revertedWith('combat_started')
+    it('can only enter dungeon once', async function () {
+      await expect(this.adventure.enter_dungeon(this.token)).to.not.be.reverted
+      await expect(this.adventure.enter_dungeon(this.token)).to.be.revertedWith('dungeon_entered')
     })
 
     it('orders combatants by initiative', async function () {
@@ -300,7 +300,7 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(this.summoner)
       .returns(featFlags)
 
-      await this.adventure.start_combat(this.token)
+      await this.adventure.enter_dungeon(this.token)
       expect((await this.adventure.turn_orders(this.token, 0)).summoner).to.be.true
       expect((await this.adventure.turn_orders(this.token, 1)).summoner).to.be.false
     })
@@ -324,12 +324,12 @@ describe('Core: Adventure II', function () {
       const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
       await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
-      const tx = await(await this.adventure.start_combat(this.token)).wait()
+      const tx = await(await this.adventure.enter_dungeon(this.token)).wait()
       const attack = tx.events[1];
       expect(attack.args.hit).to.be.false;
     })
 
-    it('can crit on stronge summoners', async function () {
+    it('can crit on strong summoners', async function () {
       this.codex.random.dn.returns(20)
 
       this.core.rarity.class
@@ -348,7 +348,7 @@ describe('Core: Adventure II', function () {
       const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
       await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
-      const tx = await(await this.adventure.start_combat(this.token)).wait()
+      const tx = await(await this.adventure.enter_dungeon(this.token)).wait()
       const attack = tx.events[1];
       expect(attack.args.hit).to.be.true;
       expect(attack.args.critical_confirmation).to.be.gt(0);
@@ -374,7 +374,7 @@ describe('Core: Adventure II', function () {
       const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
       await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
-      await this.adventure.start_combat(this.token)
+      await this.adventure.enter_dungeon(this.token)
 
       let expectedRound = 0
       while(!(await this.adventure.adventures(this.token)).combat_ended) {
@@ -386,6 +386,52 @@ describe('Core: Adventure II', function () {
       const adventure = await this.adventure.adventures(this.token)
       expect(adventure.combat_round).to.eq(expectedRound)
       expect(adventure.monster_count).to.eq(adventure.monsters_defeated)
+      const summoners_turn = await this.adventure.summoners_turns(this.token)
+      const summoner_combatant = await this.adventure.turn_orders(this.token, summoners_turn)
+      expect(summoner_combatant.hit_points).to.be.gt(-1)
+    })
+
+    it('only attacks during combat', async function () {
+      this.codex.random.dn.returns(1)
+      await expect(this.adventure.attack(this.token, 0)).to.be.revertedWith('!dungeon_entered')
+      await this.adventure.enter_dungeon(this.token)
+      const target = await this.adventure.next_able_monster(this.token)
+      await expect(this.adventure.attack(this.token, target)).to.not.be.reverted
+      await this.adventure.flee(this.token)
+      await expect(this.adventure.attack(this.token, target)).to.be.revertedWith('combat_ended')
+    })
+
+    it('rejects attacks on invalid targets', async function () {
+      this.codex.random.dn.returns(1)
+      await this.adventure.enter_dungeon(this.token)
+      await expect(this.adventure.attack(this.token, 100)).to.be.revertedWith('target out of bounds')
+    })
+
+    it('only attacks monsters', async function () {
+      this.codex.random.dn.returns(1)
+      await this.adventure.enter_dungeon(this.token)
+      const summoners_turn = await this.adventure.summoners_turns(this.token)
+      await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.summoner')
+    })
+
+    it('flees combat', async function () {
+      this.codex.random.dn.returns(1)
+      await this.adventure.enter_dungeon(this.token)
+      await this.adventure.flee(this.token)
+      const adventure = await this.adventure.adventures(this.token)
+      expect(adventure.combat_ended).to.be.true
+      expect(adventure.combat_round).to.eq(1)
+      expect(adventure.monster_count).to.be.gt(adventure.monsters_defeated)
+      const summoners_turn = await this.adventure.summoners_turns(this.token)
+      const summoner_combatant = await this.adventure.turn_orders(this.token, summoners_turn)
+      expect(summoner_combatant.hit_points).to.be.gt(-1)
+    })
+
+    it('only flees during combat', async function () {
+      await expect(this.adventure.flee(this.token)).to.be.revertedWith('!dungeon_entered')
+      await this.adventure.enter_dungeon(this.token)
+      await expect(this.adventure.flee(this.token)).to.not.be.reverted
+      await expect(this.adventure.flee(this.token)).to.be.revertedWith('combat_ended')
     })
   })
 
