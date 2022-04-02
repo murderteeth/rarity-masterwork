@@ -127,11 +127,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     next_token += 1;
   }
 
-  function sense_motive(uint token) public approvedForAdventure(token) {
+  function sense_motive(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
     Adventure storage adventure = adventures[token];
     require(!adventure.skill_check_rolled, "skill_check_rolled");
-    require(!adventure.dungeon_entered, "dungeon_entered");
-    require(adventure.ended == 0, "adventure.ended");
     (uint8 roll, uint8 score) = Roll.sense_motive(adventure.summoner);
     adventure.skill_check_succeeded = score >= SKILL_CHECK_DC;
     adventure.skill_check_rolled = true;
@@ -146,11 +144,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     ) public 
     approvedForAdventure(token)
     approvedForItem(item, item_contract)
+    onlyDuringActI(token)
   {
-    Adventure memory adventure = adventures[token];
     require(equipment_type < 2, "!equipment_type");
-    require(!adventure.dungeon_entered, "dungeon_entered");
-    require(adventure.ended == 0, "adventure.ended");
 
     if(item_contract != address(0)) {
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
@@ -180,10 +176,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function enter_dungeon(uint token) public approvedForAdventure(token) {
+  function enter_dungeon(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
     Adventure storage adventure = adventures[token];
-    require(!adventure.dungeon_entered, "dungeon_entered");
-    require(adventure.ended == 0, "adventure.ended");
     adventure.dungeon_entered = true;
     adventure.monster_count = 2;
     uint8 number_of_combatants = adventure.monster_count + 1;
@@ -215,11 +209,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     revert("no able monster");
   }
 
-  function attack(uint token, uint target) public approvedForAdventure(token) {
+  function attack(uint token, uint target) public approvedForAdventure(token) onlyDuringActII(token) {
     Adventure storage adventure = adventures[token];
-    require(adventure.dungeon_entered, "!dungeon_entered");
-    require(!adventure.combat_ended, "combat_ended");
-    require(adventure.ended == 0, "adventure.ended");
 
     uint summoners_turn = summoners_turns[token];
     uint current_turn = current_turns[token];
@@ -249,11 +240,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function flee(uint token) public approvedForAdventure(token) {
+  function flee(uint token) public approvedForAdventure(token) onlyDuringActII(token) {
     Adventure storage adventure = adventures[token];
-    require(adventure.dungeon_entered, "!dungeon_entered");
-    require(!adventure.combat_ended, "combat_ended");
-    require(adventure.ended == 0, "adventure.ended");
     adventure.combat_ended = true;
   }
 
@@ -423,8 +411,21 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
     return getApproved(token) == msg.sender
-      || ownerOf(token) == msg.sender
-      || isApprovedForAll(ownerOf(token), msg.sender);
+    || ownerOf(token) == msg.sender
+    || isApprovedForAll(ownerOf(token), msg.sender);
+  }
+
+  function isActI(uint token) public view returns (bool) {
+    Adventure memory adventure = adventures[token];
+    return !adventure.dungeon_entered 
+    && adventure.ended == 0;
+  }
+
+  function isActII(uint token) public view returns (bool) {
+    Adventure memory adventure = adventures[token];
+    return adventure.dungeon_entered 
+    && !adventure.combat_ended
+    && adventure.ended == 0;
   }
 
   modifier approvedForAdventure(uint token) {
@@ -432,6 +433,22 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       _;
     } else {
       revert("!approvedForAdventure");
+    }
+  }
+
+  modifier onlyDuringActI(uint token) {
+    if (isActI(token)) {
+      _;
+    } else {
+      revert("!ActI");
+    }    
+  }
+
+  modifier onlyDuringActII(uint token) {
+    if (isActII(token)) {
+      _;
+    } else {
+      revert("!ActII");
     }
   }
 
