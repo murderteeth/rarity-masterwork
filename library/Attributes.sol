@@ -16,37 +16,37 @@ library Attributes {
     uint32 charisma;
   }
 
-  function strengthModifier(uint256 summoner) public view returns (int8) {
+  function strength_modifier(uint256 summoner) public view returns (int8) {
     (uint32 strength,,,,,) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(strength);
+    return compute_modifier(strength);
   }
 
-  function dexterityModifier(uint256 summoner) public view returns (int8) {
+  function dexterity_modifier(uint256 summoner) public view returns (int8) {
     (, uint32 dexterity,,,,) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(dexterity);
+    return compute_modifier(dexterity);
   }
 
-  function constitutionModifier(uint256 summoner) public view returns (int8) {
+  function constitution_modifier(uint256 summoner) public view returns (int8) {
     (,, uint32 constitution,,,) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(constitution);
+    return compute_modifier(constitution);
   }
 
-  function intelligenceModifier(uint256 summoner) public view returns (int8) {
+  function intelligence_modifier(uint256 summoner) public view returns (int8) {
     (,,, uint32 intelligence,,) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(intelligence);
+    return compute_modifier(intelligence);
   }
 
-  function wisdomModifier(uint256 summoner) public view returns (int8) {
+  function wisdom_modifier(uint256 summoner) public view returns (int8) {
     (,,,, uint32 wisdom,) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(wisdom);
+    return compute_modifier(wisdom);
   }
 
-  function charismaModifier(uint256 summoner) public view returns (int8) {
+  function charisma_modifier(uint256 summoner) public view returns (int8) {
     (,,,,, uint32 charisma) = ATTRIBUTES.ability_scores(summoner);
-    return computeModifier(charisma);
+    return compute_modifier(charisma);
   }
 
-  function computeModifier(uint32 ability) public pure returns (int8) {
+  function compute_modifier(uint32 ability) public pure returns (int8) {
     if (ability < 10) return -1;
     return (int8(int32(ability)) - 10) / 2;
   }

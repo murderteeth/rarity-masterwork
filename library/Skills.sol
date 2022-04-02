@@ -10,9 +10,9 @@ library Skills {
   IRaritySkills private constant SKILLS 
     = IRaritySkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
 
-  function sense_motive(uint summoner) public view returns (uint8 points) {
+  function sense_motive(uint summoner) public view returns (uint8 ranks) {
     (uint id,,,,,,,) = CODEX.sense_motive();
     uint8[36] memory skills = SKILLS.get_skills(summoner);
-    points = skills[id - 1];
+    ranks = skills[id - 1];
   }
 }

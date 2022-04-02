@@ -8,6 +8,7 @@ import "../interfaces/codex/IRarityCodexCommonWeapons.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Attributes.sol";
+import "../library/Combat.sol";
 import "../library/Crafting.sol";
 import "../library/Random.sol";
 import "../library/Roll.sol";
@@ -39,7 +40,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   constructor() ERC721("Rarity Adventure II", "Adventure II") {}
 
-  event SenseMotive(uint token, uint8 roll, uint8 score);
+  event SenseMotive(uint token, uint8 roll, int8 score);
   event RollInitiative(uint token, uint8 roll, int8 score);
   event Attack(uint token, uint attacker, uint defender, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint token, uint combatant);
@@ -60,26 +61,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   struct EquipmentSlot {
     uint item;
     address item_contract;
-  }
-
-  struct Initiative {
-    uint8 roll;
-    int8 score;
-  }
-
-  struct Combatant {
-    uint token;
-    Initiative initiative;
-    int16 hit_points;
-    int8 base_weapon_modifier;
-    int8 total_attack_bonus;
-    int8 critical_modifier;
-    uint8 critical_multiplier;
-    uint8 damage_dice_count;
-    uint8 damage_dice_sides;
-    uint8 damage_type;
-    uint8 armor_class;
-    bool summoner;
   }
 
   mapping(uint => Adventure) public adventures;
@@ -130,10 +111,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function sense_motive(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
     Adventure storage adventure = adventures[token];
     require(!adventure.skill_check_rolled, "skill_check_rolled");
-    (uint8 roll, uint8 score) = Roll.sense_motive(adventure.summoner);
-    adventure.skill_check_succeeded = score >= SKILL_CHECK_DC;
+    Score memory skill_check = Roll.sense_motive(adventure.summoner);
+    adventure.skill_check_succeeded = skill_check.score >= int8(SKILL_CHECK_DC);
     adventure.skill_check_rolled = true;
-    emit SenseMotive(token, roll, score);
+    emit SenseMotive(token, skill_check.roll, skill_check.score);
   }
 
   function equip(
@@ -188,7 +169,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       combatants[i + 1] = monster_combatant();
     }
 
-    sort_combatants_by_initiative(combatants);
+    Combat.sort_by_initiative(combatants);
     Combatant[] storage turn_order = turn_orders[token];
     for(uint i = 0; i < number_of_combatants; i++) {
       turn_order.push(combatants[i]);
@@ -270,12 +251,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
     int8 base_weapon_modifier = Summoner.base_weapon_modifier(summoner, weapon_codex.encumbrance);
 
-    (uint8 roll, int8 score) = Roll.initiative(summoner);
-    emit RollInitiative(token, roll, score);
+    Score memory initiative = Roll.initiative(summoner);
+    emit RollInitiative(token, initiative.roll, initiative.score);
 
     combatant = Combatant({
       token: next_combatant,
-      initiative: Initiative(roll, score),
+      initiative: initiative,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
       base_weapon_modifier: base_weapon_modifier,
       total_attack_bonus: Summoner.total_attack_bonus(summoner, base_weapon_modifier),
@@ -306,10 +287,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function monster_combatant() internal returns(Combatant memory combatant) {
     codex.weapon memory weapon_codex = COMMON_WEAPONS_CODEX.spear();
-    (uint8 roll, int8 initiative) = Roll.initiative(next_combatant, Attributes.computeModifier(MONSTER_DEX), 0);
+    Score memory initiative = Roll.initiative(next_combatant, Attributes.compute_modifier(MONSTER_DEX), 0);
     combatant = Combatant({
       token: next_combatant,
-      initiative: Initiative(roll, initiative),
+      initiative: initiative,
       hit_points: int16(uint16(Random.dn(9409069218745053777, next_combatant, MONSTER_HIT_DICE_COUNT, MONSTER_HIT_DICE_SIDES))),
       base_weapon_modifier: -1,
       total_attack_bonus: int8(MONSTER_BASE_ATTACK_BONUS),
@@ -322,25 +303,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       summoner: false
     });
     next_combatant += 1;
-  }
-
-  function sort_combatants_by_initiative(Combatant[] memory combatants) internal pure {
-    uint length = combatants.length;
-    for(uint i = 0; i < length; i++) {
-      for(uint j = i + 1; j < length; j++) {
-        Combatant memory i_combatant = combatants[i];
-        Combatant memory j_combatant = combatants[j];
-        if(i_combatant.initiative.score < j_combatant.initiative.score) {
-          combatants[i] = j_combatant;
-          combatants[j] = i_combatant;
-        } else if(i_combatant.initiative.score == j_combatant.initiative.score) {
-          if(i_combatant.initiative.roll > j_combatant.initiative.roll) {
-            combatants[i] = j_combatant;
-            combatants[j] = i_combatant;
-          }
-        }
-      }
-    }
   }
 
   function set_summoners_turn(uint token, Combatant[] memory combatants) internal {
@@ -386,27 +348,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function attack_combatant(uint token, Combatant memory attacker, Combatant storage defender) internal {
-    AttackRoll memory attack_roll = Roll.attack(
-      attacker.token, 
-      attacker.total_attack_bonus, 
-      attacker.critical_modifier, 
-      attacker.critical_multiplier, 
-      defender.armor_class
-    );
-
-    if(attack_roll.damage_multiplier == 0) {
-      emit Attack(token, attacker.token, defender.token, false, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, 0, 0);
-    } else {
-      uint8 damage = Roll.damage(
-        attacker.token, 
-        attacker.damage_dice_count, 
-        attacker.damage_dice_sides,
-        attacker.base_weapon_modifier,
-        attack_roll.damage_multiplier
-      );
-      defender.hit_points -= int16(uint16(damage));
-      emit Attack(token, attacker.token, defender.token, true, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, damage, attacker.damage_type);
-    }
+    (bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
+    = Combat.attack_combatant(attacker, defender);
+    emit Attack(token, attacker.token, defender.token, hit, roll, score, critical_confirmation, damage, damage_type);
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {

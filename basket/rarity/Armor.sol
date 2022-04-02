@@ -23,7 +23,7 @@ library Armor {
         (, , , , uint256 armorBonus, uint256 maxDexBonus, , , , ) = ARMOR_CODEX
             .item_by_id(itemType);
 
-        int8 dexModifier = Attributes.dexterityModifier(summonerId) +
+        int8 dexModifier = Attributes.dexterity_modifier(summonerId) +
             proficiencyBonus(summonerId, true, armorId, armorContract);
 
         int8 result = 10 + int8(uint8(armorBonus));

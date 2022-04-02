@@ -17,7 +17,7 @@ library Summoner {
     address armor_contract
   ) public view returns (uint8) {
     int8 result = 10;
-    int8 dexModifier = Attributes.dexterityModifier(summoner) 
+    int8 dexModifier = Attributes.dexterity_modifier(summoner) 
     + armor_proficiency_bonus(summoner, armor, armor_contract);
 
     if(armor_contract != address(0)) {
@@ -47,7 +47,7 @@ library Summoner {
   }
 
   function hit_points(uint summoner) public view returns (uint8) {
-    int8 con_modifier = Attributes.constitutionModifier(summoner);
+    int8 con_modifier = Attributes.constitution_modifier(summoner);
     int hp = int(health_byclass(Rarity.class(summoner))) + con_modifier;
     if (hp <= 0) hp = 1;
     return uint8(uint(hp) * Rarity.level(summoner));
@@ -81,8 +81,8 @@ library Summoner {
 
   function base_weapon_modifier(uint summoner, uint weapon_encumbrance) public view returns (int8) {
     return weapon_encumbrance < 5
-    ? Attributes.strengthModifier(summoner)
-    : Attributes.dexterityModifier(summoner);
+    ? Attributes.strength_modifier(summoner)
+    : Attributes.dexterity_modifier(summoner);
   }
 
   function total_attack_bonus(uint summoner, int8 _base_weapon_modifier) public view returns (int8) {

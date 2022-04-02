@@ -10,7 +10,7 @@ library Monster {
      * as described in their stat sheet
      */
     function initiative(uint8 dex, int8 bonus) public view returns (int8) {
-        int8 dMod = Attributes.computeModifier(dex);
+        int8 dMod = Attributes.compute_modifier(dex);
         uint8 roll = Random.dn(8, 9, 20);
         return int8(roll) + int8(dMod) + bonus;
     }

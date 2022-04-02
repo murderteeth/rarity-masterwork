@@ -13,7 +13,7 @@ library Combat {
         int8 initiativeBonus,
         int8 dexterityBonus
     ) public view returns (int8) {
-        int8 dexModifier = Attributes.dexterityModifier(summonerId) + dexterityBonus;
+        int8 dexModifier = Attributes.dexterity_modifier(summonerId) + dexterityBonus;
         uint8 roll = Random.dn(8, 8, 20);
         return int8(roll) + int8(dexModifier) + initiativeBonus;
     }
@@ -46,7 +46,7 @@ library Combat {
             int8(baseAttack(summonerId)) +
             int8(attackRoll) +
             weaponBonus;
-        int8 strModifier = Attributes.strengthModifier(summonerId) +
+        int8 strModifier = Attributes.strength_modifier(summonerId) +
             strengthBonus;
         int8 weaponDamage = strModifier;
         uint256 weaponCritical = 0;
@@ -146,7 +146,7 @@ library Combat {
         uint256 _level,
         uint32 _const
     ) internal pure returns (uint256 health) {
-        int256 _mod = computeModifier(_const);
+        int256 _mod = compute_modifier(_const);
         int256 _baseHealth = int256(healthByClass(_class)) + _mod;
         if (_baseHealth <= 0) {
             _baseHealth = 1;
@@ -192,7 +192,7 @@ library Combat {
         return (_level * baseAttackBonusByClass(_class)) / 4;
     }
 
-    function computeModifier(uint256 ability) internal pure returns (int256) {
+    function compute_modifier(uint256 ability) internal pure returns (int256) {
         if (ability < 10) return -1;
         return (int256(ability) - 10) / 2;
     }

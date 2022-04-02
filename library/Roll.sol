@@ -7,6 +7,11 @@ import "./Feats.sol";
 import "./Random.sol";
 import "./Skills.sol";
 
+struct Score {
+  uint8 roll;
+  int8 score;
+}
+
 struct AttackRoll {
   uint8 roll;
   uint8 score;
@@ -16,33 +21,27 @@ struct AttackRoll {
 }
 
 library Roll {
-  function initiative(uint summoner) public view returns (uint8 roll, int8 score) {
-    (roll, score) = initiative(
+  function initiative(uint summoner) public view returns (Score memory result) {
+    result = initiative(
       summoner, 
-      Attributes.dexterityModifier(summoner), 
+      Attributes.dexterity_modifier(summoner), 
       Feats.improved_initiative(summoner) ? int8(4) : int8(0)
     );
   }
 
-  function initiative(uint token, int8 total_dex_modifier, int8 initiative_bonus) public view returns (uint8 roll, int8 score) {
-    roll = Random.dn(token, 11781769727069077443, 20);
-    score = total_dex_modifier + int8(initiative_bonus) + int8(roll);
+  function initiative(uint token, int8 total_dex_modifier, int8 initiative_bonus) public view returns (Score memory result) {
+    result = Score(0, 0);
+    result.roll = Random.dn(token, 11781769727069077443, 20);
+    result.score = total_dex_modifier + int8(initiative_bonus) + int8(result.roll);
   }
 
-  function sense_motive(uint summoner) public view returns (uint8 roll, uint8 score) {
-    score = 1;
-
-    int8 wisdomModifier = Attributes.wisdomModifier(summoner);
-    if(wisdomModifier == -1) {
-      score = 0;
-    } else {
-      score = score + uint8(wisdomModifier);
-    }
-
-    score = score + Skills.sense_motive(summoner);
-    if(Feats.negotiator(summoner)) score = score + 2;
-    roll = Random.dn(summoner, 3505325381439919961, 20);
-    score = score + roll - 1;
+  function sense_motive(uint summoner) public view returns (Score memory result) {
+    result = Score(0, 0);
+    result.roll = Random.dn(summoner, 3505325381439919961, 20);
+    result.score = int8(result.roll);
+    result.score += Attributes.wisdom_modifier(summoner);
+    result.score += int8(Skills.sense_motive(summoner));
+    if(Feats.negotiator(summoner)) result.score += 2;
   }
 
   function attack(

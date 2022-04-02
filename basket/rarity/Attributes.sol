@@ -31,15 +31,15 @@ library Attributes {
         return Abilities(str, dex, con, _int, wis, cha);
     }
 
-    function strengthModifier(uint256 summonerId) public view returns (int8) {
-        return computeModifier(abilityScores(summonerId).strength);
+    function strength_modifier(uint256 summonerId) public view returns (int8) {
+        return compute_modifier(abilityScores(summonerId).strength);
     }
 
-    function dexterityModifier(uint256 summonerId) public view returns (int8) {
-        return computeModifier(abilityScores(summonerId).dexterity);
+    function dexterity_modifier(uint256 summonerId) public view returns (int8) {
+        return compute_modifier(abilityScores(summonerId).dexterity);
     }
 
-    function computeModifier(uint256 ability) public pure returns (int8) {
+    function compute_modifier(uint256 ability) public pure returns (int8) {
         if (ability < 10) return -1;
         return (int8(int256(ability)) - 10) / 2;
     }
