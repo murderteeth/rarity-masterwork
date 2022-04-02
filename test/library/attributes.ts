@@ -16,37 +16,37 @@ describe('Library: Attributes', function () {
   })
 
   it('computes generic modifiers', async function () {
-    expect(await this.library.attributes.computeModifier(8)).to.eq(-1)
-    expect(await this.library.attributes.computeModifier(10)).to.eq(0)
-    expect(await this.library.attributes.computeModifier(11)).to.eq(0)
-    expect(await this.library.attributes.computeModifier(12)).to.eq(1)
-    expect(await this.library.attributes.computeModifier(14)).to.eq(2)
+    expect(await this.library.attributes.compute_modifier(8)).to.eq(-1)
+    expect(await this.library.attributes.compute_modifier(10)).to.eq(0)
+    expect(await this.library.attributes.compute_modifier(11)).to.eq(0)
+    expect(await this.library.attributes.compute_modifier(12)).to.eq(1)
+    expect(await this.library.attributes.compute_modifier(14)).to.eq(2)
   })
 
   it('computes strength modifier', async function () {
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([8, 0, 0, 0, 0, 0])
-    expect(await this.library.attributes.strengthModifier(this.summoner)).to.eq(-1)
+    expect(await this.library.attributes.strength_modifier(this.summoner)).to.eq(-1)
 
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([10, 0, 0, 0, 0, 0])
-    expect(await this.library.attributes.strengthModifier(this.summoner)).to.eq(0)
+    expect(await this.library.attributes.strength_modifier(this.summoner)).to.eq(0)
 
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([11, 0, 0, 0, 0, 0])
-    expect(await this.library.attributes.strengthModifier(this.summoner)).to.eq(0)
+    expect(await this.library.attributes.strength_modifier(this.summoner)).to.eq(0)
 
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([12, 0, 0, 0, 0, 0])
-    expect(await this.library.attributes.strengthModifier(this.summoner)).to.eq(1)
+    expect(await this.library.attributes.strength_modifier(this.summoner)).to.eq(1)
 
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([14, 0, 0, 0, 0, 0])
-    expect(await this.library.attributes.strengthModifier(this.summoner)).to.eq(2)
+    expect(await this.library.attributes.strength_modifier(this.summoner)).to.eq(2)
   })
 })
