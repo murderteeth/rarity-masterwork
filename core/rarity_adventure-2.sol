@@ -10,6 +10,7 @@ import "../library/ForItems.sol";
 import "../library/Attributes.sol";
 import "../library/Combat.sol";
 import "../library/Crafting.sol";
+import "../library/Monster.sol";
 import "../library/Random.sol";
 import "../library/Roll.sol";
 import "../library/Summoner.sol";
@@ -22,18 +23,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint8 public constant EQUIPMENT_SLOTS = 2;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
   uint8 public constant EQUIPMENT_TYPE_ARMOR = 1;
-
-  int8 public constant MONSTER_INITIATIVE_BONUS = 1;
-  uint8 public constant MONSTER_DEX = 13;
-  uint8 public constant MONSTER_AC = 15;
-  uint8 public constant MONSTER_BASE_ATTACK_BONUS = 1;
-  uint8 public constant MONSTER_CRITICAL_MULTIPLIER = 3;
-  uint8 public constant MONSTER_HIT_DICE_COUNT = 1;
-  uint8 public constant MONSTER_HIT_DICE_SIDES = 8;
-  uint8 public constant MONSTER_DAMAGE_DICE_COUNT = 1;
-  uint8 public constant MONSTER_DAMAGE_DICE_SIDES = 6;
-  uint8 public constant MONSTER_DAMAGE_TYPE = 2;
-  int8 public constant MONSTER_DAMAGE_ROLL_MODIFIER = -1;
+  uint8[10] public MONSTERS = [1, 3, 4, 6, 7, 9, 10, 11, 12, 13];
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityCodexCommonWeapons constant COMMON_WEAPONS_CODEX = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
@@ -158,16 +148,33 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
+  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8[3] memory monsters) {
+    if(level < 9) {
+      monsters[0] = MONSTERS[level + 1];
+      monsters[1] = MONSTERS[level];
+      monsters[2] = bonus 
+      ? level < 2 
+        ? MONSTERS[0] 
+        : MONSTERS[Random.dn(15608573760256557610, token, uint8(level - 1))]
+      : 0;
+    } else {
+      monsters[0] = MONSTERS[9];
+      monsters[1] = MONSTERS[8];
+      monsters[2] = 0;
+    }
+  }
+
   function enter_dungeon(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
     Adventure storage adventure = adventures[token];
     adventure.dungeon_entered = true;
-    adventure.monster_count = 2;
-    uint8 number_of_combatants = adventure.monster_count + 1;
+    adventure.monster_count = adventure.skill_check_succeeded ? 3 : 2;
+    uint8[3] memory monsters = roll_monsters(token, RARITY.level(adventure.summoner), adventure.skill_check_succeeded);
 
+    uint8 number_of_combatants = adventure.monster_count + 1;
     Combat.Combatant[] memory combatants = new Combat.Combatant[](number_of_combatants);
     combatants[0] = summoner_combatant(token, adventure.summoner);
-    for(uint i = 0; i < adventure.monster_count; i ++) {
-      combatants[i + 1] = monster_combatant();
+    for(uint i = 0; i < adventure.monster_count; i++) {
+      combatants[i + 1] = monster_combatant(Monster.monster_by_id(monsters[i]));
     }
 
     Combat.sort_by_initiative(combatants);
@@ -217,7 +224,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     if(adventure.monsters_defeated == adventure.monster_count) {
       adventure.combat_ended = true;
     } else {
-      if(summoner.total_attack_bonus[attack_counter + 1] > 0) {
+      if(attack_counter < 3 && summoner.total_attack_bonus[attack_counter + 1] > 0) {
         attack_counters[token] = attack_counter + 1;
       } else {
         attack_counters[token] = 0;
@@ -261,19 +268,27 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Score memory initiative = Roll.initiative(summoner);
     emit RollInitiative(token, initiative.roll, initiative.score);
 
+    int8[4] memory total_attack_bonus = Summoner.total_attack_bonus(summoner, base_weapon_modifier);
+    int8[16] memory damage;
+    for(uint i = 0; i < 4; i++) {
+      if(total_attack_bonus[i] > 0) {
+        Combat.pack_damage(1, uint8(weapon_codex.damage), base_weapon_modifier, uint8(weapon_codex.damage_type), i, damage);
+      } else {
+        break;
+      }
+    }
+
     combatant = Combat.Combatant({
+      summoner: true,
       token: next_combatant,
+      host: summoner,
       initiative: initiative,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
-      base_weapon_modifier: base_weapon_modifier,
-      total_attack_bonus: Summoner.total_attack_bonus(summoner, base_weapon_modifier),
+      armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract),
       critical_modifier: int8(weapon_codex.critical_modifier),
       critical_multiplier: uint8(weapon_codex.critical),
-      damage_dice_count: 1,
-      damage_dice_sides: uint8(weapon_codex.damage),
-      damage_type: uint8(weapon_codex.damage_type),
-      armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract),
-      summoner: true
+      total_attack_bonus: total_attack_bonus,
+      damage: damage
     });
 
     next_combatant += 1;
@@ -293,22 +308,19 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return codex.weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
   }
 
-  function monster_combatant() internal returns(Combat.Combatant memory combatant) {
-    codex.weapon memory weapon_codex = COMMON_WEAPONS_CODEX.spear();
-    Score memory initiative = Roll.initiative(next_combatant, Attributes.compute_modifier(MONSTER_DEX), 0);
+  function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
+    Score memory initiative = Roll.initiative(next_combatant, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
     combatant = Combat.Combatant({
+      summoner: false,
       token: next_combatant,
+      host: monster_codex.id,
       initiative: initiative,
-      hit_points: int16(uint16(Random.dn(9409069218745053777, next_combatant, MONSTER_HIT_DICE_COUNT, MONSTER_HIT_DICE_SIDES))),
-      base_weapon_modifier: -1,
-      total_attack_bonus: [int8(MONSTER_BASE_ATTACK_BONUS), 0, 0, 0],
-      critical_modifier: int8(weapon_codex.critical_modifier),
-      critical_multiplier: uint8(weapon_codex.critical),
-      damage_dice_count: 1,
-      damage_dice_sides: uint8(weapon_codex.damage),
-      damage_type: uint8(weapon_codex.damage_type),
-      armor_class: MONSTER_AC,
-      summoner: false
+      hit_points: Monster.hit_points(monster_codex, next_combatant),
+      armor_class: monster_codex.armor_class,
+      total_attack_bonus: monster_codex.total_attack_bonus,
+      critical_modifier: monster_codex.critical_modifier,
+      critical_multiplier: monster_codex.critical_multiplier,
+      damage: monster_codex.damage
     });
     next_combatant += 1;
   }
@@ -338,7 +350,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       uint attack_counter = attack_counters[token];
       if(monster.hit_points > -1) {
         attack_combatant(token, monster, summoner, attack_counter, adventure.combat_round);
-        if(monster.total_attack_bonus[attack_counter + 1] > 0) {
+        if(attack_counter < 3 && monster.total_attack_bonus[attack_counter + 1] > 0) {
           attack_counters[token] = attack_counter + 1;
         } else {
           attack_counters[token] = 0;

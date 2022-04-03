@@ -5,18 +5,45 @@ import "./Roll.sol";
 
 library Combat {
   struct Combatant {
-    uint token;
-    Score initiative;
-    int8[4] total_attack_bonus;
-    int16 hit_points;
-    int8 base_weapon_modifier;
+    bool summoner;
     int8 critical_modifier;
     uint8 critical_multiplier;
-    uint8 damage_dice_count;
-    uint8 damage_dice_sides;
-    uint8 damage_type;
     uint8 armor_class;
-    bool summoner;
+    int16 hit_points;
+    uint token;
+    uint host;
+    Score initiative;
+    int8[4] total_attack_bonus;
+    int8[16] damage;
+  }
+
+  function pack_damage(
+    uint8 damage_dice_count,
+    uint8 damage_dice_sides,
+    int8 damage_modifier,
+    uint8 damage_type,
+    uint attack_number,
+    int8[16] memory damage
+  ) internal pure {
+    damage[attack_number * 4 + 0] = int8(damage_dice_count);
+    damage[attack_number * 4 + 1] = int8(damage_dice_sides);
+    damage[attack_number * 4 + 2] = damage_modifier;
+    damage[attack_number * 4 + 3] = int8(damage_type);
+  }
+
+  function unpack_damage(
+    int8[16] memory damage, 
+    uint attack_number
+  ) internal pure returns (
+    uint8 damage_dice_count,
+    uint8 damage_dice_sides,
+    int8 damage_modifier,
+    uint8 damage_type
+  ) {
+    damage_dice_count = uint8(damage[attack_number * 4 + 0]);
+    damage_dice_sides = uint8(damage[attack_number * 4 + 1]);
+    damage_modifier = damage[attack_number * 4 + 2];
+    damage_type = uint8(damage[attack_number * 4 + 3]);
   }
 
   function sort_by_initiative(Combatant[] memory combatants) internal pure {
@@ -61,15 +88,21 @@ library Combat {
     if(attack_roll.damage_multiplier == 0) {
       return (false, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, 0, 0);
     } else {
+      (
+        uint8 damage_dice_count, 
+        uint8 damage_dice_sides, 
+        int8 damage_modifier, 
+        uint8 _damage_type
+      ) = unpack_damage(attacker.damage, attack_number);
       damage = Roll.damage(
         attacker.token, 
-        attacker.damage_dice_count, 
-        attacker.damage_dice_sides,
-        attacker.base_weapon_modifier,
+        damage_dice_count, 
+        damage_dice_sides,
+        damage_modifier,
         attack_roll.damage_multiplier
       );
       defender.hit_points -= int16(uint16(damage));
-      return (true, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, damage, attacker.damage_type);
+      return (true, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, damage, _damage_type);
     }
   }
 }
