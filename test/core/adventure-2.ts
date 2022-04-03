@@ -107,7 +107,7 @@ describe('Core: Adventure II', function () {
 
   it('is during Act II', async function() {
     const summoner = this.summon()
-    const token = await this.adventure.next_token()    
+    const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     expect(await this.adventure.isActII(token)).to.be.false
     await this.adventure.sense_motive(token)
@@ -118,6 +118,19 @@ describe('Core: Adventure II', function () {
     expect(await this.adventure.isActII(token)).to.be.false
     await this.adventure.end(token)
     expect(await this.adventure.isActII(token)).to.be.false
+  })
+
+  it('rolls monsters', async function() {
+    const token = await this.adventure.next_token()
+    let monsters = await this.adventure.roll_monsters(token, 5, false)
+    expect(monsters[0]).to.be.gt(monsters[1])
+    expect(monsters[2]).to.eq(0)
+    monsters = await this.adventure.roll_monsters(token, 5, true)
+    expect(monsters[0]).to.be.gt(monsters[1])
+    expect(monsters[2]).to.be.gt(0).and.lt(monsters[1])
+    const level_8_monsters = await this.adventure.roll_monsters(token, 8, false)
+    const level_20_monsters = await this.adventure.roll_monsters(token, 20, false)
+    expect(level_20_monsters).to.deep.eq(level_8_monsters)
   })
 
   describe('Token AUTH', async function() {
@@ -368,7 +381,7 @@ describe('Core: Adventure II', function () {
       expect(attack.args.damage).to.be.gt(0);
     })
 
-    it.only('experienced fighters get multiple attacks per round', async function () {
+    it('experienced fighters get multiple attacks per round', async function () {
       this.codex.random.dn.returns(15)
 
       this.core.rarity.class
@@ -398,7 +411,7 @@ describe('Core: Adventure II', function () {
     })
 
     it('defeats the monsters', async function () {
-      this.codex.random.dn.returns(15)
+      this.codex.random.dn.returns(2)
 
       this.core.rarity.class
       .whenCalledWith(this.summoner)
@@ -406,11 +419,11 @@ describe('Core: Adventure II', function () {
 
       this.core.rarity.level
       .whenCalledWith(this.summoner)
-      .returns(5)
+      .returns(20)
 
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
-      .returns([18, 12, 14, 0, 0, 0])
+      .returns([64, 64, 64, 0, 0, 0])
 
       const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
       const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
@@ -418,15 +431,12 @@ describe('Core: Adventure II', function () {
       await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
       await this.adventure.enter_dungeon(this.token)
 
-      let expectedRound = 0
       while(!(await this.adventure.adventures(this.token)).combat_ended) {
         const target = await this.adventure.next_able_monster(this.token)
         await this.adventure.attack(this.token, target)
-        expectedRound++;
       }
 
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.combat_round).to.eq(expectedRound)
       expect(adventure.monster_count).to.eq(adventure.monsters_defeated)
       const summoners_turn = await this.adventure.summoners_turns(this.token)
       const summoner_combatant = await this.adventure.turn_orders(this.token, summoners_turn)
