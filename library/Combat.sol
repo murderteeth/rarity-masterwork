@@ -3,22 +3,22 @@ pragma solidity ^0.8.7;
 
 import "./Roll.sol";
 
-struct Combatant {
-  uint token;
-  Score initiative;
-  int16 hit_points;
-  int8 base_weapon_modifier;
-  int8 total_attack_bonus;
-  int8 critical_modifier;
-  uint8 critical_multiplier;
-  uint8 damage_dice_count;
-  uint8 damage_dice_sides;
-  uint8 damage_type;
-  uint8 armor_class;
-  bool summoner;
-}
-
 library Combat {
+  struct Combatant {
+    uint token;
+    Score initiative;
+    int8[4] total_attack_bonus;
+    int16 hit_points;
+    int8 base_weapon_modifier;
+    int8 critical_modifier;
+    uint8 critical_multiplier;
+    uint8 damage_dice_count;
+    uint8 damage_dice_sides;
+    uint8 damage_type;
+    uint8 armor_class;
+    bool summoner;
+  }
+
   function sort_by_initiative(Combatant[] memory combatants) internal pure {
     uint length = combatants.length;
     for(uint i = 0; i < length; i++) {
@@ -40,7 +40,8 @@ library Combat {
 
   function attack_combatant(
     Combatant memory attacker, 
-    Combatant storage defender
+    Combatant storage defender,
+    uint attack_number
   ) internal returns (
     bool hit, 
     uint8 roll, 
@@ -51,7 +52,7 @@ library Combat {
   ) {
     AttackRoll memory attack_roll = Roll.attack(
       attacker.token, 
-      attacker.total_attack_bonus, 
+      attacker.total_attack_bonus[attack_number], 
       attacker.critical_modifier, 
       attacker.critical_multiplier, 
       defender.armor_class

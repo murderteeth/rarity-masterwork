@@ -38,12 +38,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityCodexCommonWeapons constant COMMON_WEAPONS_CODEX = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
-  constructor() ERC721("Rarity Adventure II", "Adventure II") {}
+  constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
-  event SenseMotive(uint token, uint8 roll, int8 score);
-  event RollInitiative(uint token, uint8 roll, int8 score);
-  event Attack(uint token, uint attacker, uint defender, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
-  event Dying(uint token, uint combatant);
+  event SenseMotive(uint indexed token, uint8 roll, int8 score);
+  event RollInitiative(uint indexed token, uint8 roll, int8 score);
+  event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
+  event Dying(uint indexed token, uint combatant);
 
   struct Adventure {
     uint summoner;
@@ -67,9 +67,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   mapping(uint => uint) public latest_adventures;
   mapping(uint => EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
   mapping(address => mapping(uint => uint)) public equipment_index;
-  mapping(uint => Combatant[]) public turn_orders;
+  mapping(uint => Combat.Combatant[]) public turn_orders;
   mapping(uint => uint) public summoners_turns;
   mapping(uint => uint) public current_turns;
+  mapping(uint => uint) public attack_counters;
 
   function onERC721Received(
     address operator,
@@ -163,14 +164,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.monster_count = 2;
     uint8 number_of_combatants = adventure.monster_count + 1;
 
-    Combatant[] memory combatants = new Combatant[](number_of_combatants);
+    Combat.Combatant[] memory combatants = new Combat.Combatant[](number_of_combatants);
     combatants[0] = summoner_combatant(token, adventure.summoner);
     for(uint i = 0; i < adventure.monster_count; i ++) {
       combatants[i + 1] = monster_combatant();
     }
 
     Combat.sort_by_initiative(combatants);
-    Combatant[] storage turn_order = turn_orders[token];
+    Combat.Combatant[] storage turn_order = turn_orders[token];
     for(uint i = 0; i < number_of_combatants; i++) {
       turn_order.push(combatants[i]);
     }
@@ -181,10 +182,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function next_able_monster(uint token) public view returns(uint monsters_turn_order) {
-    Combatant[] storage turn_order = turn_orders[token];
+    Combat.Combatant[] storage turn_order = turn_orders[token];
     uint turn_count = turn_order.length;
     for(uint i = 0; i < turn_count; i++) {
-      Combatant storage combatant = turn_order[i];
+      Combat.Combatant storage combatant = turn_order[i];
       if(!combatant.summoner && combatant.hit_points > -1) return i;
     }
     revert("no able monster");
@@ -192,21 +193,22 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function attack(uint token, uint target) public approvedForAdventure(token) onlyDuringActII(token) {
     Adventure storage adventure = adventures[token];
+    uint attack_counter = attack_counters[token];
 
     uint summoners_turn = summoners_turns[token];
     uint current_turn = current_turns[token];
     require(current_turn == summoners_turn, "!summoners_turn");
 
-    Combatant[] storage turn_order = turn_orders[token];
-    Combatant storage summoner = turn_order[summoners_turn];
+    Combat.Combatant[] storage turn_order = turn_orders[token];
+    Combat.Combatant storage summoner = turn_order[summoners_turn];
     uint turn_count = turn_order.length;
     require(target < turn_count, "target out of bounds");
 
-    Combatant storage monster = turn_order[target];
+    Combat.Combatant storage monster = turn_order[target];
     require(!monster.summoner, "monster.summoner");
     require(monster.hit_points > -1, "monster.hit_points < 0");
 
-    attack_combatant(token, summoner, monster);
+    attack_combatant(token, summoner, monster, attack_counter, adventure.combat_round);
     if(monster.hit_points < 0) {
       adventure.monsters_defeated += 1;
       emit Dying(token, monster.token);
@@ -215,9 +217,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     if(adventure.monsters_defeated == adventure.monster_count) {
       adventure.combat_ended = true;
     } else {
-      current_turn = next_turn(adventure, turn_count, current_turn);  
-      current_turns[token] = current_turn;  
-      combat_loop_until_summoners_next_turn(token);
+      if(summoner.total_attack_bonus[attack_counter + 1] > 0) {
+        attack_counters[token] = attack_counter + 1;
+      } else {
+        attack_counters[token] = 0;
+        current_turn = next_turn(adventure, turn_count, current_turn);  
+        current_turns[token] = current_turn;  
+        combat_loop_until_summoners_next_turn(token);
+      }
     }
   }
 
@@ -245,7 +252,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.ended = block.timestamp;
   }
 
-  function summoner_combatant(uint token, uint summoner) internal returns(Combatant memory combatant) {
+  function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
@@ -254,7 +261,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Score memory initiative = Roll.initiative(summoner);
     emit RollInitiative(token, initiative.roll, initiative.score);
 
-    combatant = Combatant({
+    combatant = Combat.Combatant({
       token: next_combatant,
       initiative: initiative,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
@@ -282,18 +289,19 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function unarmed_strike_codex() internal pure returns(codex.weapon memory) {
+    // _, _, proficiency, _, damage_type, _, damage, critical, critical_modifier, _, _, _
     return codex.weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
   }
 
-  function monster_combatant() internal returns(Combatant memory combatant) {
+  function monster_combatant() internal returns(Combat.Combatant memory combatant) {
     codex.weapon memory weapon_codex = COMMON_WEAPONS_CODEX.spear();
     Score memory initiative = Roll.initiative(next_combatant, Attributes.compute_modifier(MONSTER_DEX), 0);
-    combatant = Combatant({
+    combatant = Combat.Combatant({
       token: next_combatant,
       initiative: initiative,
       hit_points: int16(uint16(Random.dn(9409069218745053777, next_combatant, MONSTER_HIT_DICE_COUNT, MONSTER_HIT_DICE_SIDES))),
       base_weapon_modifier: -1,
-      total_attack_bonus: int8(MONSTER_BASE_ATTACK_BONUS),
+      total_attack_bonus: [int8(MONSTER_BASE_ATTACK_BONUS), 0, 0, 0],
       critical_modifier: int8(weapon_codex.critical_modifier),
       critical_multiplier: uint8(weapon_codex.critical),
       damage_dice_count: 1,
@@ -305,7 +313,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     next_combatant += 1;
   }
 
-  function set_summoners_turn(uint token, Combatant[] memory combatants) internal {
+  function set_summoners_turn(uint token, Combat.Combatant[] memory combatants) internal {
     uint length = combatants.length;
     for(uint i = 0; i < length; i++) {
       if(combatants[i].summoner) {
@@ -321,14 +329,24 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     uint current_turn = current_turns[token];
     if(current_turn == summoners_turn) return;
 
-    Combatant[] storage turn_order = turn_orders[token];
-    Combatant storage summoner = turn_order[summoners_turn];
+    Combat.Combatant[] storage turn_order = turn_orders[token];
+    Combat.Combatant storage summoner = turn_order[summoners_turn];
     uint turn_count = turn_order.length;
 
     do {
-      Combatant memory monster = turn_order[current_turn];
-      if(monster.hit_points > -1) attack_combatant(token, monster, summoner);
-      current_turn = next_turn(adventure, turn_count, current_turn);
+      Combat.Combatant memory monster = turn_order[current_turn];
+      uint attack_counter = attack_counters[token];
+      if(monster.hit_points > -1) {
+        attack_combatant(token, monster, summoner, attack_counter, adventure.combat_round);
+        if(monster.total_attack_bonus[attack_counter + 1] > 0) {
+          attack_counters[token] = attack_counter + 1;
+        } else {
+          attack_counters[token] = 0;
+          current_turn = next_turn(adventure, turn_count, current_turn);
+        }
+      } else {
+        current_turn = next_turn(adventure, turn_count, current_turn);
+      }
     } while(current_turn != summoners_turn && (summoner.hit_points > -1));
 
     current_turns[token] = current_turn;
@@ -347,10 +365,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function attack_combatant(uint token, Combatant memory attacker, Combatant storage defender) internal {
+  function attack_combatant(uint token, Combat.Combatant memory attacker, Combat.Combatant storage defender, uint attack_number, uint8 round) internal {
     (bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
-    = Combat.attack_combatant(attacker, defender);
-    emit Attack(token, attacker.token, defender.token, hit, roll, score, critical_confirmation, damage, damage_type);
+    = Combat.attack_combatant(attacker, defender, attack_number);
+    emit Attack(token, attacker.token, defender.token, round, hit, roll, score, critical_confirmation, damage, damage_type);
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {

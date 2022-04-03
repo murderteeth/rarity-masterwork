@@ -4,6 +4,7 @@ pragma solidity ^0.8.7;
 import "../interfaces/codex/IRarityCodexCommonArmor.sol";
 import "../interfaces/core/IRarityCommonCrafting.sol";
 import "./Attributes.sol";
+import "./Combat.sol";
 import "./Proficiency.sol";
 import "./Rarity.sol";
 
@@ -85,12 +86,21 @@ library Summoner {
     : Attributes.dexterity_modifier(summoner);
   }
 
-  function total_attack_bonus(uint summoner, int8 _base_weapon_modifier) public view returns (int8) {
-    return int8(base_attack_bonus(summoner)) + _base_weapon_modifier;
+  function total_attack_bonus(uint summoner, int8 _base_weapon_modifier) public view returns (int8[4] memory result) {
+    result = base_attack_bonus(summoner);
+    for(uint i = 0; i < 4; i++) {
+      if(result[i] > 0) result[i] += _base_weapon_modifier;
+      else break;
+    }
   }
 
-  function base_attack_bonus(uint summoner) public view returns (uint8) {
-    return uint8((Rarity.level(summoner) * base_attack_bonus_for_class(Rarity.class(summoner))) / 4);
+  function base_attack_bonus(uint summoner) public view returns (int8[4] memory result) {
+    result = [int8(0), 0, 0, 0];
+    result[0] = int8(uint8(Rarity.level(summoner)) * base_attack_bonus_for_class(Rarity.class(summoner)) / 4);
+    for(uint i = 1; i < 4; i++) {
+      if(result[i - 1] > 5) result[i] = result[i - 1] - 5;
+      else break;
+    }
   }
 
   function base_attack_bonus_for_class(uint _class) public pure returns (uint8) {
