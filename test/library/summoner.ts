@@ -97,4 +97,54 @@ describe('Library: Summoner', function () {
     const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address)
     expect(ac).to.equal(19)
   })
+
+  it('computes basic attack bonus', async function () {
+    this.rarity.class
+    .whenCalledWith(this.summoner)
+    .returns(classes.fighter)
+
+    this.rarity.level
+    .whenCalledWith(this.summoner)
+    .returns(5)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([5, 0, 0, 0])
+
+    this.rarity.level
+    .whenCalledWith(this.summoner)
+    .returns(6)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([6, 1, 0, 0])
+
+    this.rarity.level // 11th level ~ October 2024
+    .whenCalledWith(this.summoner)
+    .returns(11)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([11, 6, 1, 0])
+
+    this.rarity.level // 16th level ~ August 2030
+    .whenCalledWith(this.summoner)
+    .returns(16)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([16, 11, 6, 1])
+
+    this.rarity.class
+    .whenCalledWith(this.summoner)
+    .returns(classes.bard)
+
+    this.rarity.level
+    .whenCalledWith(this.summoner)
+    .returns(5)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([3, 0, 0, 0])
+
+    this.rarity.level // 8th level ~ December 2022
+    .whenCalledWith(this.summoner)
+    .returns(8)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([6, 1, 0, 0])
+
+    this.rarity.level // 15th level ~ February 2029
+    .whenCalledWith(this.summoner)
+    .returns(15)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([11, 6, 1, 0])
+
+    this.rarity.level // 20th level ~ July 2038
+    .whenCalledWith(this.summoner)
+    .returns(20)
+    expect(await this.library.summoner.base_attack_bonus(this.summoner)).to.deep.eq([15, 10, 5, 0])
+  })
 })

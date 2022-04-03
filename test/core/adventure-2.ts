@@ -368,6 +368,35 @@ describe('Core: Adventure II', function () {
       expect(attack.args.damage).to.be.gt(0);
     })
 
+    it.only('experienced fighters get multiple attacks per round', async function () {
+      this.codex.random.dn.returns(15)
+
+      this.core.rarity.class
+      .whenCalledWith(this.summoner)
+      .returns(classes.fighter)
+
+      this.core.rarity.level
+      .whenCalledWith(this.summoner)
+      .returns(6)
+
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([18, 12, 14, 0, 0, 0])
+
+      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+      const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
+      await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
+      await this.adventure.enter_dungeon(this.token)
+      let target = await this.adventure.next_able_monster(this.token)
+      await this.adventure.attack(this.token, target)
+      expect((await this.adventure.adventures(this.token)).combat_round).to.eq(1)
+
+      target = await this.adventure.next_able_monster(this.token)
+      await this.adventure.attack(this.token, target)
+      expect((await this.adventure.adventures(this.token)).combat_round).to.eq(1)
+    })
+
     it('defeats the monsters', async function () {
       this.codex.random.dn.returns(15)
 
