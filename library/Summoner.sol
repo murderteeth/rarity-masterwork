@@ -15,20 +15,32 @@ library Summoner {
   function armor_class(
     uint summoner,
     uint armor,
-    address armor_contract
+    address armor_contract,
+    uint shield,
+    address shield_contract
   ) public view returns (uint8) {
     int8 result = 10;
-    int8 dexModifier = Attributes.dexterity_modifier(summoner) 
-    + armor_proficiency_bonus(summoner, armor, armor_contract);
+    int8 dex_modifier = Attributes.dexterity_modifier(summoner) 
+    + armor_proficiency_bonus(summoner, armor, armor_contract)
+    + armor_proficiency_bonus(summoner, shield, shield_contract);
+
+    uint max_dex_bonus = (2**128 - 1);
 
     if(armor_contract != address(0)) {
       (, uint item_type, , ) = IRarityCommonCrafting(armor_contract).items(armor);
-      (, , , , uint armorBonus, uint maxDexBonus, , , , ) = ARMOR_CODEX.item_by_id(item_type);
-      result += int8(uint8(armorBonus));
-      result = result + ((dexModifier > int256(maxDexBonus)) ? int8(uint8(maxDexBonus)) : dexModifier);
-    } else {
-      result = result + dexModifier;
+      (, , , , uint armor_bonus, uint armor_max_dex_bonus, , , , ) = ARMOR_CODEX.item_by_id(item_type);
+      result += int8(uint8(armor_bonus));
+      if(armor_max_dex_bonus < max_dex_bonus) max_dex_bonus = armor_max_dex_bonus;
     }
+
+    if(shield_contract != address(0)) {
+      (, uint item_type, , ) = IRarityCommonCrafting(shield_contract).items(shield);
+      (, , , , uint shield_bonus, uint shield_max_dex_bonus, , , , ) = ARMOR_CODEX.item_by_id(item_type);
+      result += int8(uint8(shield_bonus));
+      if(shield_max_dex_bonus < max_dex_bonus) max_dex_bonus = shield_max_dex_bonus;
+    }
+
+    result = result + ((dex_modifier > int256(max_dex_bonus)) ? int8(uint8(max_dex_bonus)) : dex_modifier);
 
     return uint8(result);
   }

@@ -20,9 +20,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint public next_combatant = 1;
 
   uint8 public constant SKILL_CHECK_DC = 20;
-  uint8 public constant EQUIPMENT_SLOTS = 2;
+  uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
   uint8 public constant EQUIPMENT_TYPE_ARMOR = 1;
+  uint8 public constant EQUIPMENT_TYPE_SHIELD = 2;
   uint8[10] public MONSTERS = [1, 3, 4, 6, 7, 9, 10, 11, 12, 13];
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
@@ -118,14 +119,28 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     approvedForItem(item, item_contract)
     onlyDuringActI(token)
   {
-    require(equipment_type < 2, "!equipment_type");
+    require(equipment_type < 3, "!equipment_type");
 
     if(item_contract != address(0)) {
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
       if(equipment_type == EQUIPMENT_TYPE_WEAPON) {
         require(base_type == 3, "!weapon");
+        codex.weapon memory weapon = COMMON_WEAPONS_CODEX.item_by_id(item_type);
+        if(weapon.encumbrance == 5) revert("ranged weapon");
+        if(weapon.encumbrance == 4) {
+          EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+          if(shield_slot.item_contract != address(0)) revert("shield equipped");
+        }
       } else if(equipment_type == EQUIPMENT_TYPE_ARMOR) {
         require(base_type == 2 && item_type < 13, "!armor");
+      } else if(equipment_type == EQUIPMENT_TYPE_SHIELD) {
+        require(base_type == 2 && item_type > 12, "!shield");
+        EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+        if(weapon_slot.item_contract != address(0)) {
+          (, uint8 equipped_type,,) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
+          codex.weapon memory equipped_weapon = COMMON_WEAPONS_CODEX.item_by_id(equipped_type);
+          if(equipped_weapon.encumbrance == 4) revert("two-handed weapon equipped");
+        }
       }
     }
 
@@ -262,6 +277,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
     int8 base_weapon_modifier = Summoner.base_weapon_modifier(summoner, weapon_codex.encumbrance);
 
@@ -284,7 +300,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       host: summoner,
       initiative: initiative,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
-      armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract),
+      armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract, shield_slot.item, shield_slot.item_contract),
       critical_modifier: int8(weapon_codex.critical_modifier),
       critical_multiplier: uint8(weapon_codex.critical),
       total_attack_bonus: total_attack_bonus,
