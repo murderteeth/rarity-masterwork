@@ -11,3 +11,11 @@ export const equipmentType = {
   weapon: 0,
   armor: 1
 }
+
+export const enumberance = {
+  unarmed: 1,
+  lightMelee: 2,
+  oneHanded: 3,
+  twoHanded: 4,
+  ranged: 5
+}

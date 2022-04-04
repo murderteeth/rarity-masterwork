@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
-import { randomId } from '../util'
+import { enumberance, randomId } from '../util'
 import { armorType, baseType } from '../util/crafting'
 import { fakeAttributes, fakeCommonCrafting, fakeRarity } from '../util/fakes'
 import { ethers } from 'hardhat'
@@ -96,6 +96,22 @@ describe('Library: Summoner', function () {
 
     const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address)
     expect(ac).to.equal(19)
+  })
+
+  it('computes base weapon modifier', async function() {
+    this.attributes.ability_scores
+    .whenCalledWith(this.summoner)
+    .returns([14, 12, 0, 0, 0, 0])
+    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.unarmed))
+    .to.eq(2)
+    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.lightMelee))
+    .to.eq(2)
+    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.oneHanded))
+    .to.eq(2)
+    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.twoHanded))
+    .to.eq(3)
+    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.ranged))
+    .to.eq(1)
   })
 
   it('computes basic attack bonus', async function () {
