@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
-import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills } from '../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
@@ -90,7 +90,7 @@ describe('Core: Adventure II', function () {
     await expect(this.adventure.start(summoner)).to.be.revertedWith('!latest_adventure.ended')
   })
 
-  it('is during Act I', async function() {
+  it('is in Act I', async function() {
     const summoner = this.summon()
     const token = await this.adventure.next_token()    
     await this.adventure.start(summoner)
@@ -105,7 +105,7 @@ describe('Core: Adventure II', function () {
     expect(await this.adventure.isActI(token)).to.be.false
   })
 
-  it('is during Act II', async function() {
+  it('is in Act II', async function() {
     const summoner = this.summon()
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
@@ -240,6 +240,16 @@ describe('Core: Adventure II', function () {
         leatherArmor
       )
 
+      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+      await expect(this.adventure.equip(
+        this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address
+      )).to.not.be.reverted
+      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+        this.signer.address,
+        this.adventure.address,
+        heavyWoodShield
+      )
+
       let slot = await this.adventure.equipment_slots(this.token, equipmentType.weapon)
       expect(slot.item_contract).to.eq(this.crafting.common.address)
       expect(slot.item).to.eq(longsword)
@@ -247,6 +257,10 @@ describe('Core: Adventure II', function () {
       slot = await this.adventure.equipment_slots(this.token, equipmentType.armor)
       expect(slot.item_contract).to.eq(this.crafting.common.address)
       expect(slot.item).to.eq(leatherArmor)
+
+      slot = await this.adventure.equipment_slots(this.token, equipmentType.shield)
+      expect(slot.item_contract).to.eq(this.crafting.common.address)
+      expect(slot.item).to.eq(heavyWoodShield)
     })
 
     it('updates equipment slots', async function () {
@@ -273,10 +287,35 @@ describe('Core: Adventure II', function () {
       await expect(this.adventure.equip(
         this.token, equipmentType.armor, 0, ethers.constants.AddressZero
       )).to.not.be.reverted
+      await expect(this.adventure.equip(
+        this.token, equipmentType.shield, 0, ethers.constants.AddressZero
+      )).to.not.be.reverted
     })
 
     it.skip('only equips common and masterwork items', async function () {
 
+    })
+
+    it('can\'t equip a two-handed weapon after a shield', async function () {
+      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+      await this.adventure.equip(this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
+      const greatsword = fakeGreatsword(this.crafting.common, this.summoner, this.signer)
+      await expect(this.adventure.equip(this.token, equipmentType.weapon, greatsword, this.crafting.common.address))
+      .to.be.revertedWith('shield equipped')
+    })
+
+    it('can\'t equip a shield after a two-handed weapon', async function () {
+      const greatsword = fakeGreatsword(this.crafting.common, this.summoner, this.signer)
+      await this.adventure.equip(this.token, equipmentType.weapon, greatsword, this.crafting.common.address)
+      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+      await expect(this.adventure.equip(this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address))
+      .to.be.revertedWith('two-handed weapon equipped')
+    })
+
+    it('can\'t equip ranged weapons', async function () {
+      const heavyCrossbow = fakeHeavyCrossbow(this.crafting.common, this.summoner, this.signer)
+      await expect(this.adventure.equip(this.token, equipmentType.weapon, heavyCrossbow, this.crafting.common.address))
+      .to.be.revertedWith('ranged weapon')
     })
 
     it('can\'t equip items in the wrong slot', async function () {
@@ -289,6 +328,10 @@ describe('Core: Adventure II', function () {
       await expect(
         this.adventure.equip(this.token, equipmentType.weapon, leatherArmor, this.crafting.common.address
       )).to.be.revertedWith('!weapon')
+
+      await expect(
+        this.adventure.equip(this.token, equipmentType.shield, leatherArmor, this.crafting.common.address
+      )).to.be.revertedWith('!shield')
     })
 
     it('can\'t equip more than one summoner with the same item', async function () {

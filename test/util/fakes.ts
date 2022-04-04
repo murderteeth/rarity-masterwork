@@ -70,10 +70,22 @@ export function fakeLongsword(crafting: FakeContract, crafter: number, signer: S
   return fakeCraft(crafting, baseType.weapon, weaponType.longsword, crafter, signer)
 }
 
+export function fakeGreatsword(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.weapon, weaponType.greatsword, crafter, signer)
+}
+
+export function fakeHeavyCrossbow(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.weapon, weaponType.heavyCrossbow, crafter, signer)
+}
+
 export function fakeLeatherArmor(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.leather, crafter, signer)
 }
 
 export function fakeFullPlateArmor(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.fullPlate, crafter, signer)
+}
+
+export function fakeHeavyWoodShield(crafting: FakeContract, crafter: number, signer: SignerWithAddress) {
+  return fakeCraft(crafting, baseType.armor, armorType.heavyWoodShield, crafter, signer)
 }

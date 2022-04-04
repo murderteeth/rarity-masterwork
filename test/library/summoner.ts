@@ -12,6 +12,7 @@ describe('Library: Summoner', function () {
   before(async function () {
     this.summoner = randomId()
     this.fullPlate = randomId()
+    this.shield = randomId()
 
     this.rarity = await fakeRarity()
     this.attributes = await fakeAttributes()
@@ -51,7 +52,7 @@ describe('Library: Summoner', function () {
   })
 
   it('computes minimum armor class', async function () {
-    const ac = await this.library.summoner.armor_class(this.summoner, 0, ethers.constants.AddressZero)
+    const ac = await this.library.summoner.armor_class(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(9)
   })
 
@@ -60,7 +61,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns([0, 12, 0, 0, 0, 0])
 
-    const ac = await this.library.summoner.armor_class(this.summoner, 0, ethers.constants.AddressZero)
+    const ac = await this.library.summoner.armor_class(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(11)
   })
 
@@ -77,7 +78,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.fullPlate)
     .returns([baseType.armor, armorType.fullPlate, 0, 0])
 
-    const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address)
+    const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(13)
   })
 
@@ -94,8 +95,36 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.fullPlate)
     .returns([baseType.armor, armorType.fullPlate, 0, 0])
 
-    const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address)
+    const ac = await this.library.summoner.armor_class(this.summoner, this.fullPlate, this.commonCrafting.address, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(19)
+  })
+
+  it('computes armor class with proficient armor and shield', async function () {
+    this.rarity.class
+    .whenCalledWith(this.summoner)
+    .returns(classes.fighter)
+
+    this.attributes.ability_scores
+    .whenCalledWith(this.summoner)
+    .returns([0, 12, 0, 0, 0, 0])
+
+    this.commonCrafting.items
+    .whenCalledWith(this.fullPlate)
+    .returns([baseType.armor, armorType.fullPlate, 0, 0])
+
+    this.commonCrafting.items
+    .whenCalledWith(this.shield)
+    .returns([baseType.armor, armorType.heavyWoodShield, 0, 0])
+
+    const ac = await this.library.summoner.armor_class(
+      this.summoner, 
+      this.fullPlate, 
+      this.commonCrafting.address, 
+      this.shield, 
+      this.commonCrafting.address
+    )
+
+    expect(ac).to.equal(21)
   })
 
   it('computes base weapon modifier', async function() {

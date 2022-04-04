@@ -11,9 +11,12 @@ export const goodsType = {
 
 export const armorType = {
   leather: 2,
-  fullPlate: 12
+  fullPlate: 12,
+  heavyWoodShield: 16
 }
 
 export const weaponType = {
-  longsword: 27
+  longsword: 27,
+  greatsword: 38,
+  heavyCrossbow: 58
 }

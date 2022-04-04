@@ -9,7 +9,8 @@ export function randomId() {
 
 export const equipmentType = {
   weapon: 0,
-  armor: 1
+  armor: 1,
+  shield: 2
 }
 
 export const enumberance = {
