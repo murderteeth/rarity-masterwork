@@ -67,6 +67,9 @@ describe('Core: Adventure II', function () {
       this.core.rarity.ownerOf
       .whenCalledWith(summoner)
       .returns(this.signer.address)
+      this.core.rarity.level
+      .whenCalledWith(summoner)
+      .returns(1)
       return summoner
     }
   })
@@ -90,47 +93,71 @@ describe('Core: Adventure II', function () {
     await expect(this.adventure.start(summoner)).to.be.revertedWith('!latest_adventure.ended')
   })
 
-  it('is in Act I', async function() {
+  it('is outside the dungeon', async function() {
     const summoner = this.summon()
     const token = await this.adventure.next_token()    
     await this.adventure.start(summoner)
-    expect(await this.adventure.isActI(token)).to.be.true
-    await this.adventure.sense_motive(token)
-    expect(await this.adventure.isActI(token)).to.be.true
+    expect(await this.adventure.is_outside_dungeon(token)).to.be.true
     await this.adventure.enter_dungeon(token)
-    expect(await this.adventure.isActI(token)).to.be.false
+    expect(await this.adventure.is_outside_dungeon(token)).to.be.false
     await this.adventure.flee(token)
-    expect(await this.adventure.isActI(token)).to.be.false
+    expect(await this.adventure.is_outside_dungeon(token)).to.be.false
     await this.adventure.end(token)
-    expect(await this.adventure.isActI(token)).to.be.false
+    expect(await this.adventure.is_outside_dungeon(token)).to.be.false
   })
 
-  it('is in Act II', async function() {
+  it('is en combat', async function() {
     const summoner = this.summon()
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
-    expect(await this.adventure.isActII(token)).to.be.false
-    await this.adventure.sense_motive(token)
-    expect(await this.adventure.isActII(token)).to.be.false
+    expect(await this.adventure.is_en_combat(token)).to.be.false
     await this.adventure.enter_dungeon(token)
-    expect(await this.adventure.isActII(token)).to.be.true
+    expect(await this.adventure.is_en_combat(token)).to.be.true
     await this.adventure.flee(token)
-    expect(await this.adventure.isActII(token)).to.be.false
+    expect(await this.adventure.is_en_combat(token)).to.be.false
     await this.adventure.end(token)
-    expect(await this.adventure.isActII(token)).to.be.false
+    expect(await this.adventure.is_en_combat(token)).to.be.false
   })
 
-  it('rolls monsters', async function() {
+  it('is combat over', async function() {
+    const summoner = this.summon()
     const token = await this.adventure.next_token()
-    let monsters = await this.adventure.roll_monsters(token, 5, false)
-    expect(monsters[0]).to.be.gt(monsters[1])
-    expect(monsters[2]).to.eq(0)
-    monsters = await this.adventure.roll_monsters(token, 5, true)
-    expect(monsters[0]).to.be.gt(monsters[1])
-    expect(monsters[2]).to.be.gt(0).and.lt(monsters[1])
-    const level_8_monsters = await this.adventure.roll_monsters(token, 8, false)
-    const level_20_monsters = await this.adventure.roll_monsters(token, 20, false)
-    expect(level_20_monsters).to.deep.eq(level_8_monsters)
+    await this.adventure.start(summoner)
+    expect(await this.adventure.is_combat_over(token)).to.be.false
+    await this.adventure.enter_dungeon(token)
+    expect(await this.adventure.is_combat_over(token)).to.be.false
+    await this.adventure.flee(token)
+    expect(await this.adventure.is_combat_over(token)).to.be.true
+    await this.adventure.end(token)
+    expect(await this.adventure.is_combat_over(token)).to.be.false
+  })
+
+  it('is ended', async function() {
+    const summoner = this.summon()
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
+    expect(await this.adventure.is_ended(token)).to.be.false
+    await this.adventure.enter_dungeon(token)
+    expect(await this.adventure.is_ended(token)).to.be.false
+    await this.adventure.flee(token)
+    expect(await this.adventure.is_ended(token)).to.be.false
+    await this.adventure.end(token)
+    expect(await this.adventure.is_ended(token)).to.be.true
+  })
+
+  it('is victory', async function() {
+    const token = randomId()
+    await this.adventure.setVariable('adventures', { [token] : {
+      monster_count: 1,
+      monsters_defeated: 1
+    }})
+    expect(await this.adventure.is_victory(token)).to.be.true
+
+    await this.adventure.setVariable('adventures', { [token] : {
+      monster_count: 1,
+      monsters_defeated: 0
+    }})
+    expect(await this.adventure.is_victory(token)).to.be.false
   })
 
   describe('Token AUTH', async function() {
@@ -158,57 +185,6 @@ describe('Core: Adventure II', function () {
       expect(await signersConnection.isApprovedOrOwnerOfAdventure(this.token)).to.be.false
       await this.adventure.setApprovalForAll(approvedSigner.address, true)
       expect(await signersConnection.isApprovedOrOwnerOfAdventure(this.token)).to.be.true
-    })
-  })
-
-  describe('Skill check', async function () {
-    beforeEach(async function(){
-      this.summoner = this.summon()
-      this.token = await this.adventure.next_token()
-      await this.adventure.start(this.summoner)
-    })
-
-    it('fails skill check', async function () {
-      await expect(this.adventure.sense_motive(this.token))
-      .to.emit(this.adventure, 'SenseMotive')
-      .withArgs(this.token, 1, 0)
-
-      const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.skill_check_rolled).to.be.true
-      expect(adventure.skill_check_succeeded).to.be.false
-    })
-  
-    it('succeeds skill check', async function () {
-      this.core.attributes.ability_scores
-      .whenCalledWith(this.summoner)
-      .returns([0, 0, 0, 0, 10, 0])
-
-      const skillRanks = Array(36).fill(0)
-      skillRanks[skills.sense_motive] = 1
-      this.core.skills.get_skills
-      .whenCalledWith(this.summoner)
-      .returns(skillRanks)
-
-      const featFlags = Array(100).fill(false)
-      featFlags[feats.negotiator] = true
-      this.core.feats.get_feats
-      .whenCalledWith(this.summoner)
-      .returns(featFlags)
-
-      this.codex.random.dn.returns(17)
-
-      await expect(this.adventure.sense_motive(this.token))
-      .to.emit(this.adventure, 'SenseMotive')
-      .withArgs(this.token, 17, 20)
-
-      const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.skill_check_rolled).to.be.true
-      expect(adventure.skill_check_succeeded).to.be.true
-    })
-
-    it('can\'t skill check more than once per adventure', async function (){
-      await expect(this.adventure.sense_motive(this.token)).to.not.be.reverted
-      await expect(this.adventure.sense_motive(this.token)).to.be.revertedWith('skill_check_rolled')
     })
   })
 
@@ -437,7 +413,7 @@ describe('Core: Adventure II', function () {
 
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
-      .returns([18, 12, 14, 0, 0, 0])
+      .returns([24, 24, 24, 0, 0, 0])
 
       const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
       const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
@@ -513,6 +489,61 @@ describe('Core: Adventure II', function () {
     })
   })
 
+  describe('Loot', async function () {
+    beforeEach(async function(){
+      this.summoner = this.summon()
+      this.token = await this.adventure.next_token()
+      await this.adventure.start(this.summoner)
+      await this.adventure.setVariable('adventures', { [this.token] : {
+        monster_count: 1,
+        monsters_defeated: 1
+      }})
+    })
+
+    it('fails search check', async function () {
+      await expect(this.adventure.search(this.token))
+      .to.emit(this.adventure, 'SearchCheck')
+      .withArgs(this.token, 1, 0)
+
+      const adventure = await this.adventure.adventures(this.token)
+      expect(adventure.search_check_rolled).to.be.true
+      expect(adventure.search_check_succeeded).to.be.false
+    })
+  
+    it('succeeds search check', async function () {
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 10, 0, 0])
+
+      const skillRanks = Array(36).fill(0)
+      skillRanks[skills.search] = 1
+      this.core.skills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(skillRanks)
+
+      const featFlags = Array(100).fill(false)
+      featFlags[feats.investigator] = true
+      this.core.feats.get_feats
+      .whenCalledWith(this.summoner)
+      .returns(featFlags)
+
+      this.codex.random.dn.returns(17)
+
+      await expect(this.adventure.search(this.token))
+      .to.emit(this.adventure, 'SearchCheck')
+      .withArgs(this.token, 17, 20)
+
+      const adventure = await this.adventure.adventures(this.token)
+      expect(adventure.search_check_rolled).to.be.true
+      expect(adventure.search_check_succeeded).to.be.true
+    })
+
+    it('can\'t search more than once', async function (){
+      await expect(this.adventure.search(this.token)).to.not.be.reverted
+      await expect(this.adventure.search(this.token)).to.be.revertedWith('search_check_rolled')
+    })
+  })
+
   it('ends the adventure', async function () {
     const summoner = this.summon()
     const token = await this.adventure.next_token()
@@ -550,7 +581,7 @@ describe('Core: Adventure II', function () {
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     await this.adventure.end(token)
-    await expect(this.adventure.end(token)).to.be.revertedWith('adventure.ended')
+    await expect(this.adventure.end(token)).to.be.revertedWith('ended')
   })
 
   it('computes time to next adventure', async function () {
