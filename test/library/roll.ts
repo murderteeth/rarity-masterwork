@@ -36,7 +36,7 @@ describe('Library: Roll', function () {
   })
 
   describe('Initiative', async function() {
-    it('rolls low for a clumsy summoner', async function() {
+    it('rolls low for clumsy summoners', async function() {
       this.codex.random.dn.returns(1)
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
@@ -44,7 +44,7 @@ describe('Library: Roll', function () {
       expect(await this.library.roll['initiative(uint256)'](this.summoner)).to.deep.eq([1, 0])
     })
 
-    it('rolls higher for a dexterous summoner', async function() {
+    it('rolls higher for dexterous summoners', async function() {
       this.codex.random.dn.returns(1)
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
@@ -78,7 +78,7 @@ describe('Library: Roll', function () {
       .to.deep.eq([1, 0])
     })
 
-    it('rolls higher for smartie summoners', async function() {
+    it('rolls higher for smart summoners', async function() {
       this.codex.random.dn.returns(1)
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
@@ -111,13 +111,13 @@ describe('Library: Roll', function () {
   })
 
   describe('Sense Motive', async function() {
-    it('rolls low for a foolish summoner', async function() {
+    it('rolls low for foolish summoners', async function() {
       this.codex.random.dn.returns(1)
       expect(await this.library.roll.sense_motive(this.summoner))
       .to.deep.eq([1, 0])
     })
 
-    it('rolls higher for a wise summoner', async function() {
+    it('rolls higher for wise summoners', async function() {
       this.codex.random.dn.returns(1)
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
@@ -126,7 +126,7 @@ describe('Library: Roll', function () {
       .to.deep.eq([1, 5])
     })
 
-    it('rolls higher for a skilled summoner', async function() {
+    it('rolls higher for skilled summoners', async function() {
       this.codex.random.dn.returns(1)
       const skillsRanks = Array(36).fill(0)
       skillsRanks[skills.sense_motive] = 4

@@ -122,7 +122,7 @@ describe('Core: Crafting Materials II', function () {
     .returns([0, 0, 0, 2, 0, 0, false, false, false, false, false])
 
     await expect(this.mats.claim(this.adventure_token))
-    .revertedWith('!adventure ended')
+    .revertedWith('!ended')
   })
 
   it('rejects adventures that weren\'t won', async function() {
@@ -131,6 +131,6 @@ describe('Core: Crafting Materials II', function () {
     .returns([0, 0, 1, 2, 1, 0, false, false, false, false, false])
 
     await expect(this.mats.claim(this.adventure_token))
-    .revertedWith('!adventure won')
+    .revertedWith('!victory')
   })
 })

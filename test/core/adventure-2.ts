@@ -338,6 +338,15 @@ describe('Core: Adventure II', function () {
       expect(adventure.monster_count).to.eq(2)
     })
 
+    it('rolls monsters', async function() {
+      expect((await this.adventure.roll_monsters(this.token, 1, false)).monster_count).to.eq(2)
+      expect((await this.adventure.roll_monsters(this.token, 1, true)).monster_count).to.eq(3)
+      expect((await this.adventure.roll_monsters(this.token, 8, false)).monster_count).to.eq(2)
+      expect((await this.adventure.roll_monsters(this.token, 8, true)).monster_count).to.eq(3)
+      expect((await this.adventure.roll_monsters(this.token, 20, false)).monster_count).to.eq(2)
+      expect((await this.adventure.roll_monsters(this.token, 20, true)).monster_count).to.eq(3)
+    })
+
     it('orders combatants by initiative', async function () {
       const featFlags = Array(100).fill(false)
       featFlags[feats.improved_initiative] = true
