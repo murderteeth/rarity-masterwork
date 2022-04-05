@@ -29,6 +29,14 @@ library Roll {
     score = total_dex_modifier + int8(initiative_bonus) + int8(roll);
   }
 
+  function search(uint summoner) public view returns (uint8 roll, int8 score) {
+    roll = Random.dn(summoner, 12460038586674487978, 20);
+    score = int8(roll);
+    score += Attributes.intelligence_modifier(summoner);
+    score += int8(Skills.search(summoner));
+    if(Feats.investigator(summoner)) score += 2;
+  }
+
   function sense_motive(uint summoner) public view returns (uint8 roll, int8 score) {
     roll = Random.dn(summoner, 3505325381439919961, 20);
     score = int8(roll);

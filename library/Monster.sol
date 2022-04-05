@@ -86,7 +86,7 @@ library Monster {
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
     monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
+    monster.critical_multiplier = 2;
     monster.total_attack_bonus = [int8(4), 0, 0, 0];
     monster.abilities = [10, 17, 12, 1, 12, 4];
     Combat.pack_damage(1, 4, 0, 3, 0, monster.damage);
@@ -150,7 +150,7 @@ library Monster {
     monster.initiative_bonus = 0;
     monster.armor_class = 13;
     monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
+    monster.critical_multiplier = 2;
     monster.total_attack_bonus = [int8(6), 6, 1, 0];
     monster.abilities = [19, 13, 15, 2, 12, 6];
     Combat.pack_damage(1, 4, 4, 3, 0, monster.damage);
@@ -200,7 +200,7 @@ library Monster {
     monster.initiative_bonus = 0;
     monster.armor_class = 16;
     monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
+    monster.critical_multiplier = 2;
     monster.total_attack_bonus = [int8(8), 8, 3, 0];
     monster.abilities = [22, 17, 19, 2, 12, 10];
     Combat.pack_damage(1, 6, 6, 3, 0, monster.damage);
@@ -218,7 +218,7 @@ library Monster {
     monster.initiative_bonus = 0;
     monster.armor_class = 16;
     monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
+    monster.critical_multiplier = 2;
     monster.total_attack_bonus = [int8(9), 9, 4, 0];
     monster.abilities = [27, 10, 17, 2, 13, 8];
     Combat.pack_damage(1, 6, 6, 3, 0, monster.damage);

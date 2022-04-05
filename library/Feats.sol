@@ -60,4 +60,10 @@ library Feats {
     bool[100] memory feats = FEATS.get_feats(summoner);
     return feats[id - 1];
   }
+
+  function investigator(uint256 summoner) public view returns (bool) {
+    (uint id,,,,,,) = CODEX2.investigator();
+    bool[100] memory feats = FEATS.get_feats(summoner);
+    return feats[id - 1];
+  }
 }
