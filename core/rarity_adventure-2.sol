@@ -19,19 +19,20 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint public next_token = 1;
   uint public next_combatant = 1;
 
-  uint8 public constant SKILL_CHECK_DC = 20;
   uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
   uint8 public constant EQUIPMENT_TYPE_ARMOR = 1;
   uint8 public constant EQUIPMENT_TYPE_SHIELD = 2;
   uint8[10] public MONSTERS = [1, 3, 4, 6, 7, 9, 10, 11, 12, 13];
+  uint8 public constant MONSTER_LEVEL_OFFSET = 1;
+  uint8 public constant SEARCH_DC = 20;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityCodexCommonWeapons constant COMMON_WEAPONS_CODEX = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
-  event SenseMotive(uint indexed token, uint8 roll, int8 score);
+  event SearchCheck(uint indexed token, uint8 roll, int8 score);
   event RollInitiative(uint indexed token, uint8 roll, int8 score);
   event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint indexed token, uint combatant);
@@ -45,8 +46,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     uint8 combat_round;
     bool dungeon_entered;
     bool combat_ended;
-    bool skill_check_rolled;
-    bool skill_check_succeeded;
+    bool search_check_rolled;
+    bool search_check_succeeded;
+    bool search_check_critical;
   }
 
   struct EquipmentSlot {
@@ -92,21 +94,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       require(block.timestamp >= (latest_adventure.started + 1 days), "!1day");
     }
 
+    require(RARITY.level(summoner) > 0, "level == 0");
+
     adventures[next_token].summoner = summoner;
     adventures[next_token].started = block.timestamp;
     latest_adventures[summoner] = next_token;
     RARITY.safeTransferFrom(msg.sender, address(this), summoner);
     _safeMint(_msgSender(), next_token);
     next_token += 1;
-  }
-
-  function sense_motive(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
-    Adventure storage adventure = adventures[token];
-    require(!adventure.skill_check_rolled, "skill_check_rolled");
-    (uint8 roll, int8 score) = Roll.sense_motive(adventure.summoner);
-    adventure.skill_check_succeeded = score >= int8(SKILL_CHECK_DC);
-    adventure.skill_check_rolled = true;
-    emit SenseMotive(token, roll, score);
   }
 
   function equip(
@@ -117,8 +112,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     ) public 
     approvedForAdventure(token)
     approvedForItem(item, item_contract)
-    onlyDuringActI(token)
   {
+    require_outside_dungeon(adventures[token]);
     require(equipment_type < 3, "!equipment_type");
 
     if(item_contract != address(0)) {
@@ -163,27 +158,35 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8[3] memory monsters) {
+  function roll_monsters(uint token, uint level) public view returns (uint8 monster_count, uint8[3] memory monsters) {
+    bool bonus = Random.dn(12586470658909511785, token, 100) > 50;
+    monster_count = bonus ? 3 : 2;
     if(level < 9) {
-      monsters[0] = MONSTERS[level + 1];
-      monsters[1] = MONSTERS[level];
-      monsters[2] = bonus 
-      ? level < 2 
-        ? MONSTERS[0] 
-        : MONSTERS[Random.dn(15608573760256557610, token, uint8(level - 1))]
-      : 0;
+      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level];
+      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + level - 2];
+      if(bonus) {
+        if(level < 2) {
+          monsters[2] = MONSTERS[0];
+        } else {
+          monsters[2] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level - 2)) - 1];
+        }
+      }
     } else {
-      monsters[0] = MONSTERS[9];
-      monsters[1] = MONSTERS[8];
-      monsters[2] = 0;
+      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + 8];
+      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + 7];
+      if(bonus) {
+        monsters[2] = MONSTERS[Random.dn(16040042777347404675, token, uint8(MONSTER_LEVEL_OFFSET + 7)) - 1];
+      }
     }
   }
 
-  function enter_dungeon(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
+  function enter_dungeon(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
+    require_outside_dungeon(adventure);
+
     adventure.dungeon_entered = true;
-    adventure.monster_count = adventure.skill_check_succeeded ? 3 : 2;
-    uint8[3] memory monsters = roll_monsters(token, RARITY.level(adventure.summoner), adventure.skill_check_succeeded);
+    (uint8 monster_count, uint8[3] memory monsters) = roll_monsters(token, RARITY.level(adventure.summoner));
+    adventure.monster_count = monster_count;
 
     uint8 number_of_combatants = adventure.monster_count + 1;
     Combat.Combatant[] memory combatants = new Combat.Combatant[](number_of_combatants);
@@ -213,8 +216,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     revert("no able monster");
   }
 
-  function attack(uint token, uint target) public approvedForAdventure(token) onlyDuringActII(token) {
+  function attack(uint token, uint target) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
+    require_en_combat(adventure);
+
     uint attack_counter = attack_counters[token];
 
     uint summoners_turn = summoners_turns[token];
@@ -250,14 +255,28 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function flee(uint token) public approvedForAdventure(token) onlyDuringActII(token) {
+  function flee(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
+    require_en_combat(adventure);
     adventure.combat_ended = true;
+  }
+
+  function search(uint token) public approvedForAdventure(token) {
+    Adventure storage adventure = adventures[token];
+    require(!adventure.search_check_rolled, "search_check_rolled");
+    require_victory(adventure);
+    require_not_ended(adventure);
+
+    (uint8 roll, int8 score) = Roll.search(adventure.summoner);
+    adventure.search_check_rolled = true;
+    adventure.search_check_succeeded = score >= int8(SEARCH_DC);
+    adventure.search_check_critical = roll == 20;
+    emit SearchCheck(token, roll, score);
   }
 
   function end(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
-    require(adventure.ended == 0, "adventure.ended != 0");
+    require_not_ended(adventure);
 
     RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
 
@@ -401,23 +420,75 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     emit Attack(token, attacker.token, defender.token, round, hit, roll, score, critical_confirmation, damage, damage_type);
   }
 
-  function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
-    if(getApproved(token) == msg.sender) return true;
-    address owner = ownerOf(token);
-    return owner == msg.sender || isApprovedForAll(owner, msg.sender);
-  }
-
-  function isActI(uint token) public view returns (bool) {
-    Adventure memory adventure = adventures[token];
+  function outside_dungeon(Adventure memory adventure) public pure returns (bool) {
     return !adventure.dungeon_entered 
     && adventure.ended == 0;
   }
 
-  function isActII(uint token) public view returns (bool) {
-    Adventure memory adventure = adventures[token];
+  function require_outside_dungeon(Adventure memory adventure) public pure {
+    require(outside_dungeon(adventure), "!outside_dungeon");
+  }
+
+  function is_outside_dungeon(uint token) external view returns (bool) {
+    return outside_dungeon(adventures[token]);
+  }
+
+  function en_combat(Adventure memory adventure) public pure returns (bool) {
     return adventure.dungeon_entered 
     && !adventure.combat_ended
     && adventure.ended == 0;
+  }
+
+  function require_en_combat(Adventure memory adventure) public pure {
+    require(en_combat(adventure), "!en_combat");
+  }
+
+  function is_en_combat(uint token) external view returns (bool) {
+    return en_combat(adventures[token]);
+  }
+
+  function combat_over(Adventure memory adventure) public pure returns (bool) {
+    return adventure.dungeon_entered 
+    && adventure.combat_ended
+    && adventure.ended == 0;
+  }
+
+  function require_combat_over(Adventure memory adventure) public pure {
+    require(combat_over(adventure), "!combat_over");
+  }
+
+  function is_combat_over(uint token) external view returns (bool) {
+    return combat_over(adventures[token]);
+  }
+
+  function ended(Adventure memory adventure) public pure returns (bool) {
+    return adventure.ended > 0;
+  }
+
+  function require_not_ended(Adventure memory adventure) public pure {
+    require(!ended(adventure), "ended");
+  }
+
+  function is_ended(uint token) external view returns (bool) {
+    return ended(adventures[token]);
+  }
+
+  function victory(Adventure memory adventure) public pure returns (bool) {
+    return adventure.monster_count == adventure.monsters_defeated;
+  }
+
+  function require_victory(Adventure memory adventure) public pure {
+    require(victory(adventure), "!victory");
+  }
+
+  function is_victory(uint token) external view returns (bool) {
+    return victory(adventures[token]);
+  }
+
+  function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
+    if(getApproved(token) == msg.sender) return true;
+    address owner = ownerOf(token);
+    return owner == msg.sender || isApprovedForAll(owner, msg.sender);
   }
 
   modifier approvedForAdventure(uint token) {
@@ -425,22 +496,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       _;
     } else {
       revert("!approvedForAdventure");
-    }
-  }
-
-  modifier onlyDuringActI(uint token) {
-    if (isActI(token)) {
-      _;
-    } else {
-      revert("!ActI");
-    }    
-  }
-
-  modifier onlyDuringActII(uint token) {
-    if (isActII(token)) {
-      _;
-    } else {
-      revert("!ActII");
     }
   }
 
