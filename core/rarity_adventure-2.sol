@@ -103,10 +103,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function sense_motive(uint token) public approvedForAdventure(token) onlyDuringActI(token) {
     Adventure storage adventure = adventures[token];
     require(!adventure.skill_check_rolled, "skill_check_rolled");
-    Score memory skill_check = Roll.sense_motive(adventure.summoner);
-    adventure.skill_check_succeeded = skill_check.score >= int8(SKILL_CHECK_DC);
+    (uint8 roll, int8 score) = Roll.sense_motive(adventure.summoner);
+    adventure.skill_check_succeeded = score >= int8(SKILL_CHECK_DC);
     adventure.skill_check_rolled = true;
-    emit SenseMotive(token, skill_check.roll, skill_check.score);
+    emit SenseMotive(token, roll, score);
   }
 
   function equip(
@@ -281,8 +281,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
     int8 base_weapon_modifier = Summoner.base_weapon_modifier(summoner, weapon_codex.encumbrance);
 
-    Score memory initiative = Roll.initiative(summoner);
-    emit RollInitiative(token, initiative.roll, initiative.score);
+    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
+    emit RollInitiative(token, initiative_roll, initiative_score);
 
     int8[4] memory total_attack_bonus = Summoner.total_attack_bonus(summoner, base_weapon_modifier);
     int8[16] memory damage;
@@ -298,7 +298,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       summoner: true,
       token: next_combatant,
       host: summoner,
-      initiative: initiative,
+      initiative_roll: initiative_roll,
+      initiative_score: initiative_score,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
       armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract, shield_slot.item, shield_slot.item_contract),
       critical_modifier: int8(weapon_codex.critical_modifier),
@@ -325,12 +326,13 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
-    Score memory initiative = Roll.initiative(next_combatant, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
+    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(next_combatant, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
     combatant = Combat.Combatant({
       summoner: false,
       token: next_combatant,
       host: monster_codex.id,
-      initiative: initiative,
+      initiative_roll: initiative_roll,
+      initiative_score: initiative_score,
       hit_points: Monster.hit_points(monster_codex, next_combatant),
       armor_class: monster_codex.armor_class,
       total_attack_bonus: monster_codex.total_attack_bonus,
@@ -400,9 +402,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
-    return getApproved(token) == msg.sender
-    || ownerOf(token) == msg.sender
-    || isApprovedForAll(ownerOf(token), msg.sender);
+    if(getApproved(token) == msg.sender) return true;
+    address owner = ownerOf(token);
+    return owner == msg.sender || isApprovedForAll(owner, msg.sender);
   }
 
   function isActI(uint token) public view returns (bool) {

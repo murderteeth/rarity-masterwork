@@ -12,8 +12,8 @@ interface ICrafting {
 library Crafting {
   function isApprovedOrOwnerOfItem(uint item, address itemContract) public view returns (bool) {
     ICrafting crafting = ICrafting(itemContract);
-    return crafting.getApproved(item) == msg.sender
-      || crafting.ownerOf(item) == msg.sender
-      || crafting.isApprovedForAll(crafting.ownerOf(item), msg.sender);
+    if(crafting.getApproved(item) == msg.sender) return true;
+    address owner = crafting.ownerOf(item);
+    return owner == msg.sender || crafting.isApprovedForAll(owner, msg.sender);
   }
 }

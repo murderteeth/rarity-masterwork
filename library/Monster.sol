@@ -237,7 +237,7 @@ library Monster {
     monster.armor_class = 18;
     monster.critical_modifier = 0;
     monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(12), 12, 0, 0];
+    monster.total_attack_bonus = [int8(12), 7, 0, 0];
     monster.abilities = [27, 10, 17, 2, 13, 8];
     Combat.pack_damage(2, 6, 6, 1, 0, monster.damage);
     Combat.pack_damage(2, 6, 6, 1, 1, monster.damage);

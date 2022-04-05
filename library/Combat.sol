@@ -6,13 +6,14 @@ import "./Roll.sol";
 library Combat {
   struct Combatant {
     bool summoner;
+    uint8 initiative_roll;
+    int8 initiative_score;
     int8 critical_modifier;
     uint8 critical_multiplier;
     uint8 armor_class;
     int16 hit_points;
     uint token;
     uint host;
-    Score initiative;
     int8[4] total_attack_bonus;
     int8[16] damage;
   }
@@ -52,11 +53,11 @@ library Combat {
       for(uint j = i + 1; j < length; j++) {
         Combatant memory i_combatant = combatants[i];
         Combatant memory j_combatant = combatants[j];
-        if(i_combatant.initiative.score < j_combatant.initiative.score) {
+        if(i_combatant.initiative_score < j_combatant.initiative_score) {
           combatants[i] = j_combatant;
           combatants[j] = i_combatant;
-        } else if(i_combatant.initiative.score == j_combatant.initiative.score) {
-          if(i_combatant.initiative.roll > j_combatant.initiative.roll) {
+        } else if(i_combatant.initiative_score == j_combatant.initiative_score) {
+          if(i_combatant.initiative_roll > j_combatant.initiative_roll) {
             combatants[i] = j_combatant;
             combatants[j] = i_combatant;
           }
