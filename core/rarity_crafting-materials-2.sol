@@ -17,10 +17,17 @@ contract rarity_crafting_materials_2 is ERC20 {
     require(ADVENTURE_2.isApprovedOrOwnerOfAdventure(adventure_token), "!approvedForAdventure");
     require(!adventure_claims[adventure_token], "claimed");
 
-    (,, uint ended, uint8 monster_count, uint8 monsters_defeated,,,,, bool search_check_succeeded, bool search_check_critical) 
-    = ADVENTURE_2.adventures(adventure_token);
-    require(ended > 0, "!adventure ended");
-    require(monsters_defeated == monster_count, "!adventure won");
+    (
+      ,, 
+      uint ended, 
+      uint8 monster_count, 
+      uint8 monsters_defeated,
+      ,,,,
+      bool search_check_succeeded, 
+      bool search_check_critical
+    ) = ADVENTURE_2.adventures(adventure_token);
+    require(ended > 0, "!ended");
+    require(monsters_defeated == monster_count, "!victory");
 
     uint reward = 0;
     uint8 turns = monster_count + 1;

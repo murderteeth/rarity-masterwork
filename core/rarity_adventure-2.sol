@@ -32,11 +32,11 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
-  event SearchCheck(uint indexed token, uint8 roll, int8 score);
   event RollInitiative(uint indexed token, uint8 roll, int8 score);
   event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint indexed token, uint combatant);
-
+  event SearchCheck(uint indexed token, uint8 roll, int8 score);
+  
   struct Adventure {
     uint summoner;
     uint started;
@@ -158,8 +158,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function roll_monsters(uint token, uint level) public view returns (uint8 monster_count, uint8[3] memory monsters) {
-    bool bonus = Random.dn(12586470658909511785, token, 100) > 50;
+  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {
     monster_count = bonus ? 3 : 2;
     if(level < 9) {
       monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level];
@@ -185,7 +184,11 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require_outside_dungeon(adventure);
 
     adventure.dungeon_entered = true;
-    (uint8 monster_count, uint8[3] memory monsters) = roll_monsters(token, RARITY.level(adventure.summoner));
+    (uint8 monster_count, uint8[3] memory monsters) = roll_monsters(
+      token, 
+      RARITY.level(adventure.summoner), 
+      Random.dn(12586470658909511785, token, 100) > 50
+    );
     adventure.monster_count = monster_count;
 
     uint8 number_of_combatants = adventure.monster_count + 1;
@@ -467,6 +470,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function require_not_ended(Adventure memory adventure) public pure {
     require(!ended(adventure), "ended");
+  }
+
+  function require_ended(Adventure memory adventure) public pure {
+    require(ended(adventure), "!ended");
   }
 
   function is_ended(uint token) external view returns (bool) {
