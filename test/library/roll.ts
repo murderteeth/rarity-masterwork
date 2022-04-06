@@ -35,6 +35,37 @@ describe('Library: Roll', function () {
     this.summoner = randomId()
   })
 
+  describe('Craft', async function() {
+    it('rolls low for dumb dumbs', async function() {
+      this.codex.random.dn.returns(1)
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 9, 0, 0])
+      expect(await this.library.roll.craft(this.summoner))
+      .to.deep.eq([1, 0])
+    })
+
+    it('rolls higher for smart summoners', async function() {
+      this.codex.random.dn.returns(1)
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 18, 0, 0])
+      expect(await this.library.roll.craft(this.summoner))
+      .to.deep.eq([1, 5])
+    })
+
+    it('rolls higher for skilled summoners', async function() {
+      this.codex.random.dn.returns(1)
+      const skillsRanks = Array(36).fill(0)
+      skillsRanks[skills.craft] = 4
+      this.core.skills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(skillsRanks)
+      expect(await this.library.roll.craft(this.summoner))
+      .to.deep.eq([1, 4])
+    })
+  })
+
   describe('Initiative', async function() {
     it('rolls low for clumsy summoners', async function() {
       this.codex.random.dn.returns(1)
@@ -69,7 +100,7 @@ describe('Library: Roll', function () {
   })
 
   describe('Search', async function() {
-    it('rolls low for dumb dumb summoners', async function() {
+    it('rolls low for dumb dumbs', async function() {
       this.codex.random.dn.returns(1)
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)

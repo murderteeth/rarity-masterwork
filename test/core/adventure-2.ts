@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
-import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills } from '../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
@@ -61,21 +61,10 @@ describe('Core: Adventure II', function () {
         Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address
       }
     })).deploy()
-
-    this.summon = () => {
-      const summoner = randomId()
-      this.core.rarity.ownerOf
-      .whenCalledWith(summoner)
-      .returns(this.signer.address)
-      this.core.rarity.level
-      .whenCalledWith(summoner)
-      .returns(1)
-      return summoner
-    }
   })
 
   it('starts new adventures', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await expect(this.adventure.start(summoner)).to.not.be.reverted
     expect((await this.adventure.adventures(token))['started']).to.be.gt(0)
@@ -88,13 +77,13 @@ describe('Core: Adventure II', function () {
   })
 
   it('can\'t start more than one active adventure per summoner', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     await expect(this.adventure.start(summoner)).to.not.be.reverted
     await expect(this.adventure.start(summoner)).to.be.revertedWith('!latest_adventure.ended')
   })
 
   it('is outside the dungeon', async function() {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()    
     await this.adventure.start(summoner)
     expect(await this.adventure.is_outside_dungeon(token)).to.be.true
@@ -107,7 +96,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('is en combat', async function() {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     expect(await this.adventure.is_en_combat(token)).to.be.false
@@ -120,7 +109,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('is combat over', async function() {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     expect(await this.adventure.is_combat_over(token)).to.be.false
@@ -133,7 +122,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('is ended', async function() {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     expect(await this.adventure.is_ended(token)).to.be.false
@@ -162,7 +151,7 @@ describe('Core: Adventure II', function () {
 
   describe('Token AUTH', async function() {
     beforeEach(async function(){
-      this.summoner = this.summon()
+      this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
       await this.adventure.start(this.summoner)
     })
@@ -190,7 +179,7 @@ describe('Core: Adventure II', function () {
 
   describe('Equipment', async function() {
     beforeEach(async function(){
-      this.summoner = this.summon()
+      this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
       await this.adventure.start(this.summoner)
     })
@@ -314,7 +303,7 @@ describe('Core: Adventure II', function () {
       const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
 
-      const summoner2 = this.summon()
+      const summoner2 = fakeSummoner(this.core.rarity, this.signer)
       const token2 = await this.adventure.next_token()
       await this.adventure.start(summoner2)
       await expect(
@@ -325,7 +314,7 @@ describe('Core: Adventure II', function () {
 
   describe('Dungeon', async function() {
     beforeEach(async function(){
-      this.summoner = this.summon()
+      this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
       await this.adventure.start(this.summoner)
     })
@@ -500,7 +489,7 @@ describe('Core: Adventure II', function () {
 
   describe('Loot', async function () {
     beforeEach(async function(){
-      this.summoner = this.summon()
+      this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
       await this.adventure.start(this.summoner)
       await this.adventure.setVariable('adventures', { [this.token] : {
@@ -554,7 +543,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('ends the adventure', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
 
@@ -586,7 +575,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('only ends the adventure once', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     await this.adventure.end(token)
@@ -594,7 +583,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('computes time to next adventure', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     await this.adventure.start(summoner)
     expect(await this.adventure.time_to_next_adventure(summoner)).to.eq(1 * 24 * 60 * 60)
     await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
@@ -606,7 +595,7 @@ describe('Core: Adventure II', function () {
   })
 
   it('waits at least one day before starting a new adventure', async function () {
-    const summoner = this.summon()
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
     await this.adventure.end(token)

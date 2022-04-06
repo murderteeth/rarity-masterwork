@@ -1,7 +1,7 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityFeats, RaritySkills } from '../../typechain/core'
+import { Rarity, RarityAttributes, RarityCrafting, RarityFeats, RarityGold, RaritySkills } from '../../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../../typechain/interfaces/codex'
 import { armorType, baseType, weaponType } from './crafting'
 
@@ -44,12 +44,30 @@ export async function fakeFeats() {
   return result
 }
 
+export async function fakeGold() {
+  const result = await smock.fake<RarityGold>('contracts/core/gold.sol:rarity_gold', {
+    address: '0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2'
+  })
+  return result
+}
+
 export async function fakeRandom() {
   const result = await smock.fake<IRarityCodexBaseRandom2>('contracts/codex/codex-base-random-2.sol:codex', { 
     address: '0x1380be70F96D8Ce37f522bDd8214BFCc1FeC8E18'
   })
   result.dn.returns(1)
   return result
+}
+
+export function fakeSummoner(rarity: FakeContract, signer: SignerWithAddress) {
+  const summoner = randomId()
+  rarity.ownerOf
+  .whenCalledWith(summoner)
+  .returns(signer.address)
+  rarity.level
+  .whenCalledWith(summoner)
+  .returns(1)
+  return summoner
 }
 
 export function fakeCraft(crafting: FakeContract, baseType: number, itemType: number, crafter: number, signer: SignerWithAddress) {
