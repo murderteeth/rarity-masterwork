@@ -16,6 +16,13 @@ struct AttackRoll {
 }
 
 library Roll {
+  function craft(uint summoner) public view returns (uint8 roll, int8 score) {
+    roll = Random.dn(summoner, 12171199555242019957, 20);
+    score = int8(roll);
+    score += Attributes.intelligence_modifier(summoner);
+    score += int8(Skills.craft(summoner));
+  }
+
   function initiative(uint summoner) public view returns (uint8 roll, int8 score) {
     return initiative(
       summoner, 

@@ -7,11 +7,11 @@ import "../interfaces/core/IRarity.sol";
 import "../interfaces/core/IRarityCommonCrafting.sol";
 import "../library/ForSummoners.sol";
 
-interface IEffects {
-  function skill_bonus(uint token, uint8 skill) external view returns (int);
+interface ISkillBonus {
+  function skill_bonus(uint token, uint8 skill) external view returns (int8);
 }
 
-contract rarity_crafting_tools is ERC721Enumerable, IEffects, ForSummoners {
+contract rarity_crafting_tools is ERC721Enumerable, ISkillBonus, ForSummoners {
   uint8 public constant base_type = 4; //tools
   uint public next_token = 1;
 
@@ -25,16 +25,16 @@ contract rarity_crafting_tools is ERC721Enumerable, IEffects, ForSummoners {
   struct Item {
     uint8 base_type;
     uint8 item_type;
-    uint32 crafted;
+    uint64 crafted;
     uint crafter;
   }
 
   mapping(uint => Item) public items;
 
-  function skill_bonus(uint token, uint8 skill) override external view returns (int) {
+  function skill_bonus(uint token, uint8 skill) override external view returns (int8) {
     Item memory item = items[token];
-    (,,,,,codex.effects_struct memory effects) = COMMON_TOOLS_CODEX.item_by_id(item.item_type);
-    return effects.skill_bonus[skill];
+    (,,,,, int8[36] memory bonus) = COMMON_TOOLS_CODEX.item_by_id(item.item_type);
+    return bonus[skill];
   }
 
   function exchange(uint summoner, uint item_to_exchange) external approvedForSummoner(summoner) {
@@ -44,12 +44,12 @@ contract rarity_crafting_tools is ERC721Enumerable, IEffects, ForSummoners {
     uint item_to_exchange_cost = COMMON_CRAFTING.get_item_cost(item_to_exchange_base_type, item_to_exchange_item_type);
     require(item_to_exchange_cost >= (3 * tools_cost), "! >= 3*tools_cost");
 
-    COMMON_CRAFTING.safeTransferFrom(msg.sender, address(0x000000000000000000000000000000000000dEaD), item_to_exchange);
-    _safeMint(msg.sender, next_token);
-    items[next_token] = Item(base_type, tools_id, uint32(block.timestamp), summoner);
-    emit Exchanged(msg.sender, next_token, summoner, base_type, tools_id, item_to_exchange);
+    COMMON_CRAFTING.safeTransferFrom(_msgSender(), address(0x000000000000000000000000000000000000dEaD), item_to_exchange);
+    _safeMint(_msgSender(), next_token);
+    items[next_token] = Item(base_type, tools_id, uint64(block.timestamp), summoner);
+    emit Exchanged(_msgSender(), next_token, summoner, base_type, tools_id, item_to_exchange);
 
-    next_token++;
+    next_token += 1;
   }
 
   // TODO: tokenURI

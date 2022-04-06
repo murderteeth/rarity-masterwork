@@ -10,6 +10,12 @@ library Skills {
   IRaritySkills private constant SKILLS 
     = IRaritySkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
 
+  function craft(uint summoner) public view returns (uint8 ranks) {
+    (uint id,,,,,,,) = CODEX.craft();
+    uint8[36] memory skills = SKILLS.get_skills(summoner);
+    ranks = skills[id - 1];
+  }
+
   function search(uint summoner) public view returns (uint8 ranks) {
     (uint id,,,,,,,) = CODEX.search();
     uint8[36] memory skills = SKILLS.get_skills(summoner);

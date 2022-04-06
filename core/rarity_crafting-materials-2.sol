@@ -50,4 +50,7 @@ contract rarity_crafting_materials_2 is ERC20 {
     adventure_claims[adventure_token] = true;
   }
 
+  function burn(uint amount) public {
+    _burn(_msgSender(), amount);
+  }
 }

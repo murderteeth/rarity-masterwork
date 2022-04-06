@@ -39,8 +39,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   
   struct Adventure {
     uint summoner;
-    uint started;
-    uint ended;
+    uint64 started;
+    uint64 ended;
     uint8 monster_count;
     uint8 monsters_defeated;
     uint8 combat_round;
@@ -68,7 +68,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function onERC721Received(
     address operator,
     address from,
-    uint256 tokenId,
+    uint tokenId,
     bytes calldata data
   ) external pure override returns (bytes4) {
     operator; from; tokenId; data; // lint silencio!
@@ -97,9 +97,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require(RARITY.level(summoner) > 0, "level == 0");
 
     adventures[next_token].summoner = summoner;
-    adventures[next_token].started = block.timestamp;
+    adventures[next_token].started = uint64(block.timestamp);
     latest_adventures[summoner] = next_token;
-    RARITY.safeTransferFrom(msg.sender, address(this), summoner);
+    RARITY.safeTransferFrom(_msgSender(), address(this), summoner);
     _safeMint(_msgSender(), next_token);
     next_token += 1;
   }
@@ -120,7 +120,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
       if(equipment_type == EQUIPMENT_TYPE_WEAPON) {
         require(base_type == 3, "!weapon");
-        codex.weapon memory weapon = COMMON_WEAPONS_CODEX.item_by_id(item_type);
+        Weapon memory weapon = COMMON_WEAPONS_CODEX.item_by_id(item_type);
         if(weapon.encumbrance == 5) revert("ranged weapon");
         if(weapon.encumbrance == 4) {
           EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
@@ -133,7 +133,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
         EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
         if(weapon_slot.item_contract != address(0)) {
           (, uint8 equipped_type,,) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
-          codex.weapon memory equipped_weapon = COMMON_WEAPONS_CODEX.item_by_id(equipped_type);
+          Weapon memory equipped_weapon = COMMON_WEAPONS_CODEX.item_by_id(equipped_type);
           if(equipped_weapon.encumbrance == 4) revert("two-handed weapon equipped");
         }
       }
@@ -142,12 +142,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     EquipmentSlot storage slot = equipment_slots[token][equipment_type];
     if(item_contract != slot.item_contract || item != slot.item) {
       if(slot.item_contract != address(0)) {
-        ICrafting(slot.item_contract).safeTransferFrom(address(this), msg.sender, slot.item);
+        ICrafting(slot.item_contract).safeTransferFrom(address(this), _msgSender(), slot.item);
         delete equipment_index[slot.item_contract][slot.item];
       }
       if(item_contract != address(0)) {
         require(equipment_index[item_contract][item] == 0, "!item available");
-        ICrafting(item_contract).safeTransferFrom(msg.sender, address(this), item);
+        ICrafting(item_contract).safeTransferFrom(_msgSender(), address(this), item);
         slot.item = item;
         slot.item_contract = item_contract;
         equipment_index[item_contract][item] = token;
@@ -281,26 +281,26 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Adventure storage adventure = adventures[token];
     require_not_ended(adventure);
 
-    RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
+    RARITY.safeTransferFrom(address(this), _msgSender(), adventure.summoner);
 
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     if(weapon_slot.item_contract != address(0)) {
-      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), msg.sender, weapon_slot.item);
+      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), _msgSender(), weapon_slot.item);
     }
 
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     if(armor_slot.item_contract != address(0)) {
-      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), msg.sender, armor_slot.item);
+      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), _msgSender(), armor_slot.item);
     }
 
-    adventure.ended = block.timestamp;
+    adventure.ended = uint64(block.timestamp);
   }
 
   function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
     EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
-    codex.weapon memory weapon_codex = get_weapon_codex(weapon_slot);
+    Weapon memory weapon_codex = get_weapon_codex(weapon_slot);
     int8 base_weapon_modifier = Summoner.base_weapon_modifier(summoner, weapon_codex.encumbrance);
 
     (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
@@ -333,7 +333,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     next_combatant += 1;
   }
 
-  function get_weapon_codex(EquipmentSlot memory weapon_slot) internal view returns (codex.weapon memory) {
+  function get_weapon_codex(EquipmentSlot memory weapon_slot) internal view returns (Weapon memory) {
     if(weapon_slot.item_contract == address(0)) {
       return unarmed_strike_codex();
     } else {
@@ -342,9 +342,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function unarmed_strike_codex() internal pure returns(codex.weapon memory) {
+  function unarmed_strike_codex() internal pure returns(Weapon memory) {
     // _, _, proficiency, _, damage_type, _, damage, critical, critical_modifier, _, _, _
-    return codex.weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
+    return Weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
   }
 
   function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
@@ -493,9 +493,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
-    if(getApproved(token) == msg.sender) return true;
+    if(getApproved(token) == _msgSender()) return true;
     address owner = ownerOf(token);
-    return owner == msg.sender || isApprovedForAll(owner, msg.sender);
+    return owner == _msgSender() || isApprovedForAll(owner, _msgSender());
   }
 
   modifier approvedForAdventure(uint token) {
