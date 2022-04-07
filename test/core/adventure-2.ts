@@ -549,8 +549,10 @@ describe('Core: Adventure II', function () {
 
     const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
     const fullPlate = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
+    const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
     await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
     await this.adventure.equip(token, equipmentType.armor, fullPlate, this.crafting.common.address)
+    await this.adventure.equip(token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
 
     await this.adventure.end(token)
 
@@ -568,6 +570,11 @@ describe('Core: Adventure II', function () {
       this.adventure.address,
       this.signer.address,
       fullPlate
+    )
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+      this.adventure.address,
+      this.signer.address,
+      heavyWoodShield
     )
 
     const adventure = await this.adventure.adventures(token)
