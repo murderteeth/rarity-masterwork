@@ -127,19 +127,35 @@ describe('Library: Summoner', function () {
     expect(ac).to.equal(21)
   })
 
-  it('computes base weapon modifier', async function() {
+  it('computes weapon attack modifier', async function() {
     this.attributes.ability_scores
     .whenCalledWith(this.summoner)
     .returns([14, 12, 0, 0, 0, 0])
-    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.unarmed))
+    expect(await this.library.summoner.weapon_attack_modifier(this.summoner, enumberance.unarmed))
     .to.eq(2)
-    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.lightMelee))
+    expect(await this.library.summoner.weapon_attack_modifier(this.summoner, enumberance.lightMelee))
     .to.eq(2)
-    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.oneHanded))
+    expect(await this.library.summoner.weapon_attack_modifier(this.summoner, enumberance.oneHanded))
     .to.eq(2)
-    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.twoHanded))
+    expect(await this.library.summoner.weapon_attack_modifier(this.summoner, enumberance.twoHanded))
+    .to.eq(2)
+    expect(await this.library.summoner.weapon_attack_modifier(this.summoner, enumberance.ranged))
+    .to.eq(1)
+  })
+
+  it('computes weapon damage modifier', async function() {
+    this.attributes.ability_scores
+    .whenCalledWith(this.summoner)
+    .returns([14, 12, 0, 0, 0, 0])
+    expect(await this.library.summoner.weapon_damage_modifier(this.summoner, enumberance.unarmed))
+    .to.eq(2)
+    expect(await this.library.summoner.weapon_damage_modifier(this.summoner, enumberance.lightMelee))
+    .to.eq(2)
+    expect(await this.library.summoner.weapon_damage_modifier(this.summoner, enumberance.oneHanded))
+    .to.eq(2)
+    expect(await this.library.summoner.weapon_damage_modifier(this.summoner, enumberance.twoHanded))
     .to.eq(3)
-    expect(await this.library.summoner.base_weapon_modifier(this.summoner, enumberance.ranged))
+    expect(await this.library.summoner.weapon_damage_modifier(this.summoner, enumberance.ranged))
     .to.eq(1)
   })
 

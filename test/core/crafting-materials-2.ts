@@ -30,13 +30,20 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 13])
+    .returns([false, 0, 0, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+
+    this.adventure.monster_spawn
+    .whenCalledWith(1)
+    .returns(13)
+    this.adventure.monster_spawn
+    .whenCalledWith(2)
+    .returns(1)
 
     await expect(this.mats.claim(this.adventure_token))
     .to.emit(this.mats, 'Transfer')
@@ -54,13 +61,20 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 13])
+    .returns([false, 0, 0, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+
+    this.adventure.monster_spawn
+    .whenCalledWith(1)
+    .returns(13)
+    this.adventure.monster_spawn
+    .whenCalledWith(2)
+    .returns(1)
 
     await expect(this.mats.claim(this.adventure_token))
     .to.emit(this.mats, 'Transfer')
@@ -78,13 +92,20 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 13])
+    .returns([false, 0, 0, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+
+    this.adventure.monster_spawn
+    .whenCalledWith(1)
+    .returns(13)
+    this.adventure.monster_spawn
+    .whenCalledWith(2)
+    .returns(1)
 
     await expect(this.mats.claim(this.adventure_token))
     .to.emit(this.mats, 'Transfer')
@@ -102,13 +123,20 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 13])
+    .returns([false, 0, 0, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+
+    this.adventure.monster_spawn
+    .whenCalledWith(1)
+    .returns(13)
+    this.adventure.monster_spawn
+    .whenCalledWith(2)
+    .returns(1)
 
     await this.mats.claim(this.adventure_token)
 
