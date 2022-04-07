@@ -92,7 +92,15 @@ library Summoner {
     }
   }
 
-  function base_weapon_modifier(uint summoner, uint weapon_encumbrance) public view returns (int8) {
+  function weapon_attack_modifier(uint summoner, uint weapon_encumbrance) public view returns (int8) {
+    return weapon_encumbrance < 5
+    ? Attributes.strength_modifier(summoner)
+    : weapon_encumbrance == 5
+      ? Attributes.dexterity_modifier(summoner)
+      : int8(0);
+  }
+
+  function weapon_damage_modifier(uint summoner, uint weapon_encumbrance) public view returns (int8) {
     return weapon_encumbrance < 4
     ? Attributes.strength_modifier(summoner)
     : weapon_encumbrance == 4
@@ -102,10 +110,10 @@ library Summoner {
         : int8(0);
   }
 
-  function total_attack_bonus(uint summoner, int8 _base_weapon_modifier) public view returns (int8[4] memory result) {
+  function total_attack_bonus(uint summoner, int8 attack_modifier) public view returns (int8[4] memory result) {
     result = base_attack_bonus(summoner);
     for(uint i = 0; i < 4; i++) {
-      if(result[i] > 0) result[i] += _base_weapon_modifier;
+      if(result[i] > 0) result[i] += attack_modifier;
       else break;
     }
   }

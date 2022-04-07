@@ -17,7 +17,7 @@ import "../library/Summoner.sol";
 
 contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, ForItems {
   uint public next_token = 1;
-  uint public next_combatant = 1;
+  uint public next_monster = 1;
 
   uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
@@ -58,6 +58,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   mapping(uint => Adventure) public adventures;
   mapping(uint => uint) public latest_adventures;
+  mapping(uint => uint8) public monster_spawn;
   mapping(uint => EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
   mapping(address => mapping(uint => uint)) public equipment_index;
   mapping(uint => Combat.Combatant[]) public turn_orders;
@@ -301,16 +302,17 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     Weapon memory weapon_codex = get_weapon_codex(weapon_slot);
-    int8 base_weapon_modifier = Summoner.base_weapon_modifier(summoner, weapon_codex.encumbrance);
+    int8 weapon_attack_modifier = Summoner.weapon_attack_modifier(summoner, weapon_codex.encumbrance);
+    int8 weapon_damage_modifier = Summoner.weapon_damage_modifier(summoner, weapon_codex.encumbrance);
 
     (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
     emit RollInitiative(token, initiative_roll, initiative_score);
 
-    int8[4] memory total_attack_bonus = Summoner.total_attack_bonus(summoner, base_weapon_modifier);
+    int8[4] memory total_attack_bonus = Summoner.total_attack_bonus(summoner, weapon_attack_modifier);
     int8[16] memory damage;
     for(uint i = 0; i < 4; i++) {
       if(total_attack_bonus[i] > 0) {
-        Combat.pack_damage(1, uint8(weapon_codex.damage), base_weapon_modifier, uint8(weapon_codex.damage_type), i, damage);
+        Combat.pack_damage(1, uint8(weapon_codex.damage), weapon_damage_modifier, uint8(weapon_codex.damage_type), i, damage);
       } else {
         break;
       }
@@ -318,8 +320,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
     combatant = Combat.Combatant({
       summoner: true,
-      token: next_combatant,
-      host: summoner,
+      token: summoner,
       initiative_roll: initiative_roll,
       initiative_score: initiative_score,
       hit_points: int16(uint16(Summoner.hit_points(summoner))),
@@ -329,8 +330,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       total_attack_bonus: total_attack_bonus,
       damage: damage
     });
-
-    next_combatant += 1;
   }
 
   function get_weapon_codex(EquipmentSlot memory weapon_slot) internal view returns (Weapon memory) {
@@ -348,21 +347,21 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
-    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(next_combatant, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
+    monster_spawn[next_monster] = monster_codex.id;
+    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(next_monster, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
     combatant = Combat.Combatant({
       summoner: false,
-      token: next_combatant,
-      host: monster_codex.id,
+      token: next_monster,
       initiative_roll: initiative_roll,
       initiative_score: initiative_score,
-      hit_points: Monster.hit_points(monster_codex, next_combatant),
+      hit_points: Monster.hit_points(monster_codex, next_monster),
       armor_class: monster_codex.armor_class,
       total_attack_bonus: monster_codex.total_attack_bonus,
       critical_modifier: monster_codex.critical_modifier,
       critical_multiplier: monster_codex.critical_multiplier,
       damage: monster_codex.damage
     });
-    next_combatant += 1;
+    next_monster += 1;
   }
 
   function set_summoners_turn(uint token, Combat.Combatant[] memory combatants) internal {

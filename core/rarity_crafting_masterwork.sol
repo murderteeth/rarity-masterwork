@@ -149,18 +149,19 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
 
     if(!success) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
+      project.xp += XP_PER_DAY;
       emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
       return;
     }
 
     if(m < n) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
-      project.xp = project.xp + XP_PER_DAY;
+      project.xp += XP_PER_DAY;
       emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
       RARITY.spend_xp(crafter, xp);
-      project.xp = project.xp + xp;
+      project.xp += xp;
       project.done_crafting = true;
       emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, xp, m, n);
     }
@@ -177,7 +178,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
     require(project.done_crafting, "!done_crafting");
     require(!project.complete, "complete");
 
-    project.complete = true;
     Item storage item = items[token];
     item.base_type = project.base_type;
     item.item_type = project.item_type;
@@ -190,6 +190,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
       IERC721Enumerable(project.tools_contract)
       .safeTransferFrom(address(this), _msgSender(), project.tools);
     }
+
+    project.complete = true;
   }
 
   function cancel(uint token) public approvedForItem(token, address(this)) {

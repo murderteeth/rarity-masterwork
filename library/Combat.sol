@@ -13,7 +13,6 @@ library Combat {
     uint8 armor_class;
     int16 hit_points;
     uint token;
-    uint host;
     int8[4] total_attack_bonus;
     int8[16] damage;
   }
