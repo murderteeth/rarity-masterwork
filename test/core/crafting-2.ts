@@ -7,8 +7,8 @@ import { RarityMasterwork__factory } from '../../typechain/core/factories/Rarity
 import { armorType, baseType, toolType, weaponType } from '../util/crafting'
 import { Attributes__factory, Crafting__factory, Feats__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityCraftingTools } from '../../typechain/core'
-import { fakeAttributes, fakeFeats, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
-import { skills } from '../util/skills'
+import { fakeAttributes, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { skills, skillsArray } from '../util/skills'
 
 chai.use(smock.matchers)
 
@@ -29,9 +29,9 @@ describe('Core: Crafting II - Masterwork', function () {
     this.codex = {
       random: await fakeRandom(),
       masterwork: {
-        armor: await (await smock.mock('contracts/codex/codex-items-armor-masterwork.sol:codex')).deploy(),
-        tools: await (await smock.mock('contracts/codex/codex-items-tools-masterwork.sol:codex')).deploy(),
-        weapons: await (await smock.mock('contracts/codex/codex-items-weapons-masterwork.sol:codex')).deploy()
+        armor: await smock.fake('contracts/codex/codex-items-armor-masterwork.sol:codex'),
+        tools: await smock.fake('contracts/codex/codex-items-tools-masterwork.sol:codex'),
+        weapons: await smock.fake('contracts/codex/codex-items-weapons-masterwork.sol:codex')
       }
     }
 
@@ -58,6 +58,18 @@ describe('Core: Crafting II - Masterwork', function () {
     await this.masterwork.setVariable('ARMOR_CODEX', this.codex.masterwork.armor.address)
     await this.masterwork.setVariable('TOOLS_CODEX', this.codex.masterwork.tools.address)
     await this.masterwork.setVariable('WEAPONS_CODEX', this.codex.masterwork.weapons.address)
+
+    this.codex.masterwork.weapons.item_by_id
+    .whenCalledWith(weaponType.longsword)
+    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('315'), "Masterwork Longsword", ""])
+
+    this.codex.masterwork.armor.item_by_id
+    .whenCalledWith(armorType.fullPlate)
+    .returns([armorType.fullPlate, 3, 50, 8, 1, -6, 35, ethers.utils.parseEther('1650'), "Masterwork Full plate", ""])
+
+    this.codex.masterwork.tools.item_by_id
+    .whenCalledWith(toolType.artisanTools)
+    .returns([toolType.artisanTools, 5, ethers.utils.parseEther('55'), "Masterwork Artisan's Tools", "", skillsArray({ index: skills.craft, ranks: 2})])
 
     this.crafter = function() {
       const result = fakeSummoner(this.core.rarity, this.signer);
@@ -131,16 +143,16 @@ describe('Core: Crafting II - Masterwork', function () {
 
   it('gets raw materials cost', async function() {
     {
+      const cost = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
+      expect(humanEther(cost).toFixed(1)).to.eq(((15 + 300) / 3).toFixed(1))
+    }
+    {
       const cost = await this.masterwork.raw_materials_cost(baseType.armor, armorType.fullPlate)
       expect(humanEther(cost).toFixed(1)).to.eq(((1500 + 150) / 3).toFixed(1))
     }
     {
       const cost = await this.masterwork.raw_materials_cost(baseType.tools, toolType.artisanTools)
       expect(humanEther(cost).toFixed(1)).to.eq((55 / 3).toFixed(1))
-    }
-    {
-      const cost = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
-      expect(humanEther(cost).toFixed(1)).to.eq(((15 + 300) / 3).toFixed(1))
     }
   })
 

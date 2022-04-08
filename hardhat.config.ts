@@ -97,7 +97,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('codex', 'codex-items-goods.sol/codex.json', 'IRarityCodexCommonGoods')
   makeInterface('codex', 'codex-items-tools.sol/codex.json', 'IRarityCodexCommonTools')
   makeInterface('codex', 'codex-items-tools-masterwork.sol/codex.json', 'IRarityCodexMasterworkTools')
-  makeInterface('codex', 'codex-items-weapons-common.sol/codex.json', 'IRarityCodexCommonWeapons')
+  makeInterface('codex', 'codex-items-weapons-2.sol/codex.json', 'IRarityCodexCommonWeapons')
   makeInterface('codex', 'codex-items-weapons-masterwork.sol/codex.json', 'IRarityCodexMasterworkWeapons')
   makeInterface('codex', 'codex-skills.sol/codex.json', 'IRarityCodexSkills')
 })

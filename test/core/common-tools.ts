@@ -30,7 +30,7 @@ describe('Core: Common Artisan\'s Tools', function () {
       })).deploy()
     }
 
-    await this.crafting.commonTools.setVariable('COMMON_TOOLS_CODEX', this.codex.commonTools.address)
+    await this.crafting.commonTools.setVariable('TOOLS_CODEX', this.codex.commonTools.address)
 
     this.rarity.ownerOf
     .whenCalledWith(this.crafter)
@@ -79,7 +79,7 @@ describe('Core: Common Artisan\'s Tools', function () {
     .returns(this.signer.address)
 
     expect(await this.crafting.common.ownerOf(crowbar)).to.eq(this.signer.address)
-    await expect(this.crafting.commonTools.exchange(this.crafter, crowbar)).revertedWith('! >= 3*tools_cost')
+    await expect(this.crafting.commonTools.exchange(this.crafter, crowbar)).revertedWith('! >= 3*cost')
     expect(await this.crafting.common.ownerOf(crowbar)).to.eq(this.signer.address)
   })
 

@@ -41,3 +41,21 @@ export const enumberance = {
   twoHanded: 4,
   ranged: 5
 }
+
+export function unpackAttacks(attacksPack: number[]) {
+  const result = []
+  for(let i = 0; i < 4; i ++) {
+    if(attacksPack[7 * (i + 1) - 1] > 0) {
+      result.push({
+        attack_bonus: attacksPack[7 * i + 0],
+        critical_modifier: attacksPack[7 * i + 1],
+        critical_multiplier: attacksPack[7 * i + 2],
+        damage_dice_count: attacksPack[7 * i + 3],
+        damage_dice_sides: attacksPack[7 * i + 4],
+        damage_modifier: attacksPack[7 * i + 5],
+        damage_type: attacksPack[7 * i + 6]
+      })
+    }
+  }
+  return result
+} 

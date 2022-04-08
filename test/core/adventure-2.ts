@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
-import { fakeAttributes, fakeCommonCrafting, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeCommonCraftingWrapper, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
@@ -10,6 +10,7 @@ import { feats } from '../util/feats'
 import { Crafting__factory } from '../../typechain/library/factories/Crafting__factory'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { classes } from '../util/classes'
+import { weaponType } from '../util/crafting'
 
 chai.use(smock.matchers)
 
@@ -30,7 +31,7 @@ describe('Core: Adventure II', function () {
     }
 
     this.crafting = {
-      common: await fakeCommonCrafting()
+      common: await fakeCommonCraftingWrapper()
     }
 
     this.adventure = await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
@@ -61,6 +62,18 @@ describe('Core: Adventure II', function () {
         Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address
       }
     })).deploy()
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.greatsword)
+    .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.longsword)
+    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('15'), "Longsword", ""])
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.heavyCrossbow)
+    .returns([weaponType.heavyCrossbow, 1, 5, 2, 8, 10, 2, -1, 120, ethers.utils.parseEther('50'), "Heavy Crossbow", ""])
   })
 
   it('starts new adventures', async function () {
@@ -186,9 +199,7 @@ describe('Core: Adventure II', function () {
 
     it('equips summoners with weapons and armor', async function () {
       const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(
-        this.token, equipmentType.weapon, longsword, this.crafting.common.address
-      )).to.not.be.reverted
+      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
       expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
         this.signer.address,
         this.adventure.address,

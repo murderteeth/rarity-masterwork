@@ -41,8 +41,8 @@ export function getSkill(id: number) {
   return Object.keys(skills)[id - 1]
 }
 
-export function skillsArray(...points: { index: number, points: number }[]) {
+export function skillsArray(...ranks: { index: number, ranks: number }[]) {
   const result = Array(36).fill(0)
-  points.forEach(p => result[p.index] = p.points)
-  return result.reverse()
+  ranks.forEach(r => result[r.index] = r.ranks)
+  return result
 }

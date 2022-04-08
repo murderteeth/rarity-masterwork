@@ -30,13 +30,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+    .returns([false, 0, 0, 0, 0, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -61,13 +61,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+    .returns([false, 0, 0, 0, 0, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -92,13 +92,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+    .returns([false, 0, 0, 0, 0, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -123,13 +123,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0, 0, 0])
+    .returns([true, 0, 0, 0, 0, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 0, 0, 1])
+    .returns([false, 0, 0, 0, 0, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 0, 0, 2])
+    .returns([false, 0, 0, 0, 0, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
