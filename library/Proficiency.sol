@@ -1,67 +1,64 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "../interfaces/codex/IRarityCodexCommonWeapons.sol";
 import "./Rarity.sol";
 import "./Feats.sol";
 
 library Proficiency {
-  IRarityCodexCommonWeapons public constant CODEX_COMMON_WEAPONS 
-    = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
   // TODO: Tower shield feat 96, armor type 18
   function isProficientWithArmor(
-    uint256 summoner,
-    uint256 proficiencyReq,
-    uint256 armorType
+    uint summoner,
+    uint proficiency,
+    uint armorType
   ) public view returns (bool) {
-    uint256 class = Rarity.class(summoner);
+    uint class = Rarity.class(summoner);
 
     // Barbarian
     if (class == 1) {
-      if (proficiencyReq == 1 || proficiencyReq == 2) {
+      if (proficiency == 1 || proficiency == 2) {
         return true;
       } else if (
-        proficiencyReq == 3 && Feats.armor_proficiency_heavy(summoner)
+        proficiency == 3 && Feats.armor_proficiency_heavy(summoner)
       ) {
         return true;
-      } else if (proficiencyReq == 4 && armorType != 18) {
+      } else if (proficiency == 4 && armorType != 18) {
         return true;
       }
 
     // Bard, Ranger
     } else if (class == 2 || class == 8) {
-      if (proficiencyReq == 1 || proficiencyReq == 2) {
+      if (proficiency == 1 || proficiency == 2) {
         return true;
       } else if (
         (Feats.armor_proficiency_medium(summoner)) ||
-        (proficiencyReq == 3 && Feats.armor_proficiency_heavy(summoner))
+        (proficiency == 3 && Feats.armor_proficiency_heavy(summoner))
       ) {
         return true;
-      } else if (proficiencyReq == 4 && armorType != 18) {
+      } else if (proficiency == 4 && armorType != 18) {
         return true;
       }
 
     // Cleric, Paladin
     } else if (class == 3 || class == 7) {
-      if (proficiencyReq == 4 && armorType == 18) {
+      if (proficiency == 4 && armorType == 18) {
         return false;
       }
       return true;
 
     // Druid
     } else if (class == 4) {
-      if (proficiencyReq == 1) {
+      if (proficiency == 1) {
         return true;
-      } else if (proficiencyReq == 2) {
+      } else if (proficiency == 2) {
         // TODO: Filter out metal armor
         return true;
       } else if (
-        proficiencyReq == 3 && Feats.armor_proficiency_heavy(summoner)
+        proficiency == 3 && Feats.armor_proficiency_heavy(summoner)
       ) {
         // TODO: Filter out metal armor. Is there any non-metal heavy?
         return true;
-      } else if (proficiencyReq == 4 && armorType != 18) {
+      } else if (proficiency == 4 && armorType != 18) {
         // TODO: Filter out metal shields
         return true;
       }
@@ -74,21 +71,20 @@ library Proficiency {
     } else if (class == 6 || class == 10 || class == 11) {
       // TODO: Shield proficiency (63)
       return
-        (proficiencyReq == 1 && Feats.armor_proficiency_light(summoner))
-        || (proficiencyReq == 2 && Feats.armor_proficiency_medium(summoner))
-        || (proficiencyReq == 3 && Feats.armor_proficiency_heavy(summoner));
+        (proficiency == 1 && Feats.armor_proficiency_light(summoner))
+        || (proficiency == 2 && Feats.armor_proficiency_medium(summoner))
+        || (proficiency == 3 && Feats.armor_proficiency_heavy(summoner));
     }
 
     return false;
   }
 
-  function isProficientWithWeapon(uint256 summoner, uint256 weaponType)
+  function isProficientWithWeapon(uint summoner, uint proficiency, uint weaponType)
     public
     view
     returns (bool)
   {
-    uint256 class = Rarity.class(summoner);
-    uint256 proficiency = CODEX_COMMON_WEAPONS.item_by_id(weaponType).proficiency;
+    uint class = Rarity.class(summoner);
 
     // Barbarian, Fighter, Paladin, Ranger
     if (class == 1 || class == 5 || class == 7 || class == 8) {

@@ -4,23 +4,18 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "../interfaces/codex/IRarityCodexMasterworkArmor.sol";
-import "../interfaces/codex/IRarityCodexMasterworkTools.sol";
-import "../interfaces/codex/IRarityCodexMasterworkWeapons.sol";
 import "../interfaces/core/IRarity.sol";
 import "../interfaces/core/IRarityCraftingMaterials2.sol";
 import "../interfaces/core/IRarityGold.sol";
+import "../library/Codex.sol";
 import "../library/Crafting.sol";
+import "../library/Effects.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Roll.sol";
 import "../library/Skills.sol";
 
-interface ISkillBonus {
-  function skill_bonus(uint token, uint8 skill) external view returns (int8);
-}
-
-contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, ForSummoners, ForItems {
+contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
   address public TOOLS_WHITELIST_1 = address(this);
   address public TOOLS_WHITELIST_2 = 0x0000000000000000000000000000000000000000;
@@ -32,9 +27,9 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityGold constant GOLD = IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
   IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000000);
-  IRarityCodexMasterworkArmor ARMOR_CODEX = IRarityCodexMasterworkArmor(0x0000000000000000000000000000000000000000);
-  IRarityCodexMasterworkTools TOOLS_CODEX = IRarityCodexMasterworkTools(0x0000000000000000000000000000000000000000);
-  IRarityCodexMasterworkWeapons WEAPONS_CODEX = IRarityCodexMasterworkWeapons(0x0000000000000000000000000000000000000000);
+  ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000000);
+  ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000000);
+  ICodexTools TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000000);
 
   event Craft(address indexed owner, uint token, uint crafter, uint bonus_mats, uint8 roll, int8 score, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint token, uint crafter, uint8 base_type, uint8 item_type);
@@ -77,11 +72,26 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
     return this.onERC721Received.selector;
   }
 
+  // IWeapon
+  function get_weapon(uint8 item_type) override public view returns (IWeapon.Weapon memory) {
+    return WEAPONS_CODEX.item_by_id(item_type);
+  }
+
+  // IArmor
+  function get_armor(uint8 item_type) override public view returns (IArmor.Armor memory) {
+    return ARMOR_CODEX.item_by_id(item_type);
+  }
+
+  // IEffects
+  function attack_bonus(uint token) override external view returns (int8 result) {
+    if(items[token].base_type == 3) result = 1;
+  }
+
   function skill_bonus(uint token, uint8 skill) override external view returns (int8 result) {
     Item memory item = items[token];
     if(item.base_type == 4) {
-      (,,,,, int8[36] memory bonus) = TOOLS_CODEX.item_by_id(item.item_type);
-      return bonus[skill];
+      ITools.Tools memory tools = TOOLS_CODEX.item_by_id(item.item_type);
+      result = tools.skill_bonus[skill];
     }
   }
 
@@ -232,7 +242,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
   function craft_bonus(Project memory project, uint bonus_mats) internal view returns (int8 result) {
     result = project.tools_contract == address(0)
     ? -2
-    : ISkillBonus(project.tools_contract).skill_bonus(project.tools, 5);
+    : IEffects(project.tools_contract).skill_bonus(project.tools, 5);
     result += int8(uint8(bonus_mats / 200e18));
   }
 
@@ -253,7 +263,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ISkillBonus, Fo
     } else if(base_type == 3) {
       cost = WEAPONS_CODEX.item_by_id(item_type).cost;
     } else if(base_type == 4) {
-      (,cost,,,,) = TOOLS_CODEX.item_by_id(item_type);
+      cost = TOOLS_CODEX.item_by_id(item_type).cost;
     }
   }
 

@@ -1,45 +1,45 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "../interfaces/codex/IRarityCodexCommonWeapons.sol";
+import "../library/Codex.sol";
 
 contract codex {
   string public constant index = "Items";
   string public constant class = "Masterwork Weapons";
 
-  IRarityCodexCommonWeapons constant common_codex =
-    IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
+  ICodexWeapon constant COMMON_CODEX =
+    ICodexWeapon(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
-  function get_proficiency_by_id(uint256 _id)
+  function get_proficiency_by_id(uint id)
     public
     pure
     returns (string memory description)
   {
-    return common_codex.get_proficiency_by_id(_id);
+    return COMMON_CODEX.get_proficiency_by_id(id);
   }
 
-  function get_encumbrance_by_id(uint256 _id)
+  function get_encumbrance_by_id(uint id)
     public
     pure
     returns (string memory description)
   {
-    return common_codex.get_encumbrance_by_id(_id);
+    return COMMON_CODEX.get_encumbrance_by_id(id);
   }
 
-  function get_damage_type_by_id(uint256 _id)
+  function get_damage_type_by_id(uint id)
     public
     pure
     returns (string memory description)
   {
-    return common_codex.get_damage_type_by_id(_id);
+    return COMMON_CODEX.get_damage_type_by_id(id);
   }
 
-  function item_by_id(uint256 _id)
+  function item_by_id(uint id)
     public
     pure
-    returns (Weapon memory weapon)
+    returns (IWeapon.Weapon memory weapon)
   {
-    weapon = common_codex.item_by_id(_id);
+    weapon = COMMON_CODEX.item_by_id(id);
     weapon.cost = weapon.cost + 300e18;
     weapon.name = string(abi.encodePacked("Masterwork ", weapon.name));
   }

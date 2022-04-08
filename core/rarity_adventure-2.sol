@@ -4,12 +4,12 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../interfaces/core/IRarity.sol";
-import "../interfaces/codex/IRarityCodexCommonWeapons.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Attributes.sol";
 import "../library/Combat.sol";
 import "../library/Crafting.sol";
+import "../library/Effects.sol";
 import "../library/Monster.sol";
 import "../library/Random.sol";
 import "../library/Roll.sol";
@@ -28,12 +28,11 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint8 public constant SEARCH_DC = 20;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
-  IRarityCodexCommonWeapons constant COMMON_WEAPONS_CODEX = IRarityCodexCommonWeapons(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
   event RollInitiative(uint indexed token, uint8 roll, int8 score);
-  event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
+  event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint indexed token, uint combatant);
   event SearchCheck(uint indexed token, uint8 roll, int8 score);
   
@@ -51,15 +50,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     bool search_check_critical;
   }
 
-  struct EquipmentSlot {
-    uint item;
-    address item_contract;
-  }
-
   mapping(uint => Adventure) public adventures;
   mapping(uint => uint) public latest_adventures;
   mapping(uint => uint8) public monster_spawn;
-  mapping(uint => EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
+  mapping(uint => Combat.EquipmentSlot[EQUIPMENT_SLOTS]) public equipment_slots;
   mapping(address => mapping(uint => uint)) public equipment_index;
   mapping(uint => Combat.Combatant[]) public turn_orders;
   mapping(uint => uint) public summoners_turns;
@@ -121,26 +115,26 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
       if(equipment_type == EQUIPMENT_TYPE_WEAPON) {
         require(base_type == 3, "!weapon");
-        Weapon memory weapon = COMMON_WEAPONS_CODEX.item_by_id(item_type);
+        IWeapon.Weapon memory weapon = IWeapon(item_contract).get_weapon(item_type);
         if(weapon.encumbrance == 5) revert("ranged weapon");
         if(weapon.encumbrance == 4) {
-          EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+          Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
           if(shield_slot.item_contract != address(0)) revert("shield equipped");
         }
       } else if(equipment_type == EQUIPMENT_TYPE_ARMOR) {
         require(base_type == 2 && item_type < 13, "!armor");
       } else if(equipment_type == EQUIPMENT_TYPE_SHIELD) {
         require(base_type == 2 && item_type > 12, "!shield");
-        EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+        Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
         if(weapon_slot.item_contract != address(0)) {
           (, uint8 equipped_type,,) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
-          Weapon memory equipped_weapon = COMMON_WEAPONS_CODEX.item_by_id(equipped_type);
+          IWeapon.Weapon memory equipped_weapon = IWeapon(item_contract).get_weapon(equipped_type);
           if(equipped_weapon.encumbrance == 4) revert("two-handed weapon equipped");
         }
       }
     }
 
-    EquipmentSlot storage slot = equipment_slots[token][equipment_type];
+    Combat.EquipmentSlot storage slot = equipment_slots[token][equipment_type];
     if(item_contract != slot.item_contract || item != slot.item) {
       if(slot.item_contract != address(0)) {
         ICrafting(slot.item_contract).safeTransferFrom(address(this), _msgSender(), slot.item);
@@ -155,27 +149,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       } else {
         delete slot.item;
         delete slot.item_contract;
-      }
-    }
-  }
-
-  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {
-    monster_count = bonus ? 3 : 2;
-    if(level < 9) {
-      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level];
-      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + level - 2];
-      if(bonus) {
-        if(level < 2) {
-          monsters[2] = MONSTERS[0];
-        } else {
-          monsters[2] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level - 2)) - 1];
-        }
-      }
-    } else {
-      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + 8];
-      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + 7];
-      if(bonus) {
-        monsters[2] = MONSTERS[Random.dn(16040042777347404675, token, uint8(MONSTER_LEVEL_OFFSET + 7)) - 1];
       }
     }
   }
@@ -199,7 +172,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       combatants[i + 1] = monster_combatant(Monster.monster_by_id(monsters[i]));
     }
 
-    Combat.sort_by_initiative(combatants);
+    Combat.order_by_initiative(combatants);
     Combat.Combatant[] storage turn_order = turn_orders[token];
     for(uint i = 0; i < number_of_combatants; i++) {
       turn_order.push(combatants[i]);
@@ -248,7 +221,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     if(adventure.monsters_defeated == adventure.monster_count) {
       adventure.combat_ended = true;
     } else {
-      if(attack_counter < 3 && summoner.total_attack_bonus[attack_counter + 1] > 0) {
+      if(attack_counter < 3 && Combat.has_attack(summoner.attacks, attack_counter + 1)) {
         attack_counters[token] = attack_counter + 1;
       } else {
         attack_counters[token] = 0;
@@ -284,17 +257,17 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
     RARITY.safeTransferFrom(address(this), _msgSender(), adventure.summoner);
 
-    EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+    Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     if(weapon_slot.item_contract != address(0)) {
       ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), _msgSender(), weapon_slot.item);
     }
 
-    EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     if(armor_slot.item_contract != address(0)) {
       ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), _msgSender(), armor_slot.item);
     }
 
-    EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+    Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     if(shield_slot.item_contract != address(0)) {
       ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), _msgSender(), shield_slot.item);
     }
@@ -302,70 +275,61 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.ended = uint64(block.timestamp);
   }
 
-  function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
-    EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
-    EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
-    EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
-    Weapon memory weapon_codex = get_weapon_codex(weapon_slot);
-    int8 weapon_attack_modifier = Summoner.weapon_attack_modifier(summoner, weapon_codex.encumbrance);
-    int8 weapon_damage_modifier = Summoner.weapon_damage_modifier(summoner, weapon_codex.encumbrance);
+  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {
+    monster_count = bonus ? 3 : 2;
+    if(level < 9) {
+      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level];
+      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + level - 2];
+      if(bonus) {
+        if(level < 2) {
+          monsters[2] = MONSTERS[0];
+        } else {
+          monsters[2] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level - 2)) - 1];
+        }
+      }
+    } else {
+      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + 8];
+      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + 7];
+      if(bonus) {
+        monsters[2] = MONSTERS[Random.dn(16040042777347404675, token, uint8(MONSTER_LEVEL_OFFSET + 7)) - 1];
+      }
+    }
+  }
 
+  function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
     (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
     emit RollInitiative(token, initiative_roll, initiative_score);
 
-    int8[4] memory total_attack_bonus = Summoner.total_attack_bonus(summoner, weapon_attack_modifier);
-    int8[16] memory damage;
-    for(uint i = 0; i < 4; i++) {
-      if(total_attack_bonus[i] > 0) {
-        Combat.pack_damage(1, uint8(weapon_codex.damage), weapon_damage_modifier, uint8(weapon_codex.damage_type), i, damage);
-      } else {
-        break;
-      }
-    }
+    Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+    Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
 
-    combatant = Combat.Combatant({
-      summoner: true,
-      token: summoner,
-      initiative_roll: initiative_roll,
-      initiative_score: initiative_score,
-      hit_points: int16(uint16(Summoner.hit_points(summoner))),
-      armor_class: Summoner.armor_class(summoner, armor_slot.item, armor_slot.item_contract, shield_slot.item, shield_slot.item_contract),
-      critical_modifier: int8(weapon_codex.critical_modifier),
-      critical_multiplier: uint8(weapon_codex.critical),
-      total_attack_bonus: total_attack_bonus,
-      damage: damage
-    });
-  }
-
-  function get_weapon_codex(EquipmentSlot memory weapon_slot) internal view returns (Weapon memory) {
-    if(weapon_slot.item_contract == address(0)) {
-      return unarmed_strike_codex();
-    } else {
-      (, uint item_type, , ) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
-      return COMMON_WEAPONS_CODEX.item_by_id(item_type);
-    }
-  }
-
-  function unarmed_strike_codex() internal pure returns(Weapon memory) {
-    // _, _, proficiency, _, damage_type, _, damage, critical, critical_modifier, _, _, _
-    return Weapon(0, 0, 1, 0, 1, 0, 3, 2, 0, 0, "", "");
+    combatant.summoner = true;
+    combatant.token = summoner;
+    combatant.initiative_roll = initiative_roll;
+    combatant.initiative_score = initiative_score;
+    combatant.hit_points = int16(uint16(Summoner.hit_points(summoner)));
+    combatant.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
+    combatant.attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
   }
 
   function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
     monster_spawn[next_monster] = monster_codex.id;
-    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(next_monster, Attributes.compute_modifier(monster_codex.abilities[1]), monster_codex.initiative_bonus);
-    combatant = Combat.Combatant({
-      summoner: false,
-      token: next_monster,
-      initiative_roll: initiative_roll,
-      initiative_score: initiative_score,
-      hit_points: Monster.hit_points(monster_codex, next_monster),
-      armor_class: monster_codex.armor_class,
-      total_attack_bonus: monster_codex.total_attack_bonus,
-      critical_modifier: monster_codex.critical_modifier,
-      critical_multiplier: monster_codex.critical_multiplier,
-      damage: monster_codex.damage
-    });
+
+    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(
+      next_monster, 
+      Attributes.compute_modifier(monster_codex.abilities[1]), 
+      monster_codex.initiative_bonus
+    );
+
+    combatant.summoner = false;
+    combatant.token = next_monster;
+    combatant.initiative_roll = initiative_roll;
+    combatant.initiative_score = initiative_score;
+    combatant.hit_points = Monster.hit_points(monster_codex, next_monster);
+    combatant.armor_class = monster_codex.armor_class;
+    combatant.attacks = monster_codex.attacks;
+
     next_monster += 1;
   }
 
@@ -394,7 +358,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       uint attack_counter = attack_counters[token];
       if(monster.hit_points > -1) {
         attack_combatant(token, monster, summoner, attack_counter, adventure.combat_round);
-        if(attack_counter < 3 && monster.total_attack_bonus[attack_counter + 1] > 0) {
+        if(attack_counter < 3 && Combat.has_attack(monster.attacks, attack_counter + 1)) {
           attack_counters[token] = attack_counter + 1;
         } else {
           attack_counters[token] = 0;
@@ -422,7 +386,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function attack_combatant(uint token, Combat.Combatant memory attacker, Combat.Combatant storage defender, uint attack_number, uint8 round) internal {
-    (bool hit, uint8 roll, uint8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
+    (bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
     = Combat.attack_combatant(attacker, defender, attack_number);
     emit Attack(token, attacker.token, defender.token, round, hit, roll, score, critical_confirmation, damage, damage_type);
   }

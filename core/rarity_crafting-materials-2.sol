@@ -32,7 +32,7 @@ contract rarity_crafting_materials_2 is ERC20 {
     uint reward = 0;
     uint8 turns = monster_count + 1;
     for(uint i = 0; i < turns; i++) {
-      (bool summoner,,,,,,,uint token) = ADVENTURE_2.turn_orders(adventure_token, i);
+      (bool summoner,,,,,uint token) = ADVENTURE_2.turn_orders(adventure_token, i);
       if(!summoner) {
         uint8 monster_id = ADVENTURE_2.monster_spawn(token);
         reward += Monster.monster_by_id(monster_id).challenge_rating;

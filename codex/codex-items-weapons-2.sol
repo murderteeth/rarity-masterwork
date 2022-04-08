@@ -1,20 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-struct Weapon {
-  uint id;
-  uint cost;
-  uint proficiency;
-  uint encumbrance;
-  uint damage_type;
-  uint weight;
-  uint damage;
-  uint critical;
-  int critical_modifier;
-  uint range_increment;
-  string name;
-  string description;
-}
+import "../library/Codex.sol";
 
 contract codex {
   string constant public index = "Items";
@@ -54,7 +41,7 @@ contract codex {
     }
   }
 
-  function item_by_id(uint _id) public pure returns(Weapon memory weapon) {
+  function item_by_id(uint _id) public pure returns(IWeapon.Weapon memory weapon) {
     if (_id == 1) {
       return gauntlet();
     } else if (_id == 2) {
@@ -176,7 +163,7 @@ contract codex {
     }
   }
 
-  function gauntlet() public pure returns (Weapon memory weapon) {
+  function gauntlet() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 1;
     weapon.name = "Gauntlet";
     weapon.cost = 2e18;
@@ -191,7 +178,7 @@ contract codex {
     weapon.description = "This metal glove lets you deal lethal damage rather than nonlethal damage with unarmed strikes. A strike with a gauntlet is otherwise considered an unarmed attack. The cost and weight given are for a single gauntlet. Medium and heavy armors (except breastplate) come with gauntlets.";
   }
 
-  function dagger() public pure returns (Weapon memory weapon) {
+  function dagger() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 2;
     weapon.name = "Dagger";
     weapon.cost = 2e18;
@@ -206,7 +193,7 @@ contract codex {
     weapon.description = "You get a +2 bonus on Sleight of Hand checks made to conceal a dagger on your body (see the Sleight of Hand skill).";
   }
 
-  function gauntlet_spiked() public pure returns (Weapon memory weapon) {
+  function gauntlet_spiked() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 3;
     weapon.name = "Gauntlet, spiked";
     weapon.cost = 5e18;
@@ -221,7 +208,7 @@ contract codex {
     weapon.description = "Your opponent cannot use a disarm action to disarm you of spiked gauntlets. The cost and weight given are for a single gauntlet. An attack with a spiked gauntlet is considered an armed attack.";
   }
 
-  function mace_light() public pure returns (Weapon memory weapon) {
+  function mace_light() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 4;
     weapon.name = "Mace, light";
     weapon.cost = 5e18;
@@ -236,7 +223,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function sickle() public pure returns (Weapon memory weapon) {
+  function sickle() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 5;
     weapon.name = "Sickle";
     weapon.cost = 6e18;
@@ -251,7 +238,7 @@ contract codex {
     weapon.description = "A sickle can be used to make trip attacks. If you are tripped during your own trip attempt, you can drop the sickle to avoid being tripped.";
   }
 
-  function club() public pure returns (Weapon memory weapon) {
+  function club() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 6;
     weapon.name = "Club";
     weapon.cost = 1e17;
@@ -266,7 +253,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function mace_heavy() public pure returns (Weapon memory weapon) {
+  function mace_heavy() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 7;
     weapon.name = "Mace, heavy";
     weapon.cost = 12e18;
@@ -281,7 +268,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function morningstar() public pure returns (Weapon memory weapon) {
+  function morningstar() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 8;
     weapon.name = "Morningstar";
     weapon.cost = 8e18;
@@ -296,7 +283,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function shortspear() public pure returns (Weapon memory weapon) {
+  function shortspear() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 9;
     weapon.name = "Shortspear";
     weapon.cost = 1e18;
@@ -311,7 +298,7 @@ contract codex {
     weapon.description = "A shortspear is small enough to wield one-handed. It may also be thrown.";
   }
 
-  function longspear() public pure returns (Weapon memory weapon) {
+  function longspear() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 10;
     weapon.name = "Longspear";
     weapon.cost = 5e18;
@@ -326,7 +313,7 @@ contract codex {
     weapon.description = "A longspear has reach. You can strike opponents 10 feet away with it, but you cant use it against an adjacent foe. If you use a ready action to set a longspear against a charge, you deal double damage on a successful hit against a charging character.";
   }
 
-  function quarterstaff() public pure returns (Weapon memory weapon) {
+  function quarterstaff() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 11;
     weapon.name = "Quarterstaff";
     weapon.cost = 1e17;
@@ -341,7 +328,7 @@ contract codex {
     weapon.description = "A quarterstaff is a double weapon. You can fight with it as if fighting with two weapons, but if you do, you incur all the normal attack penalties associated with fighting with two weapons, just as if you were using a one-handed weapon and a light weapon. A creature wielding a quarterstaff in one hand cant use it as a double weapon-only one end of the weapon can be used in any given round.";
   }
 
-  function spear() public pure returns (Weapon memory weapon) {
+  function spear() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 12;
     weapon.name = "Spear";
     weapon.cost = 2e18;
@@ -356,7 +343,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function crossbow_heavy() public pure returns (Weapon memory weapon) {
+  function crossbow_heavy() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 13;
     weapon.name = "Crossbow, heavy";
     weapon.cost = 50e18;
@@ -371,7 +358,7 @@ contract codex {
     weapon.description = "You draw a heavy crossbow back by turning a small winch. Loading a heavy crossbow is a full-round action that provokes attacks of opportunity.";
   }
 
-  function crossbow_light() public pure returns (Weapon memory weapon) {
+  function crossbow_light() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 14;
     weapon.name = "Crossbow, light";
     weapon.cost = 35e18;
@@ -386,7 +373,7 @@ contract codex {
     weapon.description = "You draw a light crossbow back by pulling a lever. Loading a light crossbow is a move action that provokes attacks of opportunity.";
   }
 
-  function dart() public pure returns (Weapon memory weapon) {
+  function dart() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 15;
     weapon.name = "Dart";
     weapon.cost = 5e17;
@@ -401,7 +388,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function javelin() public pure returns (Weapon memory weapon) {
+  function javelin() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 16;
     weapon.name = "Javelin";
     weapon.cost = 1e18;
@@ -416,7 +403,7 @@ contract codex {
     weapon.description = "Since it is not designed for melee, you are treated as nonproficient with it and take a -4 penalty on attack rolls if you use a javelin as a melee weapon.";
   }
 
-  function sling() public pure returns (Weapon memory weapon) {
+  function sling() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 17;
     weapon.name = "Sling";
     weapon.cost = 1e17;
@@ -431,7 +418,7 @@ contract codex {
     weapon.description = "Your Strength modifier applies to damage rolls when you use a sling, just as it does for thrown weapons. You can fire, but not load, a sling with one hand. Loading a sling is a move action that requires two hands and provokes attacks of opportunity.";
   }
 
-  function axe() public pure returns (Weapon memory weapon) {
+  function axe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 18;
     weapon.name = "Axe";
     weapon.cost = 8e18;
@@ -446,7 +433,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function hammer_light() public pure returns (Weapon memory weapon) {
+  function hammer_light() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 19;
     weapon.name = "Hammer, light";
     weapon.cost = 1e18;
@@ -461,7 +448,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function handaxe() public pure returns (Weapon memory weapon) {
+  function handaxe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 20;
     weapon.name = "Handaxe";
     weapon.cost = 6e18;
@@ -476,7 +463,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function kukri() public pure returns (Weapon memory weapon) {
+  function kukri() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 21;
     weapon.name = "Kukri";
     weapon.cost = 8e18;
@@ -491,7 +478,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function pick_light() public pure returns (Weapon memory weapon) {
+  function pick_light() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 22;
     weapon.name = "Pick, light";
     weapon.cost = 4e18;
@@ -506,7 +493,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function sap() public pure returns (Weapon memory weapon) {
+  function sap() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 23;
     weapon.name = "Sap";
     weapon.cost = 1e18;
@@ -521,7 +508,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function sword_short() public pure returns (Weapon memory weapon) {
+  function sword_short() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 24;
     weapon.name = "Sword, short";
     weapon.cost = 10e18;
@@ -536,7 +523,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function battleaxe() public pure returns (Weapon memory weapon) {
+  function battleaxe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 25;
     weapon.name = "Battleaxe";
     weapon.cost = 10e18;
@@ -551,7 +538,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function flail() public pure returns (Weapon memory weapon) {
+  function flail() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 26;
     weapon.name = "Flail";
     weapon.cost = 8e18;
@@ -566,7 +553,7 @@ contract codex {
     weapon.description = "With a flail, you get a +2 bonus on opposed attack rolls made to disarm an enemy (including the roll to avoid being disarmed if such an attempt fails).";
   }
 
-  function longsword() public pure returns (Weapon memory weapon) {
+  function longsword() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 27;
     weapon.name = "Longsword";
     weapon.cost = 15e18;
@@ -581,7 +568,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function pick_heavy() public pure returns (Weapon memory weapon) {
+  function pick_heavy() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 28;
     weapon.name = "Pick, heavy";
     weapon.cost = 8e18;
@@ -596,7 +583,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function rapier() public pure returns (Weapon memory weapon) {
+  function rapier() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 29;
     weapon.name = "Rapier";
     weapon.cost = 20e18;
@@ -611,7 +598,7 @@ contract codex {
     weapon.description = "You can use the Weapon Finesse feat to apply your Dexterity modifier instead of your Strength modifier to attack rolls with a rapier sized for you, even though it isnt a light weapon for you. You cant wield a rapier in two hands in order to apply 1.5 times your Strength bonus to damage.";
   }
 
-  function scimitar() public pure returns (Weapon memory weapon) {
+  function scimitar() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 30;
     weapon.name = "Scimitar";
     weapon.cost = 15e18;
@@ -626,7 +613,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function trident() public pure returns (Weapon memory weapon) {
+  function trident() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 31;
     weapon.name = "Trident";
     weapon.cost = 15e18;
@@ -641,7 +628,7 @@ contract codex {
     weapon.description = "This weapon can be thrown. If you use a ready action to set a trident against a charge, you deal double damage on a successful hit against a charging character.";
   }
 
-  function warhammer() public pure returns (Weapon memory weapon) {
+  function warhammer() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 32;
     weapon.name = "Warhammer";
     weapon.cost = 12e18;
@@ -656,7 +643,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function falchion() public pure returns (Weapon memory weapon) {
+  function falchion() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 33;
     weapon.name = "Falchion";
     weapon.cost = 75e18;
@@ -671,7 +658,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function glaive() public pure returns (Weapon memory weapon) {
+  function glaive() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 34;
     weapon.name = "Glaive";
     weapon.cost = 8e18;
@@ -686,7 +673,7 @@ contract codex {
     weapon.description = "A glaive has reach. You can strike opponents 10 feet away with it, but you cant use it against an adjacent foe.";
   }
 
-  function greataxe() public pure returns (Weapon memory weapon) {
+  function greataxe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 35;
     weapon.name = "Greataxe";
     weapon.cost = 20e18;
@@ -701,7 +688,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function greatclub() public pure returns (Weapon memory weapon) {
+  function greatclub() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 36;
     weapon.name = "Greatclub";
     weapon.cost = 5e18;
@@ -716,7 +703,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function flail_heavy() public pure returns (Weapon memory weapon) {
+  function flail_heavy() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 37;
     weapon.name = "Flail, heavy";
     weapon.cost = 15e18;
@@ -731,7 +718,7 @@ contract codex {
     weapon.description = "With a flail, you get a +2 bonus on opposed attack rolls made to disarm an enemy (including the roll to avoid being disarmed if such an attempt fails).";
   }
 
-  function greatsword() public pure returns (Weapon memory weapon) {
+  function greatsword() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 38;
     weapon.name = "Greatsword";
     weapon.cost = 50e18;
@@ -746,7 +733,7 @@ contract codex {
     weapon.description = "";
   }
 
-  function guisarme() public pure returns (Weapon memory weapon) {
+  function guisarme() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 39;
     weapon.name = "Guisarme";
     weapon.cost = 9e18;
@@ -761,7 +748,7 @@ contract codex {
     weapon.description = "A guisarme has reach. You can strike opponents 10 feet away with it, but you cant use it against an adjacent foe.";
   }
 
-  function halberd() public pure returns (Weapon memory weapon) {
+  function halberd() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 40;
     weapon.name = "Halberd";
     weapon.cost = 10e18;
@@ -776,7 +763,7 @@ contract codex {
     weapon.description = "If you use a ready action to set a halberd against a charge, you deal double damage on a successful hit against a charging character.";
   }
 
-  function lance() public pure returns (Weapon memory weapon) {
+  function lance() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 41;
     weapon.name = "Lance";
     weapon.cost = 10e18;
@@ -791,7 +778,7 @@ contract codex {
     weapon.description = "A lance deals double damage when used from the back of a charging mount. It has reach, so you can strike opponents 10 feet away with it, but you cant use it against an adjacent foe.";
   }
 
-  function ranseur() public pure returns (Weapon memory weapon) {
+  function ranseur() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 42;
     weapon.name = "Ranseur";
     weapon.cost = 10e18;
@@ -806,7 +793,7 @@ contract codex {
     weapon.description = "A ranseur has reach. You can strike opponents 10 feet away with it, but you cant use it against an adjacent foe.";
   }
 
-  function scythe() public pure returns (Weapon memory weapon) {
+  function scythe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 43;
     weapon.name = "Scythe";
     weapon.cost = 18e18;
@@ -821,7 +808,7 @@ contract codex {
     weapon.description = "A scythe can be used to make trip attacks. If you are tripped during your own trip attempt, you can drop the scythe to avoid being tripped.";
   }
 
-  function longbow() public pure returns (Weapon memory weapon) {
+  function longbow() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 44;
     weapon.name = "Longbow";
     weapon.cost = 75e18;
@@ -836,7 +823,7 @@ contract codex {
     weapon.description = "You need at least two hands to use a bow, regardless of its size. A longbow is too unwieldy to use while you are mounted. If you have a penalty for low Strength, apply it to damage rolls when you use a longbow. If you have a bonus for high Strength, you can apply it to damage rolls when you use a composite longbow (see below) but not a regular longbow.";
   }
 
-  function longbow_composite() public pure returns (Weapon memory weapon) {
+  function longbow_composite() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 45;
     weapon.name = "Longbow, composite";
     weapon.cost = 100e18;
@@ -851,7 +838,7 @@ contract codex {
     weapon.description = "You need at least two hands to use a bow, regardless of its size. You can use a composite longbow while mounted. All composite bows are made with a particular strength rating (that is, each requires a minimum Strength modifier to use with proficiency). If your Strength bonus is less than the strength rating of the composite bow, you cant effectively use it, so you take a -2 penalty on attacks with it. The default composite longbow requires a Strength modifier of +0 or higher to use with proficiency. A composite longbow can be made with a high strength rating to take advantage of an above-average Strength score; this feature allows you to add your Strength bonus to damage, up to the maximum bonus indicated for the bow. Each point of Strength bonus granted by the bow adds 100 gp to its cost.";
   }
 
-  function shortbow() public pure returns (Weapon memory weapon) {
+  function shortbow() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 46;
     weapon.name = "Shortbow";
     weapon.cost = 30e18;
@@ -866,7 +853,7 @@ contract codex {
     weapon.description = "You need at least two hands to use a bow, regardless of its size. You can use a shortbow while mounted. If you have a penalty for low Strength, apply it to damage rolls when you use a shortbow. If you have a bonus for high Strength, you can apply it to damage rolls when you use a composite shortbow (see below) but not a regular shortbow.";
   }
 
-  function shortbow_composite() public pure returns (Weapon memory weapon) {
+  function shortbow_composite() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 47;
     weapon.name = "Shortbow, composite";
     weapon.cost = 75e18;
@@ -881,7 +868,7 @@ contract codex {
     weapon.description = "You need at least two hands to use a bow, regardless of its size. You can use a composite shortbow while mounted. All composite bows are made with a particular strength rating (that is, each requires a minimum Strength modifier to use with proficiency). If your Strength bonus is lower than the strength rating of the composite bow, you cant effectively use it, so you take a -2 penalty on attacks with it. The default composite shortbow requires a Strength modifier of +0 or higher to use with proficiency. A composite shortbow can be made with a high strength rating to take advantage of an above-average Strength score; this feature allows you to add your Strength bonus to damage, up to the maximum bonus indicated for the bow. Each point of Strength bonus granted by the bow adds 75 gp to its cost.";
   }
 
-  function kama() public pure returns (Weapon memory weapon) {
+  function kama() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 48;
     weapon.name = "Kama";
     weapon.cost = 2e18;
@@ -896,7 +883,7 @@ contract codex {
     weapon.description = "The kama is a special monk weapon. This designation gives a monk wielding a kama special options.";
   }
 
-  function nunchaku() public pure returns (Weapon memory weapon) {
+  function nunchaku() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 49;
     weapon.name = "Nunchaku";
     weapon.cost = 2e18;
@@ -911,7 +898,7 @@ contract codex {
     weapon.description = "The nunchaku is a special monk weapon. This designation gives a monk wielding a nunchaku special options. With a nunchaku, you get a +2 bonus on opposed attack rolls made to disarm an enemy (including the roll to avoid being disarmed if such an attempt fails).";
   }
 
-  function sai() public pure returns (Weapon memory weapon) {
+  function sai() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 50;
     weapon.name = "Sai";
     weapon.cost = 1e18;
@@ -926,7 +913,7 @@ contract codex {
     weapon.description = "With a sai, you get a +4 bonus on opposed attack rolls made to disarm an enemy (including the roll to avoid being disarmed if such an attempt fails).";
   }
 
-  function siangham() public pure returns (Weapon memory weapon) {
+  function siangham() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 51;
     weapon.name = "Siangham";
     weapon.cost = 3e18;
@@ -941,7 +928,7 @@ contract codex {
     weapon.description = "The siangham is a special monk weapon. This designation gives a monk wielding a siangham special options.";
   }
 
-  function sword_bastard() public pure returns (Weapon memory weapon) {
+  function sword_bastard() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 52;
     weapon.name = "Sword, bastard";
     weapon.cost = 35e18;
@@ -956,7 +943,7 @@ contract codex {
     weapon.description = "A bastard sword is too large to use in one hand without special training; thus, it is an exotic weapon. A character can use a bastard sword two-handed as a martial weapon.";
   }
 
-  function waraxe_dwarven() public pure returns (Weapon memory weapon) {
+  function waraxe_dwarven() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 53;
     weapon.name = "Waraxe, dwarven";
     weapon.cost = 30e18;
@@ -971,7 +958,7 @@ contract codex {
     weapon.description = "A dwarven waraxe is too large to use in one hand without special training; thus, it is an exotic weapon. A Medium character can use a dwarven waraxe two-handed as a martial weapon, or a Large creature can use it one-handed in the same way. A dwarf treats a dwarven waraxe as a martial weapon even when using it in one hand.";
   }
 
-  function axe_orc_double() public pure returns (Weapon memory weapon) {
+  function axe_orc_double() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 54;
     weapon.name = "Axe, orc double";
     weapon.cost = 60e18;
@@ -986,7 +973,7 @@ contract codex {
     weapon.description = "An orc double axe is a double weapon. You can fight with it as if fighting with two weapons, but if you do, you incur all the normal attack penalties associated with fighting with two weapons, just as if you were using a one-handed weapon and a light weapon.";
   }
 
-  function chain_spiked() public pure returns (Weapon memory weapon) {
+  function chain_spiked() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 55;
     weapon.name = "Chain, spiked";
     weapon.cost = 25e18;
@@ -1001,7 +988,7 @@ contract codex {
     weapon.description = "A spiked chain has reach, so you can strike opponents 10 feet away with it. In addition, unlike most other weapons with reach, it can be used against an adjacent foe.";
   }
 
-  function flail_dire() public pure returns (Weapon memory weapon) {
+  function flail_dire() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 56;
     weapon.name = "Flail, dire";
     weapon.cost = 90e18;
@@ -1016,7 +1003,7 @@ contract codex {
     weapon.description = "A dire flail is a double weapon. You can fight with it as if fighting with two weapons, but if you do, you incur all the normal attack penalties associated with fighting with two weapons, just as if you were using a one-handed weapon and a light weapon. A creature wielding a dire flail in one hand cant use it as a double weapon- only one end of the weapon can be used in any given round.";
   }
 
-  function crossbow_hand() public pure returns (Weapon memory weapon) {
+  function crossbow_hand() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 57;
     weapon.name = "Crossbow, hand";
     weapon.cost = 100e18;
@@ -1031,7 +1018,7 @@ contract codex {
     weapon.description = "You can draw a hand crossbow back by hand. Loading a hand crossbow is a move action that provokes attacks of opportunity.";
   }
 
-  function crossbow_repeating_heavy() public pure returns (Weapon memory weapon) {
+  function crossbow_repeating_heavy() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 58;
     weapon.name = "Crossbow, repeating heavy";
     weapon.cost = 400e18;
@@ -1046,7 +1033,7 @@ contract codex {
     weapon.description = "The repeating crossbow (whether heavy or light) holds 5 crossbow bolts. As long as it holds bolts, you can reload it by pulling the reloading lever (a free action). Loading a new case of 5 bolts is a full-round action that provokes attacks of opportunity.";
   }
 
-  function crossbow_repeating_light() public pure returns (Weapon memory weapon) {
+  function crossbow_repeating_light() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 59;
     weapon.name = "Crossbow, repeating light";
     weapon.cost = 250e18;

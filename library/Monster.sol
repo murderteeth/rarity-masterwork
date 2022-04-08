@@ -12,12 +12,9 @@ library Monster {
     int8 hit_dice_modifier;
     int8 initiative_bonus;
     uint8 armor_class;
-    int8 critical_modifier;
-    uint8 critical_multiplier;
     uint16 challenge_rating;
-    int8[4] total_attack_bonus;
     uint8[6] abilities;
-    int8[16] damage;
+    int8[28] attacks; // layout: [attack_bonus, critical_modifier, critical_multiplier, damage_dice_count, damage_dice_sides, damage_modifier, damage_type.. x4]
     string name;
   }
 
@@ -69,11 +66,8 @@ library Monster {
     monster.hit_dice_modifier = 0;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
-    monster.total_attack_bonus = [int8(1), 0, 0, 0];
     monster.abilities = [9, 13, 10, 10, 9, 8];
-    Combat.pack_damage(1, 2, -1, 2, 0, monster.damage);
+    Combat.pack_attack(1, 0, 3, 1, 2, -1, 2, 0, monster.attacks);
     monster.name = "Kobold";
   }
 
@@ -85,11 +79,8 @@ library Monster {
     monster.hit_dice_modifier = 1;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(4), 0, 0, 0];
     monster.abilities = [10, 17, 12, 1, 12, 4];
-    Combat.pack_damage(1, 4, 0, 3, 0, monster.damage);
+    Combat.pack_attack(4, 0, 2, 1, 4, 0, 3, 0, monster.attacks);
     monster.name = "Dire Rat";
   }
 
@@ -101,11 +92,8 @@ library Monster {
     monster.hit_dice_modifier = 1;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(2), 0, 0, 0];
     monster.abilities = [11, 13, 12, 10, 9, 6];
-    Combat.pack_damage(1, 6, 0, 1, 0, monster.damage);
+    Combat.pack_attack(2, 0, 2, 1, 6, 0, 1, 0, monster.attacks);
     monster.name = "Goblin";
   }
 
@@ -117,11 +105,8 @@ library Monster {
     monster.hit_dice_modifier = 2;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
-    monster.total_attack_bonus = [int8(3), 0, 0, 0];
     monster.abilities = [15, 10, 13, 8, 11, 8];
-    Combat.pack_damage(1, 8, 2, 3, 0, monster.damage);
+    Combat.pack_attack(3, 0, 3, 1, 8, 2, 3, 0, monster.attacks);
     monster.name = "Gnoll";
   }
 
@@ -133,11 +118,8 @@ library Monster {
     monster.hit_dice_modifier = 2;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
-    monster.total_attack_bonus = [int8(4), 0, 0, 0];
     monster.abilities = [15, 13, 13, 10, 8, 6];
-    Combat.pack_damage(1, 8, 3, 3, 0, monster.damage);
+    Combat.pack_attack(4, 0, 3, 1, 8, 3, 3, 0, monster.attacks);
     monster.name = "Gnoll";
   }
 
@@ -149,13 +131,10 @@ library Monster {
     monster.hit_dice_modifier = 6;
     monster.initiative_bonus = 0;
     monster.armor_class = 13;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(6), 6, 1, 0];
     monster.abilities = [19, 13, 15, 2, 12, 6];
-    Combat.pack_damage(1, 4, 4, 3, 0, monster.damage);
-    Combat.pack_damage(1, 4, 4, 3, 1, monster.damage);
-    Combat.pack_damage(1, 6, 2, 3, 2, monster.damage);
+    Combat.pack_attack(6, 0, 2, 1, 4, 4, 3, 0, monster.attacks);
+    Combat.pack_attack(6, 0, 2, 1, 4, 4, 3, 1, monster.attacks);
+    Combat.pack_attack(1, 0, 2, 1, 6, 2, 3, 2, monster.attacks);
     monster.name = "Black Bear";
   }
 
@@ -167,11 +146,8 @@ library Monster {
     monster.hit_dice_modifier = 11;
     monster.initiative_bonus = 0;
     monster.armor_class = 16;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(8), 0, 0, 0];
     monster.abilities = [21, 8, 15, 6, 10, 7];
-    Combat.pack_damage(2, 8, 7, 1, 0, monster.damage);
+    Combat.pack_attack(8, 0, 2, 2, 8, 7, 1, 0, monster.attacks);
     monster.name = "Ogre";
   }
 
@@ -183,11 +159,8 @@ library Monster {
     monster.hit_dice_modifier = 21;
     monster.initiative_bonus = 0;
     monster.armor_class = 15;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 3;
-    monster.total_attack_bonus = [int8(12), 0, 0, 0];
     monster.abilities = [27, 10, 17, 2, 13, 8];
-    Combat.pack_damage(1, 8, 12, 2, 0, monster.damage);
+    Combat.pack_attack(12, 0, 2, 1, 8, 12, 2, 0, monster.attacks);
     monster.name = "Dire Boar";
   }
 
@@ -199,13 +172,10 @@ library Monster {
     monster.hit_dice_modifier = 23;
     monster.initiative_bonus = 0;
     monster.armor_class = 16;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(8), 8, 3, 0];
     monster.abilities = [22, 17, 19, 2, 12, 10];
-    Combat.pack_damage(1, 6, 6, 3, 0, monster.damage);
-    Combat.pack_damage(1, 6, 6, 3, 1, monster.damage);
-    Combat.pack_damage(1, 8, 3, 3, 0, monster.damage);
+    Combat.pack_attack(8, 0, 2, 1, 6, 6, 3, 0, monster.attacks);
+    Combat.pack_attack(8, 0, 2, 1, 6, 6, 3, 1, monster.attacks);
+    Combat.pack_attack(3, 0, 2, 1, 8, 3, 3, 2, monster.attacks);
     monster.name = "Dire Wolverine";
   }
 
@@ -217,13 +187,10 @@ library Monster {
     monster.hit_dice_modifier = 36;
     monster.initiative_bonus = 0;
     monster.armor_class = 16;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(9), 9, 4, 0];
     monster.abilities = [27, 10, 17, 2, 13, 8];
-    Combat.pack_damage(1, 6, 6, 3, 0, monster.damage);
-    Combat.pack_damage(1, 6, 6, 3, 1, monster.damage);
-    Combat.pack_damage(1, 6, 3, 3, 2, monster.damage);
+    Combat.pack_attack(9, 0, 2, 1, 6, 6, 3, 0, monster.attacks);
+    Combat.pack_attack(9, 0, 2, 1, 6, 6, 3, 1, monster.attacks);
+    Combat.pack_attack(4, 0, 2, 1, 6, 3, 2, 2, monster.attacks);
     monster.name = "Troll";
   }
 
@@ -235,12 +202,9 @@ library Monster {
     monster.hit_dice_modifier = 20;
     monster.initiative_bonus = 4; // improved initiative feat
     monster.armor_class = 18;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(12), 7, 0, 0];
     monster.abilities = [27, 10, 17, 2, 13, 8];
-    Combat.pack_damage(2, 6, 6, 1, 0, monster.damage);
-    Combat.pack_damage(2, 6, 6, 1, 1, monster.damage);
+    Combat.pack_attack(12, 0, 2, 2, 6, 6, 1, 0, monster.attacks);
+    Combat.pack_attack(7, 0, 2, 2, 6, 6, 1, 1, monster.attacks);
     monster.name = "Ettin";
   }
 
@@ -252,12 +216,9 @@ library Monster {
     monster.hit_dice_modifier = 48;
     monster.initiative_bonus = 0;
     monster.armor_class = 20;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(16), 11, 0, 0];
     monster.abilities = [25, 8, 19, 6, 10, 7];
-    Combat.pack_damage(2, 8, 10, 1, 0, monster.damage);
-    Combat.pack_damage(2, 8, 10, 1, 1, monster.damage);
+    Combat.pack_attack(16, 0, 2, 2, 8, 10, 1, 0, monster.attacks);
+    Combat.pack_attack(11, 0, 2, 2, 8, 10, 1, 1, monster.attacks);
     monster.name = "Hill Giant";
   }
 
@@ -269,12 +230,9 @@ library Monster {
     monster.hit_dice_modifier = 56;
     monster.initiative_bonus = 0;
     monster.armor_class = 25;
-    monster.critical_modifier = 0;
-    monster.critical_multiplier = 2;
-    monster.total_attack_bonus = [int8(17), 12, 0, 0];
     monster.abilities = [27, 15, 19, 10, 12, 11];
-    Combat.pack_damage(2, 8, 12, 1, 0, monster.damage);
-    Combat.pack_damage(2, 8, 12, 1, 1, monster.damage);
+    Combat.pack_attack(17, 0, 2, 2, 8, 12, 1, 0, monster.attacks);
+    Combat.pack_attack(12, 0, 2, 2, 8, 12, 1, 1, monster.attacks);
     monster.name = "Stone Giant";
   }
 }

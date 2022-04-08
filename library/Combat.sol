@@ -4,49 +4,78 @@ pragma solidity ^0.8.7;
 import "./Roll.sol";
 
 library Combat {
+  uint internal constant ATTACK_STRIDE = 7;
+
+  struct EquipmentSlot {
+    address item_contract;
+    uint item;
+  }
+
   struct Combatant {
     bool summoner;
     uint8 initiative_roll;
     int8 initiative_score;
-    int8 critical_modifier;
-    uint8 critical_multiplier;
     uint8 armor_class;
     int16 hit_points;
     uint token;
-    int8[4] total_attack_bonus;
-    int8[16] damage;
+    int8[28] attacks; // layout: [attack_bonus, critical_modifier, critical_multiplier, damage_dice_count, damage_dice_sides, damage_modifier, damage_type.. x4]
   }
 
-  function pack_damage(
+  struct Attack {
+    int8 attack_bonus;
+    int8 critical_modifier;
+    uint8 critical_multiplier;
+    uint8 damage_dice_count;
+    uint8 damage_dice_sides;
+    int8 damage_modifier;
+    uint8 damage_type;
+  }
+
+  function pack_attack(
+    int8 attack_bonus,
+    int8 critical_modifier,
+    uint8 critical_multiplier,
     uint8 damage_dice_count,
     uint8 damage_dice_sides,
     int8 damage_modifier,
     uint8 damage_type,
     uint attack_number,
-    int8[16] memory damage
+    int8[28] memory attacks
   ) internal pure {
-    damage[attack_number * 4 + 0] = int8(damage_dice_count);
-    damage[attack_number * 4 + 1] = int8(damage_dice_sides);
-    damage[attack_number * 4 + 2] = damage_modifier;
-    damage[attack_number * 4 + 3] = int8(damage_type);
+    uint offset = attack_number * ATTACK_STRIDE;
+    attacks[offset + 0] = attack_bonus;
+    attacks[offset + 1] = critical_modifier;
+    attacks[offset + 2] = int8(critical_multiplier);
+    attacks[offset + 3] = int8(damage_dice_count);
+    attacks[offset + 4] = int8(damage_dice_sides);
+    attacks[offset + 5] = damage_modifier;
+    attacks[offset + 6] = int8(damage_type);
   }
 
-  function unpack_damage(
-    int8[16] memory damage, 
+  function unpack_attack(
+    int8[28] memory attacks, 
     uint attack_number
   ) internal pure returns (
-    uint8 damage_dice_count,
-    uint8 damage_dice_sides,
-    int8 damage_modifier,
-    uint8 damage_type
+    Attack memory attack
   ) {
-    damage_dice_count = uint8(damage[attack_number * 4 + 0]);
-    damage_dice_sides = uint8(damage[attack_number * 4 + 1]);
-    damage_modifier = damage[attack_number * 4 + 2];
-    damage_type = uint8(damage[attack_number * 4 + 3]);
+    uint offset = attack_number * ATTACK_STRIDE;
+    attack.attack_bonus = attacks[offset + 0];
+    attack.critical_modifier = attacks[offset + 1];
+    attack.critical_multiplier = uint8(attacks[offset + 2]);
+    attack.damage_dice_count = uint8(attacks[offset + 3]);
+    attack.damage_dice_sides = uint8(attacks[offset + 4]);
+    attack.damage_modifier = attacks[offset + 5];
+    attack.damage_type = uint8(attacks[offset + 6]);    
   }
 
-  function sort_by_initiative(Combatant[] memory combatants) internal pure {
+  function has_attack(
+    int8[28] memory attacks, 
+    uint attack_number
+  ) internal pure returns (bool) {
+    return attacks[ATTACK_STRIDE * (attack_number + 1) - 1] > 0;
+  }
+
+  function order_by_initiative(Combatant[] memory combatants) internal pure {
     uint length = combatants.length;
     for(uint i = 0; i < length; i++) {
       for(uint j = i + 1; j < length; j++) {
@@ -72,37 +101,33 @@ library Combat {
   ) internal returns (
     bool hit, 
     uint8 roll, 
-    uint8 score, 
+    int8 score, 
     uint8 critical_confirmation, 
     uint8 damage, 
     uint8 damage_type
   ) {
+    Attack memory attack = unpack_attack(attacker.attacks, attack_number);
+
     AttackRoll memory attack_roll = Roll.attack(
       attacker.token, 
-      attacker.total_attack_bonus[attack_number], 
-      attacker.critical_modifier, 
-      attacker.critical_multiplier, 
+      attack.attack_bonus, 
+      attack.critical_modifier, 
+      attack.critical_multiplier, 
       defender.armor_class
     );
 
     if(attack_roll.damage_multiplier == 0) {
       return (false, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, 0, 0);
     } else {
-      (
-        uint8 damage_dice_count, 
-        uint8 damage_dice_sides, 
-        int8 damage_modifier, 
-        uint8 _damage_type
-      ) = unpack_damage(attacker.damage, attack_number);
       damage = Roll.damage(
         attacker.token, 
-        damage_dice_count, 
-        damage_dice_sides,
-        damage_modifier,
+        attack.damage_dice_count, 
+        attack.damage_dice_sides,
+        attack.damage_modifier,
         attack_roll.damage_multiplier
       );
       defender.hit_points -= int16(uint16(damage));
-      return (true, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, damage, _damage_type);
+      return (true, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, damage, attack.damage_type);
     }
   }
 }

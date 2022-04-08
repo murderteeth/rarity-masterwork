@@ -9,7 +9,7 @@ import "./Skills.sol";
 
 struct AttackRoll {
   uint8 roll;
-  uint8 score;
+  int8 score;
   uint8 critical_roll;
   uint8 critical_confirmation;
   uint8 damage_multiplier;
@@ -61,8 +61,8 @@ library Roll {
   ) public view returns (AttackRoll memory result) {
     result.roll = Random.dn(token, 9807527763775093748, 20);
     if(result.roll == 1) return AttackRoll(1, 0, 0, 0, 0);
-    result.score = uint8(int8(result.roll) + total_bonus);
-    if(result.score >= target_armor_class) result.damage_multiplier++;
+    result.score = int8(result.roll) + total_bonus;
+    if(result.score >= int8(target_armor_class)) result.damage_multiplier++;
     if(result.roll >= uint(int(int8(20) + critical_modifier))) {
       result.critical_roll = Random.dn(token, 9809778455456300450, 20);
       result.critical_confirmation = uint8(int8(result.critical_roll) + total_bonus);
