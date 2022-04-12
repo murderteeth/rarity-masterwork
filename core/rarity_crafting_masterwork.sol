@@ -248,7 +248,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     result = project.tools_contract == address(0)
     ? -2
     : IEffects(project.tools_contract).skill_bonus(project.tools, 5);
-    result += int8(uint8(bonus_mats / 200e18));
+    result += int8(uint8(bonus_mats / 20e18));
   }
 
   function get_progress(uint token) public view returns (uint, uint) {

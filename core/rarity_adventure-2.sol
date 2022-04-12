@@ -29,9 +29,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
-  address public CRAFTING_WHITELIST_1 = 0x0000000000000000000000000000000000000000;
-  address public CRAFTING_WHITELIST_2 = 0x0000000000000000000000000000000000000000;
-  address[2] public CRAFTING_WHITELIST;
+  address[2] public CRAFT_WHITELIST;
 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
@@ -39,19 +37,19 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint indexed token, uint combatant);
   event SearchCheck(uint indexed token, uint8 roll, int8 score);
-  
+
   struct Adventure {
-    uint summoner;
-    uint64 started;
-    uint64 ended;
-    uint8 monster_count;
-    uint8 monsters_defeated;
-    uint8 combat_round;
     bool dungeon_entered;
     bool combat_ended;
     bool search_check_rolled;
     bool search_check_succeeded;
     bool search_check_critical;
+    uint8 monster_count;
+    uint8 monsters_defeated;
+    uint8 combat_round;
+    uint64 started;
+    uint64 ended;
+    uint summoner;
   }
 
   mapping(uint => Adventure) public adventures;
@@ -74,12 +72,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return this.onERC721Received.selector;
   }
 
-  function set_crafting_whitelist(address contract_one, address contract_two) public {
-    require(CRAFTING_WHITELIST[0] == address(0), "whitelist already set");
-    require(contract_one != address(0), "contract_one == address(0)");
-    require(contract_two != address(0), "contract_two == address(0)");
-    CRAFTING_WHITELIST[0] = contract_one;
-    CRAFTING_WHITELIST[1] = contract_two;
+  function set_craf_whitelist(address common, address masterwork) public {
+    require(CRAFT_WHITELIST[0] == address(0), "whitelist already set");
+    require(common != address(0), "common == address(0)");
+    require(masterwork != address(0), "masterwork == address(0)");
+    CRAFT_WHITELIST[0] = common;
+    CRAFT_WHITELIST[1] = masterwork;
   }
 
   function time_to_next_adventure(uint summoner) public view returns (uint time) {
@@ -124,8 +122,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require(equipment_type < 3, "!equipment_type");
     require(
       item_contract == address(0) 
-      || item_contract == CRAFTING_WHITELIST[0] 
-      || item_contract == CRAFTING_WHITELIST[1], 
+      || item_contract == CRAFT_WHITELIST[0] 
+      || item_contract == CRAFT_WHITELIST[1], 
       "!whitelist"
     );
 

@@ -18,13 +18,13 @@ contract rarity_crafting_materials_2 is ERC20 {
     require(!adventure_claims[adventure_token], "claimed");
 
     (
-      ,, 
-      uint ended, 
+      ,,,
+      bool search_check_succeeded, 
+      bool search_check_critical,
       uint8 monster_count, 
       uint8 monsters_defeated,
-      ,,,,
-      bool search_check_succeeded, 
-      bool search_check_critical
+      ,,
+      uint64 ended,
     ) = ADVENTURE_2.adventures(adventure_token);
     require(ended > 0, "!ended");
     require(monsters_defeated == monster_count, "!victory");
@@ -47,7 +47,7 @@ contract rarity_crafting_materials_2 is ERC20 {
       }
     }
 
-    _mint(_msgSender(), reward * 1e18);
+    _mint(_msgSender(), reward * 1e18 / 10);
     adventure_claims[adventure_token] = true;
   }
 
