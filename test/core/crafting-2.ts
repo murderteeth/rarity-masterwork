@@ -222,10 +222,10 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.craft_bonus(token, 0)).to.eq(2)
   })
 
-  it('gives a 1/200 craft bonus for bonus mats', async function() {
+  it.only('gives a 1/20 craft bonus for bonus mats', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('800'))).to.eq(2) // -2 + (800/200) = 2
+    expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('80'))).to.eq(2) // -2 + (80/20) = 2
   })
 
   it('can\'t craft without raw materials', async function() {
@@ -241,8 +241,8 @@ describe('Core: Crafting II - Masterwork', function () {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
     await this.masterwork.buy_raw_materials(token, crafter)
-    await this.masterwork.craft(token, crafter, ethers.utils.parseEther('800'))
-    expect(this.mats.burn).to.have.been.calledWith(ethers.utils.parseEther('800'))
+    await this.masterwork.craft(token, crafter, ethers.utils.parseEther('80'))
+    expect(this.mats.burn).to.have.been.calledWith(ethers.utils.parseEther('80'))
   })
 
   it('Passes craft checks and makes progress', async function() {

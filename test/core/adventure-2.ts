@@ -79,17 +79,17 @@ describe('Core: Adventure II', function () {
   })
 
   it('can\'t set a crafting whitelist address to zero', async function () {
-    await expect(this.adventure.set_crafting_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
-    .to.be.revertedWith('contract_one == address(0)')
-    await expect(this.adventure.set_crafting_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
-    .to.be.revertedWith('contract_two == address(0)')
+    await expect(this.adventure.set_craf_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
+    .to.be.revertedWith('common == address(0)')
+    await expect(this.adventure.set_craf_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
+    .to.be.revertedWith('masterwork == address(0)')
   })
 
   it('sets the crafting whitelist once', async function () {
-    await this.adventure.set_crafting_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
-    expect(await this.adventure.CRAFTING_WHITELIST(0)).to.eq(this.crafting.common.address)
-    expect(await this.adventure.CRAFTING_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
-    await expect(this.adventure.set_crafting_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
+    await this.adventure.set_craf_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
+    expect(await this.adventure.CRAFT_WHITELIST(0)).to.eq(this.crafting.common.address)
+    expect(await this.adventure.CRAFT_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
+    await expect(this.adventure.set_craf_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
     .to.be.revertedWith('whitelist already set')
   })
 

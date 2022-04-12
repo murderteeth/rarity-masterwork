@@ -7,7 +7,7 @@ import { randomId } from '../util'
 
 chai.use(smock.matchers)
 
-describe('Core: Crafting Materials II', function () {
+describe.only('Core: Crafting Materials II', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
@@ -26,7 +26,7 @@ describe('Core: Crafting Materials II', function () {
   it('claims mats for slain monsters', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 1, 2, 2, 0, false, false, false, false, false])
+    .returns([false, false, false, false, false, 2, 2, 0, 0, 1, 0])
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
@@ -50,14 +50,14 @@ describe('Core: Crafting Materials II', function () {
     .withArgs(
       ethers.constants.AddressZero, 
       this.signer.address, 
-      ethers.utils.parseEther((800 + 25).toString())
+      ethers.utils.parseEther(((800 + 25) / 10).toString())
     )
   })
 
   it('claims extra mats for a succesful search check', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 1, 2, 2, 0, false, false, true, true, false])
+    .returns([false, false, true, true, false, 2, 2, 0, 0, 1, 0])
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
@@ -81,14 +81,14 @@ describe('Core: Crafting Materials II', function () {
     .withArgs(
       ethers.constants.AddressZero, 
       this.signer.address, 
-      ethers.utils.parseEther((Math.floor(1.15 * (800 + 25))).toString())
+      ethers.utils.parseEther((Math.floor(1.15 * (800 + 25)) / 10).toString())
     )
   })
 
   it('claims even more mats for a critical search check', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 1, 2, 2, 0, false, false, true, true, true])
+    .returns([false, false, true, true, true, 2, 2, 0, 0, 1, 0])
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
@@ -112,14 +112,14 @@ describe('Core: Crafting Materials II', function () {
     .withArgs(
       ethers.constants.AddressZero, 
       this.signer.address, 
-      ethers.utils.parseEther((Math.floor(1.20 * (800 + 25))).toString())
+      ethers.utils.parseEther((Math.floor(1.20 * (800 + 25)) / 10).toString())
     )
   })
 
   it('rejects claimed adventures', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 1, 2, 2, 0, false, false, false, false, false])
+    .returns([false, false, false, false, false, 2, 2, 0, 0, 1, 0])
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
@@ -147,7 +147,7 @@ describe('Core: Crafting Materials II', function () {
   it('rejects adventures that haven\'t ended', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 0, 2, 0, 0, false, false, false, false, false])
+    .returns([false, false, false, false, false, 2, 0, 0, 0, 0, 0])
 
     await expect(this.mats.claim(this.adventure_token))
     .revertedWith('!ended')
@@ -156,7 +156,7 @@ describe('Core: Crafting Materials II', function () {
   it('rejects adventures that weren\'t won', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
-    .returns([0, 0, 1, 2, 1, 0, false, false, false, false, false])
+    .returns([false, false, false, false, false, 2, 1, 0, 0, 1, 0])
 
     await expect(this.mats.claim(this.adventure_token))
     .revertedWith('!victory')
