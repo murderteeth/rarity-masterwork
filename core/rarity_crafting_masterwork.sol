@@ -15,7 +15,7 @@ import "../library/ForItems.sol";
 import "../library/Roll.sol";
 import "../library/Skills.sol";
 
-contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, IEffects, ForSummoners, ForItems {
+contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
   address public TOOLS_WHITELIST_1 = address(this);
   address public TOOLS_WHITELIST_2 = 0x0000000000000000000000000000000000000000;
@@ -80,6 +80,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   // IArmor
   function get_armor(uint8 item_type) override public view returns (IArmor.Armor memory) {
     return ARMOR_CODEX.item_by_id(item_type);
+  }
+
+  // ITools
+  function get_tools(uint8 item_type) override public view returns (ITools.Tools memory) {
+    return TOOLS_CODEX.item_by_id(item_type);
   }
 
   // IEffects

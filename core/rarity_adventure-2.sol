@@ -29,6 +29,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
+  address public CRAFTING_WHITELIST_1 = 0x0000000000000000000000000000000000000000;
+  address public CRAFTING_WHITELIST_2 = 0x0000000000000000000000000000000000000000;
+  address[2] public CRAFTING_WHITELIST;
+
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
   event RollInitiative(uint indexed token, uint8 roll, int8 score);
@@ -68,6 +72,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   ) external pure override returns (bytes4) {
     operator; from; tokenId; data; // lint silencio!
     return this.onERC721Received.selector;
+  }
+
+  function set_crafting_whitelist(address contract_one, address contract_two) public {
+    require(CRAFTING_WHITELIST[0] == address(0), "whitelist already set");
+    require(contract_one != address(0), "contract_one == address(0)");
+    require(contract_two != address(0), "contract_two == address(0)");
+    CRAFTING_WHITELIST[0] = contract_one;
+    CRAFTING_WHITELIST[1] = contract_two;
   }
 
   function time_to_next_adventure(uint summoner) public view returns (uint time) {
@@ -110,6 +122,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   {
     require_outside_dungeon(adventures[token]);
     require(equipment_type < 3, "!equipment_type");
+    require(
+      item_contract == address(0) 
+      || item_contract == CRAFTING_WHITELIST[0] 
+      || item_contract == CRAFTING_WHITELIST[1], 
+      "!whitelist"
+    );
 
     if(item_contract != address(0)) {
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);

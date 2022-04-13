@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "../interfaces/core/IRarityCommonCrafting.sol";
 import "./Attributes.sol";
 import "./Codex.sol";
 import "./Combat.sol";
@@ -22,14 +21,14 @@ library Summoner {
     uint max_dex_bonus = (2**128 - 1);
 
     if(armor_slot.item_contract != address(0)) {
-      (, uint item_type, , ) = IRarityCommonCrafting(armor_slot.item_contract).items(armor_slot.item);
+      (, uint item_type, , ) = ICrafting(armor_slot.item_contract).items(armor_slot.item);
       IArmor.Armor memory armor_codex = IArmor(armor_slot.item_contract).get_armor(uint8(item_type));
       result += int8(uint8(armor_codex.armor_bonus));
       if(armor_codex.max_dex_bonus < max_dex_bonus) max_dex_bonus = armor_codex.max_dex_bonus;
     }
 
     if(shield_slot.item_contract != address(0)) {
-      (, uint item_type, , ) = IRarityCommonCrafting(shield_slot.item_contract).items(shield_slot.item);
+      (, uint item_type, , ) = ICrafting(shield_slot.item_contract).items(shield_slot.item);
       IArmor.Armor memory shield_codex = IArmor(shield_slot.item_contract).get_armor(uint8(item_type));
       result += int8(uint8(shield_codex.armor_bonus));
       if(shield_codex.max_dex_bonus < max_dex_bonus) max_dex_bonus = shield_codex.max_dex_bonus;
@@ -60,7 +59,7 @@ library Summoner {
     address armor_contract
   ) public view returns (int8) {
     if(armor_contract == address(0)) return 0;
-    (, uint item_type, , ) = IRarityCommonCrafting(armor_contract).items(armor);
+    (, uint item_type, , ) = ICrafting(armor_contract).items(armor);
     IArmor.Armor memory armor_codex = IArmor(armor_contract).get_armor(uint8(item_type));
     return Proficiency.isProficientWithArmor(summoner, armor_codex.proficiency, item_type)
     ? int8(0)
@@ -69,12 +68,12 @@ library Summoner {
 
   function hit_points(uint summoner) public view returns (uint8) {
     int8 con_modifier = Attributes.constitution_modifier(summoner);
-    int hp = int(health_byclass(Rarity.class(summoner))) + con_modifier;
+    int hp = int(health_by_class(Rarity.class(summoner))) + con_modifier;
     if (hp <= 0) hp = 1;
     return uint8(uint(hp) * Rarity.level(summoner));
   }
 
-  function health_byclass(uint class) internal pure returns (uint health) {
+  function health_by_class(uint class) internal pure returns (uint health) {
     if (class == 1) {
       health = 12;
     } else if (class == 2) {
