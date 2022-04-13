@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
-import { fakeAttributes, fakeCommonCrafting, fakeCommonCraftingWrapper, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeAttributes, fakeCommonCraftingWrapper, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
@@ -11,6 +11,7 @@ import { Crafting__factory } from '../../typechain/library/factories/Crafting__f
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { classes } from '../util/classes'
 import { weaponType } from '../util/crafting'
+import { RarityCrafting } from '../../typechain/core'
 
 chai.use(smock.matchers)
 
@@ -31,7 +32,8 @@ describe('Core: Adventure II', function () {
     }
 
     this.crafting = {
-      common: await fakeCommonCraftingWrapper()
+      common: await fakeCommonCraftingWrapper(),
+      masterwork: await fakeMasterwork()
     }
 
     this.adventure = await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
@@ -74,6 +76,21 @@ describe('Core: Adventure II', function () {
     this.crafting.common.get_weapon
     .whenCalledWith(weaponType.heavyCrossbow)
     .returns([weaponType.heavyCrossbow, 1, 5, 2, 8, 10, 2, -1, 120, ethers.utils.parseEther('50'), "Heavy Crossbow", ""])
+  })
+
+  it('can\'t set a crafting whitelist address to zero', async function () {
+    await expect(this.adventure.set_crafting_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
+    .to.be.revertedWith('contract_one == address(0)')
+    await expect(this.adventure.set_crafting_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
+    .to.be.revertedWith('contract_two == address(0)')
+  })
+
+  it('sets the crafting whitelist once', async function () {
+    await this.adventure.set_crafting_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
+    expect(await this.adventure.CRAFTING_WHITELIST(0)).to.eq(this.crafting.common.address)
+    expect(await this.adventure.CRAFTING_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
+    await expect(this.adventure.set_crafting_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
+    .to.be.revertedWith('whitelist already set')
   })
 
   it('starts new adventures', async function () {
@@ -268,8 +285,16 @@ describe('Core: Adventure II', function () {
       )).to.not.be.reverted
     })
 
-    it.skip('only equips common and masterwork items', async function () {
+    it('rejects items from non-whitelist contracts', async function () {
+      const rando_craft = await smock.fake('contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper')
+      const greatsword = fakeGreatsword(rando_craft, this.summoner, this.signer)
 
+      rando_craft.get_weapon
+      .whenCalledWith(weaponType.greatsword)
+      .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
+
+      await expect(this.adventure.equip(this.token, equipmentType.weapon, greatsword, rando_craft.address))
+      .to.be.revertedWith('!whitelist')
     })
 
     it('can\'t equip a two-handed weapon after a shield', async function () {
