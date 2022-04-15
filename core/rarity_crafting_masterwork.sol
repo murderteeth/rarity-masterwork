@@ -9,6 +9,7 @@ import "../interfaces/core/IRarityCraftingMaterials2.sol";
 import "../interfaces/core/IRarityGold.sol";
 import "../library/Codex.sol";
 import "../library/Crafting.sol";
+import "../library/CraftingSkills.sol";
 import "../library/Effects.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
@@ -154,8 +155,12 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     require(project.raw_materials == raw_materials_cost(project.base_type, project.item_type), "!raw_materials");
     require(!project.done_crafting, "done_crafting");
 
-    (uint8 roll, int8 score) = Roll.craft(crafter);
-    score += craft_bonus(token, bonus_mats);
+    (uint8 roll, int8 score) = Roll.craft(
+      crafter, 
+      CraftingSkills.get_specialization(project.base_type, project.item_type)
+    );
+
+    score += craft_bonus(project, bonus_mats);
     if(bonus_mats > 0) BONUS_MATS.burn(bonus_mats);
 
     bool success = score >= MASTERWORK_COMPONENT_DC;

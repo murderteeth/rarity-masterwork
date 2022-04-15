@@ -72,7 +72,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return this.onERC721Received.selector;
   }
 
-  function set_craf_whitelist(address common, address masterwork) public {
+  function set_craft_whitelist(address common, address masterwork) public {
     require(CRAFT_WHITELIST[0] == address(0), "whitelist already set");
     require(common != address(0), "common == address(0)");
     require(masterwork != address(0), "masterwork == address(0)");

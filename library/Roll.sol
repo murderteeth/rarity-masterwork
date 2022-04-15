@@ -3,6 +3,7 @@ pragma solidity ^0.8.7;
 
 import "../interfaces/core/IRarityCommonCrafting.sol";
 import "./Attributes.sol";
+import "./CraftingSkills.sol";
 import "./Feats.sol";
 import "./Random.sol";
 import "./Skills.sol";
@@ -16,11 +17,15 @@ struct AttackRoll {
 }
 
 library Roll {
-  function craft(uint summoner) public view returns (uint8 roll, int8 score) {
+  function craft(uint summoner, uint8 specialization) public view returns (uint8 roll, int8 score) {
     roll = Random.dn(summoner, 12171199555242019957, 20);
     score = int8(roll);
     score += Attributes.intelligence_modifier(summoner);
-    score += int8(Skills.craft(summoner));
+    if(specialization == 0) {
+      score += int8(Skills.craft(summoner));
+    } else {
+      score += int8(CraftingSkills.ranks(summoner, specialization));
+    }
   }
 
   function initiative(uint summoner) public view returns (uint8 roll, int8 score) {
