@@ -1,8 +1,9 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingWrapper, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../../typechain/core'
+import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../../typechain/interfaces/codex'
+import { IRarityCodexCraftingSkills } from '../../typechain/interfaces/codex/IRarityCodexCraftingSkills'
 import { armorType, baseType, weaponType } from './crafting'
 
 export async function fakeRarity() {
@@ -40,6 +41,22 @@ export async function fakeSkills() {
   })
   result.get_skills
   .returns(Array(36).fill(0))
+  return result
+}
+
+export async function fakeCraftingSkillsCodex() {
+  const result = await smock.fake<IRarityCodexCraftingSkills>('contracts/codex/codex-crafting-skills.sol:codex', {
+    address: '0x0000000000000000000000000000000000001000'
+  })
+  return result
+}
+
+export async function fakeCraftingSkills() {
+  const result = await smock.fake<RarityCraftingSkills>('contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills', {
+    address: '0x0000000000000000000000000000000000001001'
+  })
+  result.get_skills
+  .returns(Array(5).fill(0))
   return result
 }
 

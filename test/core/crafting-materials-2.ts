@@ -7,7 +7,7 @@ import { randomId } from '../util'
 
 chai.use(smock.matchers)
 
-describe.only('Core: Crafting Materials II', function () {
+describe('Core: Crafting Materials II', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]

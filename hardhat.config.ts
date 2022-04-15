@@ -76,6 +76,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('core', 'feats.sol/rarity_feats.json', 'IRarityFeats')
   makeInterface('core', 'gold.sol/rarity_gold.json', 'IRarityGold')
   makeInterface('core', 'namesv2.sol/rarity_names.json', 'IRarityNames2')
+  makeInterface('core', 'rarity_crafting_skills.sol/rarity_crafting_skills.json', 'IRarityCraftingSkills')
   makeInterface('core', 'rarity_crafting_common_tools.sol/rarity_crafting_tools.json', 'IRarityCommonTools')
   makeInterface('core', 'rarity_crafting_common.sol/rarity_crafting.json', 'IRarityCommonCrafting')
   makeInterface('core', 'rarity_crafting-materials-1.sol/rarity_crafting_materials.json', 'IRarityCraftingMaterials')
@@ -100,6 +101,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('codex', 'codex-items-weapons-2.sol/codex.json', 'IRarityCodexCommonWeapons')
   makeInterface('codex', 'codex-items-weapons-masterwork.sol/codex.json', 'IRarityCodexMasterworkWeapons')
   makeInterface('codex', 'codex-skills.sol/codex.json', 'IRarityCodexSkills')
+  makeInterface('codex', 'codex-crafting-skills.sol/codex.json', 'IRarityCodexCraftingSkills')
 })
 
 // You need to export an object to set up your config

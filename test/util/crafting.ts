@@ -34,3 +34,12 @@ export const toolType = {
   multiTool: 10,
   waterClock: 11,
 }
+
+export const craftingSkills = {
+  unspecialized: 0,
+  alchemy: 1,
+  armorsmithing: 2,
+  bowmaking: 3,
+  trapmaking: 4,
+  weaponsmithing: 5
+}

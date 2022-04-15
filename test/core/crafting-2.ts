@@ -7,8 +7,9 @@ import { RarityMasterwork__factory } from '../../typechain/core/factories/Rarity
 import { armorType, baseType, toolType, weaponType } from '../util/crafting'
 import { Attributes__factory, Crafting__factory, Feats__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityCraftingTools } from '../../typechain/core'
-import { fakeAttributes, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeAttributes, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { skills, skillsArray } from '../util/skills'
+import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 
 chai.use(smock.matchers)
 
@@ -23,11 +24,13 @@ describe('Core: Crafting II - Masterwork', function () {
       rarity: await fakeRarity(),
       attributes: await fakeAttributes(),
       skills: await fakeSkills(),
+      craftingSkills: await fakeCraftingSkills(),
       gold: await fakeGold()
     }
 
     this.codex = {
       random: await fakeRandom(),
+      craftingSkills: await fakeCraftingSkillsCodex(),
       masterwork: {
         armor: await smock.fake('contracts/codex/codex-items-armor-masterwork.sol:codex'),
         tools: await smock.fake('contracts/codex/codex-items-tools-masterwork.sol:codex'),
@@ -44,10 +47,12 @@ describe('Core: Crafting II - Masterwork', function () {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
             Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
             Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
-            Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address
+            Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+            CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
           }
         })).deploy()).address,
-        Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address
+        Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+        CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
       }
     })).deploy()
 
@@ -222,7 +227,7 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.craft_bonus(token, 0)).to.eq(2)
   })
 
-  it.only('gives a 1/20 craft bonus for bonus mats', async function() {
+  it('gives a 1/20 craft bonus for bonus mats', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
     expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('80'))).to.eq(2) // -2 + (80/20) = 2

@@ -3,9 +3,11 @@ import { smock } from '@defi-wonderland/smock'
 import { randomId } from '../util'
 import { Attributes__factory, Random__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { Feats__factory } from '../../typechain/library/factories/Feats__factory'
-import { fakeAttributes, fakeFeats, fakeRandom, fakeSkills } from '../util/fakes'
+import { fakeAttributes, fakeCraftingSkills, fakeFeats, fakeRandom, fakeSkills } from '../util/fakes'
 import { feats } from '../util/feats'
 import { skills } from '../util/skills'
+import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
+import { craftingSkills } from '../util/crafting'
 
 describe('Library: Roll', function () {
   before(async function () {
@@ -16,6 +18,7 @@ describe('Library: Roll', function () {
     this.core = {
       attributes: await fakeAttributes(),
       skills: await fakeSkills(),
+      craftingSkills: await fakeCraftingSkills(),
       feats: await fakeFeats()
     }
 
@@ -25,7 +28,8 @@ describe('Library: Roll', function () {
           Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
           Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
           Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
-          Skills: (await(await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address
+          Skills: (await(await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+          CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
         }
       })).deploy()
     }
@@ -41,7 +45,7 @@ describe('Library: Roll', function () {
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
       .returns([0, 0, 0, 9, 0, 0])
-      expect(await this.library.roll.craft(this.summoner))
+      expect(await this.library.roll.craft(this.summoner, craftingSkills.unspecialized))
       .to.deep.eq([1, 0])
     })
 
@@ -50,7 +54,7 @@ describe('Library: Roll', function () {
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
       .returns([0, 0, 0, 18, 0, 0])
-      expect(await this.library.roll.craft(this.summoner))
+      expect(await this.library.roll.craft(this.summoner, craftingSkills.unspecialized))
       .to.deep.eq([1, 5])
     })
 
@@ -61,8 +65,21 @@ describe('Library: Roll', function () {
       this.core.skills.get_skills
       .whenCalledWith(this.summoner)
       .returns(skillsRanks)
-      expect(await this.library.roll.craft(this.summoner))
+      expect(await this.library.roll.craft(this.summoner, craftingSkills.unspecialized))
       .to.deep.eq([1, 4])
+    })
+
+    it('rolls for specialized skills', async function() {
+      this.codex.random.dn.returns(1)
+
+      const craftSkillsRanks = Array(5).fill(0)
+      craftSkillsRanks[craftingSkills.weaponsmithing - 1] = 10
+      this.core.craftingSkills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(craftSkillsRanks)
+
+      expect(await this.library.roll.craft(this.summoner, craftingSkills.weaponsmithing))
+      .to.deep.eq([1, 10])
     })
   })
 

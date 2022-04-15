@@ -12,6 +12,7 @@ import { Summoner__factory } from '../../typechain/library/factories/Summoner__f
 import { classes } from '../util/classes'
 import { weaponType } from '../util/crafting'
 import { RarityCrafting } from '../../typechain/core'
+import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 
 chai.use(smock.matchers)
 
@@ -46,7 +47,8 @@ describe('Core: Adventure II', function () {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
             Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
             Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
-            Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address
+            Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+            CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
           }
         })).deploy()).address,
         Summoner: (await(await smock.mock<Summoner__factory>('contracts/library/Summoner.sol:Summoner', {
@@ -79,17 +81,17 @@ describe('Core: Adventure II', function () {
   })
 
   it('can\'t set a crafting whitelist address to zero', async function () {
-    await expect(this.adventure.set_craf_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
+    await expect(this.adventure.set_craft_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
     .to.be.revertedWith('common == address(0)')
-    await expect(this.adventure.set_craf_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
+    await expect(this.adventure.set_craft_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
     .to.be.revertedWith('masterwork == address(0)')
   })
 
   it('sets the crafting whitelist once', async function () {
-    await this.adventure.set_craf_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
+    await this.adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
     expect(await this.adventure.CRAFT_WHITELIST(0)).to.eq(this.crafting.common.address)
     expect(await this.adventure.CRAFT_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
-    await expect(this.adventure.set_craf_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
+    await expect(this.adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
     .to.be.revertedWith('whitelist already set')
   })
 
