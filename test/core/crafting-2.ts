@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai'
-import { smock } from '@defi-wonderland/smock'
+import { MockContract, smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
 import { clean, humanEther, randomId } from '../util'
 import { RarityCraftingMaterials2 } from '../../typechain/core/RarityCraftingMaterials2'
@@ -10,6 +10,7 @@ import { RarityCraftingTools } from '../../typechain/core'
 import { fakeAttributes, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { skills, skillsArray } from '../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 
 chai.use(smock.matchers)
 
@@ -58,7 +59,6 @@ describe('Core: Crafting II - Masterwork', function () {
 
     this.core.gold.transferFrom.returns(true)
 
-    await this.masterwork.setVariable('TOOLS_WHITELIST_2', this.commonTools.address)
     await this.masterwork.setVariable('BONUS_MATS', this.mats.address)
     await this.masterwork.setVariable('ARMOR_CODEX', this.codex.masterwork.armor.address)
     await this.masterwork.setVariable('TOOLS_CODEX', this.codex.masterwork.tools.address)
@@ -75,45 +75,92 @@ describe('Core: Crafting II - Masterwork', function () {
     this.codex.masterwork.tools.item_by_id
     .whenCalledWith(toolType.artisanTools)
     .returns([toolType.artisanTools, 5, ethers.utils.parseEther('55'), "Masterwork Artisan's Tools", "", skillsArray({ index: skills.craft, ranks: 2})])
-
-    this.crafter = function() {
-      const result = fakeSummoner(this.core.rarity, this.signer);
-      this.core.attributes.ability_scores
-      .whenCalledWith(result)
-      .returns([0, 0, 0, 20, 0, 0])
-      const skillsRanks = Array(36).fill(0)
-      skillsRanks[skills.craft] = 5
-      this.core.skills.get_skills
-      .whenCalledWith(result)
-      .returns(skillsRanks)
-      return result
-    }
   })
 
-  it('starts crafting projects', async function(){
-    const tools = randomId()
-    this.commonTools.items
-    .whenCalledWith(tools)
-    .returns([baseType.tools, toolType.artisanTools, 0, 0])
-    this.commonTools.ownerOf
-    .whenCalledWith(tools)
-    .returns(this.signer.address)
+  this.beforeEach(async function() {
+    this.crafter = fakeSummoner(this.core.rarity, this.signer);
+    this.core.attributes.ability_scores
+    .whenCalledWith(this.crafter)
+    .returns([0, 0, 0, 20, 0, 0])
+    const skillsRanks = Array(36).fill(0)
+    skillsRanks[skills.craft] = 5
+    this.core.skills.get_skills
+    .whenCalledWith(this.crafter)
+    .returns(skillsRanks)
+  })
 
+  async function mockMasterworkTools(masterwork: MockContract, signer: SignerWithAddress) {
+    const tools = await masterwork.next_token()
+    const balance = await masterwork.balanceOf(signer.address)
+    await masterwork.setVariable('items', {
+      [tools.toNumber()]: {
+        base_type: 4,
+        item_type: 2,
+        crafted: 0,
+        crafter: 0
+      }
+    })
+    await masterwork.setVariable('_owners', {
+      [tools.toNumber()]: signer.address
+    })
+    await masterwork.setVariable('_balances', {
+      [signer.address]: balance.add(1)
+    })
+    await masterwork.setVariable('next_token', tools.add(1))
+    await masterwork.approve(masterwork.address, tools)
+    return tools
+  }
+
+  it('starts crafting projects with masterwork tools', async function(){
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
     const token = await this.masterwork.next_token()
-    await expect(this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.commonTools.address))
+    const apprentice = await this.masterwork.APPRENTICE()
+    const cost = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
+
+    this.core.gold.transferFrom
+    .whenCalledWith(apprentice, this.crafter, apprentice, cost)
+    .returns(true)
+
+    await expect(this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address))
     .to.emit(this.masterwork, 'Transfer')
     .withArgs(ethers.constants.AddressZero, this.signer.address, token)
+
+    expect(await this.masterwork.ownerOf(tools)).to.eq(this.masterwork.address)
+    expect(await this.masterwork.getApproved(tools)).to.eq(this.signer.address)
+
+    expect(this.core.gold.transferFrom)
+    .to.have.been.calledWith(apprentice, this.crafter, apprentice, cost)
 
     const project = await this.masterwork.projects(token)
     expect(project.base_type).to.eq(baseType.weapon)
     expect(project.item_type).to.eq(weaponType.longsword)
+    expect(project.tools).to.eq(tools)
     expect(project.started).to.be.gt(0)
-    expect(this.commonTools['safeTransferFrom(address,address,uint256)'])
-    .to.have.been.calledWith(
-      this.signer.address,
-      this.masterwork.address,
-      tools
-    )
+  })
+
+  it('starts crafting projects with rented tools', async function() {
+    const token = await this.masterwork.next_token()
+    const apprentice = await this.masterwork.APPRENTICE()
+    const rawMaterials = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
+    const toolRental = await this.masterwork.ARTISANS_TOOLS_RENTAL()
+    const cost = rawMaterials.add(toolRental);
+
+    this.core.gold.transferFrom
+    .whenCalledWith(apprentice, this.crafter, apprentice, cost)
+    .returns(true)
+
+    await expect(this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero))
+    .to.emit(this.masterwork, 'Transfer')
+    .withArgs(ethers.constants.AddressZero, this.signer.address, token)
+
+    expect(this.core.gold.transferFrom)
+    .to.have.been.calledWith(apprentice, this.crafter, apprentice, cost)
+
+    const project = await this.masterwork.projects(token)
+    expect(project.base_type).to.eq(baseType.weapon)
+    expect(project.item_type).to.eq(weaponType.longsword)
+    expect(project.tools).to.eq(0)
+    expect(project.started).to.be.gt(0)
   })
 
   it('validates item type', async function() {
@@ -128,12 +175,6 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.valid_item_type(4, 12)).to.be.false
   })
 
-  it('whitelists tool contracts', async function() {
-    expect(await this.masterwork.whitelisted_tools(this.commonTools.address)).to.be.true
-    expect(await this.masterwork.whitelisted_tools(this.masterwork.address)).to.be.true
-    expect(await this.masterwork.whitelisted_tools(ethers.constants.AddressZero)).to.be.false
-  })
-
   it('checks crafter eligibility', async function(){
     const crafter = fakeSummoner(this.core.rarity, this.signer);
     expect(await this.masterwork.eligible(crafter)).to.be.false
@@ -146,7 +187,7 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.eligible(crafter)).to.be.true
   })
 
-  it('gets raw materials cost', async function() {
+  it('computes raw materials cost', async function() {
     {
       const cost = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
       expect(humanEther(cost).toFixed(1)).to.eq(((15 + 300) / 3).toFixed(1))
@@ -161,132 +202,63 @@ describe('Core: Crafting II - Masterwork', function () {
     }
   })
 
-  it('buys raw materials', async function() {
-    const crafter = await this.crafter()
-    const apprentice = await this.masterwork.APPRENTICE()
-    const cost = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
+  it('takes no craft penalty when using rented tools', async function() {
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-
-    this.core.gold.transferFrom
-    .whenCalledWith(apprentice, crafter, apprentice, cost)
-    .returns(true)
-
-    await this.masterwork.buy_raw_materials(token, crafter)
-
-    expect(this.core.gold.transferFrom)
-    .to.have.been.calledWith(apprentice, crafter, apprentice, cost)
-
-    const project = await this.masterwork.projects(token)
-    expect(humanEther(project.raw_materials).toFixed(1)).to.eq(((15 + 300) / 3).toFixed(1))
-    expect(project.raw_materials).to.deep.eq(cost)
-  })
-
-  it('takes a -2 craft penalty for using "improvised" tools', async function() {
-    const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    expect(await this.masterwork.craft_bonus(token, 0)).to.eq(-2)
-  })
-
-  it('takes no craft penalty for using common tools', async function() {
-    const tools = randomId()
-    this.commonTools.items
-    .whenCalledWith(tools)
-    .returns([baseType.tools, toolType.artisanTools, 0, 0])
-    this.commonTools.ownerOf
-    .whenCalledWith(tools)
-    .returns(this.signer.address)
-
-    const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.commonTools.address)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
     expect(await this.masterwork.craft_bonus(token, 0)).to.eq(0)
   })
 
-  it('gives a +2 craft bonus for using masterwork tools', async function() {
-    const tools = await this.masterwork.next_token()
-    const balance = await this.masterwork.balanceOf(this.signer.address)
-    await this.masterwork.setVariable('items', {
-      [tools.toNumber()]: {
-        base_type: 4,
-        item_type: 2,
-        crafted: 0,
-        crafter: 0
-      }
-    })
-    await this.masterwork.setVariable('_owners', {
-      [tools.toNumber()]: this.signer.address
-    })
-    await this.masterwork.setVariable('_balances', {
-      [this.signer.address]: balance.add(1)
-    })
-    await this.masterwork.setVariable('next_token', tools.add(1))
-    await this.masterwork.approve(this.masterwork.address, tools)
-
+  it('gives a +2 craft bonus when using masterwork tools', async function() {
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
     expect(await this.masterwork.craft_bonus(token, 0)).to.eq(2)
   })
 
   it('gives a 1/20 craft bonus for bonus mats', async function() {
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('80'))).to.eq(2) // -2 + (80/20) = 2
-  })
-
-  it('can\'t craft without raw materials', async function() {
-    const crafter = await this.crafter()
-    const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await expect(this.masterwork.craft(token, crafter, 0))
-    .to.be.revertedWith('!raw_materials')
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('80'))).to.eq(4)
   })
 
   it('burns bonus mats when crafting', async function() {
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await this.masterwork.buy_raw_materials(token, crafter)
-    await this.masterwork.craft(token, crafter, ethers.utils.parseEther('80'))
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    await this.masterwork.craft(token, this.crafter, ethers.utils.parseEther('80'))
     expect(this.mats.burn).to.have.been.calledWith(ethers.utils.parseEther('80'))
   })
 
   it('Passes craft checks and makes progress', async function() {
     this.codex.random.dn.returns(20)
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await this.masterwork.buy_raw_materials(token, crafter)
-    await expect(this.masterwork.craft(token, crafter, 0))
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    await expect(this.masterwork.craft(token, this.crafter, 0))
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
-      this.signer.address, token, crafter, 0, 
-      20, 28, 
+      this.signer.address, token, this.crafter, 0, 
+      20, 30, 
       ethers.utils.parseEther('250'), 
-      ethers.utils.parseEther('560'), ethers.utils.parseEther('3150')
+      ethers.utils.parseEther('600'), ethers.utils.parseEther('3150')
     )
   })
 
   it('Fails craft checks and doesn\'t make progress', async function() {
     this.codex.random.dn.returns(1)
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await this.masterwork.buy_raw_materials(token, crafter)
-    await expect(this.masterwork.craft(token, crafter, 0))
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    await expect(this.masterwork.craft(token, this.crafter, 0))
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
-      this.signer.address, token, crafter, 0, 
-      1, 9, 
+      this.signer.address, token, this.crafter, 0, 
+      1, 11, 
       ethers.utils.parseEther('250'), 
       0, ethers.utils.parseEther('3150')
     )
   })
 
   it('crafts until done', async function() {
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await this.masterwork.buy_raw_materials(token, crafter)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
 
     {
       const project = await this.masterwork.projects(token)
@@ -298,17 +270,15 @@ describe('Core: Crafting II - Masterwork', function () {
     }
 
     this.codex.random.dn.returns(20)
-    await this.masterwork.craft(token, crafter, 0)
+    await this.masterwork.craft(token, this.crafter, 0)
 
     const project = await this.masterwork.projects(token)
     expect(project.done_crafting).to.be.true
   })
 
   it('can\'t craft if crafting is done', async function() {
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await this.masterwork.buy_raw_materials(token, crafter)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
 
     {
       const project = await this.masterwork.projects(token)
@@ -319,107 +289,70 @@ describe('Core: Crafting II - Masterwork', function () {
       }})
     }
 
-    await expect(this.masterwork.craft(token, crafter, 0))
+    await expect(this.masterwork.craft(token, this.crafter, 0))
     .to.be.revertedWith('done_crafting')
   })
 
   it('completes projects', async function() {
-    const crafter = await this.crafter()
-    const tools = randomId()
-    this.commonTools.items
-    .whenCalledWith(tools)
-    .returns([baseType.tools, toolType.artisanTools, 0, 0])
-    this.commonTools.ownerOf
-    .whenCalledWith(tools)
-    .returns(this.signer.address)
-
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.commonTools.address)
-    await this.masterwork.buy_raw_materials(token, crafter)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
 
     const project = await this.masterwork.projects(token)
     await this.masterwork.setVariable('projects', { [token]: {
       ...clean({...project}), done_crafting: true
     }})
 
-    await expect(this.masterwork.complete(token, crafter))
+    await expect(this.masterwork.complete(token, this.crafter))
     .to.emit(this.masterwork, 'Crafted')
-    .withArgs(this.signer.address, token, crafter, baseType.weapon, weaponType.longsword)
+    .withArgs(this.signer.address, token, this.crafter, baseType.weapon, weaponType.longsword)
 
-    expect(this.commonTools['safeTransferFrom(address,address,uint256)'])
-    .to.have.been.calledWith(
-      this.masterwork.address,
-      this.signer.address,
-      tools
-    )
+    expect(await this.masterwork.ownerOf(tools)).to.eq(this.signer.address)
 
     const item = await this.masterwork.items(token)
     expect(item.base_type).to.eq(baseType.weapon)
     expect(item.item_type).to.eq(weaponType.longsword)
     expect(item.crafted).to.be.gt(0)
-    expect(item.crafter).to.eq(crafter)
+    expect(item.crafter).to.eq(this.crafter)
 
     expect((await this.masterwork.projects(token)).complete).to.be.true
   })
 
   it('can\'t complete projects that are already complete', async function() {
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
 
     const project = await this.masterwork.projects(token)
     await this.masterwork.setVariable('projects', { [token]: {
       ...clean({...project}), done_crafting: true, complete: true
     }})
-    await expect(this.masterwork.complete(token, crafter))
+    await expect(this.masterwork.complete(token, this.crafter))
     .to.be.revertedWith('complete')
   })
 
   it('can\'t complete projects if crafting isn\'t done', async function() {
-    const crafter = await this.crafter()
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
-    await expect(this.masterwork.complete(token, crafter))
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    await expect(this.masterwork.complete(token, this.crafter))
     .to.be.revertedWith('!done_crafting')
   })
 
   it('cancels projects', async function() {
-    const tools = randomId()
-    this.commonTools.items
-    .whenCalledWith(tools)
-    .returns([baseType.tools, toolType.artisanTools, 0, 0])
-    this.commonTools.ownerOf
-    .whenCalledWith(tools)
-    .returns(this.signer.address)
-
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.commonTools.address)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
 
     await expect(this.masterwork.cancel(token))
     .to.emit(this.masterwork, 'Transfer')
     .withArgs(this.signer.address, ethers.constants.AddressZero, token)
 
-    expect(this.commonTools['safeTransferFrom(address,address,uint256)'])
-    .to.have.been.calledWith(
-      this.masterwork.address,
-      this.signer.address,
-      tools
-    )
+    expect(await this.masterwork.ownerOf(tools)).to.eq(this.signer.address)
   })
 
   it('can\'t cancel projects that are done crafting', async function() {
-    const crafter = await this.crafter()
-    const tools = randomId()
-    this.commonTools.items
-    .whenCalledWith(tools)
-    .returns([baseType.tools, toolType.artisanTools, 0, 0])
-    this.commonTools.ownerOf
-    .whenCalledWith(tools)
-    .returns(this.signer.address)
-
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
     const token = await this.masterwork.next_token()
-    await this.masterwork.start(baseType.weapon, weaponType.longsword, tools, this.commonTools.address)
-    await this.masterwork.buy_raw_materials(token, crafter)
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
 
     const project = await this.masterwork.projects(token)
     await this.masterwork.setVariable('projects', { [token]: {

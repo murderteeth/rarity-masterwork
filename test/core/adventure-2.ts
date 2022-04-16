@@ -37,7 +37,7 @@ describe('Core: Adventure II', function () {
     }
 
     this.adventure = await mockAdventure()
-    await this.adventure.set_craft_whitelist(
+    await this.adventure.set_item_whitelist(
       this.crafting.common.address, 
       this.crafting.masterwork.address
     )
@@ -87,20 +87,20 @@ describe('Core: Adventure II', function () {
     })).deploy()
   }
 
-  it('can\'t set a crafting whitelist address to zero', async function () {
+  it('can\'t set a item whitelist address to zero', async function () {
     const adventure = await mockAdventure()
-    await expect(adventure.set_craft_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
+    await expect(adventure.set_item_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
     .to.be.revertedWith('common == address(0)')
-    await expect(adventure.set_craft_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
+    await expect(adventure.set_item_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
     .to.be.revertedWith('masterwork == address(0)')
   })
 
-  it('sets the crafting whitelist once', async function () {
+  it('sets the item whitelist only once', async function () {
     const adventure = await mockAdventure()
-    await adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address)
-    expect(await adventure.CRAFT_WHITELIST(0)).to.eq(this.crafting.common.address)
-    expect(await adventure.CRAFT_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
-    await expect(adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
+    await adventure.set_item_whitelist(this.crafting.common.address, this.crafting.masterwork.address)
+    expect(await adventure.ITEM_WHITELIST(0)).to.eq(this.crafting.common.address)
+    expect(await adventure.ITEM_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
+    await expect(adventure.set_item_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
     .to.be.revertedWith('whitelist already set')
   })
 
@@ -110,9 +110,15 @@ describe('Core: Adventure II', function () {
     await expect(this.adventure.start(summoner)).to.not.be.reverted
     expect((await this.adventure.adventures(token))['started']).to.be.gt(0)
     expect(await this.adventure.latest_adventures(summoner)).to.eq(token)
-    expect(this.core.rarity['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+    expect(this.core.rarity['safeTransferFrom(address,address,uint256)'])
+    .to.have.been.calledWith(
       this.signer.address,
       this.adventure.address,
+      summoner
+    )
+    expect(this.core.rarity.approve)
+    .to.have.been.calledWith(
+      this.signer.address,
       summoner
     )
   })
@@ -233,6 +239,11 @@ describe('Core: Adventure II', function () {
         this.adventure.address,
         longsword
       )
+      expect(this.crafting.common.approve)
+      .to.have.been.calledWith(
+        this.signer.address,
+        longsword
+      )
 
       const leatherArmor = fakeLeatherArmor(this.crafting.common, this.summoner, this.signer)
       await expect(this.adventure.equip(
@@ -243,6 +254,11 @@ describe('Core: Adventure II', function () {
         this.adventure.address,
         leatherArmor
       )
+      expect(this.crafting.common.approve)
+      .to.have.been.calledWith(
+        this.signer.address,
+        leatherArmor
+      )
 
       const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
       await expect(this.adventure.equip(
@@ -251,6 +267,11 @@ describe('Core: Adventure II', function () {
       expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
         this.signer.address,
         this.adventure.address,
+        heavyWoodShield
+      )
+      expect(this.crafting.common.approve)
+      .to.have.been.calledWith(
+        this.signer.address,
         heavyWoodShield
       )
 
@@ -272,6 +293,16 @@ describe('Core: Adventure II', function () {
       await this.adventure.equip(this.token, equipmentType.weapon, longsword1, this.crafting.common.address)
       const longsword2 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword2, this.crafting.common.address)
+      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+        this.signer.address,
+        this.adventure.address,
+        longsword1
+      )
+      expect(this.crafting.common.approve)
+      .to.have.been.calledWith(
+        this.signer.address,
+        longsword1
+      )
       expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
         this.adventure.address,
         this.signer.address,
