@@ -28,6 +28,8 @@ contract rarity_crafting_tools is ERC721Enumerable, IEffects, ForSummoners {
 
   mapping(uint => Item) public items;
 
+  function armor_check_bonus(uint token) override external pure returns (int8 result) { token; result = 0; }
+
   function attack_bonus(uint token) override external pure returns (int8 result) { token; result = 0; }
 
   function skill_bonus(uint token, uint8 skill) override external view returns (int8 result) {

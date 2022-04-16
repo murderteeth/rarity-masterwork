@@ -36,14 +36,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   event RollInitiative(uint indexed token, uint8 roll, int8 score);
   event Attack(uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
   event Dying(uint indexed token, uint combatant);
-  event SearchCheck(uint indexed token, uint8 roll, int8 score);
+  event AppraiseCheck(uint indexed token, uint8 roll, int8 score);
 
   struct Adventure {
     bool dungeon_entered;
     bool combat_ended;
-    bool search_check_rolled;
-    bool search_check_succeeded;
-    bool search_check_critical;
+    bool appraise_check_rolled;
+    bool appraise_check_succeeded;
+    bool appraise_check_critical;
     uint8 monster_count;
     uint8 monsters_defeated;
     uint8 combat_round;
@@ -120,12 +120,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   {
     require_outside_dungeon(adventures[token]);
     require(equipment_type < 3, "!equipment_type");
-    require(
-      item_contract == address(0) 
-      || item_contract == CRAFT_WHITELIST[0] 
-      || item_contract == CRAFT_WHITELIST[1], 
-      "!whitelist"
-    );
+    require(whitelisted(item_contract), "!whitelisted");
 
     if(item_contract != address(0)) {
       (uint8 base_type, uint8 item_type,,) = ICrafting(item_contract).items(item);
@@ -229,6 +224,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require(monster.hit_points > -1, "monster.hit_points < 0");
 
     attack_combatant(token, summoner, monster, attack_counter, adventure.combat_round);
+
     if(monster.hit_points < 0) {
       adventure.monsters_defeated += 1;
       emit Dying(token, monster.token);
@@ -254,17 +250,30 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.combat_ended = true;
   }
 
-  function search(uint token) public approvedForAdventure(token) {
+  function appraise(
+    uint token,
+    uint magnifying_glass,
+    address magnifying_glass_contract
+  ) public 
+    approvedForAdventure(token)
+    approvedForItem(magnifying_glass, magnifying_glass_contract)
+  {
     Adventure storage adventure = adventures[token];
-    require(!adventure.search_check_rolled, "search_check_rolled");
+    require(!adventure.appraise_check_rolled, "appraise_check_rolled");
+    require(whitelisted(magnifying_glass_contract), "!whitelisted");
     require_victory(adventure);
     require_not_ended(adventure);
 
-    (uint8 roll, int8 score) = Roll.search(adventure.summoner);
-    adventure.search_check_rolled = true;
-    adventure.search_check_succeeded = score >= int8(SEARCH_DC);
-    adventure.search_check_critical = roll == 20;
-    emit SearchCheck(token, roll, score);
+    (uint8 roll, int8 score) = Roll.appraise(adventure.summoner);
+
+    if(magnifying_glass > 0) {
+      score += IEffects(magnifying_glass_contract).skill_bonus(magnifying_glass, 0);
+    }
+
+    adventure.appraise_check_rolled = true;
+    adventure.appraise_check_succeeded = score >= int8(SEARCH_DC);
+    adventure.appraise_check_critical = roll == 20;
+    emit AppraiseCheck(token, roll, score);
   }
 
   function end(uint token) public approvedForAdventure(token) {
@@ -289,6 +298,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
 
     adventure.ended = uint64(block.timestamp);
+  }
+
+  function whitelisted(address contract_address) internal view returns (bool) {
+    return contract_address == address(0)
+    || contract_address == CRAFT_WHITELIST[0]
+    || contract_address == CRAFT_WHITELIST[1];
   }
 
   function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {

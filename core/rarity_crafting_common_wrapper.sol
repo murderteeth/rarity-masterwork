@@ -78,6 +78,7 @@ contract rarity_crafting_wrapper is ICommonCrafting, IWeapon, IArmor, IEffects {
   }
 
   // IEffects
+  function armor_check_bonus(uint token) override external pure returns (int8 result) { token; result = 0; }
   function attack_bonus(uint token) override external pure returns (int8 result) { token; result = 0; }
   function skill_bonus(uint token, uint8 skill) override external pure returns (int8 result) { token; skill; result = 0; }
 

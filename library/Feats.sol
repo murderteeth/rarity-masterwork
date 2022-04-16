@@ -66,4 +66,10 @@ library Feats {
     bool[100] memory feats = FEATS.get_feats(summoner);
     return feats[id - 1];
   }
+
+  function diligent(uint256 summoner) public view returns (bool) {
+    (uint id,,,,,,) = CODEX1.diligent();
+    bool[100] memory feats = FEATS.get_feats(summoner);
+    return feats[id - 1];
+  }
 }

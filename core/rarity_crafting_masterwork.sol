@@ -89,6 +89,10 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   // IEffects
+  function armor_check_bonus(uint token) override external view returns (int8 result) {
+    if(items[token].base_type == 2) result = 1;
+  }
+
   function attack_bonus(uint token) override external view returns (int8 result) {
     if(items[token].base_type == 3) result = 1;
   }
