@@ -54,7 +54,7 @@ describe('Core: Crafting Materials II', function () {
     )
   })
 
-  it('claims extra mats for a succesful search check', async function() {
+  it('claims extra mats for a succesful appraise check', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
     .returns([false, false, true, true, false, 2, 2, 0, 0, 1, 0])
@@ -85,7 +85,7 @@ describe('Core: Crafting Materials II', function () {
     )
   })
 
-  it('claims even more mats for a critical search check', async function() {
+  it('claims even more mats for a critical appraise check', async function() {
     this.adventure.adventures
     .whenCalledWith(this.adventure_token)
     .returns([false, false, true, true, true, 2, 2, 0, 0, 1, 0])

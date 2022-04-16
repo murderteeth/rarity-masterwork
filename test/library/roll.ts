@@ -39,6 +39,48 @@ describe('Library: Roll', function () {
     this.summoner = randomId()
   })
 
+  describe('Appraise', async function() {
+    it('rolls low for dumb dumbs', async function() {
+      this.codex.random.dn.returns(1)
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 9, 0, 0])
+      expect(await this.library.roll.appraise(this.summoner))
+      .to.deep.eq([1, 0])
+    })
+
+    it('rolls higher for smart summoners', async function() {
+      this.codex.random.dn.returns(1)
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 18, 0, 0])
+      expect(await this.library.roll.appraise(this.summoner))
+      .to.deep.eq([1, 5])
+    })
+
+    it('rolls higher for skilled summoners', async function() {
+      this.codex.random.dn.returns(1)
+      const skillsRanks = Array(36).fill(0)
+      skillsRanks[skills.appraise] = 4
+      this.core.skills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(skillsRanks)
+      expect(await this.library.roll.appraise(this.summoner))
+      .to.deep.eq([1, 4])
+    })
+
+    it('rolls higher with the diligent feat', async function() {
+      this.codex.random.dn.returns(1)
+      const featFlags = Array(100).fill(false)
+      featFlags[feats.diligent] = true
+      this.core.feats.get_feats
+      .whenCalledWith(this.summoner)
+      .returns(featFlags)
+      expect(await this.library.roll.appraise(this.summoner))
+      .to.deep.eq([1, 2])
+    })
+  })
+
   describe('Craft', async function() {
     it('rolls low for dumb dumbs', async function() {
       this.codex.random.dn.returns(1)

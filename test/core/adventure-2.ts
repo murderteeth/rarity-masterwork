@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentType, randomId } from '../util'
-import { fakeAttributes, fakeCommonCraftingWrapper, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeAttributes, fakeCommonCraftingWrapper, fakeCraft, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { skills } from '../util/skills'
@@ -10,8 +10,7 @@ import { feats } from '../util/feats'
 import { Crafting__factory } from '../../typechain/library/factories/Crafting__factory'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { classes } from '../util/classes'
-import { weaponType } from '../util/crafting'
-import { RarityCrafting } from '../../typechain/core'
+import { baseType, toolType, weaponType } from '../util/crafting'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 
 chai.use(smock.matchers)
@@ -37,7 +36,27 @@ describe('Core: Adventure II', function () {
       masterwork: await fakeMasterwork()
     }
 
-    this.adventure = await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
+    this.adventure = await mockAdventure()
+    await this.adventure.set_craft_whitelist(
+      this.crafting.common.address, 
+      this.crafting.masterwork.address
+    )
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.greatsword)
+    .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.longsword)
+    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('15'), "Longsword", ""])
+
+    this.crafting.common.get_weapon
+    .whenCalledWith(weaponType.heavyCrossbow)
+    .returns([weaponType.heavyCrossbow, 1, 5, 2, 8, 10, 2, -1, 120, ethers.utils.parseEther('50'), "Heavy Crossbow", ""])
+  })
+
+  async function mockAdventure() {
+    return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
       libraries: {
         Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
         Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
@@ -66,32 +85,22 @@ describe('Core: Adventure II', function () {
         Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address
       }
     })).deploy()
-
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.greatsword)
-    .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
-
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.longsword)
-    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('15'), "Longsword", ""])
-
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.heavyCrossbow)
-    .returns([weaponType.heavyCrossbow, 1, 5, 2, 8, 10, 2, -1, 120, ethers.utils.parseEther('50'), "Heavy Crossbow", ""])
-  })
+  }
 
   it('can\'t set a crafting whitelist address to zero', async function () {
-    await expect(this.adventure.set_craft_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
+    const adventure = await mockAdventure()
+    await expect(adventure.set_craft_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
     .to.be.revertedWith('common == address(0)')
-    await expect(this.adventure.set_craft_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
+    await expect(adventure.set_craft_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
     .to.be.revertedWith('masterwork == address(0)')
   })
 
   it('sets the crafting whitelist once', async function () {
-    await this.adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address);
-    expect(await this.adventure.CRAFT_WHITELIST(0)).to.eq(this.crafting.common.address)
-    expect(await this.adventure.CRAFT_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
-    await expect(this.adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
+    const adventure = await mockAdventure()
+    await adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address)
+    expect(await adventure.CRAFT_WHITELIST(0)).to.eq(this.crafting.common.address)
+    expect(await adventure.CRAFT_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
+    await expect(adventure.set_craft_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
     .to.be.revertedWith('whitelist already set')
   })
 
@@ -536,47 +545,70 @@ describe('Core: Adventure II', function () {
       }})
     })
 
-    it('fails search check', async function () {
-      await expect(this.adventure.search(this.token))
-      .to.emit(this.adventure, 'SearchCheck')
+    it('fails appraise check', async function () {
+      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero))
+      .to.emit(this.adventure, 'AppraiseCheck')
       .withArgs(this.token, 1, 0)
 
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.search_check_rolled).to.be.true
-      expect(adventure.search_check_succeeded).to.be.false
+      expect(adventure.appraise_check_rolled).to.be.true
+      expect(adventure.appraise_check_succeeded).to.be.false
     })
-  
-    it('succeeds search check', async function () {
+
+    it('gives +2 bonus for using a magnifying glass', async function () {
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 10, 0, 0])
+
+      const magnifyingGlass = fakeCraft(
+        this.crafting.masterwork, 
+        baseType.tools, 
+        toolType.magnifyingGlass, 
+        0, this.signer
+      )
+
+      this.crafting.masterwork.skill_bonus
+      .whenCalledWith(magnifyingGlass, skills.appraise)
+      .returns(2)
+
+      this.codex.random.dn.returns(17)
+
+      await expect(this.adventure.appraise(this.token, magnifyingGlass, this.crafting.masterwork.address))
+      .to.emit(this.adventure, 'AppraiseCheck')
+      .withArgs(this.token, 17, 19)
+    })
+
+    it('succeeds appraise check', async function () {
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
       .returns([0, 0, 0, 10, 0, 0])
 
       const skillRanks = Array(36).fill(0)
-      skillRanks[skills.search] = 1
+      skillRanks[skills.appraise] = 1
       this.core.skills.get_skills
       .whenCalledWith(this.summoner)
       .returns(skillRanks)
 
       const featFlags = Array(100).fill(false)
-      featFlags[feats.investigator] = true
+      featFlags[feats.diligent] = true
       this.core.feats.get_feats
       .whenCalledWith(this.summoner)
       .returns(featFlags)
 
       this.codex.random.dn.returns(17)
 
-      await expect(this.adventure.search(this.token))
-      .to.emit(this.adventure, 'SearchCheck')
+      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero))
+      .to.emit(this.adventure, 'AppraiseCheck')
       .withArgs(this.token, 17, 20)
 
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.search_check_rolled).to.be.true
-      expect(adventure.search_check_succeeded).to.be.true
+      expect(adventure.appraise_check_rolled).to.be.true
+      expect(adventure.appraise_check_succeeded).to.be.true
     })
 
-    it('can\'t search more than once', async function (){
-      await expect(this.adventure.search(this.token)).to.not.be.reverted
-      await expect(this.adventure.search(this.token)).to.be.revertedWith('search_check_rolled')
+    it('can\'t appraise more than once', async function (){
+      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero)).to.not.be.reverted
+      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero)).to.be.revertedWith('appraise_check_rolled')
     })
   })
 
