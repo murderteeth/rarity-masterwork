@@ -29,7 +29,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
-  address[2] public CRAFT_WHITELIST;
+  address[2] public ITEM_WHITELIST;
 
   constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 
@@ -72,12 +72,12 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return this.onERC721Received.selector;
   }
 
-  function set_craft_whitelist(address common, address masterwork) public {
-    require(CRAFT_WHITELIST[0] == address(0), "whitelist already set");
+  function set_item_whitelist(address common, address masterwork) public {
+    require(ITEM_WHITELIST[0] == address(0), "whitelist already set");
     require(common != address(0), "common == address(0)");
     require(masterwork != address(0), "masterwork == address(0)");
-    CRAFT_WHITELIST[0] = common;
-    CRAFT_WHITELIST[1] = masterwork;
+    ITEM_WHITELIST[0] = common;
+    ITEM_WHITELIST[1] = masterwork;
   }
 
   function time_to_next_adventure(uint summoner) public view returns (uint time) {
@@ -105,6 +105,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventures[next_token].started = uint64(block.timestamp);
     latest_adventures[summoner] = next_token;
     RARITY.safeTransferFrom(_msgSender(), address(this), summoner);
+    RARITY.approve(_msgSender(), summoner);
     _safeMint(_msgSender(), next_token);
     next_token += 1;
   }
@@ -154,6 +155,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       if(item_contract != address(0)) {
         require(equipment_index[item_contract][item] == 0, "!item available");
         ICrafting(item_contract).safeTransferFrom(_msgSender(), address(this), item);
+        ICrafting(item_contract).approve(_msgSender(), item);
         slot.item = item;
         slot.item_contract = item_contract;
         equipment_index[item_contract][item] = token;
@@ -302,8 +304,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function whitelisted(address contract_address) internal view returns (bool) {
     return contract_address == address(0)
-    || contract_address == CRAFT_WHITELIST[0]
-    || contract_address == CRAFT_WHITELIST[1];
+    || contract_address == ITEM_WHITELIST[0]
+    || contract_address == ITEM_WHITELIST[1];
   }
 
   function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {

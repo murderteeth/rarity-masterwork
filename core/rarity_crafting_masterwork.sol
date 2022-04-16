@@ -18,11 +18,10 @@ import "../library/Skills.sol";
 
 contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
-  address public TOOLS_WHITELIST_1 = address(this);
-  address public TOOLS_WHITELIST_2 = 0x0000000000000000000000000000000000000000;
 
   int8 constant MASTERWORK_COMPONENT_DC = 20;
   uint constant XP_PER_DAY = 250e18;
+  uint public ARTISANS_TOOLS_RENTAL = 5e18;
   uint public immutable APPRENTICE;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
@@ -47,9 +46,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     uint8 item_type;
     uint32 progress;
     uint64 started;
-    address tools_contract;
     uint tools;
-    uint raw_materials;
     uint xp;
   }
 
@@ -106,44 +103,40 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function start(
+    uint coinmaster,
     uint8 base_type,
     uint8 item_type,
     uint tools,
     address tools_contract
   ) public 
+    approvedForSummoner(coinmaster)
     approvedForItem(tools, tools_contract) 
   {
     require(valid_item_type(base_type, item_type), "!valid_item_type");
-    require(tools_contract == address(0) || whitelisted_tools(tools_contract), "!whitelisted_tools");
+    require(tools_contract == address(0) || tools_contract == address(this), "!whitelisted_tools");
 
     Project storage project = projects[next_token];
     project.base_type = base_type;
     project.item_type = item_type;
     project.started = uint64(block.timestamp);
 
+    uint cost = raw_materials_cost(base_type, item_type);
+
     if(tools_contract != address(0)) {
       (uint8 tool_base_type, uint8 tool_type,,) = ICrafting(tools_contract).items(tools);
       require(tool_base_type == 4 && tool_type == 2, "!Artisan's tools");
       project.tools = tools;
-      project.tools_contract = tools_contract;
       IERC721Enumerable(tools_contract)
       .safeTransferFrom(_msgSender(), address(this), tools);
+      IERC721Enumerable(tools_contract).approve(_msgSender(), tools);
+    } else {
+      cost += ARTISANS_TOOLS_RENTAL;
     }
+
+    require(GOLD.transferFrom(APPRENTICE, coinmaster, APPRENTICE, cost), "!gold");
 
     _safeMint(_msgSender(), next_token);
     next_token += 1;
-  }
-
-  function buy_raw_materials(
-    uint token, 
-    uint coinmaster
-  ) public 
-    approvedForItem(token, address(this)) 
-  {
-    Project storage project = projects[token];
-    uint cost = raw_materials_cost(project.base_type, project.item_type);
-    require(GOLD.transferFrom(APPRENTICE, coinmaster, APPRENTICE, cost), "!gold");
-    project.raw_materials = cost;
   }
 
   function craft(
@@ -156,7 +149,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   {
     require(eligible(crafter), "!eligible");
     Project storage project = projects[token];
-    require(project.raw_materials == raw_materials_cost(project.base_type, project.item_type), "!raw_materials");
     require(!project.done_crafting, "done_crafting");
 
     (uint8 roll, int8 score) = Roll.craft(
@@ -210,9 +202,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
 
     emit Crafted(_msgSender(), token, crafter, item.base_type, item.item_type);
 
-    if(project.tools_contract != address(0)) {
-      IERC721Enumerable(project.tools_contract)
-      .safeTransferFrom(address(this), _msgSender(), project.tools);
+    if(project.tools != 0) {
+      safeTransferFrom(address(this), _msgSender(), project.tools);
     }
 
     project.complete = true;
@@ -221,9 +212,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   function cancel(uint token) public approvedForItem(token, address(this)) {
     Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
-    if(project.tools_contract != address(0)) {
-      IERC721Enumerable(project.tools_contract)
-      .safeTransferFrom(address(this), _msgSender(), project.tools);
+    if(project.tools != 0) {
+      safeTransferFrom(address(this), _msgSender(), project.tools);
     }
     delete projects[token];
     _burn(token);
@@ -240,11 +230,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     return false;
   }
 
-  function whitelisted_tools(address tools_contract) public view returns (bool) {
-    return tools_contract == address(TOOLS_WHITELIST_1) 
-    || tools_contract == address(TOOLS_WHITELIST_2);
-  }
-
   function eligible(uint crafter) public view returns (bool) {
     return Skills.craft(crafter) > 0;
   }
@@ -254,9 +239,9 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function craft_bonus(Project memory project, uint bonus_mats) internal view returns (int8 result) {
-    result = project.tools_contract == address(0)
-    ? -2
-    : IEffects(project.tools_contract).skill_bonus(project.tools, 5);
+    result = (project.tools == 0)
+    ? int8(0)
+    : this.skill_bonus(project.tools, 5);
     result += int8(uint8(bonus_mats / 20e18));
   }
 
@@ -279,6 +264,12 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     } else if(base_type == 4) {
       cost = TOOLS_CODEX.item_by_id(item_type).cost;
     }
+  }
+
+  function project_cost(uint token) public view returns (uint result) {
+    Project memory project = projects[token];
+    result = raw_materials_cost(project.base_type, project.item_type);
+    if(project.tools == 0) result += ARTISANS_TOOLS_RENTAL;
   }
 
   function raw_materials_cost(uint8 base_type, uint8 item_type) public view returns (uint) {

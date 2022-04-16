@@ -2,6 +2,7 @@
 pragma solidity ^0.8.7;
 
 interface ICrafting {
+  function approve(address to, uint craft) external;
   function getApproved(uint craft) external view returns(address);
   function ownerOf(uint craft) external view returns(address);
   function isApprovedForAll(address owner, address operator) external view returns(bool);
