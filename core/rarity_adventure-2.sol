@@ -215,7 +215,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     uint turn_count = turn_order.length;
     for(uint i = 0; i < turn_count; i++) {
       Combat.Combatant storage combatant = turn_order[i];
-      if(!combatant.summoner && combatant.hit_points > -1) return i;
+      if(combatant.origin == address(this) && combatant.hit_points > -1) return i;
     }
     revert("no able monster");
   }
@@ -236,7 +236,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require(target < turn_count, "target out of bounds");
 
     Combat.Combatant storage monster = turn_order[target];
-    require(!monster.summoner, "monster.summoner");
+    require(monster.origin == address(this), "monster.origin != address(this)");
     require(monster.hit_points > -1, "monster.hit_points < 0");
 
     attack_combatant(token, summoner, monster, attack_counter, adventure.combat_round);
@@ -353,7 +353,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
 
-    combatant.summoner = true;
+    combatant.origin = address(RARITY);
     combatant.token = summoner;
     combatant.initiative_roll = initiative_roll;
     combatant.initiative_score = initiative_score;
@@ -371,7 +371,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       monster_codex.initiative_bonus
     );
 
-    combatant.summoner = false;
+    combatant.origin = address(this);
     combatant.token = next_monster;
     combatant.initiative_roll = initiative_roll;
     combatant.initiative_score = initiative_score;
@@ -385,7 +385,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function set_summoners_turn(uint token, Combat.Combatant[] memory combatants) internal {
     uint length = combatants.length;
     for(uint i = 0; i < length; i++) {
-      if(combatants[i].summoner) {
+      if(combatants[i].origin == address(RARITY)) {
         summoners_turns[token] = i;
         break;
       }

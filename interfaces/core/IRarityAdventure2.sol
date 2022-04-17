@@ -252,11 +252,11 @@ interface IRarityAdventure2 {
         external
         view
         returns (
-            bool summoner,
             uint8 initiative_roll,
             int8 initiative_score,
             uint8 armor_class,
             int16 hit_points,
+            address origin,
             uint256 token
         );
 
