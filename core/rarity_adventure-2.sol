@@ -19,13 +19,28 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint public next_token = 1;
   uint public next_monster = 1;
 
+  uint8[10] public MONSTERS = [
+    1,  // kobold (CR 1/4)
+    3,  // goblin (CR 1/3)
+    4,  // gnoll (CR 1)
+    6,  // black bear (CR 2)
+    7,  // ogre (CR 3)
+    9,  // dire wolverine (CR 4)
+    10, // troll (CR 5)
+    11, // ettin (CR 6)
+    12, // hill giant (CR 7)
+    13  // stone giant (CR 8)
+  ];
+
+  uint8 public constant MONSTER_LEVEL_OFFSET = 1;
+
   uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
   uint8 public constant EQUIPMENT_TYPE_ARMOR = 1;
   uint8 public constant EQUIPMENT_TYPE_SHIELD = 2;
-  uint8[10] public MONSTERS = [1, 3, 4, 6, 7, 9, 10, 11, 12, 13];
-  uint8 public constant MONSTER_LEVEL_OFFSET = 1;
-  uint8 public constant SEARCH_DC = 20;
+
+
+  uint8 public constant APPRAISE_DC = 20;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
@@ -173,8 +188,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.dungeon_entered = true;
     (uint8 monster_count, uint8[3] memory monsters) = roll_monsters(
       token, 
-      RARITY.level(adventure.summoner), 
-      Random.dn(12586470658909511785, token, 100) > 50
+      RARITY.level(adventure.summoner)
     );
     adventure.monster_count = monster_count;
 
@@ -273,7 +287,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
 
     adventure.appraise_check_rolled = true;
-    adventure.appraise_check_succeeded = score >= int8(SEARCH_DC);
+    adventure.appraise_check_succeeded = score >= int8(APPRAISE_DC);
     adventure.appraise_check_critical = roll == 20;
     emit AppraiseCheck(token, roll, score);
   }
@@ -308,24 +322,26 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     || contract_address == ITEM_WHITELIST[1];
   }
 
-  function roll_monsters(uint token, uint level, bool bonus) public view returns (uint8 monster_count, uint8[3] memory monsters) {
-    monster_count = bonus ? 3 : 2;
-    if(level < 9) {
-      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level];
-      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + level - 2];
-      if(bonus) {
-        if(level < 2) {
-          monsters[2] = MONSTERS[0];
-        } else {
-          monsters[2] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level - 2)) - 1];
-        }
-      }
-    } else {
-      monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + 8];
-      monsters[1] = MONSTERS[MONSTER_LEVEL_OFFSET + 7];
-      if(bonus) {
-        monsters[2] = MONSTERS[Random.dn(16040042777347404675, token, uint8(MONSTER_LEVEL_OFFSET + 7)) - 1];
-      }
+  function roll_monsters(
+    uint token, 
+    uint level
+  ) public view returns (
+    uint8 monster_count, 
+    uint8[3] memory monsters
+  ) {
+    uint level_or_max = level > 8 ? 8 : level;
+
+    monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level_or_max];
+    monster_count++;
+
+    if(Random.dn(12586470658909511785, token, 100) > 50) {
+      monsters[1] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
+      monster_count++;
+    }
+
+    if(level_or_max > 3 && Random.dn(1593506169583491991, token, 100) > 50) {
+      monsters[2] = MONSTERS[Random.dn(9249786475706550225, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
+      monster_count++;
     }
   }
 

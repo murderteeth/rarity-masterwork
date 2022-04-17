@@ -120,7 +120,7 @@ library Monster {
     monster.armor_class = 15;
     monster.abilities = [15, 13, 13, 10, 8, 6];
     Combat.pack_attack(4, 0, 3, 1, 8, 3, 3, 0, monster.attacks);
-    monster.name = "Gnoll";
+    monster.name = "Grimlock";
   }
 
   function black_bear() internal pure returns (MonsterCodex memory monster) {
