@@ -12,6 +12,7 @@ import { Summoner__factory } from '../../typechain/library/factories/Summoner__f
 import { classes } from '../util/classes'
 import { baseType, toolType, weaponType } from '../util/crafting'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
+import { BigNumber } from 'ethers'
 
 chai.use(smock.matchers)
 
@@ -402,16 +403,65 @@ describe('Core: Adventure II', function () {
       const adventure = await this.adventure.adventures(this.token)
       expect(adventure.dungeon_entered).to.be.true
       expect(adventure.combat_round).to.eq(1)
-      expect(adventure.monster_count).to.eq(2)
+      expect(adventure.monster_count).to.be.gt(0)
     })
 
     it('rolls monsters', async function() {
-      expect((await this.adventure.roll_monsters(this.token, 1, false)).monster_count).to.eq(2)
-      expect((await this.adventure.roll_monsters(this.token, 1, true)).monster_count).to.eq(3)
-      expect((await this.adventure.roll_monsters(this.token, 8, false)).monster_count).to.eq(2)
-      expect((await this.adventure.roll_monsters(this.token, 8, true)).monster_count).to.eq(3)
-      expect((await this.adventure.roll_monsters(this.token, 20, false)).monster_count).to.eq(2)
-      expect((await this.adventure.roll_monsters(this.token, 20, true)).monster_count).to.eq(3)
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('12586470658909511785'), this.token, 100)
+      .returns(50)
+
+      expect((await this.adventure.roll_monsters(this.token, 1)).monster_count).to.eq(1)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('12586470658909511785'), this.token, 100)
+      .returns(51)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('15608573760256557610'), this.token, 2)
+      .returns(2)
+
+      expect((await this.adventure.roll_monsters(this.token, 1)).monster_count).to.eq(2)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('15608573760256557610'), this.token, 3)
+      .returns(3)
+
+      expect((await this.adventure.roll_monsters(this.token, 2)).monster_count).to.eq(2)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('15608573760256557610'), this.token, 4)
+      .returns(4)
+
+      expect((await this.adventure.roll_monsters(this.token, 3)).monster_count).to.eq(2)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('1593506169583491991'), this.token, 100)
+      .returns(50)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('15608573760256557610'), this.token, 5)
+      .returns(5)
+
+      expect((await this.adventure.roll_monsters(this.token, 4)).monster_count).to.eq(2)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('1593506169583491991'), this.token, 100)
+      .returns(51)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('9249786475706550225'), this.token, 5)
+      .returns(5)
+
+      expect((await this.adventure.roll_monsters(this.token, 4)).monster_count).to.eq(3)
+
+      this.codex.random.dn
+      .whenCalledWith(BigNumber.from('9249786475706550225'), this.token, 9)
+      .returns(9)
+      expect((await this.adventure.roll_monsters(this.token, 20)).monster_count).to.eq(3)
+
+      const monsters = (await this.adventure.roll_monsters(this.token, 20)).monsters
+      monsters.forEach((monster: any) => expect(monster).to.be.above(0))
     })
 
     it('orders combatants by initiative', async function () {
@@ -497,10 +547,6 @@ describe('Core: Adventure II', function () {
       await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
       await this.adventure.enter_dungeon(this.token)
       let target = await this.adventure.next_able_monster(this.token)
-      await this.adventure.attack(this.token, target)
-      expect((await this.adventure.adventures(this.token)).combat_round).to.eq(1)
-
-      target = await this.adventure.next_able_monster(this.token)
       await this.adventure.attack(this.token, target)
       expect((await this.adventure.adventures(this.token)).combat_round).to.eq(1)
     })
