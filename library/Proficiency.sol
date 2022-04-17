@@ -5,12 +5,10 @@ import "./Rarity.sol";
 import "./Feats.sol";
 
 library Proficiency {
-
-  // TODO: Tower shield feat 96, armor type 18
   function isProficientWithArmor(
     uint summoner,
     uint proficiency,
-    uint armorType
+    uint armor_type
   ) public view returns (bool) {
     uint class = Rarity.class(summoner);
 
@@ -22,8 +20,12 @@ library Proficiency {
         proficiency == 3 && Feats.armor_proficiency_heavy(summoner)
       ) {
         return true;
-      } else if (proficiency == 4 && armorType != 18) {
-        return true;
+      } else if (proficiency == 4) {
+        if(armor_type == 18) {
+          return Feats.tower_shield_proficiency(summoner);
+        } else {
+          return true;
+        }
       }
 
     // Bard, Ranger
@@ -35,51 +37,64 @@ library Proficiency {
         (proficiency == 3 && Feats.armor_proficiency_heavy(summoner))
       ) {
         return true;
-      } else if (proficiency == 4 && armorType != 18) {
-        return true;
+      } else if (proficiency == 4) {
+        if(armor_type == 18) {
+          return Feats.tower_shield_proficiency(summoner);
+        } else {
+          return true;
+        }
       }
 
     // Cleric, Paladin
     } else if (class == 3 || class == 7) {
-      if (proficiency == 4 && armorType == 18) {
-        return false;
+      if (proficiency == 4 && armor_type == 18) {
+        return Feats.tower_shield_proficiency(summoner);
       }
       return true;
 
     // Druid
     } else if (class == 4) {
-      if (proficiency == 1) {
-        return true;
-      } else if (proficiency == 2) {
-        // TODO: Filter out metal armor
+      if (proficiency == 1 || proficiency == 2) {
         return true;
       } else if (
         proficiency == 3 && Feats.armor_proficiency_heavy(summoner)
       ) {
-        // TODO: Filter out metal armor. Is there any non-metal heavy?
         return true;
-      } else if (proficiency == 4 && armorType != 18) {
-        // TODO: Filter out metal shields
-        return true;
+      } else if (proficiency == 4) {
+        if(armor_type == 18) {
+          return Feats.tower_shield_proficiency(summoner);
+        } else {
+          return true;
+        }
       }
 
     // Fighter
     } else if (class == 5) {
       return true;
 
+    // Rogue
+    } else if (class == 9) {
+      return
+        (proficiency == 1)
+        || (proficiency == 2 && Feats.armor_proficiency_medium(summoner))
+        || (proficiency == 3 && Feats.armor_proficiency_heavy(summoner))
+        || (proficiency == 4 && armor_type == 18 && Feats.tower_shield_proficiency(summoner))
+        || (proficiency == 4 && Feats.shield_proficiency(summoner));
+
     // Monk, Sorcerer, Wizard
     } else if (class == 6 || class == 10 || class == 11) {
-      // TODO: Shield proficiency (63)
       return
         (proficiency == 1 && Feats.armor_proficiency_light(summoner))
         || (proficiency == 2 && Feats.armor_proficiency_medium(summoner))
-        || (proficiency == 3 && Feats.armor_proficiency_heavy(summoner));
+        || (proficiency == 3 && Feats.armor_proficiency_heavy(summoner))
+        || (proficiency == 4 && armor_type == 18 && Feats.tower_shield_proficiency(summoner))
+        || (proficiency == 4 && Feats.shield_proficiency(summoner));
     }
 
     return false;
   }
 
-  function isProficientWithWeapon(uint summoner, uint proficiency, uint weaponType)
+  function isProficientWithWeapon(uint summoner, uint proficiency, uint weapon_type)
     public
     view
     returns (bool)
@@ -104,11 +119,11 @@ library Proficiency {
       ) {
         return true;
       } else if (
-        weaponType == 27      // longsword
-        || weaponType == 29   // rapier
-        || weaponType == 23   // sap
-        || weaponType == 24   // short sword
-        || weaponType == 46   // short bow
+        weapon_type == 27      // longsword
+        || weapon_type == 29   // rapier
+        || weapon_type == 23   // sap
+        || weapon_type == 24   // short sword
+        || weapon_type == 46   // short bow
       ) {
         return true;
       }
@@ -136,44 +151,56 @@ library Proficiency {
       // Druid
       } else if (
         class == 4 &&
-        (weaponType == 6        // club
-          || weaponType == 2    // dagger
-          || weaponType == 15   // dart
-          || weaponType == 11   // quarterstaff
-          || weaponType == 30   // scimitar
-          || weaponType == 5    // sickle
-          || weaponType == 9    // shortspear
-          || weaponType == 17   // sling
-          || weaponType == 12)  // spear
+        (weapon_type == 6        // club
+          || weapon_type == 2    // dagger
+          || weapon_type == 15   // dart
+          || weapon_type == 11   // quarterstaff
+          || weapon_type == 30   // scimitar
+          || weapon_type == 5    // sickle
+          || weapon_type == 9    // shortspear
+          || weapon_type == 17   // sling
+          || weapon_type == 12)  // spear
       ) {
         return true;
 
       // Monk
       } else if (
         class == 6 &&
-        (weaponType == 6        // club
-          || weaponType == 14   // light crossbow
-          || weaponType == 13   // heavy crossbow
-          || weaponType == 2    // dagger
-          || weaponType == 20   // hand axe
-          || weaponType == 16   // javelin
-          || weaponType == 48   // kama
-          || weaponType == 49   // nunchaku
-          || weaponType == 11   // quarterstaff
-          || weaponType == 50   // sia
-          || weaponType == 51   // siangham
-          || weaponType == 17)  // sling
+        (weapon_type == 6        // club
+          || weapon_type == 14   // light crossbow
+          || weapon_type == 13   // heavy crossbow
+          || weapon_type == 2    // dagger
+          || weapon_type == 20   // hand axe
+          || weapon_type == 16   // javelin
+          || weapon_type == 48   // kama
+          || weapon_type == 49   // nunchaku
+          || weapon_type == 11   // quarterstaff
+          || weapon_type == 50   // sia
+          || weapon_type == 51   // siangham
+          || weapon_type == 17)  // sling
+      ) {
+        return true;
+
+      // Rogue
+      } else if (
+        class == 9 &&
+        (weapon_type <= 17       // Simple weapons
+          || weapon_type == 57   // hand crossbow
+          || weapon_type == 29   // rapier
+          || weapon_type == 23   // sap
+          || weapon_type == 46   // shortbow
+          || weapon_type == 24)  // short sword
       ) {
         return true;
 
       // Wizard
       } else if (
         class == 11 &&
-        (weaponType == 6        // club
-          || weaponType == 2    // dagger
-          || weaponType == 13   // heavy crossbow
-          || weaponType == 14   // light crossbow
-          || weaponType == 11)  // quarterstaff
+        (weapon_type == 6        // club
+          || weapon_type == 2    // dagger
+          || weapon_type == 13   // heavy crossbow
+          || weapon_type == 14   // light crossbow
+          || weapon_type == 11)  // quarterstaff
       ) {
         return true;
       }
