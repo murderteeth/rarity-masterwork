@@ -472,8 +472,8 @@ describe('Core: Adventure II', function () {
       .returns(featFlags)
 
       await this.adventure.enter_dungeon(this.token)
-      expect((await this.adventure.turn_orders(this.token, 0)).summoner).to.be.true
-      expect((await this.adventure.turn_orders(this.token, 1)).summoner).to.be.false
+      expect((await this.adventure.turn_orders(this.token, 0)).origin).to.eq(this.core.rarity.address)
+      expect((await this.adventure.turn_orders(this.token, 1)).origin).to.eq(this.adventure.address)
     })
 
     it('can attack and miss weak summoners', async function () {
@@ -594,7 +594,7 @@ describe('Core: Adventure II', function () {
       this.codex.random.dn.returns(1)
       await this.adventure.enter_dungeon(this.token)
       const summoners_turn = await this.adventure.summoners_turns(this.token)
-      await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.summoner')
+      await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.origin != address(this)')
     })
 
     it('flees combat', async function () {

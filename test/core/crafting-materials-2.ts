@@ -4,6 +4,7 @@ import { ethers } from 'hardhat'
 import { RarityCraftingMaterials2__factory } from '../../typechain/core/factories/RarityCraftingMaterials2__factory'
 import { RarityAdventure2 } from '../../typechain/core'
 import { randomId } from '../util'
+import { fakeRarity } from '../util/fakes'
 
 chai.use(smock.matchers)
 
@@ -11,6 +12,7 @@ describe('Core: Crafting Materials II', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
+    this.rarity = await fakeRarity()
     this.adventure = await smock.fake<RarityAdventure2>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2')
     this.mats = await(await smock.mock<RarityCraftingMaterials2__factory>('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')).deploy()
     await this.mats.setVariable('ADVENTURE_2', this.adventure.address)
@@ -30,13 +32,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0])
+    .returns([0, 0, 0, 0, this.rarity.address, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 1])
+    .returns([0, 0, 0, 0, this.adventure.address, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 2])
+    .returns([0, 0, 0, 0, this.adventure.address, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -61,13 +63,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0])
+    .returns([0, 0, 0, 0, this.rarity.address, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 1])
+    .returns([0, 0, 0, 0, this.adventure.address, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 2])
+    .returns([0, 0, 0, 0, this.adventure.address, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -92,13 +94,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0])
+    .returns([0, 0, 0, 0, this.rarity.address, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 1])
+    .returns([0, 0, 0, 0, this.adventure.address, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 2])
+    .returns([0, 0, 0, 0, this.adventure.address, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
@@ -123,13 +125,13 @@ describe('Core: Crafting Materials II', function () {
 
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 0)
-    .returns([true, 0, 0, 0, 0, 0])
+    .returns([0, 0, 0, 0, this.rarity.address, 0])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 1)
-    .returns([false, 0, 0, 0, 0, 1])
+    .returns([0, 0, 0, 0, this.adventure.address, 1])
     this.adventure.turn_orders
     .whenCalledWith(this.adventure_token, 2)
-    .returns([false, 0, 0, 0, 0, 2])
+    .returns([0, 0, 0, 0, this.adventure.address, 2])
 
     this.adventure.monster_spawn
     .whenCalledWith(1)
