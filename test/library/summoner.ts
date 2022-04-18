@@ -138,6 +138,28 @@ describe('Library: Summoner', function () {
     expect(ac).to.equal(21)
   })
 
+  it('computes armor class bonus for unarmored monks', async function () {
+    this.rarity.class
+    .whenCalledWith(this.summoner)
+    .returns(classes.monk)
+
+    this.attributes.ability_scores
+    .whenCalledWith(this.summoner)
+    .returns([0, 10, 0, 0, 12, 0])
+
+    this.rarity.level
+    .whenCalledWith(this.summoner)
+    .returns(5)
+
+    const ac = await this.library.summoner._armor_class_test_hack(
+      this.summoner,
+      0, ethers.constants.AddressZero,
+      0, ethers.constants.AddressZero
+    )
+
+    expect(ac).to.eq(12)
+  })
+
   it('computes armor check penalty for non-proficient armor', async function () {
     this.rarity.class
     .whenCalledWith(this.summoner)
@@ -187,6 +209,31 @@ describe('Library: Summoner', function () {
 
     const attack = unpackAttacks(attacksPack)[0]
     expect(attack.attack_bonus).to.eq(5)
+    expect(attack.damage_dice_sides).to.eq(3)
+  })
+
+  it('computes damage bonus for unarmed monks', async function() {
+    this.rarity.class
+    .whenCalledWith(this.summoner)
+    .returns(classes.monk)
+
+    this.rarity.level
+    .whenCalledWith(this.summoner)
+    .returns(5)
+
+    this.attributes.ability_scores
+    .whenCalledWith(this.summoner)
+    .returns([10, 0, 0, 0, 0, 0])
+
+    const attacksPack = await this.library.summoner._attacks_test_hack(
+      this.summoner, 
+      0, ethers.constants.AddressZero,
+      0, ethers.constants.AddressZero,
+      0, ethers.constants.AddressZero
+    )
+
+    const attack = unpackAttacks(attacksPack)[0]
+    expect(attack.damage_dice_sides).to.eq(8)
   })
 
   it('computes non-proficient armed attack', async function() {
