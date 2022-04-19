@@ -47,7 +47,8 @@ library Summoner {
     return uint8(result);
   }
 
-  function _armor_class_test_hack(
+  // https://github.com/NomicFoundation/hardhat/issues/2592
+  function _armor_class_test_wrapper(
     uint summoner,
     uint armor,
     address armor_contract,

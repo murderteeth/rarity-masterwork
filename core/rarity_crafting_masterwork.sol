@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../interfaces/core/IRarity.sol";
+import "../interfaces/core/IRarityCommonCrafting.sol";
 import "../interfaces/core/IRarityCraftingMaterials2.sol";
 import "../interfaces/core/IRarityGold.sol";
 import "../library/Codex.sol";
@@ -19,13 +20,15 @@ import "../library/Skills.sol";
 contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
 
-  int8 constant MASTERWORK_COMPONENT_DC = 20;
+  uint8 constant MASTERWORK_COMPONENT_DC = 30;
   uint constant XP_PER_DAY = 250e18;
-  uint public ARTISANS_TOOLS_RENTAL = 5e18;
+  uint public COMMON_ARTISANS_TOOLS_RENTAL = 5e18;
   uint public immutable APPRENTICE;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityGold constant GOLD = IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
+  IRarityCommonCrafting constant COMMON_CRAFTING = IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+  ICodexTools COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000000);
   IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000000);
   ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000000);
   ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000000);
@@ -44,8 +47,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     bool complete;
     uint8 base_type;
     uint8 item_type;
-    uint32 progress;
     uint64 started;
+    uint progress;
     uint tools;
     uint xp;
   }
@@ -128,9 +131,10 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
       project.tools = tools;
       IERC721Enumerable(tools_contract)
       .safeTransferFrom(_msgSender(), address(this), tools);
-      IERC721Enumerable(tools_contract).approve(_msgSender(), tools);
+      IERC721Enumerable(tools_contract)
+      .approve(_msgSender(), tools);
     } else {
-      cost += ARTISANS_TOOLS_RENTAL;
+      cost += COMMON_ARTISANS_TOOLS_RENTAL;
     }
 
     require(GOLD.transferFrom(APPRENTICE, coinmaster, APPRENTICE, cost), "!gold");
@@ -159,9 +163,10 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     score += craft_bonus(project, bonus_mats);
     if(bonus_mats > 0) BONUS_MATS.burn(bonus_mats);
 
-    bool success = score >= MASTERWORK_COMPONENT_DC;
-    if(success) project.progress += uint32(int32(score));
-    (uint m, uint n) = progress(project);
+    uint dc = uint(get_dc(project));
+    bool success = roll == 20 || score >= int8(int(dc));
+    if(success) project.progress += uint(score * int(dc) * 1e18);
+    (uint m, uint n) = get_progress(project);
 
     if(!success) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
@@ -245,15 +250,47 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     result += int8(uint8(bonus_mats / 20e18));
   }
 
-  function get_progress(uint token) public view returns (uint, uint) {
-    Project memory project = projects[token];
-    return progress(project);
+  function standard_component_dc(uint8 base_type, uint8 item_type) public pure returns (uint8 result) {
+    if(base_type == 2) {
+      result = uint8(COMMON_CRAFTING.get_armor_dc(item_type));
+    } else if(base_type == 3) {
+      result = uint8(COMMON_CRAFTING.get_weapon_dc(item_type));
+    } else if(base_type == 4) {
+      result = 15 + 10;
+    }
   }
 
-  function progress(Project memory project) public view returns (uint, uint) {
+  function standard_component_cost_in_silver(uint8 base_type, uint8 item_type) public view returns (uint result) {
+    if(base_type == 2 || base_type == 3) {
+      result = COMMON_CRAFTING.get_item_cost(base_type, item_type) * 10;
+    } else if(base_type == 4) {
+      result = COMMON_TOOLS_CODEX.item_by_id(item_type).cost * 10;
+    }
+  }
+
+  function get_dc(uint token) public view returns (uint8) {
+    Project memory project = projects[token];
+    return get_dc(project);
+  }
+
+  function get_dc(Project memory project) public view returns (uint8) {
+    return (project.progress >= standard_component_cost_in_silver(project.base_type, project.item_type))
+    ? MASTERWORK_COMPONENT_DC
+    : standard_component_dc(project.base_type, project.item_type);
+  }
+
+  function get_progress(uint token) public view returns (uint, uint) {
+    Project memory project = projects[token];
+    return get_progress(project);
+  }
+
+  function get_progress(Project memory project) public view returns (uint, uint) {
     if(project.done_crafting) return(1, 1);
-    uint cost_in_silver = item_cost(project.base_type, project.item_type) * 10;
-    return(uint(project.progress) * uint(uint8(MASTERWORK_COMPONENT_DC)) * 1e18, cost_in_silver);
+    return(project.progress, item_cost_in_silver(project.base_type, project.item_type));
+  }
+
+  function item_cost_in_silver(uint8 base_type, uint8 item_type) public view returns (uint cost) {
+    return item_cost(base_type, item_type) * 10;
   }
 
   function item_cost(uint8 base_type, uint8 item_type) public view returns (uint cost) {
@@ -269,7 +306,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   function project_cost(uint token) public view returns (uint result) {
     Project memory project = projects[token];
     result = raw_materials_cost(project.base_type, project.item_type);
-    if(project.tools == 0) result += ARTISANS_TOOLS_RENTAL;
+    if(project.tools == 0) result += COMMON_ARTISANS_TOOLS_RENTAL;
   }
 
   function raw_materials_cost(uint8 base_type, uint8 item_type) public view returns (uint) {
