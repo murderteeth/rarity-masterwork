@@ -15,7 +15,7 @@ dotenv.config();
 subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS)
 .setAction(async (_: any, __: any, runSuper: any) => {
   const paths = (await runSuper()).filter((path: string) => {
-    return !(path.includes('spells/') || path.includes('basket/'))
+    return !(path.includes('spells/'))
   });
   return paths;
 });
