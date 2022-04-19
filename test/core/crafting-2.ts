@@ -10,7 +10,6 @@ import { fakeAttributes, fakeCommonCrafting, fakeCraftingSkills, fakeCraftingSki
 import { skills, skillsArray } from '../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { RarityCrafting } from '../../typechain/core'
 
 chai.use(smock.matchers)
 
@@ -25,7 +24,6 @@ describe('Core: Crafting II - Masterwork', function () {
       attributes: await fakeAttributes(),
       skills: await fakeSkills(),
       craftingSkills: await fakeCraftingSkills(),
-      commonCrafting: (await (await smock.mock<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting')).deploy()).address,
       gold: await fakeGold()
     }
 

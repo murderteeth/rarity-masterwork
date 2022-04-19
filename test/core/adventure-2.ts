@@ -622,70 +622,47 @@ describe('Core: Adventure II', function () {
       }})
     })
 
-    it('fails appraise check', async function () {
-      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero))
-      .to.emit(this.adventure, 'AppraiseCheck')
-      .withArgs(this.token, 1, 0)
+    it('fails search check', async function () {
+      await expect(this.adventure.search(this.token))
+      .to.emit(this.adventure, 'SearchCheck')
+      .withArgs(this.signer.address, this.token, 1, 0)
 
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.appraise_check_rolled).to.be.true
-      expect(adventure.appraise_check_succeeded).to.be.false
+      expect(adventure.search_check_rolled).to.be.true
+      expect(adventure.search_check_succeeded).to.be.false
     })
 
-    it('gives +2 bonus for using a magnifying glass', async function () {
-      this.core.attributes.ability_scores
-      .whenCalledWith(this.summoner)
-      .returns([0, 0, 0, 10, 0, 0])
-
-      const magnifyingGlass = fakeCraft(
-        this.crafting.masterwork, 
-        baseType.tools, 
-        toolType.magnifyingGlass, 
-        0, this.signer
-      )
-
-      this.crafting.masterwork.skill_bonus
-      .whenCalledWith(magnifyingGlass, skills.appraise)
-      .returns(2)
-
-      this.codex.random.dn.returns(17)
-
-      await expect(this.adventure.appraise(this.token, magnifyingGlass, this.crafting.masterwork.address))
-      .to.emit(this.adventure, 'AppraiseCheck')
-      .withArgs(this.token, 17, 19)
-    })
-
-    it('succeeds appraise check', async function () {
+    it('succeeds search check', async function () {
       this.core.attributes.ability_scores
       .whenCalledWith(this.summoner)
       .returns([0, 0, 0, 10, 0, 0])
 
       const skillRanks = Array(36).fill(0)
-      skillRanks[skills.appraise] = 1
+      skillRanks[skills.search] = 1
       this.core.skills.get_skills
       .whenCalledWith(this.summoner)
       .returns(skillRanks)
 
       const featFlags = Array(100).fill(false)
-      featFlags[feats.diligent] = true
+      featFlags[feats.investigator] = true
       this.core.feats.get_feats
       .whenCalledWith(this.summoner)
       .returns(featFlags)
 
       this.codex.random.dn.returns(17)
 
-      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero))
-      .to.emit(this.adventure, 'AppraiseCheck')
-      .withArgs(this.token, 17, 20)
+      await expect(this.adventure.search(this.token))
+      .to.emit(this.adventure, 'SearchCheck')
+      .withArgs(this.signer.address, this.token, 17, 20)
 
       const adventure = await this.adventure.adventures(this.token)
-      expect(adventure.appraise_check_rolled).to.be.true
-      expect(adventure.appraise_check_succeeded).to.be.true
+      expect(adventure.search_check_rolled).to.be.true
+      expect(adventure.search_check_succeeded).to.be.true
     })
 
-    it('can\'t appraise more than once', async function (){
-      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero)).to.not.be.reverted
-      await expect(this.adventure.appraise(this.token, 0, ethers.constants.AddressZero)).to.be.revertedWith('appraise_check_rolled')
+    it('can\'t search more than once', async function (){
+      await expect(this.adventure.search(this.token)).to.not.be.reverted
+      await expect(this.adventure.search(this.token)).to.be.revertedWith('search_check_rolled')
     })
   })
 
