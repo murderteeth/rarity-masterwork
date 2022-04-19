@@ -77,7 +77,6 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('core', 'gold.sol/rarity_gold.json', 'IRarityGold')
   makeInterface('core', 'namesv2.sol/rarity_names.json', 'IRarityNames2')
   makeInterface('core', 'rarity_crafting_skills.sol/rarity_crafting_skills.json', 'IRarityCraftingSkills')
-  makeInterface('core', 'rarity_crafting_common_tools.sol/rarity_crafting_tools.json', 'IRarityCommonTools')
   makeInterface('core', 'rarity_crafting_common.sol/rarity_crafting.json', 'IRarityCommonCrafting')
   makeInterface('core', 'rarity_crafting-materials-1.sol/rarity_crafting_materials.json', 'IRarityCraftingMaterials')
   makeInterface('core', 'rarity_crafting-materials-2.sol/rarity_crafting_materials_2.json', 'IRarityCraftingMaterials2')

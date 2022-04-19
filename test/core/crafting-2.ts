@@ -1,16 +1,16 @@
 import chai, { expect } from 'chai'
 import { MockContract, smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
-import { clean, humanEther, randomId } from '../util'
+import { clean, humanEther } from '../util'
 import { RarityCraftingMaterials2 } from '../../typechain/core/RarityCraftingMaterials2'
 import { RarityMasterwork__factory } from '../../typechain/core/factories/RarityMasterwork__factory'
 import { armorType, baseType, toolType, weaponType } from '../util/crafting'
 import { Attributes__factory, Crafting__factory, Feats__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
-import { RarityCraftingTools } from '../../typechain/core'
-import { fakeAttributes, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { skills, skillsArray } from '../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { RarityCrafting } from '../../typechain/core'
 
 chai.use(smock.matchers)
 
@@ -19,13 +19,13 @@ describe('Core: Crafting II - Masterwork', function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
     this.mats = await smock.fake<RarityCraftingMaterials2>('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')
-    this.commonTools = await smock.fake<RarityCraftingTools>('contracts/core/rarity_crafting_common_tools.sol:rarity_crafting_tools')
 
     this.core = {
       rarity: await fakeRarity(),
       attributes: await fakeAttributes(),
       skills: await fakeSkills(),
       craftingSkills: await fakeCraftingSkills(),
+      commonCrafting: (await (await smock.mock<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting')).deploy()).address,
       gold: await fakeGold()
     }
 
@@ -79,11 +79,14 @@ describe('Core: Crafting II - Masterwork', function () {
 
   this.beforeEach(async function() {
     this.crafter = fakeSummoner(this.core.rarity, this.signer);
+    this.core.rarity.level
+    .whenCalledWith(this.crafter)
+    .returns(6)
     this.core.attributes.ability_scores
     .whenCalledWith(this.crafter)
     .returns([0, 0, 0, 20, 0, 0])
     const skillsRanks = Array(36).fill(0)
-    skillsRanks[skills.craft] = 5
+    skillsRanks[skills.craft] = 9
     this.core.skills.get_skills
     .whenCalledWith(this.crafter)
     .returns(skillsRanks)
@@ -142,7 +145,7 @@ describe('Core: Crafting II - Masterwork', function () {
     const token = await this.masterwork.next_token()
     const apprentice = await this.masterwork.APPRENTICE()
     const rawMaterials = await this.masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
-    const toolRental = await this.masterwork.ARTISANS_TOOLS_RENTAL()
+    const toolRental = await this.masterwork.COMMON_ARTISANS_TOOLS_RENTAL()
     const cost = rawMaterials.add(toolRental);
 
     this.core.gold.transferFrom
@@ -228,7 +231,51 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(this.mats.burn).to.have.been.calledWith(ethers.utils.parseEther('80'))
   })
 
-  it('Passes craft checks and makes progress', async function() {
+  it('computes standard component dc', async function() {
+    expect(await this.masterwork.standard_component_dc(baseType.weapon, weaponType.dagger))
+    .to.eq(20)
+    expect(await this.masterwork.standard_component_dc(baseType.weapon, weaponType.longsword))
+    .to.eq(25)
+    expect(await this.masterwork.standard_component_dc(baseType.weapon, weaponType.nunchaku))
+    .to.eq(30)
+    expect(await this.masterwork.standard_component_dc(baseType.armor, armorType.fullPlate))
+    .to.eq(28)
+    expect(await this.masterwork.standard_component_dc(baseType.tools, toolType.artisanTools))
+    .to.eq(25)
+  })
+
+  it('uses masterwork dc after standard component is complete', async function() {
+    const token = await this.masterwork.next_token()
+    await this.masterwork.setVariable('projects', {
+      [token]: {
+        done_crafting: false,
+        complete: false,
+        base_type: baseType.weapon,
+        item_type: weaponType.longsword,
+        progress: 0,
+        started: 1,
+        tools: 0,
+        xp: 0
+      }
+    })
+    expect(await this.masterwork['get_dc(uint256)'](token)).to.eq(25)
+
+    await this.masterwork.setVariable('projects', {
+      [token]: {
+        done_crafting: false,
+        complete: false,
+        base_type: baseType.weapon,
+        item_type: weaponType.longsword,
+        progress: await this.masterwork.standard_component_cost_in_silver(baseType.weapon, weaponType.longsword),
+        started: 1,
+        tools: 0,
+        xp: 0
+      }
+    })
+    expect(await this.masterwork['get_dc(uint256)'](token)).to.eq(30)
+  })
+
+  it('passes craft checks and makes progress', async function() {
     this.codex.random.dn.returns(20)
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
@@ -236,13 +283,13 @@ describe('Core: Crafting II - Masterwork', function () {
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
       this.signer.address, token, this.crafter, 0, 
-      20, 30, 
+      20, 34, 
       ethers.utils.parseEther('250'), 
-      ethers.utils.parseEther('600'), ethers.utils.parseEther('3150')
+      ethers.utils.parseEther('1170'), ethers.utils.parseEther('3150')
     )
   })
 
-  it('Fails craft checks and doesn\'t make progress', async function() {
+  it('fails craft checks and doesn\'t make progress', async function() {
     this.codex.random.dn.returns(1)
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
@@ -250,7 +297,7 @@ describe('Core: Crafting II - Masterwork', function () {
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
       this.signer.address, token, this.crafter, 0, 
-      1, 11, 
+      1, 15, 
       ethers.utils.parseEther('250'), 
       0, ethers.utils.parseEther('3150')
     )
@@ -262,10 +309,8 @@ describe('Core: Crafting II - Masterwork', function () {
 
     {
       const project = await this.masterwork.projects(token)
-      const [, costInSilver] = await this.masterwork.get_progress(token)
-      const progress = Math.floor((humanEther(costInSilver) / 20) - 1)
       await this.masterwork.setVariable('projects', { [token]: {
-        ...clean({...project}), progress
+        ...clean({...project}), progress: await this.masterwork.item_cost_in_silver(baseType.weapon, weaponType.longsword)
       }})
     }
 
@@ -282,7 +327,7 @@ describe('Core: Crafting II - Masterwork', function () {
 
     {
       const project = await this.masterwork.projects(token)
-      const [, costInSilver] = await this.masterwork.get_progress(token)
+      const [, costInSilver] = await this.masterwork['get_progress(uint256)'](token)
       const progress = Math.floor((humanEther(costInSilver) / 20))
       await this.masterwork.setVariable('projects', { [token]: {
         ...clean({...project}), done_crafting: true

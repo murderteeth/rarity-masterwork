@@ -92,7 +92,7 @@ describe('Library: Summoner', function () {
   })
 
   it('computes minimum armor class', async function () {
-    const ac = await this.library.summoner._armor_class_test_hack(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
+    const ac = await this.library.summoner._armor_class_test_wrapper(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(9)
   })
 
@@ -101,7 +101,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns([0, 12, 0, 0, 0, 0])
 
-    const ac = await this.library.summoner._armor_class_test_hack(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
+    const ac = await this.library.summoner._armor_class_test_wrapper(this.summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(11)
   })
 
@@ -114,7 +114,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns([0, 10, 0, 0, 0, 0])
 
-    const ac = await this.library.summoner._armor_class_test_hack(this.summoner, this.fullPlate, this.commonCrafting.address, 0, ethers.constants.AddressZero)
+    const ac = await this.library.summoner._armor_class_test_wrapper(this.summoner, this.fullPlate, this.commonCrafting.address, 0, ethers.constants.AddressZero)
     expect(ac).to.equal(18)
   })
 
@@ -127,7 +127,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns([0, 12, 0, 0, 0, 0])
 
-    const ac = await this.library.summoner._armor_class_test_hack(
+    const ac = await this.library.summoner._armor_class_test_wrapper(
       this.summoner, 
       this.fullPlate, 
       this.commonCrafting.address, 
@@ -151,7 +151,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns(5)
 
-    const ac = await this.library.summoner._armor_class_test_hack(
+    const ac = await this.library.summoner._armor_class_test_wrapper(
       this.summoner,
       0, ethers.constants.AddressZero,
       0, ethers.constants.AddressZero

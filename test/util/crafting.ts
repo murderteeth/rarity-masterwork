@@ -16,8 +16,10 @@ export const armorType = {
 }
 
 export const weaponType = {
+  dagger: 2,
   longsword: 27,
   greatsword: 38,
+  nunchaku: 49,
   heavyCrossbow: 58
 }
 
