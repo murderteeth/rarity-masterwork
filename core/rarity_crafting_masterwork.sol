@@ -34,8 +34,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000000);
   ICodexTools TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000000);
 
-  event Craft(address indexed owner, uint token, uint crafter, uint bonus_mats, uint8 roll, int8 score, uint xp, uint m, uint n);
-  event Crafted(address indexed owner, uint token, uint crafter, uint8 base_type, uint8 item_type);
+  event Craft(address indexed owner, uint indexed token, uint crafter, uint bonus_mats, uint8 roll, int8 score, uint xp, uint m, uint n);
+  event Crafted(address indexed owner, uint indexed token, uint crafter, uint8 base_type, uint8 item_type);
 
   constructor() ERC721("Rarity Crafting (II)", "RC(II)") {
     APPRENTICE = RARITY.next_summoner();
