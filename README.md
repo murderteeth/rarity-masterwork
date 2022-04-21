@@ -1,4 +1,5 @@
-![image](https://user-images.githubusercontent.com/89237203/163974182-7e80fbf2-eb98-4c86-b903-2e33a8c1a195.png)
+![image](https://user-images.githubusercontent.com/89237203/164444719-88a514ba-962c-44b8-8693-dd947d660e65.png)
+
 
 # Rarity Masterwork
 Masterwork is a new crafting level for Rarity players and builders. Like Rarity's first crafting level, masterwork contains a crafting station and a dungeon. Use the masterwork crafting station to create masterwork weapons, armor, and tools. Defeat monsters in the dungeon for loot that enhances your bonus at the crafting station.
