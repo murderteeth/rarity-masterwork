@@ -40,7 +40,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint8 public constant EQUIPMENT_TYPE_SHIELD = 2;
 
 
-  uint8 public constant APPRAISE_DC = 20;
+  uint8 public constant SEARCH_DC = 20;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
@@ -275,7 +275,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     (uint8 roll, int8 score) = Roll.search(adventure.summoner);
 
     adventure.search_check_rolled = true;
-    adventure.search_check_succeeded = score >= int8(APPRAISE_DC);
+    adventure.search_check_succeeded = score >= int8(SEARCH_DC);
     adventure.search_check_critical = roll == 20;
     emit SearchCheck(_msgSender(), token, roll, score);
   }
