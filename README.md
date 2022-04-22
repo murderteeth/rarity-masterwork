@@ -14,19 +14,19 @@ Masterwork weapons and armor are exceptional. They are made so well that you get
 ### Now what?
 This git repo contains all the dev tooling used to build and test Masterwork. Use it as a reference for integrating masterwork with your projects! 
 
+## Contents
+- [Get started](#get-started)
+- [Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools](#rarity-crafting-2---masterwork-weapons-armor-and-tools)
+- [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
+- [Rarity Core Library](#rarity-core-library)
+- [How to use masterwork items in your game](#how-to-use-masterwork-items-in-your-game)
+- [More package commands](#more-package-commands)
+- [hardhat.config.ts customizations](#hardhatconfigts-customizations)
+- [Default hardhat commands](#default-hardhat-commands)
+- [Thank You 👹🙏](#thank-you-)
 
-1. [Getting started](#getting-started)
-2. [Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools](#rarity-crafting-2---masterwork-weapons-armor-and-tools)
-3. [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
-4. [Rarity Core Library](#rarity-core-library)
-5. [How to use masterwork items in your game](#how-to-use-masterwork-items-in-your-game)
-6. [More package commands](#more-package-commands)
-7. [hardhat.config.ts customizations](#hardhatconfigts-customizations)
-8. [Default hardhat commands](#default-hardhat-commands)
-9. [Thank You 👹🙏](#thank-you-)
 
-
-## Getting started
+## Get started
 ```shell
 git clone git@github.com:murderteeth/rarity-masterwork.git
 cd rarity-masterwork
@@ -303,17 +303,114 @@ The following d20 monsters were chosen for their CRs and relatively simple attac
 
 
 ## Rarity Core Library
-Masterwork's crafting and dungeon mechanics are complex. To manage these features we started a [solidity library](https://github.com/murderteeth/rarity-masterwork/tree/main/contracts/library) to abstract everything a builder need to create their own d20 adventures.
+Masterwork's crafting and dungeon mechanics are complex. For sanity's sake we started the [rarity core solidity library](https://github.com/murderteeth/rarity-masterwork/tree/main/contracts/library) to abstract everything a builder needs to create their own d20 adventures. 
 
-### Summoners
-### Effects
-### Rolls
-### Combat
-### The Combatant struct
-### Etc
+The library is extensive and growing. Documentation will come in a future iteration. For now, lets look at how combat is implemented. The library lets you have any character attack any other character using d20 rules to govern the outcome. It does this by first requiring that each fighter be adapted to a standard `Combatant` struct. This allows the combat system to run d20 combat rules against a common interface and enables summoner vs monster and summoner vs summoner combat.. it also enables monster vs monster and, in theory, any nft against any nft.
 
+Check out the current `Combatant` stuct:
+```solidity
+struct Combatant {
+  uint8 initiative_roll;
+  int8 initiative_score;
+  uint8 armor_class;
+  int16 hit_points;
+  address origin;
+  uint token;
+  int8[28] attacks;
+}
+```
+- **initiative_roll/score** - Determines turn order
+- **armor_class** - How difficult it is to hit this combatant
+- **hit_points** - How much damage can be taken
+- **origin** - Contract address that issues this combatant's underlying token
+- **token** - This combatant's underlying nft (eg, a Summoner Id)
+- **attacks** - An array containing all the combatant's attacks per round
+
+The current `attacks` array can contain up to 4 attacks. Each attack has these properties:
+- attack_bonus
+- critical_modifier
+- critical_multiplier
+- damage_dice_count
+- damage_dice_sides
+- damage_modifier
+- damage_type
+
+Helper functions for packing and unpacking the `attacks` array live in the [Combat library](https://github.com/murderteeth/rarity-masterwork/blob/main/contracts/library/Combat.sol).
+
+Monsters in the Barn implements summoner vs monster combat. To adapt summoners and monsters to the `Combatant` struct it uses these two functions:
+
+```solidity
+function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
+  (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
+  emit RollInitiative(_msgSender(), token, initiative_roll, initiative_score);
+
+  Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+  Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+  Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+
+  combatant.origin = address(RARITY);
+  combatant.token = summoner;
+  combatant.initiative_roll = initiative_roll;
+  combatant.initiative_score = initiative_score;
+  combatant.hit_points = int16(uint16(Summoner.hit_points(summoner)));
+  combatant.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
+  combatant.attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
+}
+
+function monster_combatant(Monster.MonsterCodex memory monster_codex) internal returns(Combat.Combatant memory combatant) {
+  monster_spawn[next_monster] = monster_codex.id;
+
+  (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(
+    next_monster, 
+    Attributes.compute_modifier(monster_codex.abilities[1]), 
+    monster_codex.initiative_bonus
+  );
+
+  combatant.origin = address(this);
+  combatant.token = next_monster;
+  combatant.initiative_roll = initiative_roll;
+  combatant.initiative_score = initiative_score;
+  combatant.hit_points = Monster.hit_points(monster_codex, next_monster);
+  combatant.armor_class = monster_codex.armor_class;
+  combatant.attacks = monster_codex.attacks;
+
+  next_monster += 1;
+}
+```
+
+Note the use of another struct from the `Combat` library, `EquipmentSlot`, and several other functions from the `Roll` and `Summoner` libraries to make adapting to the Combatant struct easy. With those adapters in place Monsters in the Barn can run an attack like this:
+
+```solidity
+(bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
+    = Combat.attack_combatant(attacker, defender, attack_number);
+```
 
 ## How to use masterwork items in your game
+The key feature of a masterwork longsword is the +1 attack bonus it grants its wielder. The masterwork contract exposes these special features through the `IEffects` interface found in the [Effects library](contracts/library/Effects.sol). In the case of a longsword, query its attack bonus like this:
+
+```solidity
+int8 attack_bonus = masterwork.attack_bonus(longswordToken);
+```
+
+In your game you probably want to support masterwork and common items at the same time. But the common items contract doesn't support `IEffects` and reverts if you try to call any IEffects functions. You could use branching logic, but that won't scale as you consider new item contracts in the future. Monsters in the Barn had this problem. So the library was updated to use both common and masterwork items by talking to the common items contract through a [wrapper contract](contracts/core/rarity_crafting_common_wrapper.sol) that adds the same `IEffects` interface used by masterwork.
+
+Going back to the masterwork longsword, if you want to compute the correct attack bonus for your summoner you now have two options:
+- Call `masterwork.attack_bonus(longswordToken)` directly (and add some branching logic for common longswords)
+- Use the common item contract wrapper so that you can call `IEffects` functions on either contract
+
+Another option is to let the library do it for you by using its `EquipmentSlot` and `Combatant` structs. This is how Monsters in the Barn is implemented, so that's the best reference. For now consider this code snip:
+
+```solidity
+import "../library/Combat.sol";
+
+Combat.EquipmentSlot memory weapon_slot = Combat.EquipmentSlot(masterwork_address, longsword_id);
+Combat.EquipmentSlot memory armor_slot = Combat.EquipmentSlot(common_wrapper_address, full_plate_id);
+Combat.EquipmentSlot memory shield_slot = Combat.EquipmentSlot(address(0), 0);
+int8[28] attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
+
+Combat.Attack memory primary_attack = Combat.unpack_attack(attacks, 0);
+```
+In this example we get a summoner's primary attack with all weapon and armor bonuses/penalties applied as if they equiped a masterwork longsword, a common suite of full plate armor, and no shield. The `Attack` struct contains things like full attack bonus and damage dice.
 
 
 ## More package commands
@@ -321,7 +418,7 @@ Masterwork's crafting and dungeon mechanics are complex. To manage these feature
 yarn test
 yarn test-fast
 yarn report-gas
-yarn random-uint265
+yarn random-uint256   # handy for generating random seeds
 ```
 
 
