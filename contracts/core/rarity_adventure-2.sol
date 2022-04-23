@@ -39,7 +39,6 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   uint8 public constant EQUIPMENT_TYPE_ARMOR = 1;
   uint8 public constant EQUIPMENT_TYPE_SHIELD = 2;
 
-
   uint8 public constant SEARCH_DC = 20;
 
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);

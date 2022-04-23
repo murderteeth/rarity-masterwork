@@ -442,7 +442,7 @@ yarn random-uint256   # handy for generating random seeds
 This project uses [hardhat](https://github.com/NomicFoundation/hardhat) for its solidity dev environment. The following  customizations have been made.
 
 ### typechain
-This project also uses [typechain](https://github.com/dethcrypto/TypeChain) to generate typescript types for all the core contracts and libraries. Unfortunately the current typechain has a known name-colision problem when generating types across nested directories. A future release of typechain promises to fix this. For now, this project overrides hardhat's `TASK_COMPILE_SOLIDITY_COMPILE_JOBS` compile task and generates the typechain types manually as a mitigation.
+This project also uses [typechain](https://github.com/dethcrypto/TypeChain) to generate typescript types for all the core contracts and libraries. Unfortunately the current typechain has a known name-colision problem when generating types across nested directories. A future release of typechain promises to fix this. For now, this project overrides hardhat's `TASK_COMPILE_SOLIDITY_COMPILE_JOBS` compile task and generates the typechain types manually as a workaround.
 
 ### interfaces
 This project also includes a custom hardhat task that generates full interfaces on all contracts. The results are saved  [here](/contracts/interfaces). This can be run manually with:
@@ -453,14 +453,14 @@ npx hardhat rarity-interfaces
 # Thank You 👹🙏
 Please join me and say thanks to these great folks:
 
-### 0xHrunting
-Hrunting is a table-top DM guru and has spent many hours with me divining a path towards adapting d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Thank you friend!
+### Hrunting
+Hrunting is a table-top DM guru and has been advising me on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that we need masterwork crafting before magic crafting.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
-Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code. Thank you friend!
+Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
 
 ### [RarityExtended](https://rarityextended.com/)
-The Extended team kindly reviewed and gave feedback to masterwork. Masterwork has also borrowed some great ideas from their [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib). Thank you friends!
+The Extended team kindly reviewed and gave feedback to masterwork. Masterwork has also borrowed some great ideas from their [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib).
 
 ### [CryptoShuraba](https://www.metaland.game/)
-The Shuraba team also gave their time to a review of masterwork. In addtion, they generously granted the project 1300 MST. Thank you friends!
+The Shuraba team has given a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.

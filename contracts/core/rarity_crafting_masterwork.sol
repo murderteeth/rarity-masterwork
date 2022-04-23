@@ -20,7 +20,7 @@ import "../library/Skills.sol";
 contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
 
-  uint8 constant MASTERWORK_COMPONENT_DC = 30;
+  uint8 constant MASTERWORK_COMPONENT_DC = 20;
   uint constant XP_PER_DAY = 250e18;
   uint public COMMON_ARTISANS_TOOLS_RENTAL = 5e18;
   uint public immutable APPRENTICE;
@@ -164,7 +164,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     if(bonus_mats > 0) BONUS_MATS.burn(bonus_mats);
 
     uint dc = uint(get_dc(project));
-    bool success = roll == 20 || score >= int8(int(dc));
+    bool success = score >= int8(int(dc));
     if(success) project.progress += uint(score * int(dc) * 1e18);
     (uint m, uint n) = get_progress(project);
 
@@ -250,13 +250,13 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     result += int8(uint8(bonus_mats / 20e18));
   }
 
-  function standard_component_dc(uint8 base_type, uint8 item_type) public pure returns (uint8 result) {
+  function standard_component_dc(uint8 base_type, uint8 item_type) public view returns (uint8 result) {
     if(base_type == 2) {
-      result = uint8(COMMON_CRAFTING.get_armor_dc(item_type));
+      result = 10 + get_armor(item_type).armor_bonus;
     } else if(base_type == 3) {
-      result = uint8(COMMON_CRAFTING.get_weapon_dc(item_type));
+      result = 12 + (get_weapon(item_type).proficiency - 1) * 3;
     } else if(base_type == 4) {
-      result = 15 + 10;
+      result = 15;
     }
   }
 
