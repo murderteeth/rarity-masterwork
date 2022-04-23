@@ -24,8 +24,8 @@ This git repo contains all the source code and tooling used to build and test Ma
 - [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
 - [Rarity Core Library](#rarity-core-library)
 - [How to use masterwork items in your game](#how-to-use-masterwork-items-in-your-game)
-- [More package commands](#more-package-commands)
-- [hardhat customizations](#hardhat-customizations)
+- [Package commands](#package-commands)
+- [Hardhat customizations](#hardhat-customizations)
 - [Thank You 👹🙏](#thank-you-)
 
 
@@ -173,7 +173,7 @@ You can also craft the following masterwork tools, found in the [masterwork tool
 A codex for common tools, [codex-items-tools.sol](/contracts/codex/codex-items-tools.sol) has also been provided for future expansion.
 
 ### Masterwork crafting mechanics
-Masterwork adapts its crafting mechanics from the d20 rules below while also continuing ideas from the core common crafting contract. The mechanics have been set such that a level 5 crafter with maxed craft skills, and without supplying any bonus crafting mats, can complete a masterwork longsword in exchange for 1 week of XP.
+Masterwork adapts its crafting mechanics from the d20 rules below while also continuing ideas from the core common crafting contract. The mechanics have been set such that a level 6 crafter with maxed craft skills, and without supplying any bonus crafting mats, can complete a masterwork longsword in exchange for 1 week of XP.
 
 [from d20, _under Check_](https://www.d20srd.org/srd/skills/craft.htm)
 > All crafts require artisan's tools to give the best chance of success. If improvised tools are used, the check is made with a -2 circumstance penalty. On the other hand, masterwork artisan's tools provide a +2 circumstance bonus on the check.
@@ -307,7 +307,7 @@ Each attack emits an `Attack` event containing attacker, defender, and attack re
 The mechanics of Monsters in the Barn follow d20 combat closely, but only cover the very basics. Future expansions will cover more advanced mechanics like movement, ranged weapons, spells, saving throws, conditions, and buffs. For more, check out [d20 Combat](https://www.d20srd.org/indexes/combat.htm).
 
 ### Tired of killing rats?? Meet the monsters of the barn
-The following d20 monsters were chosen for both their CRs and their simple attack and damage properties. An ad hoc monster codex has been created in the library [here](contracts/library/Monsters.sol).
+The following d20 monsters were chosen for both their CRs and their simple attack and damage properties. An ad hoc [monster codex](contracts/library/Monster.sol) is available in the library.
 - [**Kobold (CR 1/4)**](https://www.d20srd.org/srd/monsters/kobold.htm)
 - [**Goblin (CR 1/3)**](https://www.d20srd.org/srd/monsters/goblin.htm)
 - [**Gnoll (CR 1)**](https://www.d20srd.org/srd/monsters/gnoll.htm)
@@ -412,11 +412,11 @@ int8 attack_bonus = masterwork.attack_bonus(longswordToken);
 
 In your game you probably want to support masterwork and common items side-by-side. But the common items contract doesn't support `IEffects` and reverts if you try to call any IEffects functions. You could use branching logic, but that won't scale as you consider new item contracts in the future. Monsters in the Barn had this problem. So the library was updated to use both common and masterwork items by talking to the common items contract through a [wrapper contract](contracts/core/rarity_crafting_common_wrapper.sol) that implements the same `IEffects` interface used by masterwork.
 
-Going back to the masterwork longsword, if you want to compute the correct attack bonus for your summoner you now have two options:
-- Call `masterwork.attack_bonus(longswordToken)` directly (and add some branching logic for common longswords)
+Back to the masterwork longsword. If you want to compute the correct attack bonus for your summoner you now have two options:
+- Call `masterwork.attack_bonus(longswordToken)` directly and add some branching logic for common longswords
 - Use the common item contract wrapper so that you can call `IEffects` functions on either contract
 
-Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure-2.sol) is implemented, so that's the a good reference. For example, consider the contract's `preview` function:
+Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure-2.sol) is implemented. For example, consider the contract's `preview` function:
 ```solidity
 function preview(
   uint summoner, 
@@ -438,21 +438,21 @@ function preview(
 }
 ```
 
-The preview function can be used by a client to see the effects of equipping an item before they actually equip it. Client can call preview like this:
+The preview function can be used by a client to see the effects of equipping an item before actually equipping it. Clients can call preview like this:
 
 ```ts
 const preview = await this.adventure.preview(
   fighter, 
-  longsword, this.crafting.common.address,
-  fullplate, this.crafting.common.address,
-  shield, this.crafting.common.address
+  longsword, crafting.masterwork.address,
+  fullplate, crafting.common.address,
+  0, ethers.constants.AddressZero
 )
 const fullPrimaryAttackBonus = unpackAttacks(preview.attacks)[0].attack_bonus
 ```
-`unpackAttacks` is a utility provided [here](test/util/index.ts) in this repo.
+`unpackAttacks` is a utility provided [here](test/util/index.ts).
 
 
-## More package commands
+## Package commands
 ```shell
 yarn test
 yarn test-fast
@@ -460,13 +460,13 @@ yarn report-gas
 yarn random-uint256   # handy for generating random seeds
 ```
 
-## hardhat customizations
+## Hardhat customizations
 This project uses [hardhat](https://github.com/NomicFoundation/hardhat) for its solidity dev environment. The following  customizations have been made.
 
-### typechain
+### Typechain
 This project also uses [typechain](https://github.com/dethcrypto/TypeChain) to generate typescript types for all the core contracts and libraries. Unfortunately the current typechain has a known name-colision problem when generating types across nested directories. A future release of typechain promises to fix this. For now, this project overrides hardhat's `TASK_COMPILE_SOLIDITY_COMPILE_JOBS` compile task and generates the typechain types manually as a workaround.
 
-### interfaces
+### Interfaces
 This project also includes a custom hardhat task that generates full interfaces on all contracts. The results are saved  [here](/contracts/interfaces). This can be run manually with:
 ```shell
 npx hardhat rarity-interfaces
