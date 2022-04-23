@@ -476,7 +476,7 @@ npx hardhat rarity-interfaces
 Please join me and say thanks to these great folks:
 
 ### Hrunting
-Hrunting is a table-top DM guru and has been advising me on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that we need masterwork crafting before magic crafting.
+Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that we need masterwork crafting before magic crafting.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
 Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
