@@ -179,7 +179,7 @@ The initial difficulty of a masterwork project is just the DC of the common vers
 ### Crafting progress
 Most projects will require more than one craft check. As you make craft checks each score is aggregated into a total with this forumula:
 
-![image](http://www.sciweavers.org/tex2img.php?eq=%20S_t%20%3D%20%5Csum%20%20%5Cbegin%7Bcases%7DS_t%20%3C%20C_s%2C%20%26%20score%20%2A%20DC_s%20%5C%5CS_t%20%5Cgeq%20C_s%2C%20%26%20score%20%2A%20DC_m%20%5Cend%7Bcases%7D%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![image](https://user-images.githubusercontent.com/89237203/164949444-43b4d936-6ee8-40be-a336-6afc29e7cd6f.png)
 - S<sub>t</sub> = total score
 - C<sub>s</sub> = the cost of a common version of the item being crafted, priced in silver
 - DC<sub>s</sub> = the difficulty class of the item being crafted (aka, the standard component)
@@ -187,7 +187,7 @@ Most projects will require more than one craft check. As you make craft checks e
 
 Progress is then computed as the ratio of your total score to the cost of the masterwork item, priced in silver:
 
-![image](http://www.sciweavers.org/tex2img.php?eq=Progress%20%3D%20TotalScore%20%2F%20TotalMasteworkItemCostInSilver&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![image](https://user-images.githubusercontent.com/89237203/164949319-35010474-17e8-4bf2-a2c2-010115d76f8e.png)
 
 Thus, a bonus to your craft skill not only gives you better odds on passing a craft check. A bonus also "speeds up" your project by adding more to your progress on each succesful roll. 
 
