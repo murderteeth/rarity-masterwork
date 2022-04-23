@@ -70,7 +70,7 @@ library Summoner {
     if(armor_contract == address(0)) return 0;
     (, uint item_type, , ) = ICrafting(armor_contract).items(armor);
     IArmor.Armor memory armor_codex = IArmor(armor_contract).get_armor(uint8(item_type));
-    return Proficiency.isProficientWithArmor(summoner, armor_codex.proficiency, item_type)
+    return Proficiency.is_proficient_with_armor(summoner, armor_codex.proficiency, item_type)
     ? int8(0)
     : int8(armor_codex.penalty);
   }
@@ -133,7 +133,7 @@ library Summoner {
     + armor_check_penalty(summoner, shield_slot.item, shield_slot.item_contract);
 
     if(weapon_codex.id != 0
-      && !Proficiency.isProficientWithWeapon(summoner, weapon_codex.proficiency, weapon_codex.id)
+      && !Proficiency.is_proficient_with_weapon(summoner, weapon_codex.proficiency, weapon_codex.id)
     ) {
       attack_modifier -= 4;
     }

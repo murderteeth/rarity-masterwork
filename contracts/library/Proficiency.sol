@@ -5,7 +5,7 @@ import "./Rarity.sol";
 import "./Feats.sol";
 
 library Proficiency {
-  function isProficientWithArmor(
+  function is_proficient_with_armor(
     uint summoner,
     uint proficiency,
     uint armor_type
@@ -94,7 +94,7 @@ library Proficiency {
     return false;
   }
 
-  function isProficientWithWeapon(uint summoner, uint proficiency, uint weapon_type)
+  function is_proficient_with_weapon(uint summoner, uint proficiency, uint weapon_type)
     public
     view
     returns (bool)

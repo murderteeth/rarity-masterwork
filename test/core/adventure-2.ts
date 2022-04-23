@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { equipmentType, randomId } from '../util'
+import { equipmentType, randomId, unpackAttacks } from '../util'
 import { fakeAttributes, fakeCommonCraftingWrapper, fakeCraft, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
@@ -10,9 +10,10 @@ import { feats } from '../util/feats'
 import { Crafting__factory } from '../../typechain/library/factories/Crafting__factory'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { classes } from '../util/classes'
-import { baseType, toolType, weaponType } from '../util/crafting'
+import { armorType, baseType, toolType, weaponType } from '../util/crafting'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { BigNumber } from 'ethers'
+import { armors, weapons } from '../util/equipment'
 
 chai.use(smock.matchers)
 
@@ -45,15 +46,23 @@ describe('Core: Adventure II', function () {
 
     this.crafting.common.get_weapon
     .whenCalledWith(weaponType.greatsword)
-    .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
+    .returns(weapons('greatsword'))
 
     this.crafting.common.get_weapon
     .whenCalledWith(weaponType.longsword)
-    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('15'), "Longsword", ""])
+    .returns(weapons('longsword'))
 
     this.crafting.common.get_weapon
     .whenCalledWith(weaponType.heavyCrossbow)
-    .returns([weaponType.heavyCrossbow, 1, 5, 2, 8, 10, 2, -1, 120, ethers.utils.parseEther('50'), "Heavy Crossbow", ""])
+    .returns(weapons('crossbow, heavy'))
+
+    this.crafting.common.get_armor
+    .whenCalledWith(armorType.fullPlate)
+    .returns(armors('full plate'))
+
+    this.crafting.common.get_armor
+    .whenCalledWith(armorType.heavyWoodShield)
+    .returns(armors('shield, heavy wooden'))
   })
 
   async function mockAdventure() {
@@ -62,6 +71,12 @@ describe('Core: Adventure II', function () {
         Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
         Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
         Crafting: (await(await smock.mock<Crafting__factory>('contracts/library/Crafting.sol:Crafting')).deploy()).address,
+        Proficiency: (await(await smock.mock<Proficiency__factory>('contracts/library/Proficiency.sol:Proficiency', {
+          libraries: {
+            Feats: (await (await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
+            Rarity: (await (await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
+          }
+        })).deploy()).address,
         Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
           libraries: {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
@@ -230,6 +245,52 @@ describe('Core: Adventure II', function () {
       this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
       await this.adventure.start(this.summoner)
+    })
+
+    it('tests proficiencies', async function() {
+      const fighter = randomId()
+      this.core.rarity.class
+      .whenCalledWith(fighter)
+      .returns(classes.fighter)
+
+      expect(await this.adventure.is_proficient_with_weapon(fighter, weaponType.longsword, this.crafting.common.address))
+      .to.be.true
+
+      expect(await this.adventure.is_proficient_with_armor(fighter, armorType.fullPlate, this.crafting.common.address))
+      .to.be.true
+
+      expect(await this.adventure.is_proficient_with_armor(fighter, armorType.heavyWoodShield, this.crafting.common.address))
+      .to.be.true
+    })
+
+    it('previews loadouts', async function() {
+      const fighter = randomId()
+      this.core.rarity.class
+      .whenCalledWith(fighter)
+      .returns(classes.fighter)
+
+      this.core.rarity.level
+      .whenCalledWith(fighter)
+      .returns(1)
+
+      this.core.attributes.ability_scores
+      .whenCalledWith(fighter)
+      .returns([10, 10, 10, 0, 0, 0])
+
+      const longsword = fakeLongsword(this.crafting.common, fighter, this.signer)
+      const fullplate = fakeFullPlateArmor(this.crafting.common, fighter, this.signer)
+      const shield = fakeHeavyWoodShield(this.crafting.common, fighter, this.signer)
+
+      const preview = await this.adventure.preview(
+        fighter, 
+        longsword, this.crafting.common.address,
+        fullplate, this.crafting.common.address,
+        shield, this.crafting.common.address
+      )
+
+      expect(preview.armor_class).to.eq(20)
+      expect(preview.hit_points).to.eq(10)
+      expect(unpackAttacks(preview.attacks)[0].attack_bonus).to.eq(1)
     })
 
     it('equips summoners with weapons and armor', async function () {
@@ -584,7 +645,7 @@ describe('Core: Adventure II', function () {
       expect(summoner_combatant.hit_points).to.be.gt(-1)
     })
 
-    it('rejects attacks on invalid targets', async function () {
+    it('only attacks inbounds targets', async function () {
       this.codex.random.dn.returns(1)
       await this.adventure.enter_dungeon(this.token)
       await expect(this.adventure.attack(this.token, 100)).to.be.revertedWith('target out of bounds')

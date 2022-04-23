@@ -291,6 +291,21 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork['get_dc(uint256)'](token)).to.eq(20)
   })
 
+  it.only('gets craft check odds', async function() {
+    const token = await this.masterwork.next_token()
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    const [average_score, dc] = await this.masterwork.get_craft_check_odds(token, this.crafter, ethers.utils.parseEther('20'))
+    expect(average_score).to.eq(25)
+    expect(dc).to.eq(15)
+  })
+
+  it.only('estimates project xp cost', async function() {
+    const token = await this.masterwork.next_token()
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+    const xp = await this.masterwork.estimate_remaining_xp_cost(token, this.crafter, ethers.utils.parseEther('20'))
+    expect(xp).to.deep.eq(ethers.utils.parseEther('1260'))
+  })
+
   it('passes craft checks and makes progress', async function() {
     this.codex.random.dn.returns(20)
     const token = await this.masterwork.next_token()

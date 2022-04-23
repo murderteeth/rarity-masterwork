@@ -25,7 +25,7 @@ This git repo contains all the source code and tooling used to build and test Ma
 - [Rarity Core Library](#rarity-core-library)
 - [How to use masterwork items in your game](#how-to-use-masterwork-items-in-your-game)
 - [More package commands](#more-package-commands)
-- [hardhat.config.ts customizations](#hardhatconfigts-customizations)
+- [hardhat customizations](#hardhat-customizations)
 - [Thank You 👹🙏](#thank-you-)
 
 
@@ -126,8 +126,8 @@ console.log('estimate', ethers.utils.formatEther(estimate))
 ```
 Get a summoner's odds of succeeding the current craft check:
 ```ts
-const [averageCraftCheck, currentCraftDC] = await masterwork.craft_check_odds(masterworkToken, summoner, bonusMats)
-const craftOdds = averageCraftCheck / currentCraftDC
+const [average_score, dc] = await masterwork.get_craft_check_odds(masterworkToken, summoner, bonusMats)
+const odds = average_score / dc
 ```
 
 4. When crafting is done ,`project.done_crafting`, complete the project:
@@ -416,18 +416,40 @@ Going back to the masterwork longsword, if you want to compute the correct attac
 - Call `masterwork.attack_bonus(longswordToken)` directly (and add some branching logic for common longswords)
 - Use the common item contract wrapper so that you can call `IEffects` functions on either contract
 
-Another option is to let the library do it for you by using its `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure-2.sol) is implemented, so that's the best reference. For now consider this code snip:
+Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure-2.sol) is implemented, so that's the a good reference. For example, consider the contract's `preview` function:
 ```solidity
-import "../library/Combat.sol";
-
-Combat.EquipmentSlot memory weapon_slot = Combat.EquipmentSlot(masterwork_address, longsword_id);
-Combat.EquipmentSlot memory armor_slot = Combat.EquipmentSlot(common_wrapper_address, full_plate_id);
-Combat.EquipmentSlot memory shield_slot = Combat.EquipmentSlot(address(0), 0);
-int8[28] attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
-
-Combat.Attack memory primary_attack = Combat.unpack_attack(attacks, 0);
+function preview(
+  uint summoner, 
+  uint weapon, 
+  address weapon_contract, 
+  uint armor, 
+  address armor_contract, 
+  uint shield, 
+  address shield_contract
+) public view returns (Combat.Combatant memory result) {
+  Combat.EquipmentSlot memory weapon_slot = Combat.EquipmentSlot(weapon_contract, weapon);
+  Combat.EquipmentSlot memory armor_slot = Combat.EquipmentSlot(armor_contract, armor);
+  Combat.EquipmentSlot memory shield_slot = Combat.EquipmentSlot(shield_contract, shield);
+  result.token = summoner;
+  result.origin = address(RARITY);
+  result.hit_points = int16(uint16(Summoner.hit_points(summoner)));
+  result.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
+  result.attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
+}
 ```
-In this example we get a summoner's primary attack with all weapon and armor bonuses/penalties applied as if they equiped a masterwork longsword, a common suite of full plate armor, and no shield. The `Attack` struct used here contains things like full attack bonus and damage dice.
+
+The preview function can be used by a client to see the effects of equipping an item before they actually equip it. Client can call preview like this:
+
+```ts
+const preview = await this.adventure.preview(
+  fighter, 
+  longsword, this.crafting.common.address,
+  fullplate, this.crafting.common.address,
+  shield, this.crafting.common.address
+)
+const fullPrimaryAttackBonus = unpackAttacks(preview.attacks)[0].attack_bonus
+```
+`unpackAttacks` is a utility provided [here](test/util/index.ts) in this repo.
 
 
 ## More package commands
@@ -438,7 +460,7 @@ yarn report-gas
 yarn random-uint256   # handy for generating random seeds
 ```
 
-## hardhat.config.ts customizations
+## hardhat customizations
 This project uses [hardhat](https://github.com/NomicFoundation/hardhat) for its solidity dev environment. The following  customizations have been made.
 
 ### typechain

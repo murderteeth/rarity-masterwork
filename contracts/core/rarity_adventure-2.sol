@@ -7,10 +7,12 @@ import "../interfaces/core/IRarity.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Attributes.sol";
+import "../library/Codex.sol";
 import "../library/Combat.sol";
 import "../library/Crafting.sol";
 import "../library/Effects.sol";
 import "../library/Monster.sol";
+import "../library/Proficiency.sol";
 import "../library/Random.sol";
 import "../library/Roll.sol";
 import "../library/Summoner.sol";
@@ -494,6 +496,33 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function is_victory(uint token) external view returns (bool) {
     return victory(adventures[token]);
+  }
+
+  function is_proficient_with_weapon(uint summoner, uint8 weapon_type, address weapon_contract) public view returns (bool) {
+    return Proficiency.is_proficient_with_weapon(summoner, IWeapon(weapon_contract).get_weapon(weapon_type).proficiency, weapon_type);
+  }
+
+  function is_proficient_with_armor(uint summoner, uint8 armor_type, address armor_contract) public view returns (bool) {
+    return Proficiency.is_proficient_with_armor(summoner, IArmor(armor_contract).get_armor(armor_type).proficiency, armor_type);
+  }
+
+  function preview(
+    uint summoner, 
+    uint weapon, 
+    address weapon_contract, 
+    uint armor, 
+    address armor_contract, 
+    uint shield, 
+    address shield_contract
+  ) public view returns (Combat.Combatant memory result) {
+    Combat.EquipmentSlot memory weapon_slot = Combat.EquipmentSlot(weapon_contract, weapon);
+    Combat.EquipmentSlot memory armor_slot = Combat.EquipmentSlot(armor_contract, armor);
+    Combat.EquipmentSlot memory shield_slot = Combat.EquipmentSlot(shield_contract, shield);
+    result.token = summoner;
+    result.origin = address(RARITY);
+    result.hit_points = int16(uint16(Summoner.hit_points(summoner)));
+    result.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
+    result.attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {

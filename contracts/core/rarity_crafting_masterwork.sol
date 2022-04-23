@@ -166,7 +166,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     uint dc = uint(get_dc(project));
     bool success = score >= int8(int(dc));
     if(success) project.progress += uint(score * int(dc) * 1e18);
-    (uint m, uint n) = get_progress(project);
+    (uint m, uint n) = progress(project);
 
     if(!success) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
@@ -281,12 +281,34 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
 
   function get_progress(uint token) public view returns (uint, uint) {
     Project memory project = projects[token];
-    return get_progress(project);
+    return progress(project);
   }
 
-  function get_progress(Project memory project) public view returns (uint, uint) {
+  function progress(Project memory project) public view returns (uint, uint) {
     if(project.done_crafting) return(1, 1);
     return(project.progress, item_cost_in_silver(project.base_type, project.item_type));
+  }
+
+  function get_craft_check_odds(uint token, uint summoner, uint bonus_mats) public view returns (int8 average_score, uint8 dc) {
+    Project memory project = projects[token];
+    (average_score, dc) = craft_check_odds(project, summoner, bonus_mats);
+  }
+
+  function craft_check_odds(Project memory project, uint summoner, uint bonus_mats) public view returns (int8 average_score, uint8 dc) {
+    (uint8 roll, int8 score) = Roll.craft(
+      summoner, 
+      CraftingSkills.get_specialization(project.base_type, project.item_type)
+    );
+    average_score = score - int8(roll) + 10 + craft_bonus(project, bonus_mats);
+    dc = get_dc(project);
+  }
+
+  function estimate_remaining_xp_cost(uint token, uint summoner, uint bonus_mats) public view returns (uint xp) {
+    Project memory project = projects[token];
+    uint silver = item_cost_in_silver(project.base_type, project.item_type);
+    (int8 average_score,) = craft_check_odds(project, summoner, bonus_mats);
+    uint average_score_uint = uint(uint8(average_score));
+    return XP_PER_DAY * silver / ((average_score_uint**2)*1e18);
   }
 
   function item_cost_in_silver(uint8 base_type, uint8 item_type) public view returns (uint cost) {

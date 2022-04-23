@@ -25,15 +25,18 @@ library Roll {
     if(Feats.diligent(summoner)) score += 2;
   }
 
+  function craft_bonus(uint summoner, uint8 specialization) public view returns (int8 bonus) {
+    bonus += Attributes.intelligence_modifier(summoner);
+    if(specialization == 0) {
+      bonus += int8(Skills.craft(summoner));
+    } else {
+      bonus += int8(CraftingSkills.ranks(summoner, specialization));
+    }    
+  }
+
   function craft(uint summoner, uint8 specialization) public view returns (uint8 roll, int8 score) {
     roll = Random.dn(summoner, 12171199555242019957, 20);
-    score = int8(roll);
-    score += Attributes.intelligence_modifier(summoner);
-    if(specialization == 0) {
-      score += int8(Skills.craft(summoner));
-    } else {
-      score += int8(CraftingSkills.ranks(summoner, specialization));
-    }
+    score = int8(roll) + craft_bonus(summoner, specialization);
   }
 
   function initiative(uint summoner) public view returns (uint8 roll, int8 score) {
