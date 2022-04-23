@@ -44,6 +44,7 @@ contracts/
 - codex/
   - [codex-crafting-skills.sol](contracts/codex/codex-crafting-skills.sol)
   - [codex-items-armor-masterwork.sol](contracts/codex/codex-items-armor-masterwork.sol)
+  - [codex-items-tools.sol](contracts/codex/codex-items-tools.sol)
   - [codex-items-tools-masterwork.sol](contracts/codex/codex-items-tools-masterwork.sol)
   - [codex-items-weapons-2.sol](contracts/codex/codex-items-weapons-2.sol)
   - [codex-items-weapons-masterwork.sol](contracts/codex/codex-items-weapons-masterwork.sol)
@@ -172,8 +173,26 @@ You can also craft the following masterwork tools, found in the [masterwork tool
 
 A codex for common tools, [codex-items-tools.sol](/contracts/codex/codex-items-tools.sol) has also been provided for future expansion.
 
+### Crafting difficulty class
+The initial difficulty of a masterwork project is just the DC of the common version of the item being crafted. This is called the "standard component". Once enough progress has been made at the standard component DC the difficulty increases to the masterwork component DC (which is always 20). When the difficulty goes up so does the amount of progress you make on each check.
+
+### Crafting progress
+Most projects will require more than one craft check. As you make craft checks each score is aggregated into a total with this forumula:
+
+![image](http://www.sciweavers.org/tex2img.php?eq=%20S_t%20%3D%20%5Csum%20%20%5Cbegin%7Bcases%7DS_t%20%3C%20C_s%2C%20%26%20score%20%2A%20DC_s%20%5C%5CS_t%20%5Cgeq%20C_s%2C%20%26%20score%20%2A%20DC_m%20%5Cend%7Bcases%7D%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+- S<sub>t</sub> = total score
+- C<sub>s</sub> = the cost of a common version of the item being crafted, priced in silver
+- DC<sub>s</sub> = the difficulty class of the item being crafted (aka, the standard component)
+- DC<sub>m</sub> = the difficulty class of the item's masterwork component (always 20)
+
+Progress is then computed as the ratio of your total score to the cost of the masterwork item, priced in silver:
+
+![image](http://www.sciweavers.org/tex2img.php?eq=Progress%20%3D%20TotalScore%20%2F%20TotalMasteworkItemCostInSilver&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+Thus, a bonus to your craft skill not only gives you better odds on passing a craft check. A bonus also "speeds up" your project by adding more to your progress on each succesful roll. 
+
 ### Masterwork crafting mechanics
-Masterwork adapts its crafting mechanics from the d20 rules below while also continuing ideas from the core common crafting contract. The mechanics have been set such that a level 6 crafter with maxed craft skills, and without supplying any bonus crafting mats, can complete a masterwork longsword in exchange for 1 week of XP.
+Masterwork adapts its crafting mechanics from the d20 rules below while also continuing ideas from the core common crafting contract. The mechanics have been set such that a level 6 crafter with maxed craft skills, and without supplying any bonus crafting mats, can complete a masterwork longsword for about 5 days of XP (one work week).
 
 [from d20, _under Check_](https://www.d20srd.org/srd/skills/craft.htm)
 > All crafts require artisan's tools to give the best chance of success. If improvised tools are used, the check is made with a -2 circumstance penalty. On the other hand, masterwork artisan's tools provide a +2 circumstance bonus on the check.
@@ -476,13 +495,13 @@ npx hardhat rarity-interfaces
 Please join me and say thanks to these great folks:
 
 ### Hrunting
-Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that we need masterwork crafting before magic crafting.
+Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that Rarity needs masterwork crafting before magic crafting.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
 Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
 
 ### [RarityExtended](https://rarityextended.com/)
-The Extended team kindly reviewed and gave feedback to masterwork. Masterwork has also borrowed some great ideas from their [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib).
+The Extended team kindly reviewed and gave feedback on masterwork. Masterwork also borrows some great ideas from Extended's [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib).
 
 ### [CryptoShuraba](https://www.metaland.game/)
-The Shuraba team has given a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.
+The Shuraba team gave a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.
