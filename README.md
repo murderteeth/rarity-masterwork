@@ -189,7 +189,7 @@ Progress is then computed as the ratio of your total score to the cost of the ma
 
 ![image](https://user-images.githubusercontent.com/89237203/164949319-35010474-17e8-4bf2-a2c2-010115d76f8e.png)
 
-Thus, a bonus to your craft skill not only gives you better odds on passing a craft check. A bonus also "speeds up" your project by adding more to your progress on each succesful roll. 
+Thus, a bonus to your craft skill doesn't just give you better odds on passing a craft check. A bonus also "speeds up" your project by adding more to your progress on each succesful roll. 
 
 ### Masterwork crafting mechanics
 Masterwork adapts its crafting mechanics from the d20 rules below while also continuing ideas from the core common crafting contract. The mechanics have been set such that a level 6 crafter with maxed craft skills, and without supplying any bonus crafting mats, can complete a masterwork longsword for about 5 days of XP (one work week).
@@ -495,7 +495,7 @@ npx hardhat rarity-interfaces
 Please join me and say thanks to these great folks:
 
 ### Hrunting
-Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity. Hrunting gave critical insights on the design of Monsters in the Barn and was first to point out that Rarity needs masterwork crafting before magic crafting.
+Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity. Hrunting gave critical input on the design of Monsters in the Barn and was first to point out that Rarity needs masterwork crafting before magic crafting.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
 Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
