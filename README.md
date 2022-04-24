@@ -177,7 +177,7 @@ A codex for common tools, [codex-items-tools.sol](/contracts/codex/codex-items-t
 The initial difficulty of a masterwork project is just the DC of the common version of the item being crafted. This is called the "standard component". Once enough progress has been made at the standard component DC the difficulty increases to the masterwork component DC (which is always 20). When the difficulty goes up so does the amount of progress you make on each check.
 
 ### Crafting progress
-Most projects will require more than one craft check. As you make craft checks each score is aggregated into a total with this forumula:
+Most projects will require more than one craft check. As you make craft checks each score is aggregated into a total with this formula:
 
 ![image](https://user-images.githubusercontent.com/89237203/164949444-43b4d936-6ee8-40be-a336-6afc29e7cd6f.png)
 - S<sub>t</sub> = total score
@@ -495,7 +495,7 @@ npx hardhat rarity-interfaces
 Please join me and say thanks to these great folks:
 
 ### Hrunting
-Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity in a way that stays genuine to both the rules and spirit of the system. Hrunting was also first to point out that Rarity needs masterwork crafting before magic crafting.
+Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity. Hrunting gave critical insights on the design of Monsters in the Barn and was first to point out that Rarity needs masterwork crafting before magic crafting.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
 Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
@@ -504,4 +504,4 @@ Homestead wrote the first draft of the masterwork dungeon and core library. This
 The Extended team kindly reviewed and gave feedback on masterwork. Masterwork also borrows some great ideas from Extended's [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib).
 
 ### [CryptoShuraba](https://www.metaland.game/)
-The Shuraba team gave a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.
+The Shuraba team also gave a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.
