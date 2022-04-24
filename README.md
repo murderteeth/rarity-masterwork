@@ -122,7 +122,7 @@ const percentDone = progress.div(masterworkItemCostInSilver)
 ```
 Estimate a project's remaining XP cost:
 ```ts
-const estimate = await masterwork.estimate_remaining_xp_cost(masterworkToken)
+const estimate = await masterwork.estimate_remaining_xp_cost(masterworkToken, summoner, bonusMats)
 console.log('estimate', ethers.utils.formatEther(estimate))
 ```
 Get a summoner's odds of succeeding the current craft check:
