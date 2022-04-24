@@ -242,7 +242,7 @@ Note that the last parameter is the address of the crafting contract that issues
 - [common items wrapper](contracts/core/rarity_crafting_common_wrapper.sol)
 - [masterwork items](contracts/core/rarity_crafting_masterwork.sol)
 
-The common items wrapper makes is easy for the adventure contract, and its underlying combat system, to handle common and masterwork items through the same interfaces.
+The common items wrapper makes it easy for the adventure contract to handle common and masterwork items through the same interfaces.
 
 Players may also choose to fight unarmed and/or unarmored. This is only recommended for Monks, however, who receive attack and armor bonuses [per d20](https://www.d20srd.org/srd/classes/monk.htm).
 
