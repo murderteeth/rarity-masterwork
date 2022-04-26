@@ -103,7 +103,7 @@ describe('Core: Adventure II', function () {
     })).deploy()
   }
 
-  it('can\'t set a item whitelist address to zero', async function () {
+  it('can\'t set an item whitelist address to zero', async function () {
     const adventure = await mockAdventure()
     await expect(adventure.set_item_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
     .to.be.revertedWith('common == address(0)')

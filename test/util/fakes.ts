@@ -46,14 +46,14 @@ export async function fakeSkills() {
 
 export async function fakeCraftingSkillsCodex() {
   const result = await smock.fake<IRarityCodexCraftingSkills>('contracts/codex/codex-crafting-skills.sol:codex', {
-    address: '0x0000000000000000000000000000000000001000'
+    address: '0x0000000000000000000000000000000000000001'
   })
   return result
 }
 
 export async function fakeCraftingSkills() {
   const result = await smock.fake<RarityCraftingSkills>('contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills', {
-    address: '0x0000000000000000000000000000000000001001'
+    address: '0x0000000000000000000000000000000000000007'
   })
   result.get_skills
   .returns(Array(5).fill(0))

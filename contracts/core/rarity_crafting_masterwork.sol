@@ -28,11 +28,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityGold constant GOLD = IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
   IRarityCommonCrafting constant COMMON_CRAFTING = IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-  ICodexTools COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000000);
-  IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000000);
-  ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000000);
-  ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000000);
-  ICodexTools TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000000);
+  ICodexTools COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000002);
+  IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000008);
+  ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
+  ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000005);
+  ICodexTools TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000006);
 
   event Craft(address indexed owner, uint indexed token, uint crafter, uint bonus_mats, uint8 roll, int8 score, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint indexed token, uint crafter, uint8 base_type, uint8 item_type);

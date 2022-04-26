@@ -7,7 +7,7 @@ import "../library/Monster.sol";
 
 contract rarity_crafting_materials_2 is ERC20 {
 
-  IRarityAdventure2 public ADVENTURE_2 = IRarityAdventure2(0x0000000000000000000000000000000000000000);
+  IRarityAdventure2 public ADVENTURE_2 = IRarityAdventure2(0x0000000000000000000000000000000000000009);
 
   constructor() ERC20("Rarity Crafting Materials (II)", "Craft (II)") {}
 
