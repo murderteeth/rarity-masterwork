@@ -42,6 +42,16 @@ export const enumberance = {
   ranged: 5
 }
 
+export const damageType = {
+  bludgeoning: 1,
+  piercing: 2,
+  slashing: 3
+}
+
+export function getDamageType(id: number) {
+  return Object.keys(damageType)[id - 1]
+}
+
 export function unpackAttacks(attacksPack: number[]) {
   const result = []
   for(let i = 0; i < 4; i ++) {
