@@ -2,8 +2,16 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../interfaces/core/IRarityAdventure2.sol";
 import "../library/Monster.sol";
+
+interface IRarityAdventure2 {
+  function getApproved(uint256 tokenId) external view returns (address);
+  function ownerOf(uint256 tokenId) external view returns (address);
+  function isApprovedForAll(address owner, address operator) external view returns (bool);
+  function adventures(uint) external view returns (bool dungeon_entered, bool combat_ended, bool search_check_rolled, bool search_check_succeeded, bool search_check_critical, uint8 monster_count, uint8 monsters_defeated, uint8 combat_round, uint64 started, uint64 ended, uint summoner);
+  function turn_orders(uint, uint) external view returns (uint8 initiative_roll, int8 initiative_score, uint8 armor_class, int16 hit_points, address origin, uint token);
+  function monster_spawn(uint) external view returns (uint8);
+}
 
 contract rarity_crafting_materials_2 is ERC20 {
 
@@ -14,7 +22,7 @@ contract rarity_crafting_materials_2 is ERC20 {
   mapping(uint => bool) public adventure_claims;
 
   function claim(uint adventure_token) public {
-    require(ADVENTURE_2.isApprovedOrOwnerOfAdventure(adventure_token), "!approvedForAdventure");
+    require(isApprovedOrOwnerOfAdventure(adventure_token), "!approvedForAdventure");
     require(!adventure_claims[adventure_token], "claimed");
 
     (
@@ -53,5 +61,11 @@ contract rarity_crafting_materials_2 is ERC20 {
 
   function burn(uint amount) public {
     _burn(_msgSender(), amount);
+  }
+
+  function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
+    if(ADVENTURE_2.getApproved(token) == _msgSender()) return true;
+    address owner = ADVENTURE_2.ownerOf(token);
+    return owner == _msgSender() || ADVENTURE_2.isApprovedForAll(owner, _msgSender());
   }
 }

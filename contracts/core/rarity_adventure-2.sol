@@ -51,7 +51,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   event RollInitiative(address indexed owner, uint indexed token, uint8 roll, int8 score);
   event Attack(address indexed owner, uint indexed token, uint attacker, uint defender, uint8 round, bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type);
-  event Dying(address indexed owner, uint indexed token, uint combatant);
+  event Dying(address indexed owner, uint indexed token, uint8 round, uint combatant);
   event SearchCheck(address indexed owner, uint indexed token, uint8 roll, int8 score);
 
   struct Adventure {
@@ -240,11 +240,11 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     require(monster.origin == address(this), "monster.origin != address(this)");
     require(monster.hit_points > -1, "monster.hit_points < 0");
 
-    attack_combatant(token, summoner, monster, attack_counter, adventure.combat_round);
+    attack_combatant(token, summoners_turn, summoner, target, monster, attack_counter, adventure.combat_round);
 
     if(monster.hit_points < 0) {
       adventure.monsters_defeated += 1;
-      emit Dying(_msgSender(), token, monster.token);
+      emit Dying(_msgSender(), token, adventure.combat_round, target);
     }
 
     if(adventure.monsters_defeated == adventure.monster_count) {
@@ -395,7 +395,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       Combat.Combatant memory monster = turn_order[current_turn];
       uint attack_counter = attack_counters[token];
       if(monster.hit_points > -1) {
-        attack_combatant(token, monster, summoner, attack_counter, adventure.combat_round);
+        attack_combatant(token, current_turn, monster, summoners_turn, summoner, attack_counter, adventure.combat_round);
         if(attack_counter < 3 && Combat.has_attack(monster.attacks, attack_counter + 1)) {
           attack_counters[token] = attack_counter + 1;
         } else {
@@ -410,7 +410,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     current_turns[token] = current_turn;
     if(summoner.hit_points < 0) {
       adventure.combat_ended = true;
-      emit Dying(_msgSender(), token, summoner.token);
+      emit Dying(_msgSender(), token, adventure.combat_round, summoners_turn);
     }
   }
 
@@ -423,10 +423,10 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
-  function attack_combatant(uint token, Combat.Combatant memory attacker, Combat.Combatant storage defender, uint attack_number, uint8 round) internal {
+  function attack_combatant(uint token, uint attacker_index, Combat.Combatant memory attacker, uint defender_index, Combat.Combatant storage defender, uint attack_number, uint8 round) internal {
     (bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
     = Combat.attack_combatant(attacker, defender, attack_number);
-    emit Attack(_msgSender(), token, attacker.token, defender.token, round, hit, roll, score, critical_confirmation, damage, damage_type);
+    emit Attack(_msgSender(), token, attacker_index, defender_index, round, hit, roll, score, critical_confirmation, damage, damage_type);
   }
 
   function outside_dungeon(Adventure memory adventure) public pure returns (bool) {

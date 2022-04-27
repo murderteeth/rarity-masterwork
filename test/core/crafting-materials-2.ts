@@ -20,9 +20,9 @@ describe('Core: Crafting Materials II', function () {
 
   beforeEach(async function() {
     this.adventure_token = randomId()
-    this.adventure.isApprovedOrOwnerOfAdventure
+    this.adventure.getApproved
     .whenCalledWith(this.adventure_token)
-    .returns(true)
+    .returns(this.signer.address)
   })
 
   it('claims mats for slain monsters', async function() {
