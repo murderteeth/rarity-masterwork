@@ -109,7 +109,7 @@ library Combat {
     Attack memory attack = unpack_attack(attacker.attacks, attack_number);
 
     AttackRoll memory attack_roll = Roll.attack(
-      attacker.token, 
+      attacker.token + attack_number, 
       attack.attack_bonus, 
       attack.critical_modifier, 
       attack.critical_multiplier, 
@@ -120,7 +120,7 @@ library Combat {
       return (false, attack_roll.roll, attack_roll.score, attack_roll.critical_confirmation, 0, 0);
     } else {
       damage = Roll.damage(
-        attacker.token, 
+        attacker.token + attack_number, 
         attack.damage_dice_count, 
         attack.damage_dice_sides,
         attack.damage_modifier,

@@ -69,32 +69,32 @@ library Roll {
   }
 
   function attack(
-    uint token, 
+    uint seed, 
     int8 total_bonus,
     int8 critical_modifier,
     uint8 critical_multiplier,
     uint8 target_armor_class
   ) public view returns (AttackRoll memory result) {
-    result.roll = Random.dn(token, 9807527763775093748, 20);
+    result.roll = Random.dn(seed, 9807527763775093748, 20);
     if(result.roll == 1) return AttackRoll(1, 0, 0, 0, 0);
     result.score = int8(result.roll) + total_bonus;
     if(result.score >= int8(target_armor_class)) result.damage_multiplier++;
     if(result.roll >= uint(int(int8(20) + critical_modifier))) {
-      result.critical_roll = Random.dn(token, 9809778455456300450, 20);
+      result.critical_roll = Random.dn(seed, 9809778455456300450, 20);
       result.critical_confirmation = uint8(int8(result.critical_roll) + total_bonus);
       if(result.critical_confirmation >= target_armor_class) result.damage_multiplier += critical_multiplier;
     }
   }
 
   function damage(
-    uint token,
+    uint seed,
     uint8 dice_count, 
     uint8 dice_sides,
     int8 total_modifier,
     uint8 damage_multiplier
   ) public view returns (uint8 result) {
     for(uint i; i < damage_multiplier; i++) {
-      int8 signed_result = int8(Random.dn(token, 6459055441333536942 + i, dice_count, dice_sides)) + total_modifier;
+      int8 signed_result = int8(Random.dn(seed, 6459055441333536942 + i, dice_count, dice_sides)) + total_modifier;
       if(signed_result < 1) {
         result += 1;
       } else {
