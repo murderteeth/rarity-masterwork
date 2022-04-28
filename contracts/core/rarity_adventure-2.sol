@@ -320,16 +320,16 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   ) {
     uint level_or_max = level > 8 ? 8 : level;
 
-    monsters[0] = MONSTERS[MONSTER_LEVEL_OFFSET + level_or_max];
+    monsters[monster_count] = MONSTERS[MONSTER_LEVEL_OFFSET + level_or_max];
     monster_count++;
 
     if(Random.dn(12586470658909511785, token, 100) > 50) {
-      monsters[1] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
+      monsters[monster_count] = MONSTERS[Random.dn(15608573760256557610, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
       monster_count++;
     }
 
     if(level_or_max > 3 && Random.dn(1593506169583491991, token, 100) > 50) {
-      monsters[2] = MONSTERS[Random.dn(9249786475706550225, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
+      monsters[monster_count] = MONSTERS[Random.dn(9249786475706550225, token, uint8(MONSTER_LEVEL_OFFSET + level_or_max)) - 1];
       monster_count++;
     }
   }
