@@ -45,7 +45,7 @@ interface ICommonCrafting {
 contract rarity_crafting_wrapper is ICommonCrafting, IWeapon, IArmor, IEffects {
 
   // IWeapon
-  ICodexWeapon constant WEAPON_CODEX = ICodexWeapon(0xeE1a2EA55945223404d73C0BbE57f540BBAAD0D8);
+  ICodexWeapon constant WEAPON_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000003);
   function get_weapon(uint8 item_type) override public pure returns (IWeapon.Weapon memory) {
     return WEAPON_CODEX.item_by_id(item_type);
   }
