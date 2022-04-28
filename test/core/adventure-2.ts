@@ -106,7 +106,7 @@ describe('Core: Adventure II', function () {
   it('can\'t set an item whitelist address to zero', async function () {
     const adventure = await mockAdventure()
     await expect(adventure.set_item_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
-    .to.be.revertedWith('common == address(0)')
+    .to.be.revertedWith('commonWrapper == address(0)')
     await expect(adventure.set_item_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
     .to.be.revertedWith('masterwork == address(0)')
   })
@@ -740,6 +740,10 @@ describe('Core: Adventure II', function () {
     await this.adventure.equip(token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
 
     await this.adventure.end(token)
+
+    expect(await this.adventure.equipment_index(this.crafting.common.address, longsword)).to.eq(0)
+    expect(await this.adventure.equipment_index(this.crafting.common.address, fullPlate)).to.eq(0)
+    expect(await this.adventure.equipment_index(this.crafting.common.address, heavyWoodShield)).to.eq(0)
 
     expect(this.core.rarity['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.adventure.address,

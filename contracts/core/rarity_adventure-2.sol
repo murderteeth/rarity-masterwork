@@ -293,16 +293,19 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     if(weapon_slot.item_contract != address(0)) {
       ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), _msgSender(), weapon_slot.item);
+      delete equipment_index[weapon_slot.item_contract][weapon_slot.item];
     }
 
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     if(armor_slot.item_contract != address(0)) {
       ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), _msgSender(), armor_slot.item);
+      delete equipment_index[armor_slot.item_contract][armor_slot.item];
     }
 
     Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     if(shield_slot.item_contract != address(0)) {
       ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), _msgSender(), shield_slot.item);
+      delete equipment_index[shield_slot.item_contract][shield_slot.item];
     }
 
     adventure.ended = uint64(block.timestamp);
