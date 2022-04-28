@@ -88,12 +88,15 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return this.onERC721Received.selector;
   }
 
-  function set_item_whitelist(address common, address masterwork) public {
+  function set_item_whitelist(address commonWrapper, address masterwork) public {
     require(ITEM_WHITELIST[0] == address(0), "whitelist already set");
-    require(common != address(0), "common == address(0)");
+    require(commonWrapper != address(0), "commonWrapper == address(0)");
     require(masterwork != address(0), "masterwork == address(0)");
-    ITEM_WHITELIST[0] = common;
+    ITEM_WHITELIST[0] = commonWrapper;
     ITEM_WHITELIST[1] = masterwork;
+
+    ICrafting common = ICrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
+    common.setApprovalForAll(commonWrapper, true);
   }
 
   function time_to_next_adventure(uint summoner) public view returns (uint time) {
