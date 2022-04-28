@@ -1,51 +1,19 @@
-import { ethers } from 'hardhat'
-import deployAddresses from '../../deploy-addresses.json'
-import { classes } from '../../test/util/classes'
-import { getDamageType } from '../../test/util'
+import { ethers, network } from 'hardhat'
+import { equipmentType, getDamageType } from '../../test/util'
 import monsterCodex from '../../test/util/monster-codex.json'
+import getContracts from './--contracts'
+import party from './party.json'
 
-async function contracts() {
-  return {
-    rarity: await ethers.getContractAt(
-      'contracts/core/rarity.sol:rarity',
-      '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb'
-    ),
-    attributes: await ethers.getContractAt(
-      'contracts/core/attributes.sol:rarity_attributes',
-      '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
-    ),
-    adventure2: await ethers.getContractAt(
-      'contracts/core/rarity_adventure-2.sol:rarity_adventure_2', 
-      deployAddresses.core_rarity_adventure_2
-    ),
-    mats2: await ethers.getContractAt(
-      'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
-      deployAddresses.core_crafting_mats_2
-    ),
-    masterwork: await ethers.getContractAt(
-      'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', 
-      deployAddresses.core_rarity_crafting_masterwork
-    ),
-  }  
+const gasLimit = 2_000_000
+
+async function jumpOneDay() {
+  await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
+  await network.provider.send("evm_mine");
 }
 
-async function trainSummoner(contracts: any, summonerClass: number, abilities: number[]) {
-  const result = await contracts.rarity.next_summoner()
-  await(await contracts.rarity.summon(summonerClass)).wait()
-  await(await contracts.attributes.point_buy(result, ...abilities)).wait()
-  return result
-}
-
-async function trainFighter(rarity: any) {
-  const adventurer = await trainSummoner(rarity, 
-    classes.fighter, [18, 12, 13, 11, 8, 12])
-  return adventurer
-}
-
-async function trainMonk(rarity: any) {
-  const adventurer = await trainSummoner(rarity, 
-    classes.monk, [18, 12, 13, 11, 12, 8])
-  return adventurer
+async function jumpOneMinute() {
+  await network.provider.send("evm_increaseTime", [1 * 60]);
+  await network.provider.send("evm_mine");
 }
 
 async function getTurnOrder(contracts: any, adventureToken: any) {
@@ -62,19 +30,18 @@ async function getMonster(contracts: any, combatantToken: any) {
   return monsterCodex.find((monster: any) => monster.id === monsterId)?.name
 }
 
-async function getInititalTurnOrder(contracts: any, summoner: any, adventureToken: any) {
-  const initialSummoner = await contracts.adventure2.preview(summoner, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
+async function getInititalTurnOrder(contracts: any, initialSummoner: any, adventureToken: any) {
   const { adventure, turnOrder } = await getTurnOrder(contracts, adventureToken)
   const index = turnOrder.findIndex((combatant: any) => combatant.token.eq(initialSummoner.token))
-  turnOrder[index] = { ...initialSummoner, initiative: turnOrder[index].initiative }
+  turnOrder[index] = { ...initialSummoner, initiative_roll: turnOrder[index]['initiative_roll'], initiative_score: turnOrder[index]['initiative_score'] }
   return turnOrder
 }
 
 async function logTurnOrder(contracts: any, turnOrder: any) {
-  console.log('\ncombatants ---------------------')
+  console.log('\n-- status')
   for(let i = 0; i < turnOrder.length; i++) {
     const combatant = turnOrder[i]
-    const type = combatant['origin'] === contracts.rarity.address ? 'summoner' : await getMonster(contracts, combatant['token'])
+    const type = combatant['origin'] === contracts.rarity.address ? 'Summoner' : await getMonster(contracts, combatant['token'])
     console.log(type, 'hp', combatant['hit_points'], 'ac', combatant['armor_class'], 'initiative', combatant['initiative_score'])
   }  
 }
@@ -114,50 +81,139 @@ async function logAttacks(contracts: any, adventureToken: any, tx: any) {
   }
 }
 
-async function adventure(contracts: any) {
-  const gasLimit = 1_000_000
-  console.log()
-  //const adventurer = await trainFighter(contracts)
-  const adventurer = await trainMonk(contracts)
+async function adventure(contracts: any, logging: boolean, adventureToken:any, adventurer: any, level: number, loadout: number) {
+  if(logging) console.log()
 
-  await contracts.rarity.approve(contracts.adventure2.address, adventurer)
-  const startTx = await(await contracts.adventure2.start(adventurer)).wait()
-  const adventureToken = startTx.events[3].args.tokenId
+  if(logging) console.log(`-- Adventure ${adventureToken.toString()} ---------------- }~-`)
+  if(logging) console.log(`-- Level ${level} Fighter`)
 
-  console.log(`-- Adventure ${adventureToken.toString()} ---------------- }~-`)
-  console.log('-- Level 1 Monk')
-  console.log('-- Unarmed')
+  let summonerPreview = null
+  switch(loadout) {
+    case 0: {
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.longsword, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.armor, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.shield, party.equipment.shield, contracts.crafting.commonWrapper.address, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.longsword, contracts.crafting.commonWrapper.address, party.equipment.armor, contracts.crafting.commonWrapper.address, party.equipment.shield, contracts.crafting.commonWrapper.address)
+      if(logging) console.log('-- Armed with longsword, big wood shield, and full plate armor')
+      break
+    } case 1: {
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.greatsword, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.armor, contracts.crafting.commonWrapper.address, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.greatsword, contracts.crafting.commonWrapper.address, party.equipment.armor, contracts.crafting.commonWrapper.address, 0, ethers.constants.AddressZero)
+      if(logging) console.log('-- Armed with greatsword and full plate armor')
+      break
+    } default: {
+      summonerPreview = await contracts.adventure2.preview(adventurer, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
+      if(logging) console.log('-- Unarmed')
+    }
+  }
 
   const enterTx = await(await contracts.adventure2.enter_dungeon(adventureToken, { gasLimit })).wait()
-  const initialTurnOrder = await getInititalTurnOrder(contracts, adventurer, adventureToken)
-  await logTurnOrder(contracts, initialTurnOrder)
-  console.log()
-  await logAttacks(contracts, adventureToken, enterTx)
+  const initialTurnOrder = await getInititalTurnOrder(contracts, summonerPreview, adventureToken)
+  if(logging) await logTurnOrder(contracts, initialTurnOrder)
+  if(logging) console.log()
+  if(logging) await logAttacks(contracts, adventureToken, enterTx)
 
   while(!(await contracts.adventure2.adventures(adventureToken)).combat_ended) {
     const target = await contracts.adventure2.next_able_monster(adventureToken)
     const attackTx = await(await contracts.adventure2.attack(adventureToken, target, { gasLimit })).wait()
-    await logAttacks(contracts, adventureToken, attackTx)
+    if(logging) await logAttacks(contracts, adventureToken, attackTx)
+    await jumpOneMinute()
   }
 
-  await logTurnOrder(contracts, (await getTurnOrder(contracts, adventureToken)).turnOrder)
-  await contracts.adventure2.end(adventureToken)
+  if(logging) await logTurnOrder(contracts, (await getTurnOrder(contracts, adventureToken)).turnOrder)
 
   const adventure = await contracts.adventure2.adventures(adventureToken)
   if(adventure.monsters_defeated === adventure.monster_count) {
+    if(logging) console.log('VICTORY!')
+
+    const searchTx = await(await contracts.adventure2.search(adventureToken)).wait()
+    const searchArgs = searchTx.events[0].args
+    const searchSuccess = searchArgs['score'] >= 20
+    const searchCrit = searchArgs['roll'] == 20
+    if(searchSuccess) {
+      if(searchCrit) {
+        if(logging) console.log('\n🎇 20% more loot found!', '::', searchArgs['roll'], searchArgs['score'])
+      } else {
+        if(logging) console.log('\n🔍 15% more loot found!', '::', searchArgs['roll'], searchArgs['score'])
+      }
+    } else {
+      if(logging) console.log('\n💔 no more loot found', '::', searchArgs['roll'], searchArgs['score'])
+    }
+
+    if(logging) console.log('-- end adventure')
+    await contracts.adventure2.end(adventureToken)
     const claimTx = await(await contracts.mats2.claim(adventureToken)).wait()
     const transferArgs = claimTx.events.find((e: any) => e.event === 'Transfer').args
-    console.log('\n💰 VICTORY!', ethers.utils.formatEther(transferArgs['value']), 'mats claimed')
+    if(logging) console.log('💰', ethers.utils.formatEther(transferArgs['value']), 'mats claimed')
+  } else {
+    if(logging) console.log('-- end adventure')
+    await contracts.adventure2.end(adventureToken)
   }
 
-  console.log()
+  if(logging) console.log()
+  return adventure.monsters_defeated === adventure.monster_count
 }
 
 async function main() {
-  const CONTRACTS = await contracts()
-  for(let i = 0; i < 10; i++) {
-    await adventure(CONTRACTS)
+  const contracts = await getContracts()
+
+  const sample = 10
+
+  // const loadout = 0
+  // const loadoutDescription = 'longsword/full plate/sheild'
+  const loadout = 1
+  const loadoutDescription = 'greatsword/full plate'
+
+  const levels = party.fighters.length
+  // const levels = 2
+  console.log('🤺 Monsters in the Barn levels: 1 -', levels.toString(), ' loadout:', loadoutDescription, 'samples:', sample)
+  const results = Array(levels).fill([]).map(r => Array(2).fill(0))
+  for(let i = 0; i < levels; i++) {
+    const fighter = party.fighters[i]
+    const level = i + 1
+    process.stdout.write((level > 1 ? '\n' : '') + '[level ' + level + '] ')
+    for(let j = 0; j < sample; j++) {
+      await jumpOneDay()
+      await contracts.rarity.approve(contracts.adventure2.address, fighter)
+      const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
+      const adventureToken = startTx.events[3].args.tokenId
+      try {
+        const result = await adventure(contracts, false, adventureToken, fighter, level, loadout)
+        results[i][result ? 1 : 0]++
+        process.stdout.write(result ? '🏆' : '👹')
+      } catch(error) {
+        console.log(error)
+        console.log('\n-- end adventure!')
+        await contracts.adventure2.end(adventureToken)
+      }
+    }
+    process.stdout.write(' win rate ' + (100 * results[i][1] / sample).toFixed(2) + '%')
   }
+  process.stdout.write('\n')
+
+  // results.forEach((result: any, index: any) => {
+  //   const level = index + 1
+  //   console.log('level', level, 'win rate', (100 * result[1] / sample).toFixed(2), '%')
+  // })
+
+  // play all fighters
+  // for(let i = 0; i < party.fighters.length; i++) {
+  //   const fighter = party.fighters[i]
+  //   for(let j = 0; j < 2; j++) {
+  //     await jumpOneDay()
+  //     await contracts.rarity.approve(contracts.adventure2.address, fighter)
+  //     const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
+  //     const adventureToken = startTx.events[3].args.tokenId
+  //     try {
+  //       await adventure(contracts, adventureToken, fighter, i + 1, j)
+  //     } catch(error) {
+  //       console.log(error)
+  //       console.log('\n-- end adventure!')
+  //       await contracts.adventure2.end(adventureToken)
+  //     }
+  //   }
+  // }
 }
 
 main().catch((error) => {

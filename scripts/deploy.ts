@@ -118,6 +118,19 @@ async function main() {
   await library_summoner.deployed()
   console.log('📚 deploy library/Summoner.sol', library_summoner.address);
 
+
+
+  //////////////////////////////////////////////////
+  console.log('\n🤖 update contract reference addresses and compile')
+  await replace.replaceInFile({
+    files: 'contracts/**/*.sol',
+    from: [new RegExp(devAddresses.codex_weapons_2, 'g')],
+    to: [codex_items_weapons_2.address]
+  })
+  await hre.run('compile')
+
+
+
   const core_rarity_crafting_common_wrapper = await (await ethers.getContractFactory('contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper')).deploy()
   await core_rarity_crafting_common_wrapper.deployed()
   console.log('🤺 deploy core/rarity_crafting_common_wrapper.sol', core_rarity_crafting_common_wrapper.address);
@@ -162,7 +175,6 @@ async function main() {
     from: [
       new RegExp(devAddresses.core_crafting_mats_2, 'g'),
       new RegExp(devAddresses.codex_common_tools, 'g'),
-      new RegExp(devAddresses.codex_weapons_2, 'g'),
       new RegExp(devAddresses.codex_weapons_masterwork, 'g'),
       new RegExp(devAddresses.codex_armor_masterwork, 'g'),
       new RegExp(devAddresses.codex_tools_masterwork, 'g')
@@ -170,7 +182,6 @@ async function main() {
     to: [
       core_crafting_mats_2.address,
       codex_items_tools.address,
-      codex_items_weapons_2.address,
       codex_items_weapons_masterwork.address,
       codex_items_armor_masterwork.address,
       codex_items_tools_masterwork.address
