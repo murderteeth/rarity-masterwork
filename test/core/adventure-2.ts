@@ -504,7 +504,7 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(BigNumber.from('15608573760256557610'), this.token, 5)
       .returns(5)
 
-      expect((await this.adventure.roll_monsters(this.token, 4)).monster_count).to.eq(2)
+      expect((await this.adventure.roll_monsters(this.token, 7)).monster_count).to.eq(2)
 
       this.codex.random.dn
       .whenCalledWith(BigNumber.from('1593506169583491991'), this.token, 100)
@@ -514,7 +514,7 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(BigNumber.from('9249786475706550225'), this.token, 5)
       .returns(5)
 
-      expect((await this.adventure.roll_monsters(this.token, 4)).monster_count).to.eq(3)
+      expect((await this.adventure.roll_monsters(this.token, 7)).monster_count).to.eq(3)
 
       this.codex.random.dn
       .whenCalledWith(BigNumber.from('9249786475706550225'), this.token, 9)

@@ -6,16 +6,20 @@ Masterwork is a new crafting level for Rarity players and builders. Like Rarity'
 Masterwork is an expansion of the original Rarity core created by Andre Cronje, et al in September 2021. It continues the vision of a free-to-mint, permissionless, d20 implementation in solidity.
 
 ### So what?
-Masterwork weapons and armor are exceptional. They are made so well that you get a bonus when using them. Masterwork weapons make you more accurate, granting a +1 bonus on all attacks. That is, you get a 10% better chance of hitting an Armor Class of 10, 5% better odds against AC 20, and so on. Masterwork armor fits you perfectly, granting a +1 armor check bonus. This gives you better odds whenever your movement is in check, such as sneaking up on an opponent or climbing out of a trap.
+Masterwork weapons and armor are exceptional. They are made so well that you get a bonus when using them.
 
-🧙‍♂️ - Masterwork crafting is also the basis for magic weapons and armor. Magic weapons and armor grant even more bonuses such as extra damage and improved armor class. Magic Crafting, coming soon..
+Masterwork weapons make you more accurate, granting a +1 bonus on all attacks. That is, you get a 10% better chance of hitting an Armor Class of 10, 5% better odds against AC 20, and so on. 
 
-👷‍♀️ - And masterwork is built around a solidity library containing everything you need to create your own on-chain d20 adventures. 
+Masterwork armor fits you perfectly, granting a +1 armor check bonus. This gives you better odds whenever your movement is in check, such as sneaking up on an opponent or climbing out of a trap.
+
+🧙‍♂️ - Masterwork crafting is the basis for magic weapons and armor. Magic weapons and armor grant even more bonuses such as extra damage and improved armor class. Magic Crafting, coming soon..
+
+👷‍♀️ - The [Rarity Core Library](/contracts/library) was created to support Masterwork. The core library contains everything you need to create your own on-chain d20 adventures in Solidity.
 
 👹 - Nice!!
 
 ### Now what?
-This git repo contains all the source code and tooling used to build and test Masterwork. Use it as a reference for integrating masterwork and other d20 mechanics with your game. 
+This git repo contains all the source code and tooling used to build and test Masterwork. Use it as a reference or template for integrating masterwork and other d20 mechanics with your game. 
 
 ## Contents
 - [Get started](#get-started)
@@ -33,12 +37,13 @@ This git repo contains all the source code and tooling used to build and test Ma
 ```shell
 git clone git@github.com:murderteeth/rarity-masterwork.git
 cd rarity-masterwork
+# config local .env file
 yarn
 npx hardhat compile
 yarn test
 ```
 
-## Proposed additions to Rarity Core
+## Additions to Rarity Core
 
 contracts/
 - codex/
@@ -211,7 +216,7 @@ Masterwork adapts its crafting mechanics from the d20 rules below while also con
 Monsters in the Barn is a single player, turn-based combat encounter. The adventure begins outside a barn where monsters have been hording salvage. Choose a summoner, equip them with weapons and armor, enter the barn.. If you defeat the monsters, claim their salvage and use it to speed up crafting at the masterwork crafting station. If you loose, try again tomorrow. This adventure is minted to your wallet as a standard ERC721 token. 
 
 ### Challenge Rating
-Monsters in the Barn is designed to be challenging for summoners level 1 through 8. Entering the barn initiaties combat with up to 3 monsters. Summoners are matched against monsters having a CR (challenge rating) equal to their level or lower.
+Monsters in the Barn is designed to be challenging for summoners level 1 through 9. Entering the barn initiaties combat with up to 3 monsters. Summoners are matched against monsters having a CR (challenge rating) equal to their level or lower.
 
 ### Walkthrough
 1. Start a new Monsters in the Barn adventure by selecting a summoner and calling `start`:
@@ -335,14 +340,11 @@ The following d20 monsters were chosen for both their CRs and their simple attac
 - [**Dire Wolverine (CR 4)**](https://www.d20srd.org/srd/monsters/direWolverine.htm)
 - [**Troll (CR 5)**](https://www.d20srd.org/srd/monsters/troll.htm)
 - [**Ettin (CR 6)**](https://www.d20srd.org/srd/monsters/ettin.htm)
-- [**Hill Giant (CR 7)**](https://www.d20srd.org/srd/monsters/giant.htm#hillGiant)
-- [**Stone Giant (CR 8)**](https://www.d20srd.org/srd/monsters/giant.htm#stoneGiant)
-
 
 ## Rarity Core Library
 Masterwork's crafting and dungeon mechanics are complex. For sanity's sake we started a [rarity core solidity library](https://github.com/murderteeth/rarity-masterwork/tree/main/contracts/library) to abstract everything a builder needs to create their own d20 adventures. 
 
-The library is extensive and growing. The library isn't documented yet, but lets look at how combat is implemented. The library lets you have any character attack any other character using d20 rules to compute the outcome. It does this by first requiring that each fighter be adapted to a standard `Combatant` struct. This allows the combat system to run d20 combat rules against a common interface and enables summoner vs monster and summoner vs summoner combat.. it also enables monster vs monster and, in theory, general nft vs nft.
+Consider the library's combat system. The combat system lets any character attack any other character using d20 rules to compute the outcome. It does this by requiring that each fighter be adapted to a standard `Combatant` struct. This allows the combat system to run d20 combat rules against a common interface and enables summoner vs monster and summoner vs summoner combat.. it also enables monster vs monster and, in theory, general nft vs nft.
 
 Check out the `Combatant` stuct:
 ```solidity
