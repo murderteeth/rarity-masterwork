@@ -23,7 +23,7 @@ This git repo contains all the source code and tooling used to build and test Ma
 
 ## Contents
 - [Get started](#get-started)
-- [Proposed additions to Rarity Core](#proposed-additions-to-rarity-core)
+- [Additions to Rarity Core](#additions-to-rarity-core)
 - [Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools](#rarity-crafting-2---masterwork-weapons-armor-and-tools)
 - [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
 - [Rarity Core Library](#rarity-core-library)
@@ -216,7 +216,7 @@ Masterwork adapts its crafting mechanics from the d20 rules below while also con
 Monsters in the Barn is a single player, turn-based combat encounter. The adventure begins outside a barn where monsters have been hording salvage. Choose a summoner, equip them with weapons and armor, enter the barn.. If you defeat the monsters, claim their salvage and use it to speed up crafting at the masterwork crafting station. If you loose, try again tomorrow. This adventure is minted to your wallet as a standard ERC721 token. 
 
 ### Challenge Rating
-Monsters in the Barn is designed to be challenging for summoners level 1 through 9. Entering the barn initiaties combat with up to 3 monsters. Summoners are matched against monsters having a CR (challenge rating) equal to their level or lower.
+Monsters in the Barn is designed to be challenging for summoners level 1 through 9. Entering the barn initiates combat with up to 3 monsters. Summoners are matched against monsters having a CR (challenge rating) equal to their level or lower.
 
 ### Walkthrough
 1. Start a new Monsters in the Barn adventure by selecting a summoner and calling `start`:

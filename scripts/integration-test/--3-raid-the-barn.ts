@@ -90,16 +90,16 @@ async function adventure(contracts: any, logging: boolean, adventureToken:any, a
   let summonerPreview = null
   switch(loadout) {
     case 0: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.longsword, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.armor, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.shield, party.equipment.shield, contracts.crafting.commonWrapper.address, { gasLimit })
-      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.longsword, contracts.crafting.commonWrapper.address, party.equipment.armor, contracts.crafting.commonWrapper.address, party.equipment.shield, contracts.crafting.commonWrapper.address)
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.common.longsword, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.common.armor, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.shield, party.equipment.common.shield, contracts.crafting.commonWrapper.address, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.common.longsword, contracts.crafting.commonWrapper.address, party.equipment.common.armor, contracts.crafting.commonWrapper.address, party.equipment.common.shield, contracts.crafting.commonWrapper.address)
       if(logging) console.log('-- Armed with longsword, big wood shield, and full plate armor')
       break
     } case 1: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.greatsword, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.armor, contracts.crafting.commonWrapper.address, { gasLimit })
-      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.greatsword, contracts.crafting.commonWrapper.address, party.equipment.armor, contracts.crafting.commonWrapper.address, 0, ethers.constants.AddressZero)
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.common.greatsword, contracts.crafting.commonWrapper.address, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.common.armor, contracts.crafting.commonWrapper.address, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.common.greatsword, contracts.crafting.commonWrapper.address, party.equipment.common.armor, contracts.crafting.commonWrapper.address, 0, ethers.constants.AddressZero)
       if(logging) console.log('-- Armed with greatsword and full plate armor')
       break
     } default: {
@@ -156,7 +156,7 @@ async function adventure(contracts: any, logging: boolean, adventureToken:any, a
 }
 
 async function winRates(contracts: any) {
-  const samples = 40
+  const samples = 10
 
   // const loadout = 0
   // const loadoutDescription = 'longsword/full plate/sheild'

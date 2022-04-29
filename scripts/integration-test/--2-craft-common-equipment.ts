@@ -11,13 +11,14 @@ async function jumpOneDay() {
 
 async function craft(contracts: any, baseType: number, itemType: number) {
   const cost = await contracts.crafting.common.get_item_cost(baseType, itemType)
-  await contracts.gold.approve(party.crafter, await contracts.crafting.common.SUMMMONER_ID(), cost)
-  let craftchecks = 0
+  await contracts.gold.approve(party.crafters[0], await contracts.crafting.common.SUMMMONER_ID(), cost)
+  process.stdout.write('craft check ')
   while(1) {
-    console.log('craftcheck', ++craftchecks)
-    const tx = await(await contracts.crafting.common.craft(party.crafter, baseType, itemType, 0)).wait()
+    process.stdout.write('🔨')
+    const tx = await(await contracts.crafting.common.craft(party.crafters[0], baseType, itemType, 0)).wait()
     const transferEvent = tx.events.find((e: any) => e.event === 'Transfer')
     if(transferEvent) {
+      process.stdout.write('\n')
       return transferEvent.args['tokenId']
     }
   }
@@ -25,7 +26,7 @@ async function craft(contracts: any, baseType: number, itemType: number) {
 
 async function main() {
   const contracts = await getContracts()
-  await contracts.rarity.approve(contracts.crafting.common.address, party.crafter)
+  await contracts.rarity.approve(contracts.crafting.common.address, party.crafters[0])
   await contracts.crafting.common.setApprovalForAll(contracts.crafting.commonWrapper.address, true)
 
   console.log('⚔ craft longsword')
@@ -48,10 +49,12 @@ async function main() {
   await fs.writeFile('./scripts/integration-test/party.json', JSON.stringify({
     ...party,
     equipment: {
-      longsword,
-      greatsword,
-      armor,
-      shield
+      common: {
+        longsword,
+        greatsword,
+        armor,
+        shield
+      }
     }
   }, null, '\t'))
 }

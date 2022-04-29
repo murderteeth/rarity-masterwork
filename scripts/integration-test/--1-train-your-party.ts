@@ -4,6 +4,7 @@ import getContracts from './contracts'
 import { classes } from '../../test/util/classes'
 import { skills, skillsArray } from '../../test/util/skills'
 import { feats } from '../../test/util/feats'
+import { craftingSkills } from '../../test/util/crafting'
 
 async function jumpOneDay() {
   await network.provider.send('evm_increaseTime', [1 * 24 * 60 * 60])
@@ -42,7 +43,7 @@ async function trainSummoner(
   return result
 }
 
-async function trainCrafter({contracts, level = 1}:{contracts: any, level?: number}) {
+async function trainCrafter({contracts, level = 1, craftingSkill}:{contracts: any, level?: number, craftingSkill: number}) {
   console.log('-- train level', level, 'crafter ---------------- }~-')
   const adventurer = await trainSummoner(
     contracts, 
@@ -51,6 +52,11 @@ async function trainCrafter({contracts, level = 1}:{contracts: any, level?: numb
     level,
     skillsArray({ index: skills.craft, ranks: level + 3})
   )
+
+  console.log('train crafting skill')
+  const craftingSkills = Array(5).fill(0)
+  craftingSkills[craftingSkill - 1] = level + 3
+  await contracts.craftingSkills.set_skills(adventurer, craftingSkills)
 
   if(level > 3) {
     console.log('+1 intelligence')
@@ -106,7 +112,9 @@ async function trainFighter({contracts, level = 1}:{contracts: any, level?: numb
 async function main() {
   const contracts = await getContracts()
 
-  const crafter = (await trainCrafter({ contracts, level: 6 })).toString()
+  const crafters = []
+  crafters.push(await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.weaponsmithing }))
+  crafters.push(await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.armorsmithing }))
 
   const fighters = []
   for(let level = 1; level < 11; level++) {
@@ -116,7 +124,7 @@ async function main() {
 
   console.log('write party.json')
   await fs.writeFile('./scripts/integration-test/party.json', JSON.stringify({
-    crafter, fighters
+    crafters, fighters
   }, null, '\t'))
 }
 

@@ -32,6 +32,10 @@ export default async function getContracts() {
         'contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper', 
         deployAddresses.core_rarity_crafting_common_wrapper
       ),
+      masterwork: await ethers.getContractAt(
+        'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', 
+        deployAddresses.core_rarity_crafting_masterwork
+      )
     },
     adventure2: await ethers.getContractAt(
       'contracts/core/rarity_adventure-2.sol:rarity_adventure_2', 
@@ -41,9 +45,9 @@ export default async function getContracts() {
       'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
       deployAddresses.core_crafting_mats_2
     ),
-    masterwork: await ethers.getContractAt(
-      'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', 
-      deployAddresses.core_rarity_crafting_masterwork
+    craftingSkills: await ethers.getContractAt(
+      'contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills',
+      deployAddresses.core_rarity_crafting_skills
     ),
     library: {
       random: await ethers.getContractAt(
