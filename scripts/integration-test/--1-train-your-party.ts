@@ -1,6 +1,6 @@
 import { ethers, network } from 'hardhat'
 import {promises as fs} from 'fs'
-import getContracts from './--contracts'
+import getContracts from './contracts'
 import { classes } from '../../test/util/classes'
 import { skills, skillsArray } from '../../test/util/skills'
 import { feats } from '../../test/util/feats'
@@ -87,6 +87,11 @@ async function trainFighter({contracts, level = 1}:{contracts: any, level?: numb
     await contracts.attributes.increase_strength(adventurer)
   }
 
+  if(level > 7) {
+    console.log('+1 strength')
+    await contracts.attributes.increase_strength(adventurer)
+  }
+
   console.log('setup class feats')
   await contracts.feats.setup_class(adventurer)
   console.log('take investigator feat')
@@ -104,7 +109,7 @@ async function main() {
   const crafter = (await trainCrafter({ contracts, level: 6 })).toString()
 
   const fighters = []
-  for(let level = 1; level < 9; level++) {
+  for(let level = 1; level < 11; level++) {
     const fighter = await trainFighter({ contracts, level })
     fighters.push(fighter.toString())
   }

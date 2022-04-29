@@ -1,7 +1,7 @@
 import { ethers, network } from 'hardhat'
 import { equipmentType, getDamageType } from '../../test/util'
 import monsterCodex from '../../test/util/monster-codex.json'
-import getContracts from './--contracts'
+import getContracts from './contracts'
 import party from './party.json'
 
 const gasLimit = 2_000_000
@@ -155,10 +155,8 @@ async function adventure(contracts: any, logging: boolean, adventureToken:any, a
   return adventure.monsters_defeated === adventure.monster_count
 }
 
-async function main() {
-  const contracts = await getContracts()
-
-  const sample = 10
+async function winRates(contracts: any) {
+  const samples = 40
 
   // const loadout = 0
   // const loadoutDescription = 'longsword/full plate/sheild'
@@ -167,13 +165,13 @@ async function main() {
 
   const levels = party.fighters.length
   // const levels = 2
-  console.log('🤺 Monsters in the Barn levels: 1 -', levels.toString(), ' loadout:', loadoutDescription, 'samples:', sample)
+  console.log('🤺 Monsters in the Barn levels: 1 -', levels.toString(), ' loadout:', loadoutDescription, 'samples:', samples)
   const results = Array(levels).fill([]).map(r => Array(2).fill(0))
   for(let i = 0; i < levels; i++) {
     const fighter = party.fighters[i]
     const level = i + 1
-    process.stdout.write((level > 1 ? '\n' : '') + '[level ' + level + '] ')
-    for(let j = 0; j < sample; j++) {
+    process.stdout.write((level > 1 ? '\n' : '') + 'level ' + level + ' ')
+    for(let j = 0; j < samples; j++) {
       await jumpOneDay()
       await contracts.rarity.approve(contracts.adventure2.address, fighter)
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
@@ -188,32 +186,37 @@ async function main() {
         await contracts.adventure2.end(adventureToken)
       }
     }
-    process.stdout.write(' win rate ' + (100 * results[i][1] / sample).toFixed(2) + '%')
+    process.stdout.write(' win rate ' + (100 * results[i][1] / samples).toFixed(2) + '%')
   }
+}
+
+async function logAdventures(contracts: any) {
+  for(let i = 0; i < party.fighters.length; i++) {
+    const fighter = party.fighters[i]
+    for(let j = 0; j < 2; j++) {
+      await jumpOneDay()
+      await contracts.rarity.approve(contracts.adventure2.address, fighter)
+      const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
+      const adventureToken = startTx.events[3].args.tokenId
+      try {
+        await adventure(contracts, true, adventureToken, fighter, i + 1, j)
+      } catch(error) {
+        console.log(error)
+        console.log('\n-- end adventure!')
+        await contracts.adventure2.end(adventureToken)
+      }
+    }
+  }
+}
+
+async function main() {
+  const contracts = await getContracts()
+
+  await winRates(contracts)
   process.stdout.write('\n')
 
-  // results.forEach((result: any, index: any) => {
-  //   const level = index + 1
-  //   console.log('level', level, 'win rate', (100 * result[1] / sample).toFixed(2), '%')
-  // })
+  // await logAdventures(contracts)
 
-  // play all fighters
-  // for(let i = 0; i < party.fighters.length; i++) {
-  //   const fighter = party.fighters[i]
-  //   for(let j = 0; j < 2; j++) {
-  //     await jumpOneDay()
-  //     await contracts.rarity.approve(contracts.adventure2.address, fighter)
-  //     const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
-  //     const adventureToken = startTx.events[3].args.tokenId
-  //     try {
-  //       await adventure(contracts, adventureToken, fighter, i + 1, j)
-  //     } catch(error) {
-  //       console.log(error)
-  //       console.log('\n-- end adventure!')
-  //       await contracts.adventure2.end(adventureToken)
-  //     }
-  //   }
-  // }
 }
 
 main().catch((error) => {

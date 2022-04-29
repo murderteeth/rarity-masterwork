@@ -1,6 +1,6 @@
 import { ethers, network } from 'hardhat'
 import {promises as fs} from 'fs'
-import getContracts from './--contracts'
+import getContracts from './contracts'
 import { armorType, baseType, weaponType } from '../../test/util/crafting';
 import party from './party.json'
 

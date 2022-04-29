@@ -1,5 +1,5 @@
 import { network } from 'hardhat'
-import getContracts from './--contracts'
+import getContracts from './contracts'
 
 async function jumpOneMinute() {
   await network.provider.send("evm_increaseTime", [1 * 60]);
