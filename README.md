@@ -28,6 +28,7 @@ This git repo contains all the source code and tooling used to build and test Ma
 - [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
 - [Rarity Core Library](#rarity-core-library)
 - [How to use masterwork items in your game](#how-to-use-masterwork-items-in-your-game)
+- [Testing](#testing)
 - [Package commands](#package-commands)
 - [Hardhat customizations](#hardhat-customizations)
 - [Thank You 👹🙏](#thank-you-)
@@ -471,6 +472,29 @@ const preview = await this.adventure.preview(
 const fullPrimaryAttackBonus = unpackAttacks(preview.attacks)[0].attack_bonus
 ```
 `unpackAttacks` is a utility provided [here](test/util/index.ts).
+
+
+## Testing
+### Unit tests
+There's a few unit tests. Run them like this
+```console
+yarn test
+```
+
+### Acceptance test (manual)
+The acceptance test is designed to run against a local hardhat network. The Easiest way to run it, start a console and run this
+```console
+yarn start-fork
+```
+Then open another console and run these
+```console
+npx hardhat run scripts/deploy.ts --network localhost
+npx hardhat run scripts/acceptance-test/--1-train-your-party.ts --network localhost
+npx hardhat run scripts/acceptance-test/--2-craft-common-equipment.ts --network localhost
+npx hardhat run scripts/acceptance-test/--3-raid-the-barn.ts --network localhost
+npx hardhat run scripts/acceptance-test/--4-craft-masterwork-equipment.ts --network localhost
+npx hardhat run scripts/acceptance-test/--5-raid-the-barn-again.ts --network localhost
+```
 
 
 ## Package commands

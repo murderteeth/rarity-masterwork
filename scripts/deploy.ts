@@ -32,7 +32,7 @@ async function main() {
 
 
   //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and compile')
+  console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
     from: [new RegExp(devAddresses.codex_weapons_2, 'g')],
@@ -87,7 +87,7 @@ async function main() {
 
 
   //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and compile')
+  console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
     from: [new RegExp(devAddresses.codex_crafting_skills, 'g'), new RegExp(devAddresses.core_crafting_skills, 'g')],
@@ -152,7 +152,7 @@ async function main() {
 
 
   //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and compile')
+  console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
     from: [new RegExp(devAddresses.core_adventure_2, 'g')],
@@ -169,7 +169,7 @@ async function main() {
 
 
   //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and compile')
+  console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
     from: [

@@ -5,11 +5,7 @@ import { classes } from '../../test/util/classes'
 import { skills, skillsArray } from '../../test/util/skills'
 import { feats } from '../../test/util/feats'
 import { craftingSkills } from '../../test/util/crafting'
-
-async function jumpOneDay() {
-  await network.provider.send('evm_increaseTime', [1 * 24 * 60 * 60])
-  await network.provider.send('evm_mine')
-}
+import { jumpOneDay } from './jump'
 
 async function dailyAdventure(contracts: any, summoner: any) {
   await contracts.rarity.adventure(summoner)
@@ -44,7 +40,7 @@ async function trainSummoner(
 }
 
 async function trainCrafter({contracts, level = 1, craftingSkill}:{contracts: any, level?: number, craftingSkill: number}) {
-  console.log('-- train level', level, 'crafter ---------------- }~-')
+  console.log('\n-- train level', level, 'crafter ---------------- }~-')
   const adventurer = await trainSummoner(
     contracts, 
     classes.wizard, 
@@ -79,7 +75,7 @@ async function trainCrafter({contracts, level = 1, craftingSkill}:{contracts: an
 }
 
 async function trainFighter({contracts, level = 1}:{contracts: any, level?: number}) {
-  console.log('-- train level', level, 'fighter ---------------- }~-')
+  console.log('\n-- train level', level, 'fighter ---------------- }~-')
   const adventurer = await trainSummoner(
     contracts, 
     classes.fighter, 
@@ -113,8 +109,8 @@ async function main() {
   const contracts = await getContracts()
 
   const crafters = []
-  crafters.push(await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.weaponsmithing }))
-  crafters.push(await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.armorsmithing }))
+  crafters.push((await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.weaponsmithing })).toString())
+  crafters.push((await trainCrafter({ contracts, level: 6, craftingSkill: craftingSkills.armorsmithing })).toString())
 
   const fighters = []
   for(let level = 1; level < 11; level++) {
@@ -123,7 +119,7 @@ async function main() {
   }
 
   console.log('write party.json')
-  await fs.writeFile('./scripts/integration-test/party.json', JSON.stringify({
+  await fs.writeFile('./scripts/acceptance-test/party.json', JSON.stringify({
     crafters, fighters
   }, null, '\t'))
 }

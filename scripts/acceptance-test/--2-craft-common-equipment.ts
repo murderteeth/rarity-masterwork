@@ -1,13 +1,7 @@
-import { ethers, network } from 'hardhat'
 import {promises as fs} from 'fs'
 import getContracts from './contracts'
 import { armorType, baseType, weaponType } from '../../test/util/crafting';
 import party from './party.json'
-
-async function jumpOneDay() {
-  await network.provider.send('evm_increaseTime', [1 * 24 * 60 * 60])
-  await network.provider.send('evm_mine')
-}
 
 async function craft(contracts: any, baseType: number, itemType: number) {
   const cost = await contracts.crafting.common.get_item_cost(baseType, itemType)
@@ -46,7 +40,7 @@ async function main() {
   await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, shield)
 
   console.log('write party.json')
-  await fs.writeFile('./scripts/integration-test/party.json', JSON.stringify({
+  await fs.writeFile('./scripts/acceptance-test/party.json', JSON.stringify({
     ...party,
     equipment: {
       common: {

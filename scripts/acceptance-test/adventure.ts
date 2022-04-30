@@ -1,20 +1,11 @@
-import { ethers, network } from 'hardhat'
+import { ethers } from 'hardhat'
 import { equipmentType, getDamageType } from '../../test/util'
 import monsterCodex from '../../test/util/monster-codex.json'
-import getContracts from './contracts'
+import { jumpOneDay, jumpOneMinute } from "./jump"
 import party from './party.json'
 
+const samples = 10
 const gasLimit = 2_000_000
-
-async function jumpOneDay() {
-  await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
-  await network.provider.send("evm_mine");
-}
-
-async function jumpOneMinute() {
-  await network.provider.send("evm_increaseTime", [1 * 60]);
-  await network.provider.send("evm_mine");
-}
 
 async function getTurnOrder(contracts: any, adventureToken: any) {
   const turnOrder = []
@@ -81,26 +72,36 @@ async function logAttacks(contracts: any, adventureToken: any, tx: any) {
   }
 }
 
-async function adventure(contracts: any, logging: boolean, adventureToken:any, adventurer: any, level: number, loadout: number) {
+async function adventure(
+  contracts: any, 
+  logging: boolean, 
+  adventureToken: any, 
+  adventurer: any, 
+  level: number, 
+  loadout: number, 
+  equipment: any, 
+  equipmentAddress: any
+) {
   if(logging) console.log()
 
   if(logging) console.log(`-- Adventure ${adventureToken.toString()} ---------------- }~-`)
   if(logging) console.log(`-- Level ${level} Fighter`)
 
+  const masterwork = isMasterwork(contracts, equipmentAddress)
   let summonerPreview = null
   switch(loadout) {
     case 0: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.common.longsword, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.common.armor, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.shield, party.equipment.common.shield, contracts.crafting.commonWrapper.address, { gasLimit })
-      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.common.longsword, contracts.crafting.commonWrapper.address, party.equipment.common.armor, contracts.crafting.commonWrapper.address, party.equipment.common.shield, contracts.crafting.commonWrapper.address)
-      if(logging) console.log('-- Armed with longsword, big wood shield, and full plate armor')
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, equipment.longsword, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, equipment.armor, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.shield, equipment.shield, equipmentAddress, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, equipment.longsword, equipmentAddress, equipment.armor, equipmentAddress, equipment.shield, equipmentAddress)
+      if(logging) console.log(`-- Armed with ${masterwork?'masterwork ':''}longsword, big wood shield, and full plate armor`)
       break
     } case 1: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, party.equipment.common.greatsword, contracts.crafting.commonWrapper.address, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, party.equipment.common.armor, contracts.crafting.commonWrapper.address, { gasLimit })
-      summonerPreview = await contracts.adventure2.preview(adventurer, party.equipment.common.greatsword, contracts.crafting.commonWrapper.address, party.equipment.common.armor, contracts.crafting.commonWrapper.address, 0, ethers.constants.AddressZero)
-      if(logging) console.log('-- Armed with greatsword and full plate armor')
+      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, equipment.greatsword, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentType.armor, equipment.armor, equipmentAddress, { gasLimit })
+      summonerPreview = await contracts.adventure2.preview(adventurer, equipment.greatsword, equipmentAddress, equipment.armor, equipmentAddress, 0, ethers.constants.AddressZero)
+      if(logging) console.log(`-- Armed with ${masterwork?'masterwork ':''} greatsword and full plate armor`)
       break
     } default: {
       summonerPreview = await contracts.adventure2.preview(adventurer, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero, 0, ethers.constants.AddressZero)
@@ -155,16 +156,17 @@ async function adventure(contracts: any, logging: boolean, adventureToken:any, a
   return adventure.monsters_defeated === adventure.monster_count
 }
 
-async function winRates(contracts: any) {
-  const samples = 10
+function isMasterwork(contracts: any, address: any) {
+  return address === contracts.crafting.masterwork.address
+}
 
+export async function winRates(contracts: any, equipment: any, equipmentAddress: any) {
   // const loadout = 0
-  // const loadoutDescription = 'longsword/full plate/sheild'
+  // const loadoutDescription = masterwork ? 'masterwork longsword/full plate/sheild' : 'longsword/full plate/sheild'
   const loadout = 1
-  const loadoutDescription = 'greatsword/full plate'
+  const loadoutDescription = isMasterwork(contracts, equipmentAddress) ? 'masterwork greatsword/full plate' : 'greatsword/full plate'
 
   const levels = party.fighters.length
-  // const levels = 2
   console.log('🤺 Monsters in the Barn levels: 1 -', levels.toString(), ' loadout:', loadoutDescription, 'samples:', samples)
   const results = Array(levels).fill([]).map(r => Array(2).fill(0))
   for(let i = 0; i < levels; i++) {
@@ -177,7 +179,7 @@ async function winRates(contracts: any) {
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
-        const result = await adventure(contracts, false, adventureToken, fighter, level, loadout)
+        const result = await adventure(contracts, false, adventureToken, fighter, level, loadout, equipment, equipmentAddress)
         results[i][result ? 1 : 0]++
         process.stdout.write(result ? '🏆' : '👹')
       } catch(error) {
@@ -188,9 +190,10 @@ async function winRates(contracts: any) {
     }
     process.stdout.write(' win rate ' + (100 * results[i][1] / samples).toFixed(2) + '%')
   }
+  process.stdout.write('\n')
 }
 
-async function logAdventures(contracts: any) {
+export async function logAdventures(contracts: any, equipment: any, equipmentAddress: any) {
   for(let i = 0; i < party.fighters.length; i++) {
     const fighter = party.fighters[i]
     for(let j = 0; j < 2; j++) {
@@ -199,7 +202,7 @@ async function logAdventures(contracts: any) {
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
-        await adventure(contracts, true, adventureToken, fighter, i + 1, j)
+        await adventure(contracts, true, adventureToken, fighter, i + 1, j, equipment, equipmentAddress)
       } catch(error) {
         console.log(error)
         console.log('\n-- end adventure!')
@@ -208,18 +211,3 @@ async function logAdventures(contracts: any) {
     }
   }
 }
-
-async function main() {
-  const contracts = await getContracts()
-
-  await winRates(contracts)
-  process.stdout.write('\n')
-
-  // await logAdventures(contracts)
-
-}
-
-main().catch((error) => {
-  console.error(error)
-  process.exitCode = 1
-})

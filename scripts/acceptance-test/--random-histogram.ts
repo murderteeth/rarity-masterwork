@@ -1,10 +1,5 @@
-import { network } from 'hardhat'
 import getContracts from './contracts'
-
-async function jumpOneMinute() {
-  await network.provider.send("evm_increaseTime", [1 * 60]);
-  await network.provider.send("evm_mine");
-}
+import { jumpOneMinute } from './jump'
 
 async function main() {
   const contracts = await getContracts()
