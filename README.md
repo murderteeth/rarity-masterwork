@@ -1,6 +1,5 @@
-![image](https://user-images.githubusercontent.com/89237203/164617930-54dd10fc-a1ec-4e8f-89d3-70388588dae2.png)
+![github-full](https://user-images.githubusercontent.com/89237203/166094951-ed8b7ab6-423c-4296-8519-d9cb428844cc.png)
 
-# Rarity Masterwork
 Masterwork is a new crafting level for Rarity players and builders. Like Rarity's first crafting level, masterwork contains a crafting station and a dungeon. Use the masterwork crafting station to create masterwork weapons, armor, and tools. Defeat monsters in the dungeon for loot that speeds up crafting at the crafting station.
 
 Masterwork is an expansion of the original Rarity core created by Andre Cronje, et al in September 2021. It continues the vision of a free-to-mint, permissionless, d20 implementation in solidity.
@@ -65,10 +64,15 @@ contracts/
 
 
 ## Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools
-Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Creating a masterwork item consists of starting a masterwork project, making craft checks until the item is finished, then completing the project. The mechanic allows multiple summoners to participate in the crafting of the same item. For example, you can have one summoner pay for the project's raw materials, have many different summoners make craft checks, then choose a totally different summoner to complete the project and have the new item minted in their name.
+Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Creating a masterwork item like this:
+- Start a masterwork project
+- Making craft checks until the item is finished
+- Complete the project
+
+The mechanic allows multiple summoners to participate in the crafting of the same item. For example, you can have one summoner pay for the project's raw materials, have many different summoners make craft checks, then choose a totally different summoner to complete the project and have the new item minted in their name.
 
 ### Walkthrough
-1. Starting a new masterwork project requires an upfront payment for raw materials. Approve the contract's apprentice to receive the fees like this:
+1. Starting a new masterwork project requires a payment in gold for raw materials. Approve the contract's apprentice to receive the fees like this:
 ```ts
 const cost = await masterwork.raw_materials_cost(baseType.weapon, weaponType.longsword)
 await gold.approve(summoner, await masterwork.APPRENTICE(), cost)
