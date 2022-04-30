@@ -64,9 +64,9 @@ contracts/
 
 
 ## Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools
-Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Creating a masterwork item like this:
+Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Create masterwork items like this:
 - Start a masterwork project
-- Making craft checks until the item is finished
+- Make craft checks until the item is finished
 - Complete the project
 
 The mechanic allows multiple summoners to participate in the crafting of the same item. For example, you can have one summoner pay for the project's raw materials, have many different summoners make craft checks, then choose a totally different summoner to complete the project and have the new item minted in their name.
