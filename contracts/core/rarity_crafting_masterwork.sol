@@ -161,7 +161,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     );
 
     score += craft_bonus(project, bonus_mats);
-    if(bonus_mats > 0) BONUS_MATS.burn(bonus_mats);
+    if(bonus_mats > 0) BONUS_MATS.burn(msg.sender, bonus_mats);
 
     uint dc = uint(get_dc(project));
     bool success = score >= int8(int(dc));

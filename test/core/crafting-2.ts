@@ -240,7 +240,7 @@ describe('Core: Crafting II - Masterwork', function () {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
     await this.masterwork.craft(token, this.crafter, ethers.utils.parseEther('80'))
-    expect(this.mats.burn).to.have.been.calledWith(ethers.utils.parseEther('80'))
+    expect(this.mats.burn).to.have.been.calledWith(this.signer.address, ethers.utils.parseEther('80'))
   })
 
   it('computes standard component dc', async function() {
