@@ -7,17 +7,6 @@ import party from './party.json'
 const samples = 10
 const gasLimit = 2_000_000
 
-async function approveEquipment(contracts: any) {
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.longsword)
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.greatsword)
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.armor)
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.shield)
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.longsword)
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.greatsword)
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.armor)
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.shield)
-}
-
 async function getTurnOrder(contracts: any, adventureToken: any) {
   const turnOrder = []
   const adventure = await contracts.adventure2.adventures(adventureToken)
@@ -171,7 +160,7 @@ function isMasterwork(contracts: any, address: any) {
   return address === contracts.crafting.masterwork.address
 }
 
-export async function winRates(contracts: any, equipment: any, equipmentAddress: any) {
+export async function winRates(contracts: any, equipmentApprovals: any, equipment: any, equipmentAddress: any) {
   // const loadout = 0
   // const loadoutDescription = masterwork ? 'masterwork longsword/full plate/sheild' : 'longsword/full plate/sheild'
   const loadout = 1
@@ -187,7 +176,7 @@ export async function winRates(contracts: any, equipment: any, equipmentAddress:
     for(let j = 0; j < samples; j++) {
       await jumpOneDay()
       await contracts.rarity.approve(contracts.adventure2.address, fighter)
-      await approveEquipment(contracts)
+      await equipmentApprovals()
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
@@ -205,7 +194,7 @@ export async function winRates(contracts: any, equipment: any, equipmentAddress:
   process.stdout.write('\n')
 }
 
-export async function logAdventures(contracts: any, equipment: any, equipmentAddress: any) {
+export async function logAdventures(contracts: any, equipmentApprovals: any, equipment: any, equipmentAddress: any) {
   for(let i = 0; i < party.fighters.length; i++) {
     const fighter = party.fighters[i]
     for(let j = 0; j < 2; j++) {
@@ -214,7 +203,7 @@ export async function logAdventures(contracts: any, equipment: any, equipmentAdd
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
-        await approveEquipment(contracts)
+        await equipmentApprovals()
         await adventure(contracts, true, adventureToken, fighter, i + 1, j, equipment, equipmentAddress)
       } catch(error) {
         console.log(error)
