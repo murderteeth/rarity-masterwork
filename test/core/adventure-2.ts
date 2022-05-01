@@ -800,4 +800,34 @@ describe('Core: Adventure II', function () {
     await network.provider.send("evm_mine");
     await expect(this.adventure.start(summoner)).to.not.be.reverted
   })
+
+  it.only('transfers summoner and equipment approvals with token', async function () {
+    const rando = this.signers[1]
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
+    const token = await this.adventure.next_token()
+    await this.adventure.start(summoner)
+    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
+    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
+    const leatherArmor = fakeLeatherArmor(this.crafting.common, summoner, this.signer)
+    await this.adventure.equip(token, equipmentType.armor, leatherArmor, this.crafting.common.address)
+    const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
+    await this.adventure.equip(token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
+    await this.adventure.transferFrom(this.signer.address, rando.address, token)
+    expect(this.core.rarity['approve(address,uint256)']).to.have.been.calledWith(
+      rando.address,
+      summoner
+    )
+    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
+      rando.address,
+      longsword
+    )
+    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
+      rando.address,
+      leatherArmor
+    )
+    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
+      rando.address,
+      heavyWoodShield
+    )
+  })
 })

@@ -449,7 +449,6 @@ describe('Core: Crafting II - Masterwork', function () {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools)
     await this.masterwork.transferFrom(this.signer.address, rando.address, token)
-    expect(await this.masterwork.ownerOf(token)).to.eq(rando.address)
     const randoConnection = this.masterwork.connect(rando)
     await randoConnection.cancel(token)
     expect(await this.masterwork.ownerOf(tools)).to.eq(rando.address)

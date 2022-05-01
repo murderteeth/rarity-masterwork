@@ -546,5 +546,27 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
   }
 
+  function _transfer(address from, address to, uint token) internal override {
+    Adventure memory adventure = adventures[token];
+    RARITY.approve(to, adventure.summoner);
+
+    Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+    if(weapon_slot.item_contract != address(0)) {
+      ICrafting(weapon_slot.item_contract).approve(to, weapon_slot.item);
+    }
+
+    Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    if(armor_slot.item_contract != address(0)) {
+      ICrafting(armor_slot.item_contract).approve(to, armor_slot.item);
+    }
+
+    Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+    if(shield_slot.item_contract != address(0)) {
+      ICrafting(shield_slot.item_contract).approve(to, shield_slot.item);
+    }
+
+    super._transfer(from, to, token);
+  }
+
   // TODO: tokenURI
 }
