@@ -109,14 +109,12 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     uint coinmaster,
     uint8 base_type,
     uint8 item_type,
-    uint tools,
-    address tools_contract
+    uint tools
   ) public 
     approvedForSummoner(coinmaster)
-    approvedForItem(tools, tools_contract) 
   {
+    require(tools == 0 || Crafting.isApprovedOrOwnerOfItem(tools, address(this)), "!approvedForItem");
     require(valid_item_type(base_type, item_type), "!valid_item_type");
-    require(tools_contract == address(0) || tools_contract == address(this), "!whitelisted_tools");
 
     Project storage project = projects[next_token];
     project.base_type = base_type;
@@ -125,13 +123,12 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
 
     uint cost = raw_materials_cost(base_type, item_type);
 
-    if(tools_contract != address(0)) {
-      (uint8 tool_base_type, uint8 tool_type,,) = ICrafting(tools_contract).items(tools);
-      require(tool_base_type == 4 && tool_type == 2, "!Artisan's tools");
+    if(tools != 0) {
+      Item memory tools_item = items[tools];
+      require(tools_item.base_type == 4 && tools_item.item_type == 2, "!Artisan's tools");
       project.tools = tools;
-      IERC721Enumerable(tools_contract)
-      .safeTransferFrom(_msgSender(), address(this), tools);
-      IERC721Enumerable(tools_contract)
+      safeTransferFrom(_msgSender(), address(this), tools);
+      IERC721Enumerable(address(this))
       .approve(_msgSender(), tools);
     } else {
       cost += COMMON_ARTISANS_TOOLS_RENTAL;

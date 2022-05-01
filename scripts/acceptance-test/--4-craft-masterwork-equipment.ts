@@ -14,8 +14,7 @@ async function craft(contracts: any, crafter: any, baseType: number, itemType: n
     crafter, 
     baseType, 
     itemType, 
-    tools, 
-    tools ? contracts.crafting.masterwork.address : ethers.constants.AddressZero
+    tools
   )).wait()
   const token = startTx.events.filter((e: any) => e.event === 'Transfer').slice(-1)[0].args['tokenId']
 

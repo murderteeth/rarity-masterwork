@@ -86,11 +86,11 @@ await gold.approve(summoner, await masterwork.APPRENTICE(), cost)
 
 2. Once your gold is approved start a new project like this:
 ```ts
-await masterwork.start(summoner, baseType.weapon, weaponType.longsword, 0, ethers.constants.AddressZero)
+await masterwork.start(summoner, baseType.weapon, weaponType.longsword, 0)
 ```
 Or if you have masterwork artisan's tools, like this:
 ```ts
-await masterwork.start(summoner, baseType.weapon, weaponType.longsword, <masterwork artisans tools tokenId>, masterwork.address)
+await masterwork.start(summoner, baseType.weapon, weaponType.longsword, <masterwork artisans tools tokenId>)
 ```
 
 Calling `start` does this
