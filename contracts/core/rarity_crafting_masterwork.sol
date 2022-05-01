@@ -163,25 +163,25 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     uint dc = uint(get_dc(project));
     bool success = score >= int8(int(dc));
     if(success) project.progress += uint(score * int(dc) * 1e18);
-    (uint m, uint n) = progress(project);
+    uint cost_in_silver = item_cost_in_silver(project.base_type, project.item_type);
 
     if(!success) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
       return;
     }
 
-    if(m < n) {
+    if(project.progress < cost_in_silver) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
     } else {
-      uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
-      RARITY.spend_xp(crafter, xp);
-      project.xp += xp;
+      uint prorate_xp = XP_PER_DAY * (cost_in_silver - (project.progress - uint(score * int(dc) * 1e18))) / uint(score * int(dc) * 1e18);
+      if(prorate_xp > 0) RARITY.spend_xp(crafter, prorate_xp);
+      project.xp += prorate_xp;
       project.done_crafting = true;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, xp, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, prorate_xp, project.progress, cost_in_silver);
     }
   }
 

@@ -341,19 +341,25 @@ describe('Core: Crafting II - Masterwork', function () {
   it('crafts until done', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
+    const costInSilver = await this.masterwork.item_cost_in_silver(baseType.weapon, weaponType.longsword)
 
-    {
-      const project = await this.masterwork.projects(token)
-      await this.masterwork.setVariable('projects', { [token]: {
-        ...clean({...project}), progress: await this.masterwork.item_cost_in_silver(baseType.weapon, weaponType.longsword)
-      }})
-    }
+    let project = await this.masterwork.projects(token)
+    const almostDone = costInSilver.sub(ethers.utils.parseEther('10'))
+    await this.masterwork.setVariable('projects', { [token]: {
+      ...clean({...project}), progress: almostDone
+    }})
 
     this.codex.random.dn.returns(20)
     await this.masterwork.craft(token, this.crafter, 0)
 
-    const project = await this.masterwork.projects(token)
+    project = await this.masterwork.projects(token)
     expect(project.done_crafting).to.be.true
+
+    const xpPerDay = ethers.utils.parseEther('250')
+    const expectedScoreTimesDc = ethers.utils.parseEther('680')
+    const prorateXp = (costInSilver.sub(almostDone)).mul(xpPerDay).div(expectedScoreTimesDc)
+    expect(this.core.rarity.spend_xp)
+    .to.be.calledWith(this.crafter, prorateXp)
   })
 
   it('can\'t craft if crafting is done', async function() {
