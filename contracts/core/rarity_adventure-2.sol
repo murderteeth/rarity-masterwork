@@ -168,10 +168,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
     Combat.EquipmentSlot storage slot = equipment_slots[token][equipment_type];
     if(item_contract != slot.item_contract || item != slot.item) {
-      if(slot.item_contract != address(0)) {
-        ICrafting(slot.item_contract).safeTransferFrom(address(this), msg.sender, slot.item);
-        delete equipment_index[slot.item_contract][slot.item];
-      }
+      address current_item_contract = slot.item_contract;
+      uint current_item = slot.item;
+
       if(item_contract != address(0)) {
         require(equipment_index[item_contract][item] == 0, "!item available");
         ICrafting(item_contract).safeTransferFrom(msg.sender, address(this), item);
@@ -182,6 +181,11 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
       } else {
         delete slot.item;
         delete slot.item_contract;
+      }
+
+      if(current_item_contract != address(0)) {
+        delete equipment_index[current_item_contract][current_item];
+        ICrafting(current_item_contract).safeTransferFrom(address(this), msg.sender, current_item);
       }
     }
   }
@@ -288,28 +292,27 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function end(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
     require_not_ended(adventure);
+    adventure.ended = uint64(block.timestamp);
 
     RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
 
     Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     if(weapon_slot.item_contract != address(0)) {
-      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), msg.sender, weapon_slot.item);
       delete equipment_index[weapon_slot.item_contract][weapon_slot.item];
+      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), msg.sender, weapon_slot.item);
     }
 
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     if(armor_slot.item_contract != address(0)) {
-      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), msg.sender, armor_slot.item);
       delete equipment_index[armor_slot.item_contract][armor_slot.item];
+      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), msg.sender, armor_slot.item);
     }
 
     Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     if(shield_slot.item_contract != address(0)) {
-      ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), msg.sender, shield_slot.item);
       delete equipment_index[shield_slot.item_contract][shield_slot.item];
+      ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), msg.sender, shield_slot.item);
     }
-
-    adventure.ended = uint64(block.timestamp);
   }
 
   function whitelisted(address contract_address) internal view returns (bool) {

@@ -204,21 +204,21 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
 
     emit Crafted(msg.sender, token, crafter, item.base_type, item.item_type);
 
+    project.complete = true;
     if(project.tools != 0) {
       safeTransferFrom(address(this), msg.sender, project.tools);
     }
-
-    project.complete = true;
   }
 
   function cancel(uint token) public approvedForItem(token, address(this)) {
     Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
-    if(project.tools != 0) {
-      safeTransferFrom(address(this), msg.sender, project.tools);
-    }
+    uint tools = project.tools;
     delete projects[token];
     _burn(token);
+    if(tools != 0) {
+      safeTransferFrom(address(this), msg.sender, tools);
+    }
   }
 
   function valid_item_type(uint8 base_type, uint8 item_type) public pure returns (bool) {

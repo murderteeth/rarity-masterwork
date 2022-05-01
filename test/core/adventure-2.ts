@@ -352,8 +352,8 @@ describe('Core: Adventure II', function () {
 
     it('updates equipment slots', async function () {
       const longsword1 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword1, this.crafting.common.address)
       const longsword2 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+      await this.adventure.equip(this.token, equipmentType.weapon, longsword1, this.crafting.common.address)
       await this.adventure.equip(this.token, equipmentType.weapon, longsword2, this.crafting.common.address)
       expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
         this.signer.address,
@@ -373,6 +373,11 @@ describe('Core: Adventure II', function () {
       expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
         this.signer.address,
         this.adventure.address,
+        longsword2
+      )
+      expect(this.crafting.common.approve)
+      .to.have.been.calledWith(
+        this.signer.address,
         longsword2
       )
     })
