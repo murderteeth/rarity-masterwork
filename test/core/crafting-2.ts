@@ -236,6 +236,14 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.craft_bonus(token, ethers.utils.parseEther('80'))).to.eq(4)
   })
 
+  it('puts a ceiling on bonus mats', async function() {
+    const token = await this.masterwork.next_token()
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
+    const maxMats = await this.masterwork.max_bonus_mats(token)
+    expect(await this.masterwork.craft_bonus(token, maxMats)).to.eq(127)
+    expect(await this.masterwork.craft_bonus(token, maxMats.add(ethers.utils.parseEther('100')))).to.eq(127)
+  })
+
   it('burns bonus mats when crafting', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)

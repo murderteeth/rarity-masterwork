@@ -236,6 +236,13 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     return Skills.craft(crafter) > 0;
   }
 
+  function max_bonus_mats(uint token) public view returns (uint) {
+    Project memory project = projects[token];
+    return (project.tools == 0)
+    ? 127 * 20e18
+    : uint8(127 - this.skill_bonus(project.tools, 5)) * 20e18;
+  }
+
   function craft_bonus(uint token, uint bonus_mats) public view returns (int8 result) {
     return craft_bonus(projects[token], bonus_mats);
   }
@@ -244,7 +251,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     result = (project.tools == 0)
     ? int8(0)
     : this.skill_bonus(project.tools, 5);
-    result += int8(uint8(bonus_mats / 20e18));
+    if((bonus_mats / 20e18) > uint8(127 - result)) {
+      return int8(127);
+    } else {
+      result += int8(uint8(bonus_mats / 20e18));
+    }
   }
 
   function standard_component_dc(uint8 base_type, uint8 item_type) public view returns (uint8 result) {
