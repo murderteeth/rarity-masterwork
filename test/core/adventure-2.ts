@@ -801,7 +801,7 @@ describe('Core: Adventure II', function () {
     await expect(this.adventure.start(summoner)).to.not.be.reverted
   })
 
-  it.only('transfers summoner and equipment approvals with token', async function () {
+  it('transfers summoner and equipment approvals with token', async function () {
     const rando = this.signers[1]
     const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()

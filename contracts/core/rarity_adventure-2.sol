@@ -124,9 +124,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventures[next_token].summoner = summoner;
     adventures[next_token].started = uint64(block.timestamp);
     latest_adventures[summoner] = next_token;
-    RARITY.safeTransferFrom(_msgSender(), address(this), summoner);
-    RARITY.approve(_msgSender(), summoner);
-    _safeMint(_msgSender(), next_token);
+    RARITY.safeTransferFrom(msg.sender, address(this), summoner);
+    RARITY.approve(msg.sender, summoner);
+    _safeMint(msg.sender, next_token);
     next_token += 1;
   }
 
@@ -169,13 +169,13 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combat.EquipmentSlot storage slot = equipment_slots[token][equipment_type];
     if(item_contract != slot.item_contract || item != slot.item) {
       if(slot.item_contract != address(0)) {
-        ICrafting(slot.item_contract).safeTransferFrom(address(this), _msgSender(), slot.item);
+        ICrafting(slot.item_contract).safeTransferFrom(address(this), msg.sender, slot.item);
         delete equipment_index[slot.item_contract][slot.item];
       }
       if(item_contract != address(0)) {
         require(equipment_index[item_contract][item] == 0, "!item available");
-        ICrafting(item_contract).safeTransferFrom(_msgSender(), address(this), item);
-        ICrafting(item_contract).approve(_msgSender(), item);
+        ICrafting(item_contract).safeTransferFrom(msg.sender, address(this), item);
+        ICrafting(item_contract).approve(msg.sender, item);
         slot.item = item;
         slot.item_contract = item_contract;
         equipment_index[item_contract][item] = token;
@@ -248,7 +248,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
     if(monster.hit_points < 0) {
       adventure.monsters_defeated += 1;
-      emit Dying(_msgSender(), token, adventure.combat_round, target);
+      emit Dying(msg.sender, token, adventure.combat_round, target);
     }
 
     if(adventure.monsters_defeated == adventure.monster_count) {
@@ -282,30 +282,30 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     adventure.search_check_rolled = true;
     adventure.search_check_succeeded = score >= int8(SEARCH_DC);
     adventure.search_check_critical = roll == 20;
-    emit SearchCheck(_msgSender(), token, roll, score);
+    emit SearchCheck(msg.sender, token, roll, score);
   }
 
   function end(uint token) public approvedForAdventure(token) {
     Adventure storage adventure = adventures[token];
     require_not_ended(adventure);
 
-    RARITY.safeTransferFrom(address(this), _msgSender(), adventure.summoner);
+    RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
 
     Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     if(weapon_slot.item_contract != address(0)) {
-      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), _msgSender(), weapon_slot.item);
+      ICrafting(weapon_slot.item_contract).safeTransferFrom(address(this), msg.sender, weapon_slot.item);
       delete equipment_index[weapon_slot.item_contract][weapon_slot.item];
     }
 
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     if(armor_slot.item_contract != address(0)) {
-      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), _msgSender(), armor_slot.item);
+      ICrafting(armor_slot.item_contract).safeTransferFrom(address(this), msg.sender, armor_slot.item);
       delete equipment_index[armor_slot.item_contract][armor_slot.item];
     }
 
     Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     if(shield_slot.item_contract != address(0)) {
-      ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), _msgSender(), shield_slot.item);
+      ICrafting(shield_slot.item_contract).safeTransferFrom(address(this), msg.sender, shield_slot.item);
       delete equipment_index[shield_slot.item_contract][shield_slot.item];
     }
 
@@ -343,7 +343,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
   function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
     (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
-    emit RollInitiative(_msgSender(), token, initiative_roll, initiative_score);
+    emit RollInitiative(msg.sender, token, initiative_roll, initiative_score);
 
     Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
@@ -417,7 +417,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     current_turns[token] = current_turn;
     if(summoner.hit_points < 0) {
       adventure.combat_ended = true;
-      emit Dying(_msgSender(), token, adventure.combat_round, summoners_turn);
+      emit Dying(msg.sender, token, adventure.combat_round, summoners_turn);
     }
   }
 
@@ -433,7 +433,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   function attack_combatant(uint token, uint attacker_index, Combat.Combatant memory attacker, uint defender_index, Combat.Combatant storage defender, uint attack_number, uint8 round) internal {
     (bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type) 
     = Combat.attack_combatant(attacker, defender, attack_number);
-    emit Attack(_msgSender(), token, attacker_index, defender_index, round, hit, roll, score, critical_confirmation, damage, damage_type);
+    emit Attack(msg.sender, token, attacker_index, defender_index, round, hit, roll, score, critical_confirmation, damage, damage_type);
   }
 
   function outside_dungeon(Adventure memory adventure) public pure returns (bool) {
@@ -533,9 +533,9 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
-    if(getApproved(token) == _msgSender()) return true;
+    if(getApproved(token) == msg.sender) return true;
     address owner = ownerOf(token);
-    return owner == _msgSender() || isApprovedForAll(owner, _msgSender());
+    return owner == msg.sender || isApprovedForAll(owner, msg.sender);
   }
 
   modifier approvedForAdventure(uint token) {

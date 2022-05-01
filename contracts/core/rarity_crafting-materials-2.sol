@@ -55,7 +55,7 @@ contract rarity_crafting_materials_2 is ERC20 {
       }
     }
 
-    _mint(_msgSender(), reward * 1e18 / 10);
+    _mint(msg.sender, reward * 1e18 / 10);
     adventure_claims[adventure_token] = true;
   }
 
@@ -64,8 +64,8 @@ contract rarity_crafting_materials_2 is ERC20 {
   }
 
   function isApprovedOrOwnerOfAdventure(uint token) public view returns (bool) {
-    if(ADVENTURE_2.getApproved(token) == _msgSender()) return true;
+    if(ADVENTURE_2.getApproved(token) == msg.sender) return true;
     address owner = ADVENTURE_2.ownerOf(token);
-    return owner == _msgSender() || ADVENTURE_2.isApprovedForAll(owner, _msgSender());
+    return owner == msg.sender || ADVENTURE_2.isApprovedForAll(owner, msg.sender);
   }
 }

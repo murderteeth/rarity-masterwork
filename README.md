@@ -386,7 +386,7 @@ Monsters in the Barn implements summoner vs monster combat. To adapt summoners a
 ```solidity
 function summoner_combatant(uint token, uint summoner) internal returns(Combat.Combatant memory combatant) {
   (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
-  emit RollInitiative(_msgSender(), token, initiative_roll, initiative_score);
+  emit RollInitiative(msg.sender, token, initiative_roll, initiative_score);
 
   Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
   Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];

@@ -127,16 +127,16 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
       Item memory tools_item = items[tools];
       require(tools_item.base_type == 4 && tools_item.item_type == 2, "!Artisan's tools");
       project.tools = tools;
-      safeTransferFrom(_msgSender(), address(this), tools);
+      safeTransferFrom(msg.sender, address(this), tools);
       IERC721Enumerable(address(this))
-      .approve(_msgSender(), tools);
+      .approve(msg.sender, tools);
     } else {
       cost += COMMON_ARTISANS_TOOLS_RENTAL;
     }
 
     require(GOLD.transferFrom(APPRENTICE, coinmaster, APPRENTICE, cost), "!gold");
 
-    _safeMint(_msgSender(), next_token);
+    _safeMint(msg.sender, next_token);
     next_token += 1;
   }
 
@@ -168,20 +168,20 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     if(!success) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
       return;
     }
 
     if(m < n) {
       RARITY.spend_xp(crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, m, n);
     } else {
       uint xp = XP_PER_DAY - (XP_PER_DAY * (m - n)) / n;
       RARITY.spend_xp(crafter, xp);
       project.xp += xp;
       project.done_crafting = true;
-      emit Craft(_msgSender(), token, crafter, bonus_mats, roll, score, xp, m, n);
+      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, xp, m, n);
     }
   }
 
@@ -202,10 +202,10 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     item.crafted = uint64(block.timestamp);
     item.crafter = crafter;
 
-    emit Crafted(_msgSender(), token, crafter, item.base_type, item.item_type);
+    emit Crafted(msg.sender, token, crafter, item.base_type, item.item_type);
 
     if(project.tools != 0) {
-      safeTransferFrom(address(this), _msgSender(), project.tools);
+      safeTransferFrom(address(this), msg.sender, project.tools);
     }
 
     project.complete = true;
@@ -215,7 +215,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
     if(project.tools != 0) {
-      safeTransferFrom(address(this), _msgSender(), project.tools);
+      safeTransferFrom(address(this), msg.sender, project.tools);
     }
     delete projects[token];
     _burn(token);
