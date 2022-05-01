@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import "../library/ForSummoners.sol";
 import "../library/Rarity.sol";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import "../interfaces/codex/IRarityCodexCommonArmor.sol";
 import "../library/Codex.sol";

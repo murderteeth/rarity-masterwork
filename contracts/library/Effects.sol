@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 interface IEffects {
   function armor_check_bonus(uint token) external view returns (int8);
