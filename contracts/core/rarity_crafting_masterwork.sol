@@ -335,5 +335,13 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     return item_cost(base_type, item_type) / 3;
   }
 
+  function _transfer(address from, address to, uint token) internal override {
+    Project memory project = projects[token];
+    if(project.tools != 0 && ownerOf(project.tools) == address(this)) {
+      IERC721Enumerable(address(this)).approve(to, project.tools);
+    }
+    super._transfer(from, to, token);
+  }
+
   // TODO: tokenURI
 }

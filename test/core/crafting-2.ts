@@ -442,4 +442,16 @@ describe('Core: Crafting II - Masterwork', function () {
     await expect(this.masterwork.cancel(token))
     .to.be.revertedWith('done_crafting')
   })
+
+  it('transfers artisan\'s tools with token', async function() {
+    const rando = this.signers[1]
+    const tools = await mockMasterworkTools(this.masterwork, this.signer)
+    const token = await this.masterwork.next_token()
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, tools, this.masterwork.address)
+    await this.masterwork.transferFrom(this.signer.address, rando.address, token)
+    expect(await this.masterwork.ownerOf(token)).to.eq(rando.address)
+    const randoConnection = this.masterwork.connect(rando)
+    await randoConnection.cancel(token)
+    expect(await this.masterwork.ownerOf(tools)).to.eq(rando.address)
+  })
 })
