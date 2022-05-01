@@ -54,22 +54,18 @@ async function main() {
   console.log('⚔ craft masterwork longsword')
   await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
   const longsword = (await craft(contracts, weaponsmith, baseType.weapon, weaponType.longsword, artisansTools)).toString()
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, longsword)
 
   console.log('⚔ craft masterwork greatsword')
   await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
   const greatsword = (await craft(contracts, weaponsmith, baseType.weapon, weaponType.greatsword, artisansTools)).toString()
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, greatsword)
 
   console.log('🛡 craft full plate armor')
   await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
   const armor = (await craft(contracts, armorsmith, baseType.armor, armorType.fullPlate, artisansTools)).toString()
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, armor)
 
   console.log('🛡 craft big wood shield')
   await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
   const shield = (await craft(contracts, armorsmith, baseType.armor, armorType.heavyWoodShield, artisansTools)).toString()
-  await contracts.crafting.masterwork.approve(contracts.adventure2.address, shield)
 
   console.log('write party.json')
   await fs.writeFile('./scripts/acceptance-test/party.json', JSON.stringify({

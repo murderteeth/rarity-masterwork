@@ -7,6 +7,17 @@ import party from './party.json'
 const samples = 10
 const gasLimit = 2_000_000
 
+async function approveEquipment(contracts: any) {
+  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.longsword)
+  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.greatsword)
+  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.armor)
+  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.shield)
+  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.longsword)
+  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.greatsword)
+  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.armor)
+  await contracts.crafting.masterwork.approve(contracts.adventure2.address, party.equipment.masterwork.shield)
+}
+
 async function getTurnOrder(contracts: any, adventureToken: any) {
   const turnOrder = []
   const adventure = await contracts.adventure2.adventures(adventureToken)
@@ -176,6 +187,7 @@ export async function winRates(contracts: any, equipment: any, equipmentAddress:
     for(let j = 0; j < samples; j++) {
       await jumpOneDay()
       await contracts.rarity.approve(contracts.adventure2.address, fighter)
+      await approveEquipment(contracts)
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
@@ -202,6 +214,7 @@ export async function logAdventures(contracts: any, equipment: any, equipmentAdd
       const startTx = await(await contracts.adventure2.start(fighter, { gasLimit })).wait()
       const adventureToken = startTx.events[3].args.tokenId
       try {
+        await approveEquipment(contracts)
         await adventure(contracts, true, adventureToken, fighter, i + 1, j, equipment, equipmentAddress)
       } catch(error) {
         console.log(error)
