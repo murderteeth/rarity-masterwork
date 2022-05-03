@@ -230,7 +230,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     } else if (base_type == 3) {
       return (1 <= item_type && item_type <= 59);
     } else if (base_type == 4) {
-      return (1 <= item_type && item_type <= 11);
+      return (item_type == 2 || item_type == 7 || item_type == 9 || item_type == 10);
     }
     return false;
   }

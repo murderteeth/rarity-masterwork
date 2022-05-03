@@ -42,7 +42,7 @@ contract codex {
     result.id = 9;
     result.weight = 2;
     result.cost = 100e18;
-    result.name = "Masterwork Thieves Tools";
+    result.name = "Masterwork Thieve's Tools";
     result.description = "This kit contains extra tools and tools of better make, which grant a +2 circumstance bonus on Disable Device and Open Lock checks.";
     result.skill_bonus[8] = 2;
     result.skill_bonus[21] = 2;

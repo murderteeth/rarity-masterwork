@@ -109,7 +109,7 @@ contract codex {
     result.id = 9;
     result.weight = 2;
     result.cost = 30e18;
-    result.name = "Thieves Tools";
+    result.name = "Thieve's Tools";
     result.description = "his kit contains the tools you need to use the Disable Device and Open Lock skills. Without these tools, you must improvise tools, and you take a -2 circumstance penalty on Disable Device and Open Lock checks.";
     result.skill_bonus[9] = 0;
     result.skill_bonus[22] = 0;

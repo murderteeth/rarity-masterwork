@@ -188,8 +188,9 @@ describe('Core: Crafting II - Masterwork', function () {
     expect(await this.masterwork.valid_item_type(1, 1)).to.be.false
     expect(await this.masterwork.valid_item_type(2, 1)).to.be.true
     expect(await this.masterwork.valid_item_type(3, 1)).to.be.true
-    expect(await this.masterwork.valid_item_type(4, 1)).to.be.true
+    expect(await this.masterwork.valid_item_type(4, 1)).to.be.false
     expect(await this.masterwork.valid_item_type(5, 1)).to.be.false
+    expect(await this.masterwork.valid_item_type(4, 2)).to.be.true
     expect(await this.masterwork.valid_item_type(2, 19)).to.be.false
     expect(await this.masterwork.valid_item_type(3, 60)).to.be.false
     expect(await this.masterwork.valid_item_type(4, 12)).to.be.false
