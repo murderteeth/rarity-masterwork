@@ -65,3 +65,16 @@ interface ITools {
 interface ICodexTools {
   function item_by_id(uint id) external pure returns(ITools.Tools memory);
 }
+
+interface ICodexSkills {
+  function skill_by_id(uint _id) external pure returns(
+    uint id,
+    string memory name,
+    uint attribute_id,
+    uint synergy,
+    bool retry,
+    bool armor_check_penalty,
+    string memory check,
+    string memory action
+  );
+}

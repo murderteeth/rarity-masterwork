@@ -614,7 +614,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combat.Combatant[] memory turn_order = turn_orders[token];
 
     uint y = 0;
-    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 340 340" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
+    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'status ', status_string(token, adventure, turn_order), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'summoner ', summoner_string(token, adventure, turn_order), '</text>'));
 
@@ -624,13 +624,13 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     y = y_after_loadout + 20; (string memory monster_fragment, uint y_after_monsters) = monsters_svg_fragment(token, y, adventure, turn_order);
     svg = string(abi.encodePacked(svg, monster_fragment));
 
-    y = y_after_monsters; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'loot ', loot_string(token, adventure, turn_order), '</text>'));
+    y = y_after_monsters; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'loot ', loot_string(adventure, turn_order), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'started ', StringUtil.toString(adventure.started), '</text>'));
     y += 20; if(adventure.ended > 0) svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'ended ', StringUtil.toString(adventure.ended), '</text>'));
     else svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'ended --</text>'));
     svg = string(abi.encodePacked(svg, '</svg>'));
 
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "adventure #', StringUtil.toString(token), '", "description": "Rarity Adventure 2: Monsters in the Barn. Fight monsters, claim salvage, craft Rarity masterwork items.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
+    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "adventure #', StringUtil.toString(token), '", "description": "Rarity Adventure 2: Monsters in the Barn. Fight, claim salvage, craft masterwork items.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
     return string(abi.encodePacked('data:application/json;base64,', json));
   }
 
@@ -696,7 +696,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
     Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
     if(weapon_slot.item_contract == address(0)) {
-      result = string(abi.encodePacked('<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmed</text>'));
+      result = string(abi.encodePacked(result, '<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmed</text>'));
       y += 20;
     } else {
       (,uint8 item_type,,) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
@@ -709,7 +709,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     }
 
     if(armor_slot.item_contract == address(0) && shield_slot.item_contract == address(0)) {
-      result = string(abi.encodePacked('<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmored</text>'));
+      result = string(abi.encodePacked(result, '<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmored</text>'));
     } else {
       if(armor_slot.item_contract != address(0)) {
         (,uint8 item_type,,) = ICrafting(armor_slot.item_contract).items(armor_slot.item);
@@ -733,9 +733,8 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     new_y = y;
   }
 
-  function loot_string(uint token, Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result) {
+  function loot_string(Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result) {
     result = "--";
     if(ended(adventure) && victory(adventure)) result = string(abi.encodePacked(StringUtil.toString(count_loot(adventure, turn_order) / 1e18), " Salvage"));
   }
-
 }

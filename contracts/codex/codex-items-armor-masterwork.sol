@@ -37,7 +37,7 @@ contract codex {
     armor.weight = uint8(weight);
     armor.armor_bonus = uint8(armor_bonus);
     armor.max_dex_bonus = uint8(max_dex_bonus);
-    armor.penalty = int8(penalty - 1);
+    armor.penalty = int8(penalty + 1);
     armor.spell_failure = uint8(spell_failure);
     armor.cost = cost + 150e18;
     armor.name = string(abi.encodePacked("Masterwork ", name));

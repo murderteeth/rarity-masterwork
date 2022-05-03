@@ -1,6 +1,7 @@
 import chai, { expect } from 'chai'
 import { MockContract, smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
+import isSvg from 'is-svg'
 import { clean, humanEther } from '../util'
 import { RarityCraftingMaterials2 } from '../../typechain/core/RarityCraftingMaterials2'
 import { RarityMasterwork__factory } from '../../typechain/core/factories/RarityMasterwork__factory'
@@ -31,6 +32,9 @@ describe('Core: Crafting II - Masterwork', function () {
     this.codex = {
       random: await fakeRandom(),
       craftingSkills: await fakeCraftingSkillsCodex(),
+      common: {
+        tools: await smock.fake('contracts/codex/codex-items-tools.sol:codex'),
+      },
       masterwork: {
         armor: await smock.fake('contracts/codex/codex-items-armor-masterwork.sol:codex'),
         tools: await smock.fake('contracts/codex/codex-items-tools-masterwork.sol:codex'),
@@ -58,6 +62,7 @@ describe('Core: Crafting II - Masterwork', function () {
 
     this.core.gold.transferFrom.returns(true)
 
+    await this.masterwork.setVariable('COMMON_TOOLS_CODEX', this.codex.common.tools.address)
     await this.masterwork.setVariable('BONUS_MATS', this.mats.address)
     await this.masterwork.setVariable('ARMOR_CODEX', this.codex.masterwork.armor.address)
     await this.masterwork.setVariable('TOOLS_CODEX', this.codex.masterwork.tools.address)
@@ -466,5 +471,15 @@ describe('Core: Crafting II - Masterwork', function () {
     const randoConnection = this.masterwork.connect(rando)
     await randoConnection.cancel(token)
     expect(await this.masterwork.ownerOf(tools)).to.eq(rando.address)
+  })
+
+  it('makes valid token uris', async function() {
+    const token = await this.masterwork.next_token()
+    await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
+    const tokenUri = await this.masterwork.tokenURI(token)
+    const tokenJson = JSON.parse(Buffer.from(tokenUri.split(',')[1], "base64").toString());
+    const tokenSvg = Buffer.from(tokenJson.image.split(',')[1], "base64").toString();
+    // console.log('tokenJson.image', tokenJson.image)
+    expect(isSvg(tokenSvg)).to.be.true;
   })
 })

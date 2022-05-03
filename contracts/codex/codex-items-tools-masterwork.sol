@@ -44,8 +44,8 @@ contract codex {
     result.cost = 100e18;
     result.name = "Masterwork Thieves Tools";
     result.description = "This kit contains extra tools and tools of better make, which grant a +2 circumstance bonus on Disable Device and Open Lock checks.";
-    result.skill_bonus[9] = 2;
-    result.skill_bonus[22] = 2;
+    result.skill_bonus[8] = 2;
+    result.skill_bonus[21] = 2;
   }
 
   function multitool() public pure returns (ITools.Tools memory result) {
