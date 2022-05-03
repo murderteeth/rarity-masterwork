@@ -3,6 +3,7 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "../interfaces/core/IRarity.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
@@ -15,6 +16,7 @@ import "../library/Monster.sol";
 import "../library/Proficiency.sol";
 import "../library/Random.sol";
 import "../library/Roll.sol";
+import "../library/StringUtil.sol";
 import "../library/Summoner.sol";
 
 contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, ForItems {
@@ -28,14 +30,13 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   // 6 black bear (CR 2)
   // 7 ogre (CR 3)
   // 8 dire boar (CR 4)
+  // 9 dire wolverine (CR 4)
   // 10 troll (CR 5)
   // 11 ettin (CR 6)
 
   uint8[9] public MONSTERS = [1, 3, 4, 6, 7, 11, 8, 9, 10];
   uint8[6] public MONSTER_FOR_LEVEL = [4, 6, 6, 7, 7, 11];
   uint8[9] public MONSTER_BONUS_INDEX_FOR_LEVEL = [2, 3, 3, 4, 4, 5, 6, 7, 8];
-
-  uint8 public constant MONSTER_LEVEL_OFFSET = 1;
 
   uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
@@ -284,7 +285,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     (uint8 roll, int8 score) = Roll.search(adventure.summoner);
 
     adventure.search_check_rolled = true;
-    adventure.search_check_succeeded = score >= int8(SEARCH_DC);
+    adventure.search_check_succeeded = roll == 20 || score >= int8(SEARCH_DC);
     adventure.search_check_critical = roll == 20;
     emit SearchCheck(msg.sender, token, roll, score);
   }
@@ -339,7 +340,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
 
     if(level > 6 && Random.dn(1593506169583491991, token, 100) > 50) {
       uint8 bonus_index = MONSTER_BONUS_INDEX_FOR_LEVEL[level > 9 ? 8 : level - 1];
-      monsters[monster_count] = MONSTERS[Random.dn(15608573760256557610, token, bonus_index + 1) - 1];
+      monsters[monster_count] = MONSTERS[Random.dn(15241373560133191304, token, bonus_index + 1) - 1];
       monster_count++;
     }
   }
@@ -508,6 +509,43 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     return victory(adventures[token]);
   }
 
+  function count_loot(Adventure memory adventure, Combat.Combatant[] memory turn_order) public view returns (uint) {
+    if(!victory(adventure)) return 0;
+
+    uint reward = 0;
+    uint8 turn_count = adventure.monster_count + 1;
+    for(uint i = 0; i < turn_count; i++) {
+      Combat.Combatant memory combatant = turn_order[i];
+      if(combatant.origin == address(this)) {
+        reward += Monster.monster_by_id(monster_spawn[combatant.token]).challenge_rating;
+      }
+    }
+
+    if(adventure.search_check_succeeded) {
+      if(adventure.search_check_critical) {
+        reward = 6 * reward / 5;
+      } else {
+        reward = 23 * reward / 20;
+      }
+    }
+
+    return reward * 1e18 / 10;
+  }
+
+  function count_loot(uint token) public view returns (uint) {
+    return count_loot(adventures[token], turn_orders[token]);
+  }
+
+  function fled(uint token, Adventure memory adventure, Combat.Combatant[] memory turn_order) public view returns (bool) {
+    return combat_over(adventure) 
+      && adventure.monster_count > adventure.monsters_defeated
+      && turn_order[summoners_turns[token]].hit_points > -1;
+  }
+
+  function was_fled(uint token) external view returns (bool) {
+    return fled(token, adventures[token], turn_orders[token]);
+  }
+
   function is_proficient_with_weapon(uint summoner, uint8 weapon_type, address weapon_contract) public view returns (bool) {
     return Proficiency.is_proficient_with_weapon(summoner, IWeapon(weapon_contract).get_weapon(weapon_type).proficiency, weapon_type);
   }
@@ -571,5 +609,133 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     super._transfer(from, to, token);
   }
 
-  // TODO: tokenURI
+  function tokenURI(uint token) public view virtual override returns (string memory) {
+    Adventure memory adventure = adventures[token];
+    Combat.Combatant[] memory turn_order = turn_orders[token];
+
+    uint y = 0;
+    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 340 340" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
+    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'status ', status_string(token, adventure, turn_order), '</text>'));
+    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'summoner ', summoner_string(token, adventure, turn_order), '</text>'));
+
+    y += 20; (string memory loadout_fragment, uint y_after_loadout) = loadout_svg_fragment(token, y);
+    svg = string(abi.encodePacked(svg, loadout_fragment));
+
+    y = y_after_loadout + 20; (string memory monster_fragment, uint y_after_monsters) = monsters_svg_fragment(token, y, adventure, turn_order);
+    svg = string(abi.encodePacked(svg, monster_fragment));
+
+    y = y_after_monsters; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'loot ', loot_string(token, adventure, turn_order), '</text>'));
+    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'started ', StringUtil.toString(adventure.started), '</text>'));
+    y += 20; if(adventure.ended > 0) svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'ended ', StringUtil.toString(adventure.ended), '</text>'));
+    else svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'ended --</text>'));
+    svg = string(abi.encodePacked(svg, '</svg>'));
+
+    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "adventure #', StringUtil.toString(token), '", "description": "Rarity Adventure 2: Monsters in the Barn. Fight monsters, claim salvage, craft Rarity masterwork items.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
+    return string(abi.encodePacked('data:application/json;base64,', json));
+  }
+
+  function status_string(uint token, Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result) {
+    if(outside_dungeon(adventure)) result = "Outside the dungeon";
+    else if(en_combat(adventure)) result = string(abi.encodePacked("Combat in Round", " ", StringUtil.toString(adventure.combat_round)));
+    else if(combat_over(adventure)) result = "Looting";
+    else if(ended(adventure)) {
+      if(victory(adventure)) {
+        result = string(abi.encodePacked("Victory! during Round", " ", StringUtil.toString(adventure.combat_round)));
+      } else {
+        if(fled(token, adventure, turn_order)) {
+          result = string(abi.encodePacked("Fled during Round", " ", StringUtil.toString(adventure.combat_round)));
+        } else {
+          result = string(abi.encodePacked("Defeat during Round", " ", StringUtil.toString(adventure.combat_round)));
+        }
+      }
+    }
+  }
+
+  function summoner_string(uint token, Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result) {
+    result = StringUtil.toString(adventure.summoner);
+    if(turn_order.length > 0) {
+      result = string(abi.encodePacked(
+        result, 
+        " (", StringUtil.toString(turn_order[summoners_turns[token]].hit_points), "hp)"
+      ));
+    }
+  }
+
+  function monsters_svg_fragment(uint token, uint y, Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result, uint new_y) {
+    uint turn_count = turn_order.length;
+    uint summoners_turn = summoners_turns[token];
+
+    result = string(abi.encodePacked('<text x="10" y="', StringUtil.toString(y), '" class="base">monsters</text>'));
+    y += 20;
+
+    if(adventure.monster_count == 0) {
+      result = string(abi.encodePacked(
+        result, '<text x="20" y="', StringUtil.toString(y), '" class="base">--</text>'
+      ));
+    } else {
+      for(uint i = 0; i < turn_count; i++) {
+        if(i != summoners_turn) {
+          result = string(abi.encodePacked(
+            result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
+            Monster.monster_by_id(monster_spawn[turn_order[i].token]).name,
+            " (", StringUtil.toString(turn_order[i].hit_points), "hp)", '</text>'
+          ));
+          y += 20;
+        }
+      }
+    }
+
+    new_y = y;
+  }
+
+  function loadout_svg_fragment(uint token, uint y) internal view returns (string memory result, uint new_y) {
+    result = string(abi.encodePacked('<text x="10" y="', StringUtil.toString(y), '" class="base">loadout</text>'));
+    y += 20;
+
+    Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+    Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+    Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+    if(weapon_slot.item_contract == address(0)) {
+      result = string(abi.encodePacked('<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmed</text>'));
+      y += 20;
+    } else {
+      (,uint8 item_type,,) = ICrafting(weapon_slot.item_contract).items(weapon_slot.item);
+      result = string(abi.encodePacked(
+        result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
+        IWeapon(weapon_slot.item_contract).get_weapon(item_type).name,
+        '</text>'
+      ));
+      y += 20;
+    }
+
+    if(armor_slot.item_contract == address(0) && shield_slot.item_contract == address(0)) {
+      result = string(abi.encodePacked('<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmored</text>'));
+    } else {
+      if(armor_slot.item_contract != address(0)) {
+        (,uint8 item_type,,) = ICrafting(armor_slot.item_contract).items(armor_slot.item);
+        result = string(abi.encodePacked(
+          result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
+          IArmor(armor_slot.item_contract).get_armor(item_type).name,
+          '</text>'
+        ));
+        y += 20;
+      }
+      if(shield_slot.item_contract != address(0)) {
+        (,uint8 item_type,,) = ICrafting(shield_slot.item_contract).items(shield_slot.item);
+        result = string(abi.encodePacked(
+          result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
+          IArmor(shield_slot.item_contract).get_armor(item_type).name,
+          '</text>'
+        ));
+      }
+    }
+
+    new_y = y;
+  }
+
+  function loot_string(uint token, Adventure memory adventure, Combat.Combatant[] memory turn_order) internal view returns (string memory result) {
+    result = "--";
+    if(ended(adventure) && victory(adventure)) result = string(abi.encodePacked(StringUtil.toString(count_loot(adventure, turn_order) / 1e18), " Salvage"));
+  }
+
 }

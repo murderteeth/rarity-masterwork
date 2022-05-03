@@ -14,6 +14,7 @@ import { armorType, baseType, toolType, weaponType } from '../util/crafting'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { BigNumber } from 'ethers'
 import { armors, weapons } from '../util/equipment'
+import isSvg from 'is-svg'
 
 chai.use(smock.matchers)
 
@@ -643,7 +644,7 @@ describe('Core: Adventure II', function () {
         await this.adventure.attack(this.token, target)
       }
 
-      const adventure = await this.adventure.adventures(this.token)
+      const adventure = await this.adventure.end(this.token)
       expect(adventure.monster_count).to.eq(adventure.monsters_defeated)
       const summoners_turn = await this.adventure.summoners_turns(this.token)
       const summoner_combatant = await this.adventure.turn_orders(this.token, summoners_turn)
@@ -674,6 +675,7 @@ describe('Core: Adventure II', function () {
       const summoners_turn = await this.adventure.summoners_turns(this.token)
       const summoner_combatant = await this.adventure.turn_orders(this.token, summoners_turn)
       expect(summoner_combatant.hit_points).to.be.gt(-1)
+      expect(await this.adventure.was_fled(this.token)).to.be.true
     })
   })
 
@@ -681,10 +683,18 @@ describe('Core: Adventure II', function () {
     beforeEach(async function(){
       this.summoner = fakeSummoner(this.core.rarity, this.signer)
       this.token = await this.adventure.next_token()
+      this.codex.random.dn
+      .whenCalledWith('12586470658909511785', this.token, 100)
+      .returns(1)
+      this.codex.random.dn
+      .whenCalledWith('1593506169583491991', this.token, 100)
+      .returns(1)
       await this.adventure.start(this.summoner)
+      await this.adventure.enter_dungeon(this.token)
       await this.adventure.setVariable('adventures', { [this.token] : {
         monster_count: 1,
-        monsters_defeated: 1
+        monsters_defeated: 1,
+        combat_ended: true
       }})
     })
 
@@ -729,6 +739,54 @@ describe('Core: Adventure II', function () {
     it('can\'t search more than once', async function (){
       await expect(this.adventure.search(this.token)).to.not.be.reverted
       await expect(this.adventure.search(this.token)).to.be.revertedWith('search_check_rolled')
+    })
+
+    it('counts standard loot', async function() {
+      expect(await this.adventure['count_loot(uint256)'](this.token)).to.deep.eq(ethers.utils.parseEther('10'))
+    })
+
+    it('counts loot with successful search check', async function() {
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 10, 0, 0])
+
+      const skillRanks = Array(36).fill(0)
+      skillRanks[skills.search] = 1
+      this.core.skills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(skillRanks)
+
+      const featFlags = Array(100).fill(false)
+      featFlags[feats.investigator] = true
+      this.core.feats.get_feats
+      .whenCalledWith(this.summoner)
+      .returns(featFlags)
+
+      this.codex.random.dn.returns(17)
+      await expect(this.adventure.search(this.token))
+      expect(await this.adventure['count_loot(uint256)'](this.token)).to.deep.eq(ethers.utils.parseEther('11.5'))
+    })
+
+    it('counts loot with critical search check', async function() {
+      this.core.attributes.ability_scores
+      .whenCalledWith(this.summoner)
+      .returns([0, 0, 0, 10, 0, 0])
+
+      const skillRanks = Array(36).fill(0)
+      skillRanks[skills.search] = 1
+      this.core.skills.get_skills
+      .whenCalledWith(this.summoner)
+      .returns(skillRanks)
+
+      const featFlags = Array(100).fill(false)
+      featFlags[feats.investigator] = true
+      this.core.feats.get_feats
+      .whenCalledWith(this.summoner)
+      .returns(featFlags)
+
+      this.codex.random.dn.returns(20)
+      await expect(this.adventure.search(this.token))
+      expect(await this.adventure['count_loot(uint256)'](this.token)).to.deep.eq(ethers.utils.parseEther('12'))
     })
   })
 
@@ -834,5 +892,59 @@ describe('Core: Adventure II', function () {
       rando.address,
       heavyWoodShield
     )
+  })
+
+  it('makes valid token uris', async function() {
+    const summoner = fakeSummoner(this.core.rarity, this.signer)
+    this.codex.random.dn.returns(2)
+
+    this.core.rarity.class
+    .whenCalledWith(summoner)
+    .returns(classes.fighter)
+    
+    this.core.rarity.level
+    .whenCalledWith(summoner)
+    .returns(20)
+    
+    this.core.attributes.ability_scores
+    .whenCalledWith(summoner)
+    .returns([64, 64, 64, 0, 0, 0])
+
+    const token = await this.adventure.next_token()
+
+    this.codex.random.dn
+    .whenCalledWith('12586470658909511785', token, 100)
+    .returns(51)
+    this.codex.random.dn
+    .whenCalledWith('15608573760256557610', token, 9)
+    .returns(3)
+
+    this.codex.random.dn
+    .whenCalledWith('1593506169583491991', token, 100)
+    .returns(51)
+    this.codex.random.dn
+    .whenCalledWith('15241373560133191304', token, 9)
+    .returns(7)
+
+    await this.adventure.start(summoner)
+    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
+    const fullPlate = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
+    const woodSheild = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
+    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
+    await this.adventure.equip(token, equipmentType.armor, fullPlate, this.crafting.common.address)
+    await this.adventure.equip(token, equipmentType.shield, woodSheild, this.crafting.common.address)
+    await this.adventure.enter_dungeon(token)
+    
+    while(!(await this.adventure.adventures(token)).combat_ended) {
+      const target = await this.adventure.next_able_monster(token)
+      await this.adventure.attack(token, target)
+    }
+    
+    await this.adventure.end(token)
+    const tokenUri = await this.adventure.tokenURI(token)
+    const tokenJson = JSON.parse(Buffer.from(tokenUri.split(',')[1], "base64").toString());
+    const tokenSvg = Buffer.from(tokenJson.image.split(',')[1], "base64").toString();
+    // console.log('tokenJson.image', tokenJson.image)
+    expect(isSvg(tokenSvg)).to.be.true;
   })
 })

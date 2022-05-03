@@ -342,6 +342,7 @@ The following d20 monsters were chosen for both their CRs and their simple attac
 - [**Gnoll (CR 1)**](https://www.d20srd.org/srd/monsters/gnoll.htm)
 - [**Black Bear (CR 2)**](https://www.d20srd.org/srd/monsters/bearBlack.htm)
 - [**Ogre (CR 3)**](https://www.d20srd.org/srd/monsters/ogre.htm)
+- [**Dire Boar (CR 4)**](https://www.d20srd.org/srd/monsters/direBoar.htm)
 - [**Dire Wolverine (CR 4)**](https://www.d20srd.org/srd/monsters/direWolverine.htm)
 - [**Troll (CR 5)**](https://www.d20srd.org/srd/monsters/troll.htm)
 - [**Ettin (CR 6)**](https://www.d20srd.org/srd/monsters/ettin.htm)

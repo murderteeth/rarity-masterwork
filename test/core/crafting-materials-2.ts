@@ -26,119 +26,39 @@ describe('Core: Crafting Materials II', function () {
   })
 
   it('claims mats for slain monsters', async function() {
-    this.adventure.adventures
+    this.adventure.is_ended
     .whenCalledWith(this.adventure_token)
-    .returns([false, false, false, false, false, 2, 2, 0, 0, 1, 0])
+    .returns(true)
 
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 0)
-    .returns([0, 0, 0, 0, this.rarity.address, 0])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 1)
-    .returns([0, 0, 0, 0, this.adventure.address, 1])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 2)
-    .returns([0, 0, 0, 0, this.adventure.address, 2])
+    this.adventure.is_victory
+    .whenCalledWith(this.adventure_token)
+    .returns(true)
 
-    this.adventure.monster_spawn
-    .whenCalledWith(1)
-    .returns(13)
-    this.adventure.monster_spawn
-    .whenCalledWith(2)
-    .returns(1)
+    this.adventure['count_loot(uint256)']
+    .whenCalledWith(this.adventure_token)
+    .returns(100)
 
     await expect(this.mats.claim(this.adventure_token))
     .to.emit(this.mats, 'Transfer')
     .withArgs(
       ethers.constants.AddressZero, 
       this.signer.address, 
-      ethers.utils.parseEther(((800 + 25) / 10).toString())
-    )
-  })
-
-  it('claims extra mats for a succesful search check', async function() {
-    this.adventure.adventures
-    .whenCalledWith(this.adventure_token)
-    .returns([false, false, true, true, false, 2, 2, 0, 0, 1, 0])
-
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 0)
-    .returns([0, 0, 0, 0, this.rarity.address, 0])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 1)
-    .returns([0, 0, 0, 0, this.adventure.address, 1])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 2)
-    .returns([0, 0, 0, 0, this.adventure.address, 2])
-
-    this.adventure.monster_spawn
-    .whenCalledWith(1)
-    .returns(13)
-    this.adventure.monster_spawn
-    .whenCalledWith(2)
-    .returns(1)
-
-    await expect(this.mats.claim(this.adventure_token))
-    .to.emit(this.mats, 'Transfer')
-    .withArgs(
-      ethers.constants.AddressZero, 
-      this.signer.address, 
-      ethers.utils.parseEther((Math.floor(1.15 * (800 + 25)) / 10).toString())
-    )
-  })
-
-  it('claims even more mats for a critical search check', async function() {
-    this.adventure.adventures
-    .whenCalledWith(this.adventure_token)
-    .returns([false, false, true, true, true, 2, 2, 0, 0, 1, 0])
-
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 0)
-    .returns([0, 0, 0, 0, this.rarity.address, 0])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 1)
-    .returns([0, 0, 0, 0, this.adventure.address, 1])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 2)
-    .returns([0, 0, 0, 0, this.adventure.address, 2])
-
-    this.adventure.monster_spawn
-    .whenCalledWith(1)
-    .returns(13)
-    this.adventure.monster_spawn
-    .whenCalledWith(2)
-    .returns(1)
-
-    await expect(this.mats.claim(this.adventure_token))
-    .to.emit(this.mats, 'Transfer')
-    .withArgs(
-      ethers.constants.AddressZero, 
-      this.signer.address, 
-      ethers.utils.parseEther((Math.floor(1.20 * (800 + 25)) / 10).toString())
+      100
     )
   })
 
   it('rejects claimed adventures', async function() {
-    this.adventure.adventures
+    this.adventure.is_ended
     .whenCalledWith(this.adventure_token)
-    .returns([false, false, false, false, false, 2, 2, 0, 0, 1, 0])
+    .returns(true)
 
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 0)
-    .returns([0, 0, 0, 0, this.rarity.address, 0])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 1)
-    .returns([0, 0, 0, 0, this.adventure.address, 1])
-    this.adventure.turn_orders
-    .whenCalledWith(this.adventure_token, 2)
-    .returns([0, 0, 0, 0, this.adventure.address, 2])
+    this.adventure.is_victory
+    .whenCalledWith(this.adventure_token)
+    .returns(true)
 
-    this.adventure.monster_spawn
-    .whenCalledWith(1)
-    .returns(13)
-    this.adventure.monster_spawn
-    .whenCalledWith(2)
-    .returns(1)
+    this.adventure['count_loot(uint256)']
+    .whenCalledWith(this.adventure_token)
+    .returns(100)
 
     await this.mats.claim(this.adventure_token)
 
@@ -147,18 +67,22 @@ describe('Core: Crafting Materials II', function () {
   })
 
   it('rejects adventures that haven\'t ended', async function() {
-    this.adventure.adventures
+    this.adventure.is_ended
     .whenCalledWith(this.adventure_token)
-    .returns([false, false, false, false, false, 2, 0, 0, 0, 0, 0])
+    .returns(false)
 
     await expect(this.mats.claim(this.adventure_token))
     .revertedWith('!ended')
   })
 
   it('rejects adventures that weren\'t won', async function() {
-    this.adventure.adventures
+    this.adventure.is_ended
     .whenCalledWith(this.adventure_token)
-    .returns([false, false, false, false, false, 2, 1, 0, 0, 1, 0])
+    .returns(true)
+
+    this.adventure.is_victory
+    .whenCalledWith(this.adventure_token)
+    .returns(false)
 
     await expect(this.mats.claim(this.adventure_token))
     .revertedWith('!victory')
