@@ -13,10 +13,6 @@ async function main() {
   await codex_crafting_skills.deployed()
   console.log('📐 deploy codex/codex-crafting-skills.sol', codex_crafting_skills.address);
 
-  const codex_items_armor_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-armor-masterwork.sol:codex')).deploy()
-  await codex_items_armor_masterwork.deployed()
-  console.log('📐 deploy codex/codex-items-armor-masterwork.sol', codex_items_armor_masterwork.address);
-
   const codex_items_tools = await (await ethers.getContractFactory('contracts/codex/codex-items-tools.sol:codex')).deploy()
   await codex_items_tools.deployed()
   console.log('📐 deploy codex/codex-items-tools.sol', codex_items_tools.address);
@@ -29,14 +25,24 @@ async function main() {
   await codex_items_weapons_2.deployed()
   console.log('📐 deploy codex/codex-items-weapons-2', codex_items_weapons_2.address);
 
+  const codex_items_armor_2 = await (await ethers.getContractFactory('contracts/codex/codex-items-armor-2.sol:codex')).deploy()
+  await codex_items_armor_2.deployed()
+  console.log('📐 deploy codex/codex_items_armor_2', codex_items_armor_2.address);
+
 
 
   //////////////////////////////////////////////////
   console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
-    from: [new RegExp(devAddresses.codex_weapons_2, 'g')],
-    to: [codex_items_weapons_2.address]
+    from: [
+      new RegExp(devAddresses.codex_weapons_2, 'g'), 
+      new RegExp(devAddresses.codex_armor_2, 'g')
+    ],
+    to: [
+      codex_items_weapons_2.address, 
+      codex_items_armor_2.address
+    ]
   })
   await hre.run('compile')
 
@@ -45,6 +51,10 @@ async function main() {
   const codex_items_weapons_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-weapons-masterwork.sol:codex')).deploy()
   await codex_items_weapons_masterwork.deployed()
   console.log('📐 deploy codex/codex-items-weapons-masterwork.sol', codex_items_weapons_masterwork.address);
+
+  const codex_items_armor_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-armor-masterwork.sol:codex')).deploy()
+  await codex_items_armor_masterwork.deployed()
+  console.log('📐 deploy codex/codex-items-armor-masterwork.sol', codex_items_armor_masterwork.address);
 
   const library_rarity = await (await ethers.getContractFactory('contracts/library/Rarity.sol:Rarity')).deploy()
   await library_rarity.deployed()
@@ -211,6 +221,7 @@ async function main() {
 
   await fs.writeFile('./deploy-addresses.json', JSON.stringify({
     codex_crafting_skills: codex_crafting_skills.address,
+    codex_items_armor_2: codex_items_armor_2.address,
     codex_items_armor_masterwork: codex_items_armor_masterwork.address,
     codex_items_tools: codex_items_tools.address,
     codex_items_tools_masterwork: codex_items_tools_masterwork.address,

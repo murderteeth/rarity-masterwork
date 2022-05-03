@@ -9,7 +9,7 @@ contract codex {
   string public constant class = "Masterwork Armor";
 
   IRarityCodexCommonArmor constant COMMON_CODEX =
-    IRarityCodexCommonArmor(0xf5114A952Aca3e9055a52a87938efefc8BB7878C);
+    IRarityCodexCommonArmor(0x0000000000000000000000000000000000000010);
 
   function get_proficiency_by_id(uint256 _id)
     public

@@ -77,7 +77,7 @@ contract codex {
     } else if (_id == 17) {
       return sling();
     } else if (_id == 18) {
-      return axe_throwing();
+      return axe();
     } else if (_id == 19) {
       return hammer_light();
     } else if (_id == 20) {
@@ -418,7 +418,7 @@ contract codex {
     weapon.description = "Your Strength modifier applies to damage rolls when you use a sling, just as it does for thrown weapons. You can fire, but not load, a sling with one hand. Loading a sling is a move action that requires two hands and provokes attacks of opportunity.";
   }
 
-  function axe_throwing() public pure returns (IWeapon.Weapon memory weapon) {
+  function axe() public pure returns (IWeapon.Weapon memory weapon) {
     weapon.id = 18;
     weapon.name = "Axe, Throwing";
     weapon.cost = 8e18;
@@ -640,7 +640,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This weapon consists of a wooden haft and a heavy, metal head. The head may be single (like a carpenter’s hammer) or double (like a sledgehammer). The haft is long enough that you may wield it one- or two-handed. Though heavy and relatively slow to wield, warhammers are capable of delivering immense blows, crushing armor and flesh alike.";
+    weapon.description = "This weapon consists of a wooden haft and a heavy, metal head. The head may be single (like a carpenter's hammer) or double (like a sledgehammer). The haft is long enough that you may wield it one- or two-handed. Though heavy and relatively slow to wield, warhammers are capable of delivering immense blows, crushing armor and flesh alike.";
   }
 
   function falchion() public pure returns (IWeapon.Weapon memory weapon) {
@@ -685,7 +685,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This two-handed battle axe is heavy enough that you can’t wield it with one hand. The head may have one blade or two, and may be “bearded” (meaning hooked or trailing at the bottom) to increase cleaving power and help pull down enemy shields. The haft is usually 3 to 4 feet long.";
+    weapon.description = "This two-handed battle axe is heavy enough that you can't wield it with one hand. The head may have one blade or two, and may be ""bearded"" (meaning hooked or trailing at the bottom) to increase cleaving power and help pull down enemy shields. The haft is usually 3 to 4 feet long.";
   }
 
   function greatclub() public pure returns (IWeapon.Weapon memory weapon) {
@@ -700,7 +700,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This larger, bulkier version of the common club is heavy enough that you can’t wield it with one hand. It may be ornate and carved, reinforced with metal, or a simple branch from a tree. Like simple clubs, greatclubs have many names, such as cudgels, bludgeons, shillelaghs, and more.";
+    weapon.description = "This larger, bulkier version of the common club is heavy enough that you can't wield it with one hand. It may be ornate and carved, reinforced with metal, or a simple branch from a tree. Like simple clubs, greatclubs have many names, such as cudgels, bludgeons, shillelaghs, and more.";
   }
 
   function flail_heavy() public pure returns (IWeapon.Weapon memory weapon) {

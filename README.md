@@ -44,10 +44,10 @@ yarn test
 ```
 
 ## Additions to Rarity Core
-
 contracts/
 - codex/
   - [codex-crafting-skills.sol](contracts/codex/codex-crafting-skills.sol)
+  - [codex-items-armor-2.sol](contracts/codex/codex-items-armor-2.sol)
   - [codex-items-armor-masterwork.sol](contracts/codex/codex-items-armor-masterwork.sol)
   - [codex-items-tools.sol](contracts/codex/codex-items-tools.sol)
   - [codex-items-tools-masterwork.sol](contracts/codex/codex-items-tools-masterwork.sol)
@@ -62,6 +62,8 @@ contracts/
 - [interfaces/*](contracts/interfaces/)
 - [library/*](contracts/library/)
 
+### codex-items-weapons-2 and codex-items-armor-2
+The original weapons and armor codexes were missing several item descriptions. The new versions have descriptions for every item. In addition, the weapons codex was upgraded to use a Weapon struct.
 
 ## Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools
 Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Create masterwork items like this:
