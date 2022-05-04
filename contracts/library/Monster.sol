@@ -18,7 +18,12 @@ library Monster {
     string name;
   }
 
-  function hit_points(MonsterCodex memory monster, uint token) internal view returns (int16) {
+  function standard_hit_points(MonsterCodex memory monster) internal view returns (int16) {
+    return int16(uint16((monster.hit_dice_count * monster.hit_dice_sides - monster.hit_dice_count) / 2 + monster.hit_dice_count))
+    + monster.hit_dice_modifier;
+  }
+
+  function roll_hit_points(MonsterCodex memory monster, uint token) internal view returns (int16) {
     int16 roll = int16(uint16(Random.dn(
       9409069218745053777, 
       token, 

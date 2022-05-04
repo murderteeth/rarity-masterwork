@@ -375,7 +375,7 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     combatant.token = next_monster;
     combatant.initiative_roll = initiative_roll;
     combatant.initiative_score = initiative_score;
-    combatant.hit_points = Monster.hit_points(monster_codex, next_monster);
+    combatant.hit_points = Monster.standard_hit_points(monster_codex);
     combatant.armor_class = monster_codex.armor_class;
     combatant.attacks = monster_codex.attacks;
 

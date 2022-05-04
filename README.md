@@ -5,17 +5,19 @@ Masterwork is a new crafting level for Rarity players and builders. Like Rarity'
 Masterwork is an expansion of the original Rarity core created by Andre Cronje, et al in September 2021. It continues the vision of a free-to-mint, permissionless, d20 implementation in solidity.
 
 ### So what?
-Masterwork weapons and armor are exceptional. They are made so well that you get a bonus when using them.
+Masterwork items are exceptional. They are made so well that you get a bonus when using them.
 
-Masterwork weapons make you more accurate, granting a +1 bonus on all attacks. That is, you get a 10% better chance of hitting an Armor Class of 10, 5% better odds against AC 20, and so on. 
+⚔ Masterwork weapons make you more accurate, granting a +1 bonus on all attacks. That is, you get a 10% better chance of hitting an Armor Class of 10, 5% better odds against AC 20, and so on. 
 
-Masterwork armor fits you perfectly, granting a +1 armor check bonus. This gives you better odds whenever your movement is in check, such as sneaking up on an opponent or climbing out of a trap.
+🛡 Masterwork armor fits you perfectly, granting a +1 armor check bonus. This gives you better odds whenever your movement is in check, such as sneaking up on an opponent or climbing out of a trap.
 
-🧙‍♂️ - Masterwork crafting is the basis for magic weapons and armor. Magic weapons and armor grant even more bonuses such as extra damage and improved armor class. Magic Crafting, coming soon..
+🛠 Masterwork tools are just what you needed to get the job done. They grant various skill bonuses such as crafting and lock picking.
 
-👷‍♀️ - The [Rarity Core Library](/contracts/library) was created to support Masterwork. The core library contains everything you need to create your own on-chain d20 adventures in Solidity.
+🧙‍♂️ Masterwork crafting is the basis for magic weapons and armor. Magic weapons and armor grant even more bonuses such as extra damage and improved armor class. Magic Crafting, coming soon..
 
-👹 - Nice!!
+👷‍♀️ The [Rarity Core Library](/contracts/library) was created to support Masterwork. The core library contains everything you need to create your own on-chain d20 adventures in Solidity.
+
+👹 Nice!!
 
 ### Now what?
 This git repo contains all the source code and tooling used to build and test Masterwork. Use it as a reference or template for integrating masterwork and other d20 mechanics with your game. 
@@ -220,7 +222,7 @@ Masterwork adapts its crafting mechanics from the d20 rules below while also con
 
 
 ## Rarity Adventure 2 - Monsters in the Barn
-Monsters in the Barn is a single player, turn-based combat encounter. The adventure begins outside a barn where monsters have been hording salvage. Choose a summoner, equip them with weapons and armor, enter the barn.. If you defeat the monsters, claim their salvage and use it to speed up crafting at the masterwork crafting station. If you loose, try again tomorrow. This adventure is minted to your wallet as a standard ERC721 token. 
+Monsters in the Barn is a single player, turn-based combat encounter. The adventure begins outside a barn where monsters have been hording salvage. Choose a summoner, equip weapons and armor, enter the barn.. If you defeat the monsters, claim their salvage and use it to speed up crafting at the masterwork crafting station. If you loose, try again tomorrow. This adventure is minted to your wallet as a standard ERC721 token. 
 
 ### Challenge Rating
 Monsters in the Barn is designed to be challenging for summoners level 1 through 9. Entering the barn initiates combat with up to 3 monsters. Summoners are matched against monsters having a CR (challenge rating) equal to their level or lower.
