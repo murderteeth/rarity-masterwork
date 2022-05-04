@@ -5,7 +5,7 @@ import { classes } from '../../test/util/classes'
 import { skills, skillsArray } from '../../test/util/skills'
 import { feats } from '../../test/util/feats'
 import { craftingSkills } from '../../test/util/crafting'
-import { jumpOneDay } from './jump'
+import { jumpOneDay } from '../../test/util/jump'
 
 async function dailyAdventure(contracts: any, summoner: any) {
   await contracts.rarity.adventure(summoner)

@@ -1,5 +1,5 @@
 import getContracts from './contracts'
-import { jumpOneMinute } from './jump'
+import { jumpOneMinute } from '../../test/util/jump'
 
 async function main() {
   const contracts = await getContracts()

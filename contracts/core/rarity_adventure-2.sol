@@ -29,14 +29,14 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
   // 4 gnoll (CR 1)
   // 6 black bear (CR 2)
   // 7 ogre (CR 3)
+  // 11 ettin (CR 6)
   // 8 dire boar (CR 4)
   // 9 dire wolverine (CR 4)
   // 10 troll (CR 5)
-  // 11 ettin (CR 6)
 
   uint8[9] public MONSTERS = [1, 3, 4, 6, 7, 11, 8, 9, 10];
-  uint8[6] public MONSTER_FOR_LEVEL = [4, 6, 6, 7, 7, 11];
-  uint8[9] public MONSTER_BONUS_INDEX_FOR_LEVEL = [2, 3, 3, 4, 4, 5, 6, 7, 8];
+  uint8[7] public MONSTERS_BY_LEVEL = [4, 6, 6, 7, 7, 8, 9];
+  uint8[9] public MONSTER_BONUS_INDEX_BY_LEVEL = [2, 3, 3, 3, 4, 5, 6, 8, 8];
 
   uint8 public constant EQUIPMENT_SLOTS = 3;
   uint8 public constant EQUIPMENT_TYPE_WEAPON = 0;
@@ -329,17 +329,17 @@ contract rarity_adventure_2 is ERC721Enumerable, IERC721Receiver, ForSummoners, 
     uint8 monster_count, 
     uint8[3] memory monsters
   ) {
-    monsters[monster_count] = MONSTER_FOR_LEVEL[level > 6 ? 5 : level - 1];
+    monsters[monster_count] = MONSTERS_BY_LEVEL[level > 7 ? 6 : level - 1];
     monster_count++;
 
     if(Random.dn(12586470658909511785, token, 100) > 50) {
-      uint8 bonus_index = MONSTER_BONUS_INDEX_FOR_LEVEL[level > 5 ? 4 : level - 1];
+      uint8 bonus_index = MONSTER_BONUS_INDEX_BY_LEVEL[level > 5 ? 4 : level - 1];
       monsters[monster_count] = MONSTERS[Random.dn(15608573760256557610, token, bonus_index + 1) - 1];
       monster_count++;
     }
 
-    if(level > 6 && Random.dn(1593506169583491991, token, 100) > 50) {
-      uint8 bonus_index = MONSTER_BONUS_INDEX_FOR_LEVEL[level > 9 ? 8 : level - 1];
+    if(level > 5 && Random.dn(1593506169583491991, token, 100) > 50) {
+      uint8 bonus_index = MONSTER_BONUS_INDEX_BY_LEVEL[level > 9 ? 8 : level - 1];
       monsters[monster_count] = MONSTERS[Random.dn(15241373560133191304, token, bonus_index + 1) - 1];
       monster_count++;
     }
