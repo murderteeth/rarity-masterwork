@@ -30,7 +30,7 @@ contract codex {
   ) {
     id = 1;
     name = "Alchemy";
-    description = "";
+    description = "Craft alchemical items such as acid, antitoxins, and Alchemist\'s fire.";
   }
 
   function armorsmithing() public pure returns (
@@ -40,7 +40,7 @@ contract codex {
   ) {
     id = 2;
     name = "Armorsmithing";
-    description = "";
+    description = "Craft armor and shields.";
   }
 
   function bowmaking() public pure returns (
@@ -50,7 +50,7 @@ contract codex {
   ) {
     id = 3;
     name = "Bowmaking";
-    description = "";
+    description = "Craft simple and composite long and short bows.";
   }
 
   function trapmaking() public pure returns (
@@ -60,7 +60,7 @@ contract codex {
   ) {
     id = 4;
     name = "Trapmaking";
-    description = "";
+    description = "Craft mechanical and magic traps.";
   }
 
   function weaponsmithing() public pure returns (
@@ -70,6 +70,6 @@ contract codex {
   ) {
     id = 5;
     name = "Weaponsmithing";
-    description = "";
+    description = "Craft melee weapons such as axes, daggers, swords, greatswords, maces, hammers, and spears.";
   }
 }

@@ -18,7 +18,7 @@ library Monster {
     string name;
   }
 
-  function standard_hit_points(MonsterCodex memory monster) internal view returns (int16) {
+  function standard_hit_points(MonsterCodex memory monster) internal pure returns (int16) {
     return int16(uint16((monster.hit_dice_count * monster.hit_dice_sides - monster.hit_dice_count) / 2 + monster.hit_dice_count))
     + monster.hit_dice_modifier;
   }
