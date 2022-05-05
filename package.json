@@ -5,7 +5,8 @@
     "test-fast": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "report-gas": "REPORT_GAS=true npx hardhat test",
     "start-fork": "npx hardhat node --hostname 0.0.0.0 --fork https://rpc.ftm.tools",
-    "random-uint256": "npx ts-node scripts/randomUint256.ts"
+    "random-uint256": "npx ts-node scripts/randomUint256.ts",
+    "size-contracts": "npx hardhat size-contracts"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.0.7",
@@ -47,6 +48,7 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "hardhat-contract-sizer": "^2.5.1",
     "is-svg": "^4.3.2",
     "replace-in-file": "^6.3.2"
   }

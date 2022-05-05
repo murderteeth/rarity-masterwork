@@ -7,6 +7,7 @@ import "@nomiclabs/hardhat-waffle";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-abi-exporter";
+import 'hardhat-contract-sizer'
 import { promise as glob } from 'glob-promise'
 import shell, { ShellString } from 'shelljs'
 
@@ -117,7 +118,7 @@ const config: HardhatUserConfig = {
       },
       optimizer: {
         enabled: true,
-        runs: 2000,
+        runs: 200,
       },
     }
   },

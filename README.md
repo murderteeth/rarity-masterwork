@@ -512,6 +512,7 @@ yarn test
 yarn test-fast
 yarn report-gas
 yarn random-uint256   # handy for generating random seeds
+yarn size-contracts   # get compiled size of all the contracts
 ```
 
 ## Hardhat customizations
