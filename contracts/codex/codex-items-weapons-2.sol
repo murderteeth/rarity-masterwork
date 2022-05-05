@@ -385,7 +385,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = 0;
     weapon.range_increment = 20;
-    weapon.description = "Darts are missile weapons, designed to fly such that a sharp, often weighted point will strike first. They can be distinguished from javelins by fletching (i.e., feathers on the tail) and a shaft that is shorter and/or more flexible, and from arrows by the fact that they are not of the right length to use with a normal bow.";
+    weapon.description = "Darts are missile weapons, designed to fly such that a sharp, often weighted point will strike first.";
   }
 
   function javelin() public pure returns (IWeapon.Weapon memory weapon) {
@@ -423,7 +423,7 @@ contract codex {
     weapon.name = "Axe, Throwing";
     weapon.cost = 8e18;
     weapon.proficiency = 2;
-    weapon.encumbrance = 2;
+    weapon.encumbrance = 5;
     weapon.damage_type = 3;
     weapon.weight = 2;
     weapon.damage = 6;
@@ -460,7 +460,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This one-handed axe is short (roughly 1 foot long) and designed for use with one hand. Unlike throwing axes, it is not well balanced for a graceful tumbling motion, and is instead heavier at its head. Tomahawks, war hatchets, and other such names usually refer to hand axes.";
+    weapon.description = "This one-handed axe is short (roughly 1 foot long) and designed for use with one hand.";
   }
 
   function kukri() public pure returns (IWeapon.Weapon memory weapon) {
@@ -505,7 +505,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This weapon consists of a soft wrapping around a hard, dense core, typically a leather sheath around a lead rod. The head is wider than the handle and designed to spread out the force of the blow, making it less likely to draw blood or break bones.";
+    weapon.description = "This weapon consists of a soft wrapping around a hard, dense core, typically a leather sheath around a lead rod.";
   }
 
   function sword_short() public pure returns (IWeapon.Weapon memory weapon) {
@@ -520,7 +520,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = -1;
     weapon.range_increment = 0;
-    weapon.description = "Short swords are some of the most common weapons found in any martial society, and thus designs are extremely varied, depending on the region and creator. Most are around 2 feet in length. Their blades can be curved or straight, single- or double-edged, and wide or narrow. Hilts may be ornate or simple, with crossguards, basket hilts, or no guard at all. Such weapons are often used on their own, but can also be paired as a matched set, or used in conjunction with a dagger or longer sword.";
+    weapon.description = "This sword is around 2 feet in length.";
   }
 
   function battleaxe() public pure returns (IWeapon.Weapon memory weapon) {
@@ -535,7 +535,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "The handle of this axe is long enough that you can wield it one-handed or two-handed. The head may have one blade or two, with blade shapes ranging from half-moons to squared edges like narrower versions of woodcutting axes. The wooden haft may be protected and strengthened with metal bands called langets.";
+    weapon.description = "The handle of this axe is long enough that you can wield it one-handed or two-handed. The head may have one blade or two.";
   }
 
   function flail() public pure returns (IWeapon.Weapon memory weapon) {
@@ -580,7 +580,7 @@ contract codex {
     weapon.critical = 4;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This variant of the light pick has a longer handle and can be used with one or two hands. It is a common, inexpensive weapon for mounted soldiers since it can be used effectively from horseback.";
+    weapon.description = "This variant of the light pick has a longer handle and can be used with one or two hands.";
   }
 
   function rapier() public pure returns (IWeapon.Weapon memory weapon) {
@@ -640,7 +640,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This weapon consists of a wooden haft and a heavy, metal head. The head may be single (like a carpenter's hammer) or double (like a sledgehammer). The haft is long enough that you may wield it one- or two-handed. Though heavy and relatively slow to wield, warhammers are capable of delivering immense blows, crushing armor and flesh alike.";
+    weapon.description = "This weapon consists of a wooden haft and a heavy, metal head.";
   }
 
   function falchion() public pure returns (IWeapon.Weapon memory weapon) {
@@ -655,7 +655,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = -2;
     weapon.range_increment = 0;
-    weapon.description = "This sword has one curved, sharp edge like a scimitar, with the back edge unsharpened and either flat or slightly curved. Its weight is greater toward the end, making it better for chopping rather than stabbing.";
+    weapon.description = "This sword has one curved, sharp edge like a scimitar, with the back edge unsharpened and either flat or slightly curved.";
   }
 
   function glaive() public pure returns (IWeapon.Weapon memory weapon) {
@@ -685,7 +685,7 @@ contract codex {
     weapon.critical = 3;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This two-handed battle axe is heavy enough that you can't wield it with one hand. The head may have one blade or two, and may be ""bearded"" (meaning hooked or trailing at the bottom) to increase cleaving power and help pull down enemy shields. The haft is usually 3 to 4 feet long.";
+    weapon.description = "This two-handed battle axe is heavy enough that you can't wield it with one hand. The head may have one blade or two.";
   }
 
   function greatclub() public pure returns (IWeapon.Weapon memory weapon) {
@@ -700,7 +700,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "This larger, bulkier version of the common club is heavy enough that you can't wield it with one hand. It may be ornate and carved, reinforced with metal, or a simple branch from a tree. Like simple clubs, greatclubs have many names, such as cudgels, bludgeons, shillelaghs, and more.";
+    weapon.description = "This larger, bulkier version of the common club is heavy enough that you can't wield it with one hand.";
   }
 
   function flail_heavy() public pure returns (IWeapon.Weapon memory weapon) {
@@ -1000,7 +1000,7 @@ contract codex {
     weapon.critical = 2;
     weapon.critical_modifier = 0;
     weapon.range_increment = 0;
-    weapon.description = "A dire flail is a double weapon. You can fight with it as if fighting with two weapons, but if you do, you incur all the normal attack penalties associated with fighting with two weapons, just as if you were using a one-handed weapon and a light weapon. A creature wielding a dire flail in one hand cant use it as a double weapon- only one end of the weapon can be used in any given round.";
+    weapon.description = "A dire flail is a double weapon. You can fight with it as if fighting with two weapons, but if you do, you incur all the normal attack penalties associated with fighting with two weapons.";
   }
 
   function crossbow_hand() public pure returns (IWeapon.Weapon memory weapon) {
