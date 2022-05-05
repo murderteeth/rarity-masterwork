@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
-import { enumberance, randomId, unpackAttacks } from '../util'
-import { armorType, baseType, weaponType } from '../util/crafting'
-import { fakeAttributes, fakeCommonCraftingWrapper, fakeMasterwork, fakeRarity } from '../util/fakes'
+import { enumberance, randomId, unpackAttacks } from '../../util'
+import { armorType, baseType, weaponType } from '../../util/crafting'
+import { fakeAttributes, fakeCommonCraftingWrapper, fakeMasterwork, fakeRarity } from '../../util/fakes'
 import { ethers } from 'hardhat'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Rarity__factory } from '../../typechain/library'
-import { classes } from '../util/classes'
+import { classes } from '../../util/classes'
 
 describe('Library: Summoner', function () {
   before(async function () {

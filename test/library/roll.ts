@@ -1,13 +1,13 @@
 import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
-import { randomId } from '../util'
+import { randomId } from '../../util'
 import { Attributes__factory, Random__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { Feats__factory } from '../../typechain/library/factories/Feats__factory'
-import { fakeAttributes, fakeCraftingSkills, fakeFeats, fakeRandom, fakeSkills } from '../util/fakes'
-import { feats } from '../util/feats'
-import { skills } from '../util/skills'
+import { fakeAttributes, fakeCraftingSkills, fakeFeats, fakeRandom, fakeSkills } from '../../util/fakes'
+import { feats } from '../../util/feats'
+import { skills } from '../../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
-import { craftingSkills } from '../util/crafting'
+import { craftingSkills } from '../../util/crafting'
 
 describe('Library: Roll', function () {
   before(async function () {

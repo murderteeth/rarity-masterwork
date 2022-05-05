@@ -1,11 +1,11 @@
 import { ethers, network } from 'hardhat'
 import {promises as fs} from 'fs'
 import getContracts from './contracts'
-import { classes } from '../../test/util/classes'
-import { skills, skillsArray } from '../../test/util/skills'
-import { feats } from '../../test/util/feats'
-import { craftingSkills } from '../../test/util/crafting'
-import { jumpOneDay } from '../../test/util/jump'
+import { classes } from '../../util/classes'
+import { skills, skillsArray } from '../../util/skills'
+import { feats } from '../../util/feats'
+import { craftingSkills } from '../../util/crafting'
+import { jumpOneDay } from '../../util/jump'
 
 async function dailyAdventure(contracts: any, summoner: any) {
   await contracts.rarity.adventure(summoner)

@@ -1,6 +1,6 @@
 import {promises as fs} from 'fs'
 import getContracts from './contracts'
-import { armorType, baseType, weaponType } from '../../test/util/crafting';
+import { armorType, baseType, weaponType } from '../../util/crafting';
 import party from './party.json'
 
 async function craft(contracts: any, baseType: number, itemType: number) {

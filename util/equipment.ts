@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import codex from '../../contracts/codex/json/equipment.json'
+import codex from '../contracts/codex/json/equipment.json'
 
 export const officialWeapons = codex.equipments.equipment.filter(e => e.family === 'Weapons')
 export const officialArmor = codex.equipments.equipment.filter(e => e.family === 'Armor and Shields')

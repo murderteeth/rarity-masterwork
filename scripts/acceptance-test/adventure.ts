@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat'
-import { equipmentType, getDamageType } from '../../test/util'
-import monsterCodex from '../../test/util/monster-codex.json'
-import { jumpOneDay, jumpOneMinute } from "../../test/util/jump"
+import { equipmentType, getDamageType } from '../../util'
+import monsterCodex from '../../util/monster-codex.json'
+import { jumpOneDay, jumpOneMinute } from "../../util/jump"
 import party from './party.json'
 
 const samples = 10

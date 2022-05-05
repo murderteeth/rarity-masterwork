@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { randomId } from '../util'
+import { randomId } from '../../util'
 import { Rarity__factory } from '../../typechain/library'
-import { fakeRarity } from '../util/fakes'
+import { fakeRarity } from '../../util/fakes'
 
 describe('Library: Rarity', function () {
   before(async function () {

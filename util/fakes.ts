@@ -1,9 +1,9 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../../typechain/core'
-import { IRarityCodexBaseRandom2 } from '../../typechain/interfaces/codex'
-import { IRarityCodexCraftingSkills } from '../../typechain/interfaces/codex/IRarityCodexCraftingSkills'
+import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
+import { IRarityCodexBaseRandom2 } from '../typechain/interfaces/codex'
+import { IRarityCodexCraftingSkills } from '../typechain/interfaces/codex/IRarityCodexCraftingSkills'
 import { armorType, baseType, weaponType } from './crafting'
 
 export async function fakeRarity() {

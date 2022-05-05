@@ -3,8 +3,8 @@ import { smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
 import { RarityCraftingMaterials2__factory } from '../../typechain/core/factories/RarityCraftingMaterials2__factory'
 import { RarityAdventure2 } from '../../typechain/core'
-import { randomId } from '../util'
-import { fakeRarity } from '../util/fakes'
+import { randomId } from '../../util'
+import { fakeRarity } from '../../util/fakes'
 
 chai.use(smock.matchers)
 

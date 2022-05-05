@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat'
 import {promises as fs} from 'fs'
 import getContracts from './contracts'
-import { armorType, baseType, toolType, weaponType } from '../../test/util/crafting';
+import { armorType, baseType, toolType, weaponType } from '../../util/crafting';
 import party from './party.json'
 
 function logUri(message: string, tokenUri: string) {

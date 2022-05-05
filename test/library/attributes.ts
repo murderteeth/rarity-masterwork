@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { Attributes__factory } from '../../typechain/library/factories/Attributes__factory'
-import { randomId } from '../util'
-import { fakeAttributes } from '../util/fakes'
+import { randomId } from '../../util'
+import { fakeAttributes } from '../../util/fakes'
 
 describe('Library: Attributes', function () {
   before(async function () {

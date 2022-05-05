@@ -1,12 +1,12 @@
 import chai, { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
-import { fakeRarity, fakeSkills, fakeSummoner } from '../util/fakes'
+import { fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { RarityCraftingSkills__factory } from '../../typechain/core'
 import { Rarity__factory, Skills__factory } from '../../typechain/library'
-import { skills } from '../util/skills'
-import { craftingSkills } from '../util/crafting'
+import { skills } from '../../util/skills'
+import { craftingSkills } from '../../util/crafting'
 import { ethers } from 'hardhat'
-import { classes } from '../util/classes'
+import { classes } from '../../util/classes'
 
 chai.use(smock.matchers)
 
