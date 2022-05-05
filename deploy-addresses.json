@@ -21,5 +21,6 @@
 	"core_rarity_crafting_common_wrapper": "0x4631BCAbD6dF18D94796344963cB60d44a4136b6",
 	"core_rarity_adventure_2": "0x86A2EE8FAf9A840F7a2c64CA3d51209F9A02081D",
 	"core_crafting_mats_2": "0xA4899D35897033b927acFCf422bc745916139776",
-	"core_rarity_crafting_masterwork": "0xf953b3A269d80e3eB0F2947630Da976B896A8C5b"
+	"core_rarity_crafting_masterwork_uri": "0xf953b3A269d80e3eB0F2947630Da976B896A8C5b",
+	"core_rarity_crafting_masterwork": "0xAA292E8611aDF267e563f334Ee42320aC96D0463"
 }

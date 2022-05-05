@@ -199,12 +199,15 @@ async function main() {
   })
   await hre.run('compile')
 
-
+  const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri')).deploy()
+  await core_rarity_crafting_masterwork_uri.deployed()
+  console.log('📚 deploy core/core_rarity_crafting_masterwork_uri.sol', core_rarity_crafting_masterwork_uri.address);
 
   const core_rarity_crafting_masterwork = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', {
     libraries: {
       Crafting: library_crafting.address,
       CraftingSkills: library_crafting_skills.address,
+      MasterworkUri: core_rarity_crafting_masterwork_uri.address,
       Rarity: library_rarity.address,
       Roll: library_roll.address,
       Skills: library_skills.address
@@ -242,12 +245,13 @@ async function main() {
     core_rarity_crafting_common_wrapper: core_rarity_crafting_common_wrapper.address,
     core_rarity_adventure_2: core_rarity_adventure_2.address,
     core_crafting_mats_2: core_crafting_mats_2.address,
+    core_rarity_crafting_masterwork_uri: core_rarity_crafting_masterwork_uri.address,
     core_rarity_crafting_masterwork: core_rarity_crafting_masterwork.address
   }, null, '\t'))
   console.log('📝 write deployed addresses to ./deploy-addresses.json')
 
   if(network.name === 'mainnet') {
-    shell.exec('git commit -a -m "Deploy mainnet"')
+    shell.exec('git commit -a -m "🚀 Deploy mainnet"')
   } else {
     shell.exec('git checkout contracts/*')
   }

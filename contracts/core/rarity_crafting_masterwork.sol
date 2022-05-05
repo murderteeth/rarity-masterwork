@@ -4,7 +4,6 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
 import "../interfaces/core/IRarity.sol";
 import "../interfaces/core/IRarityCommonCrafting.sol";
 import "../interfaces/core/IRarityCraftingMaterials2.sol";
@@ -17,7 +16,7 @@ import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Roll.sol";
 import "../library/Skills.sol";
-import "../library/StringUtil.sol";
+import "./rarity_crafting_masterwork_uri.sol";
 
 contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
   uint public next_token = 1;
@@ -30,7 +29,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityGold constant GOLD = IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
   IRarityCommonCrafting constant COMMON_CRAFTING = IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-  ICodexSkills SKILLS_CODEX = ICodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
   ICodexTools COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000002);
   IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000008);
   ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
@@ -45,26 +43,8 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     RARITY.summon(2);
   }
 
-  struct Project {
-    bool done_crafting;
-    bool complete;
-    uint8 base_type;
-    uint8 item_type;
-    uint64 started;
-    uint progress;
-    uint tools;
-    uint xp;
-  }
-
-  struct Item {
-    uint8 base_type;
-    uint8 item_type;
-    uint64 crafted;
-    uint crafter;
-  }
-
-  mapping(uint => Project) public projects;
-  mapping(uint => Item) public items;
+  mapping(uint => MasterworkUri.Project) public projects;
+  mapping(uint => MasterworkUri.Item) public items;
 
   function onERC721Received(
     address operator,
@@ -101,7 +81,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function skill_bonus(uint token, uint8 skill) override external view returns (int8 result) {
-    Item memory item = items[token];
+    MasterworkUri.Item memory item = items[token];
     if(item.base_type == 4) {
       ITools.Tools memory tools = TOOLS_CODEX.item_by_id(item.item_type);
       result = tools.skill_bonus[skill];
@@ -119,7 +99,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     require(tools == 0 || Crafting.isApprovedOrOwnerOfItem(tools, address(this)), "!approvedForItem");
     require(valid_item_type(base_type, item_type), "!valid_item_type");
 
-    Project storage project = projects[next_token];
+    MasterworkUri.Project storage project = projects[next_token];
     project.base_type = base_type;
     project.item_type = item_type;
     project.started = uint64(block.timestamp);
@@ -127,7 +107,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     uint cost = raw_materials_cost(base_type, item_type);
 
     if(tools != 0) {
-      Item memory toolsitem = items[tools];
+      MasterworkUri.Item memory toolsitem = items[tools];
       require(toolsitem.base_type == 4 && toolsitem.item_type == 2, "!Artisan's tools");
       project.tools = tools;
       safeTransferFrom(msg.sender, address(this), tools);
@@ -152,7 +132,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     approvedForSummoner(crafter) 
   {
     require(eligible(crafter), "!eligible");
-    Project storage project = projects[token];
+    MasterworkUri.Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
 
     (uint8 roll, int8 score) = Roll.craft(
@@ -195,11 +175,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     approvedForItem(token, address(this))
     approvedForSummoner(crafter)
   {
-    Project storage project = projects[token];
+    MasterworkUri.Project storage project = projects[token];
     require(project.done_crafting, "!done_crafting");
     require(!project.complete, "complete");
 
-    Item storage item = items[token];
+    MasterworkUri.Item storage item = items[token];
     item.base_type = project.base_type;
     item.item_type = project.item_type;
     item.crafted = uint64(block.timestamp);
@@ -214,7 +194,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function cancel(uint token) public approvedForItem(token, address(this)) {
-    Project storage project = projects[token];
+    MasterworkUri.Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
     uint tools = project.tools;
     delete projects[token];
@@ -240,7 +220,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function max_bonus_mats(uint token) public view returns (uint) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     return (project.tools == 0)
     ? 127 * 20e18
     : uint8(127 - this.skill_bonus(project.tools, 5)) * 20e18;
@@ -250,7 +230,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     return craft_bonus(projects[token], bonus_mats);
   }
 
-  function craft_bonus(Project memory project, uint bonus_mats) internal view returns (int8 result) {
+  function craft_bonus(MasterworkUri.Project memory project, uint bonus_mats) internal view returns (int8 result) {
     result = (project.tools == 0)
     ? int8(0)
     : this.skill_bonus(project.tools, 5);
@@ -280,32 +260,32 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function get_dc(uint token) public view returns (uint8) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     return get_dc(project);
   }
 
-  function get_dc(Project memory project) public view returns (uint8) {
+  function get_dc(MasterworkUri.Project memory project) public view returns (uint8) {
     return (project.progress >= standard_component_cost_in_silver(project.base_type, project.item_type))
     ? MASTERWORK_COMPONENT_DC
     : standard_component_dc(project.base_type, project.item_type);
   }
 
   function get_progress(uint token) public view returns (uint, uint) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     return progress(project);
   }
 
-  function progress(Project memory project) public view returns (uint, uint) {
+  function progress(MasterworkUri.Project memory project) public view returns (uint, uint) {
     if(project.done_crafting) return(1, 1);
     return(project.progress, item_cost_in_silver(project.base_type, project.item_type));
   }
 
   function get_craft_check_odds(uint token, uint summoner, uint bonus_mats) public view returns (int8 average_score, uint8 dc) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     (average_score, dc) = craft_check_odds(project, summoner, bonus_mats);
   }
 
-  function craft_check_odds(Project memory project, uint summoner, uint bonus_mats) public view returns (int8 average_score, uint8 dc) {
+  function craft_check_odds(MasterworkUri.Project memory project, uint summoner, uint bonus_mats) public view returns (int8 average_score, uint8 dc) {
     (uint8 roll, int8 score) = Roll.craft(
       summoner, 
       CraftingSkills.get_specialization(project.base_type, project.item_type)
@@ -315,7 +295,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function estimate_remaining_xp_cost(uint token, uint summoner, uint bonus_mats) public view returns (uint xp) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     uint silver = item_cost_in_silver(project.base_type, project.item_type);
     (int8 average_score,) = craft_check_odds(project, summoner, bonus_mats);
     uint average_score_uint = uint(uint8(average_score));
@@ -337,7 +317,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function project_cost(uint token) public view returns (uint result) {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     result = raw_materials_cost(project.base_type, project.item_type);
     if(project.tools == 0) result += COMMON_ARTISANS_TOOLS_RENTAL;
   }
@@ -347,179 +327,27 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   }
 
   function _transfer(address from, address to, uint token) internal override {
-    Project memory project = projects[token];
+    MasterworkUri.Project memory project = projects[token];
     if(project.tools != 0 && ownerOf(project.tools) == address(this)) {
       IERC721Enumerable(address(this)).approve(to, project.tools);
     }
     super._transfer(from, to, token);
   }
 
-  function tokenURI(uint token) public view virtual override returns (string memory) {
-    Project memory project = projects[token];
-    if(project.complete) return item_uri(token);
-    else return project_uri(token, project);
-  }
-
-  function project_uri(uint token, Project memory project) public view returns (string memory) {
-    uint y = 0;
-    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'category ', base_type_name(project.base_type), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'item ', item_name(project.base_type, project.item_type), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'status ', status_string(project), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'tools ', tools_string(project), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'progress ', progress_string(project), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'xp ', StringUtil.toString(project.xp / 1e18), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'started ', StringUtil.toString(project.started), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'ended ', ended_string(token, project), '</text>'));
-    svg = string(abi.encodePacked(svg, '</svg>'));
-
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "project #', StringUtil.toString(token), '", "description": "Rarity tier 2 (Masterwork), non magical, item crafting.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
-    return string(abi.encodePacked('data:application/json;base64,', json));
-  }
-
-  function item_uri(uint token) public view returns (string memory result) {
-    uint base_type = items[token].base_type;
-    if (base_type == 2) {
-      return armor_uri(token);
-    } else if (base_type == 3) {
-      return weapon_uri(token);
-    } else if (base_type == 4) {
-      return tools_uri(token);
-    }
-  }
-
-  function armor_uri(uint token) public view returns (string memory) {
-    uint y = 0;
-    Item memory item = items[token];
-    IArmor.Armor memory armor = ARMOR_CODEX.item_by_id(item.item_type);
-
-    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'category ', base_type_name(item.base_type), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'name ', armor.name, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'cost ', StringUtil.toString(armor.cost/1e18), 'gp</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'weight ', StringUtil.toString(armor.weight), 'lb</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'proficiency ', ARMOR_CODEX.get_proficiency_by_id(armor.proficiency), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'armor bonus ', StringUtil.toString(armor.armor_bonus), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'max_dex ', StringUtil.toString(armor.max_dex_bonus), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'penalty ', StringUtil.toString(armor.penalty), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'spell failure ', StringUtil.toString(armor.spell_failure), '%</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'bonus</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="20" y="', StringUtil.toString(y), '" class="base">', '-1 Armor Check Penalty</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'description ', armor.description, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafter ', StringUtil.toString(item.crafter), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafted ', StringUtil.toString(item.crafted), '</text>'));
-    svg = string(abi.encodePacked(svg, '</svg>'));
-
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "item #', StringUtil.toString(token), '", "description": "Rarity tier 2 (Masterwork), non magical, item crafting.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
-    return string(abi.encodePacked('data:application/json;base64,', json));
-  }
-
-  function weapon_uri(uint token) public view returns (string memory) {
-    uint y = 0;
-    Item memory item = items[token];
-    IWeapon.Weapon memory weapon = WEAPONS_CODEX.item_by_id(item.item_type);
-
-    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'category ', base_type_name(item.base_type), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'name ', weapon.name, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'cost ', StringUtil.toString(weapon.cost/1e18), 'gp</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'weight ', StringUtil.toString(weapon.weight), 'lb</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'proficiency ', WEAPONS_CODEX.get_proficiency_by_id(weapon.proficiency), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'encumbrance ', WEAPONS_CODEX.get_encumbrance_by_id(weapon.encumbrance), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'damage 1d', StringUtil.toString(weapon.damage), ', ', WEAPONS_CODEX.get_damage_type_by_id(weapon.damage_type) ,'</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', '(modifier) x critical (', StringUtil.toString(weapon.critical_modifier), ') x ', StringUtil.toString(weapon.critical), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'range ', StringUtil.toString(weapon.range_increment), 'ft</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'bonus</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="20" y="', StringUtil.toString(y), '" class="base">', '+1 Attack</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'description ', weapon.description, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafter ', StringUtil.toString(item.crafter), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafted ', StringUtil.toString(item.crafted), '</text>'));
-    svg = string(abi.encodePacked(svg, '</svg>'));
-
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "item #', StringUtil.toString(token), '", "description": "Rarity tier 2 (Masterwork), non magical, item crafting.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
-    return string(abi.encodePacked('data:application/json;base64,', json));
-  }
-
-  function tools_uri(uint token) public view returns (string memory) {
-    uint y = 0;
-    Item memory item = items[token];
-    ITools.Tools memory tools = TOOLS_CODEX.item_by_id(item.item_type);
-
-    string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'category ', base_type_name(item.base_type), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'name ', tools.name, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'cost ', StringUtil.toString(tools.cost/1e18), 'gp</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'weight ', StringUtil.toString(tools.weight), 'lb</text>'));
-
-    y += 20; (string memory bonus_fragment, uint y_after_bonus) = tools_bonus_svg_fragment(tools, y);
-    svg = string(abi.encodePacked(svg, bonus_fragment));
-
-    y = y_after_bonus; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'description ', tools.description, '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafter ', StringUtil.toString(item.crafter), '</text>'));
-    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafted ', StringUtil.toString(item.crafted), '</text>'));
-    svg = string(abi.encodePacked(svg, '</svg>'));
-
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "item #', StringUtil.toString(token), '", "description": "Rarity tier 2 (Masterwork), non magical, item crafting.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
-    return string(abi.encodePacked('data:application/json;base64,', json));
-  }
-
-  function base_type_name(uint8 base_type) public pure returns (string memory result) {
-    if (base_type == 2) {
-      result = "Armor";
-    } else if (base_type == 3) {
-      result = "Weapons";
-    } else if (base_type == 4) {
-      result = "Tools";
-    }
-  }
-
-  function item_name(uint8 base_type, uint8 item_type) public view returns (string memory result) {
-    if(base_type == 2) {
-      result = get_armor(item_type).name;
-    } else if(base_type == 3) {
-      result = get_weapon(item_type).name;
-    } else if(base_type == 4) {
-      result = get_tools(item_type).name;
-    }
-  }
-
-  function status_string(Project memory project) internal pure returns (string memory) {
-    if(project.complete) return "Complete";
-    if(project.done_crafting) return "Ready for completion";
-    return "Crafting";
-  }
-
-  function tools_string(Project memory project) internal pure returns (string memory) {
-    if(project.tools > 0) return "Masterwork Artisan's Tools";
-    return "Common Artisan's Tools (Rental)";
-  }
-
-  function progress_string(Project memory project) internal view returns (string memory) {
-    (uint m, uint n) = progress(project);
-    return string(abi.encodePacked(StringUtil.toString(m * 100 / n), "%"));
-  }
-
-  function ended_string(uint token, Project memory project) internal view returns (string memory) {
+  function tokenURI(uint token) public view virtual override returns (string memory uri) {
+    MasterworkUri.Project memory project = projects[token];
     if(project.complete) {
-      return StringUtil.toString(items[token].crafted);
-    } else {
-      return "--";
-    }
-  }
-
-  function tools_bonus_svg_fragment(ITools.Tools memory tools, uint y) internal view returns (string memory result, uint new_y) {
-    result = string(abi.encodePacked('<text x="10" y="', StringUtil.toString(y), '" class="base">bonus</text>'));
-    y += 20;
-    for(uint i = 0; i < 36; i++) {
-      int8 bonus = tools.skill_bonus[i];
-      string memory sign = "";
-      if(bonus != 0) {
-        if(bonus > 0) sign = "+";
-        (, string memory name,,,,,,) = SKILLS_CODEX.skill_by_id(i + 1);
-        result = string(abi.encodePacked(result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', sign, StringUtil.toString(bonus), ' ', name, '</text>'));
-        y += 20;
+      uint base_type = items[token].base_type;
+      if (base_type == 2) {
+        return MasterworkUri.armor_uri(token, items[token]);
+      } else if (base_type == 3) {
+        return MasterworkUri.weapon_uri(token, items[token]);
+      } else if (base_type == 4) {
+        return MasterworkUri.tools_uri(token, items[token]);
       }
+    } else {
+      (uint m, uint n) = progress(project);
+      return MasterworkUri.project_uri(token, project, items[token], m, n);
     }
-    new_y = y;
   }
 }
