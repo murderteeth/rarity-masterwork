@@ -1,4 +1,4 @@
-import hre, { ethers } from 'hardhat'
+import hre, { ethers, network } from 'hardhat'
 import replace from 'replace-in-file'
 import shell from 'shelljs'
 import {promises as fs} from 'fs'
@@ -246,7 +246,12 @@ async function main() {
   }, null, '\t'))
   console.log('📝 write deployed addresses to ./deploy-addresses.json')
 
-  shell.exec('git checkout contracts/*')
+  if(network.name === 'mainnet') {
+    shell.exec('git commit -a -m "Deploy mainnet"')
+  } else {
+    shell.exec('git checkout contracts/*')
+  }
+
   console.log('\n\n💥 deployed!!\n\n')
 }
 
