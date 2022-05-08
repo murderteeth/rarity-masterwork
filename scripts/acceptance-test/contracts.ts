@@ -47,7 +47,7 @@ export default async function getContracts(signer?: SignerWithAddress) {
       )
     },
     adventure2: await ethers.getContractAt(
-      'contracts/core/rarity_adventure-2.sol:rarity_adventure_2', 
+      'contracts/core/rarity_adventure_2.sol:rarity_adventure_2', 
       deployAddresses.core_rarity_adventure_2,
       signer
     ),

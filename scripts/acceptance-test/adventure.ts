@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { equipmentType, getDamageType } from '../../util'
+import { equipmentSlot, getDamageType } from '../../util'
 import monsterCodex from '../../util/monster-codex.json'
 import { jumpOneDay, jumpOneMinute } from "../../util/jump"
 import party from './party.json'
@@ -91,15 +91,15 @@ async function adventure(
   let summonerPreview = null
   switch(loadout) {
     case 0: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, equipment.longsword, equipmentAddress, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, equipment.armor, equipmentAddress, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.shield, equipment.shield, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentSlot.weapon1, equipment.longsword, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentSlot.armor, equipment.armor, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentSlot.shield, equipment.shield, equipmentAddress, { gasLimit })
       summonerPreview = await contracts.adventure2.preview(adventurer, equipment.longsword, equipmentAddress, equipment.armor, equipmentAddress, equipment.shield, equipmentAddress)
       if(logging) console.log(`-- Armed with ${masterwork?'masterwork ':''}longsword, big wood shield, and full plate armor`)
       break
     } case 1: {
-      await contracts.adventure2.equip(adventureToken, equipmentType.weapon, equipment.greatsword, equipmentAddress, { gasLimit })
-      await contracts.adventure2.equip(adventureToken, equipmentType.armor, equipment.armor, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentSlot.weapon1, equipment.greatsword, equipmentAddress, { gasLimit })
+      await contracts.adventure2.equip(adventureToken, equipmentSlot.armor, equipment.armor, equipmentAddress, { gasLimit })
       summonerPreview = await contracts.adventure2.preview(adventurer, equipment.greatsword, equipmentAddress, equipment.armor, equipmentAddress, 0, ethers.constants.AddressZero)
       if(logging) console.log(`-- Armed with ${masterwork?'masterwork ':''} greatsword and full plate armor`)
       break

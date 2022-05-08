@@ -1,10 +1,11 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
+import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityEquipment2, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../typechain/interfaces/codex'
 import { IRarityCodexCraftingSkills } from '../typechain/interfaces/codex/IRarityCodexCraftingSkills'
 import { armorType, baseType, weaponType } from './crafting'
+import devAddresses from '../dev-addresses.json'
 
 export async function fakeRarity() {
   return await smock.fake<Rarity>('contracts/core/rarity.sol:rarity', { 
@@ -24,6 +25,13 @@ export async function fakeCommonCraftingWrapper() {
 
 export async function fakeMasterwork() {
   return await smock.fake<RarityMasterwork>('contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork')
+}
+
+export async function fakeEquipment() {
+  return await smock.fake<RarityEquipment2>(
+    'contracts/core/rarity_equipment_2.sol:rarity_equipment_2', 
+    { address: devAddresses.core_rarity_equipment_2 }
+  )
 }
 
 export async function fakeAttributes() {
@@ -46,14 +54,14 @@ export async function fakeSkills() {
 
 export async function fakeCraftingSkillsCodex() {
   const result = await smock.fake<IRarityCodexCraftingSkills>('contracts/codex/codex-crafting-skills.sol:codex', {
-    address: '0x0000000000000000000000000000000000000001'
+    address: devAddresses.codex_crafting_skills
   })
   return result
 }
 
 export async function fakeCraftingSkills() {
   const result = await smock.fake<RarityCraftingSkills>('contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills', {
-    address: '0x0000000000000000000000000000000000000007'
+    address: devAddresses.core_crafting_skills
   })
   result.get_skills
   .returns(Array(5).fill(0))

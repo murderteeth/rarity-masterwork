@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { equipmentType, getDamageType } from '../../util'
+import { equipmentSlot, getDamageType } from '../../util'
 import { fakeAttributes, fakeCommonCraftingWrapper, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeMasterwork, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
@@ -78,7 +78,7 @@ async function logAttacks(fixture: any, adventureToken: any, tx: any) {
 }
 
 async function mockAdventure() {
-  return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
+  return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
     libraries: {
       Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
       Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
@@ -119,8 +119,8 @@ async function simulateAdventure(fixture: any, logging: boolean) {
   await jumpOneDay()
   const token = await fixture.adventure.next_token()
   await fixture.adventure.start(fixture.summoner)
-  await fixture.adventure.equip(token, equipmentType.weapon, fixture.greatsword, fixture.crafting.common.address)
-  await fixture.adventure.equip(token, equipmentType.armor, fixture.fullPlate, fixture.crafting.common.address)
+  await fixture.adventure.equip(token, equipmentSlot.weapon1, fixture.greatsword, fixture.crafting.common.address)
+  await fixture.adventure.equip(token, equipmentSlot.armor, fixture.fullPlate, fixture.crafting.common.address)
   const enterTx = await(await fixture.adventure.enter_dungeon(token)).wait()
 
   if(logging) await logAttacks(fixture, token, enterTx)

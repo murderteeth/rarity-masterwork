@@ -6,17 +6,12 @@ import "./Roll.sol";
 library Combat {
   uint internal constant ATTACK_STRIDE = 7;
 
-  struct EquipmentSlot {
-    address item_contract;
-    uint item;
-  }
-
   struct Combatant {
     uint8 initiative_roll;
     int8 initiative_score;
     uint8 armor_class;
     int16 hit_points;
-    address origin;
+    address mint;
     uint token;
     int8[28] attacks; // layout: [attack_bonus, critical_modifier, critical_multiplier, damage_dice_count, damage_dice_sides, damage_modifier, damage_type.. x4]
   }

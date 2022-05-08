@@ -82,7 +82,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('core', 'rarity_crafting_masterwork.sol/rarity_masterwork.json', 'IRarityMasterworkCrafting')
   makeInterface('core', 'rarity_crafting-materials-1.sol/rarity_crafting_materials.json', 'IRarityCraftingMaterials')
   makeInterface('core', 'rarity_crafting-materials-2.sol/rarity_crafting_materials_2.json', 'IRarityCraftingMaterials2')
-  makeInterface('core', 'rarity_adventure-2.sol/rarity_adventure_2.json', 'IRarityAdventure2')
+  makeInterface('core', 'rarity_adventure_2.sol/rarity_adventure_2.json', 'IRarityAdventure2')
   makeInterface('core', 'rarity.sol/rarity.json', 'IRarity')
   makeInterface('core', 'skills.sol/rarity_skills.json', 'IRaritySkills')
   makeInterface('core', 'wRGLD.sol/wrapped_rarity_gold.json', 'IRarityWGold')

@@ -12,8 +12,8 @@ import { skills, skillsArray } from '../../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { armors, weapons } from '../../util/equipment'
-import { RarityMasterworkUri__factory } from '../../typechain/core/factories/RarityMasterworkUri__factory'
 import devAddresses from '../../dev-addresses.json'
+import { MasterworkUri__factory } from '../../typechain/core'
 
 chai.use(smock.matchers)
 
@@ -48,7 +48,7 @@ describe('Core: Crafting II - Masterwork', function () {
       libraries: {
         Crafting: (await (await smock.mock<Crafting__factory>('contracts/library/Crafting.sol:Crafting')).deploy()).address,
         CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address,
-        MasterworkUri: (await(await smock.mock<RarityMasterworkUri__factory>('contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri')).deploy()).address,
+        MasterworkUri: (await(await smock.mock<MasterworkUri__factory>('contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri')).deploy()).address,
         Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
         Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
           libraries: {

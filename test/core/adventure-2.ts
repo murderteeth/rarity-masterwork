@@ -1,20 +1,19 @@
 import chai, { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
-import { equipmentType, randomId, unpackAttacks } from '../../util'
-import { fakeAttributes, fakeCommonCraftingWrapper, fakeCraft, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLeatherArmor, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
-import { Attributes__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
+import isSvg from 'is-svg'
+import { equipmentSlot, randomId } from '../../util'
+import { fakeAttributes, fakeCommonCraftingWrapper, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
+import { Attributes__factory, Feats__factory, Monster__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
+import { AdventureUri__factory } from '../../typechain/core'
 import { skills } from '../../util/skills'
 import { feats } from '../../util/feats'
-import { Crafting__factory } from '../../typechain/library/factories/Crafting__factory'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { classes } from '../../util/classes'
-import { armorType, baseType, toolType, weaponType } from '../../util/crafting'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { BigNumber } from 'ethers'
-import { armors, weapons } from '../../util/equipment'
-import isSvg from 'is-svg'
+import devAddresses from '../../dev-addresses.json'
 
 chai.use(smock.matchers)
 
@@ -24,7 +23,11 @@ describe('Core: Adventure II', function () {
     this.signer = this.signers[0]
 
     this.codex = {
-      random: await fakeRandom()
+      random: await fakeRandom(),
+      common: {
+        armor: await smock.fake('contracts/codex/codex-items-armor-2.sol:codex', { address: devAddresses.codex_armor_2 }),
+        weapons: await smock.fake('contracts/codex/codex-items-weapons-2.sol:codex', { address: devAddresses.codex_weapons_2 })
+      }
     }
 
     this.core = {
@@ -39,45 +42,62 @@ describe('Core: Adventure II', function () {
       masterwork: await fakeMasterwork()
     }
 
-    this.adventure = await mockAdventure()
-    await this.adventure.set_item_whitelist(
-      this.crafting.common.address, 
-      this.crafting.masterwork.address
-    )
+    this.equipment = await fakeEquipment()
+    this.equipment.codexes
+    .whenCalledWith(this.crafting.common.address, 2)
+    .returns(this.codex.common.armor.address)
 
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.greatsword)
-    .returns(weapons('greatsword'))
+    this.equipment.codexes
+    .whenCalledWith(this.crafting.common.address, 3)
+    .returns(this.codex.common.weapons.address)
 
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.longsword)
-    .returns(weapons('longsword'))
 
-    this.crafting.common.get_weapon
-    .whenCalledWith(weaponType.heavyCrossbow)
-    .returns(weapons('crossbow, heavy'))
-
-    this.crafting.common.get_armor
-    .whenCalledWith(armorType.fullPlate)
-    .returns(armors('full plate'))
-
-    this.crafting.common.get_armor
-    .whenCalledWith(armorType.heavyWoodShield)
-    .returns(armors('shield, heavy wooden'))
+    this.adventureUri = await mockAdvenutreUri()
+    this.adventure = await mockAdventure(this.adventureUri)
   })
 
-  async function mockAdventure() {
-    return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
+  async function mockAdvenutreUri() {
+    return await(await smock.mock<AdventureUri__factory>('contracts/core/rarity_adventure_2_uri.sol:AdventureUri', {
       libraries: {
-        Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
-        Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
-        Crafting: (await(await smock.mock<Crafting__factory>('contracts/library/Crafting.sol:Crafting')).deploy()).address,
-        Proficiency: (await(await smock.mock<Proficiency__factory>('contracts/library/Proficiency.sol:Proficiency', {
+        Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
           libraries: {
-            Feats: (await (await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
-            Rarity: (await (await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
+            Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+            Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+            Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
+              libraries: {
+                Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+                Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+                Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
+                Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+                CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
+              }
+            })).deploy()).address
+          }
+        })).deploy()).address
+      }
+    })).deploy()
+  }
+
+  async function mockAdventure(adventureUri: any) {
+    return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
+      libraries: {
+        AdventureUri: adventureUri.address,
+        Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
+          libraries: {
+            Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+            Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+            Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
+              libraries: {
+                Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+                Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+                Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
+                Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+                CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
+              }
+            })).deploy()).address
           }
         })).deploy()).address,
+        Rarity: (await(await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
         Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
           libraries: {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
@@ -96,30 +116,22 @@ describe('Core: Adventure II', function () {
                 Rarity: (await (await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
               }
             })).deploy()).address,
-            Rarity: (await (await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address
+            Rarity: (await (await smock.mock<Rarity__factory>('contracts/library/Rarity.sol:Rarity')).deploy()).address,
+            Roll: (await(await smock.mock<Roll__factory>('contracts/library/Roll.sol:Roll', {
+              libraries: {
+                Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
+                Attributes: (await (await smock.mock<Attributes__factory>('contracts/library/Attributes.sol:Attributes')).deploy()).address,
+                Feats: (await(await smock.mock<Feats__factory>('contracts/library/Feats.sol:Feats')).deploy()).address,
+                Skills: (await (await smock.mock<Skills__factory>('contracts/library/Skills.sol:Skills')).deploy()).address,
+                CraftingSkills: (await(await smock.mock<CraftingSkills__factory>('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()).address
+              }
+            })).deploy()).address
           }
         })).deploy()).address,
         Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address
       }
     })).deploy()
   }
-
-  it('can\'t set an item whitelist address to zero', async function () {
-    const adventure = await mockAdventure()
-    await expect(adventure.set_item_whitelist(ethers.constants.AddressZero, this.crafting.masterwork.address))
-    .to.be.revertedWith('commonWrapper == address(0)')
-    await expect(adventure.set_item_whitelist(this.crafting.common.address, ethers.constants.AddressZero))
-    .to.be.revertedWith('masterwork == address(0)')
-  })
-
-  it('sets the item whitelist only once', async function () {
-    const adventure = await mockAdventure()
-    await adventure.set_item_whitelist(this.crafting.common.address, this.crafting.masterwork.address)
-    expect(await adventure.ITEM_WHITELIST(0)).to.eq(this.crafting.common.address)
-    expect(await adventure.ITEM_WHITELIST(1)).to.eq(this.crafting.masterwork.address)
-    await expect(adventure.set_item_whitelist(this.crafting.common.address, this.crafting.masterwork.address))
-    .to.be.revertedWith('whitelist already set')
-  })
 
   it('starts new adventures', async function () {
     const summoner = fakeSummoner(this.core.rarity, this.signer)
@@ -241,223 +253,6 @@ describe('Core: Adventure II', function () {
     })
   })
 
-  describe('Equipment', async function() {
-    beforeEach(async function(){
-      this.summoner = fakeSummoner(this.core.rarity, this.signer)
-      this.token = await this.adventure.next_token()
-      await this.adventure.start(this.summoner)
-    })
-
-    it('tests proficiencies', async function() {
-      const fighter = randomId()
-      this.core.rarity.class
-      .whenCalledWith(fighter)
-      .returns(classes.fighter)
-
-      expect(await this.adventure.is_proficient_with_weapon(fighter, weaponType.longsword, this.crafting.common.address))
-      .to.be.true
-
-      expect(await this.adventure.is_proficient_with_armor(fighter, armorType.fullPlate, this.crafting.common.address))
-      .to.be.true
-
-      expect(await this.adventure.is_proficient_with_armor(fighter, armorType.heavyWoodShield, this.crafting.common.address))
-      .to.be.true
-    })
-
-    it('previews loadouts', async function() {
-      const fighter = randomId()
-      this.core.rarity.class
-      .whenCalledWith(fighter)
-      .returns(classes.fighter)
-
-      this.core.rarity.level
-      .whenCalledWith(fighter)
-      .returns(1)
-
-      this.core.attributes.ability_scores
-      .whenCalledWith(fighter)
-      .returns([10, 10, 10, 0, 0, 0])
-
-      const longsword = fakeLongsword(this.crafting.common, fighter, this.signer)
-      const fullplate = fakeFullPlateArmor(this.crafting.common, fighter, this.signer)
-      const shield = fakeHeavyWoodShield(this.crafting.common, fighter, this.signer)
-
-      const preview = await this.adventure.preview(
-        fighter, 
-        longsword, this.crafting.common.address,
-        fullplate, this.crafting.common.address,
-        shield, this.crafting.common.address
-      )
-
-      expect(preview.armor_class).to.eq(20)
-      expect(preview.hit_points).to.eq(10)
-      expect(unpackAttacks(preview.attacks)[0].attack_bonus).to.eq(1)
-    })
-
-    it('equips summoners with weapons and armor', async function () {
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.signer.address,
-        this.adventure.address,
-        longsword
-      )
-      expect(this.crafting.common.approve)
-      .to.have.been.calledWith(
-        this.signer.address,
-        longsword
-      )
-
-      const leatherArmor = fakeLeatherArmor(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(
-        this.token, equipmentType.armor, leatherArmor, this.crafting.common.address
-      )).to.not.be.reverted
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.signer.address,
-        this.adventure.address,
-        leatherArmor
-      )
-      expect(this.crafting.common.approve)
-      .to.have.been.calledWith(
-        this.signer.address,
-        leatherArmor
-      )
-
-      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(
-        this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address
-      )).to.not.be.reverted
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.signer.address,
-        this.adventure.address,
-        heavyWoodShield
-      )
-      expect(this.crafting.common.approve)
-      .to.have.been.calledWith(
-        this.signer.address,
-        heavyWoodShield
-      )
-
-      let slot = await this.adventure.equipment_slots(this.token, equipmentType.weapon)
-      expect(slot.item_contract).to.eq(this.crafting.common.address)
-      expect(slot.item).to.eq(longsword)
-
-      slot = await this.adventure.equipment_slots(this.token, equipmentType.armor)
-      expect(slot.item_contract).to.eq(this.crafting.common.address)
-      expect(slot.item).to.eq(leatherArmor)
-
-      slot = await this.adventure.equipment_slots(this.token, equipmentType.shield)
-      expect(slot.item_contract).to.eq(this.crafting.common.address)
-      expect(slot.item).to.eq(heavyWoodShield)
-    })
-
-    it('updates equipment slots', async function () {
-      const longsword1 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      const longsword2 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword1, this.crafting.common.address)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword2, this.crafting.common.address)
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.signer.address,
-        this.adventure.address,
-        longsword1
-      )
-      expect(this.crafting.common.approve)
-      .to.have.been.calledWith(
-        this.signer.address,
-        longsword1
-      )
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.adventure.address,
-        this.signer.address,
-        longsword1
-      )
-      expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-        this.signer.address,
-        this.adventure.address,
-        longsword2
-      )
-      expect(this.crafting.common.approve)
-      .to.have.been.calledWith(
-        this.signer.address,
-        longsword2
-      )
-    })
-
-    it('equips unarmed summoners', async function () {
-      await expect(this.adventure.equip(
-        this.token, equipmentType.weapon, 0, ethers.constants.AddressZero
-      )).to.not.be.reverted
-      await expect(this.adventure.equip(
-        this.token, equipmentType.armor, 0, ethers.constants.AddressZero
-      )).to.not.be.reverted
-      await expect(this.adventure.equip(
-        this.token, equipmentType.shield, 0, ethers.constants.AddressZero
-      )).to.not.be.reverted
-    })
-
-    it('rejects items from non-whitelist contracts', async function () {
-      const rando_craft = await smock.fake('contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper')
-      const greatsword = fakeGreatsword(rando_craft, this.summoner, this.signer)
-
-      rando_craft.get_weapon
-      .whenCalledWith(weaponType.greatsword)
-      .returns([weaponType.greatsword, 2, 4, 3, 8, 12, 2, -1, 0, ethers.utils.parseEther('50'), "Greatsword", ""])
-
-      await expect(this.adventure.equip(this.token, equipmentType.weapon, greatsword, rando_craft.address))
-      .to.be.revertedWith('!whitelist')
-    })
-
-    it('can\'t equip a two-handed weapon after a shield', async function () {
-      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
-      const greatsword = fakeGreatsword(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(this.token, equipmentType.weapon, greatsword, this.crafting.common.address))
-      .to.be.revertedWith('shield equipped')
-    })
-
-    it('can\'t equip a shield after a two-handed weapon', async function () {
-      const greatsword = fakeGreatsword(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, greatsword, this.crafting.common.address)
-      const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(this.token, equipmentType.shield, heavyWoodShield, this.crafting.common.address))
-      .to.be.revertedWith('two-handed weapon equipped')
-    })
-
-    it('can\'t equip ranged weapons', async function () {
-      const heavyCrossbow = fakeHeavyCrossbow(this.crafting.common, this.summoner, this.signer)
-      await expect(this.adventure.equip(this.token, equipmentType.weapon, heavyCrossbow, this.crafting.common.address))
-      .to.be.revertedWith('ranged weapon')
-    })
-
-    it('can\'t equip items in the wrong slot', async function () {
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await expect(
-        this.adventure.equip(this.token, equipmentType.armor, longsword, this.crafting.common.address
-      )).to.be.revertedWith('!armor')
-
-      const leatherArmor = fakeLeatherArmor(this.crafting.common, this.summoner, this.signer)
-      await expect(
-        this.adventure.equip(this.token, equipmentType.weapon, leatherArmor, this.crafting.common.address
-      )).to.be.revertedWith('!weapon')
-
-      await expect(
-        this.adventure.equip(this.token, equipmentType.shield, leatherArmor, this.crafting.common.address
-      )).to.be.revertedWith('!shield')
-    })
-
-    it('can\'t equip more than one summoner with the same item', async function () {
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-
-      const summoner2 = fakeSummoner(this.core.rarity, this.signer)
-      const token2 = await this.adventure.next_token()
-      await this.adventure.start(summoner2)
-      await expect(
-        this.adventure.equip(token2, equipmentType.weapon, longsword, this.crafting.common.address
-      )).to.be.revertedWith('!item available')
-    })
-  })
-
   describe('Dungeon', async function() {
     beforeEach(async function(){
       this.summoner = fakeSummoner(this.core.rarity, this.signer)
@@ -539,11 +334,11 @@ describe('Core: Adventure II', function () {
       .returns(featFlags)
 
       await this.adventure.enter_dungeon(this.token)
-      expect((await this.adventure.turn_orders(this.token, 0)).origin).to.eq(this.core.rarity.address)
-      expect((await this.adventure.turn_orders(this.token, 1)).origin).to.eq(this.adventure.address)
+      expect((await this.adventure.turn_orders(this.token, 0)).mint).to.eq(this.core.rarity.address)
+      expect((await this.adventure.turn_orders(this.token, 1)).mint).to.eq(this.adventure.address)
     })
 
-    it('can attack and miss weak summoners', async function () {
+    it('can attack and miss weak, defensless summoners', async function () {
       this.codex.random.dn.returns(1)
 
       this.core.rarity.class
@@ -558,10 +353,6 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(this.summoner)
       .returns([0, 9, 0, 0, 0, 0])
 
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-      await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
       const tx = await(await this.adventure.enter_dungeon(this.token)).wait()
       const attack = tx.events[1];
       expect(attack.args.hit).to.be.false;
@@ -582,40 +373,25 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(this.summoner)
       .returns([18, 0, 0, 0, 0, 0])
 
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-      await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
+      const weapon = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+      const armor = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+      const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+  
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.weapon1)
+      .returns([this.crafting.common.address, weapon])
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.armor)
+      .returns([this.crafting.common.address, armor])
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.shield)
+      .returns([this.crafting.common.address, shield])
+
       const tx = await(await this.adventure.enter_dungeon(this.token)).wait()
       const attack = tx.events[1];
       expect(attack.args.hit).to.be.true;
       expect(attack.args.critical_confirmation).to.be.gt(0);
       expect(attack.args.damage).to.be.gt(0);
-    })
-
-    it('experienced fighters get multiple attacks per round', async function () {
-      this.codex.random.dn.returns(15)
-
-      this.core.rarity.class
-      .whenCalledWith(this.summoner)
-      .returns(classes.fighter)
-
-      this.core.rarity.level
-      .whenCalledWith(this.summoner)
-      .returns(6)
-
-      this.core.attributes.ability_scores
-      .whenCalledWith(this.summoner)
-      .returns([24, 24, 24, 0, 0, 0])
-
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-      await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
-      await this.adventure.enter_dungeon(this.token)
-      let target = await this.adventure.next_able_monster(this.token)
-      await this.adventure.attack(this.token, target)
-      expect((await this.adventure.adventures(this.token)).combat_round).to.eq(1)
     })
 
     it('defeats the monsters', async function () {
@@ -633,10 +409,20 @@ describe('Core: Adventure II', function () {
       .whenCalledWith(this.summoner)
       .returns([64, 64, 64, 0, 0, 0])
 
-      const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-      const fullPlate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
-      await this.adventure.equip(this.token, equipmentType.weapon, longsword, this.crafting.common.address)
-      await this.adventure.equip(this.token, equipmentType.armor, fullPlate, this.crafting.common.address)
+      const weapon = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+      const armor = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+      const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+  
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.weapon1)
+      .returns([this.crafting.common.address, weapon])
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.armor)
+      .returns([this.crafting.common.address, armor])
+      this.equipment.slots
+      .whenCalledWith(this.summoner, equipmentSlot.shield)
+      .returns([this.crafting.common.address, shield])
+
       await this.adventure.enter_dungeon(this.token)
 
       while(!(await this.adventure.adventures(this.token)).combat_ended) {
@@ -661,7 +447,7 @@ describe('Core: Adventure II', function () {
       this.codex.random.dn.returns(1)
       await this.adventure.enter_dungeon(this.token)
       const summoners_turn = await this.adventure.summoners_turns(this.token)
-      await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.origin != address(this)')
+      await expect(this.adventure.attack(this.token, summoners_turn)).to.be.revertedWith('monster.mint != address(this)')
     })
 
     it('flees combat', async function () {
@@ -742,7 +528,7 @@ describe('Core: Adventure II', function () {
     })
 
     it('counts standard loot', async function() {
-      expect(await this.adventure['count_loot(uint256)'](this.token)).to.deep.eq(ethers.utils.parseEther('10'))
+      expect(await this.adventure.count_loot(this.token)).to.deep.eq(ethers.utils.parseEther('10'))
     })
 
     it('counts loot with successful search check', async function() {
@@ -794,39 +580,12 @@ describe('Core: Adventure II', function () {
     const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
-
-    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
-    const fullPlate = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
-    const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
-    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
-    await this.adventure.equip(token, equipmentType.armor, fullPlate, this.crafting.common.address)
-    await this.adventure.equip(token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
-
     await this.adventure.end(token)
-
-    expect(await this.adventure.equipment_index(this.crafting.common.address, longsword)).to.eq(0)
-    expect(await this.adventure.equipment_index(this.crafting.common.address, fullPlate)).to.eq(0)
-    expect(await this.adventure.equipment_index(this.crafting.common.address, heavyWoodShield)).to.eq(0)
 
     expect(this.core.rarity['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.adventure.address,
       this.signer.address,
       summoner
-    )
-    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-      this.adventure.address,
-      this.signer.address,
-      longsword
-    )
-    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-      this.adventure.address,
-      this.signer.address,
-      fullPlate
-    )
-    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
-      this.adventure.address,
-      this.signer.address,
-      heavyWoodShield
     )
 
     const adventure = await this.adventure.adventures(token)
@@ -864,33 +623,15 @@ describe('Core: Adventure II', function () {
     await expect(this.adventure.start(summoner)).to.not.be.reverted
   })
 
-  it('transfers summoner and equipment approvals with token', async function () {
+  it('transfers summoner approval with token', async function () {
     const rando = this.signers[1]
     const summoner = fakeSummoner(this.core.rarity, this.signer)
     const token = await this.adventure.next_token()
     await this.adventure.start(summoner)
-    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
-    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
-    const leatherArmor = fakeLeatherArmor(this.crafting.common, summoner, this.signer)
-    await this.adventure.equip(token, equipmentType.armor, leatherArmor, this.crafting.common.address)
-    const heavyWoodShield = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
-    await this.adventure.equip(token, equipmentType.shield, heavyWoodShield, this.crafting.common.address)
     await this.adventure.transferFrom(this.signer.address, rando.address, token)
     expect(this.core.rarity['approve(address,uint256)']).to.have.been.calledWith(
       rando.address,
       summoner
-    )
-    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
-      rando.address,
-      longsword
-    )
-    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
-      rando.address,
-      leatherArmor
-    )
-    expect(this.crafting.common['approve(address,uint256)']).to.have.been.calledWith(
-      rando.address,
-      heavyWoodShield
     )
   })
 
@@ -927,19 +668,27 @@ describe('Core: Adventure II', function () {
     .returns(7)
 
     await this.adventure.start(summoner)
-    const longsword = fakeLongsword(this.crafting.common, summoner, this.signer)
-    const fullPlate = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
-    const woodSheild = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
-    await this.adventure.equip(token, equipmentType.weapon, longsword, this.crafting.common.address)
-    await this.adventure.equip(token, equipmentType.armor, fullPlate, this.crafting.common.address)
-    await this.adventure.equip(token, equipmentType.shield, woodSheild, this.crafting.common.address)
+    const weapon = fakeLongsword(this.crafting.common, summoner, this.signer)
+    const armor = fakeFullPlateArmor(this.crafting.common, summoner, this.signer)
+    const shield = fakeHeavyWoodShield(this.crafting.common, summoner, this.signer)
+
+    this.equipment.slots
+    .whenCalledWith(summoner, equipmentSlot.weapon1)
+    .returns([this.crafting.common.address, weapon])
+    this.equipment.slots
+    .whenCalledWith(summoner, equipmentSlot.armor)
+    .returns([this.crafting.common.address, armor])
+    this.equipment.slots
+    .whenCalledWith(summoner, equipmentSlot.shield)
+    .returns([this.crafting.common.address, shield])
+
     await this.adventure.enter_dungeon(token)
     
     while(!(await this.adventure.adventures(token)).combat_ended) {
       const target = await this.adventure.next_able_monster(token)
       await this.adventure.attack(token, target)
     }
-    
+
     await this.adventure.end(token)
     const tokenUri = await this.adventure.tokenURI(token)
     const tokenJson = JSON.parse(Buffer.from(tokenUri.split(',')[1], "base64").toString());

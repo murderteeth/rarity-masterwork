@@ -56,7 +56,7 @@ contracts/
   - [codex-items-weapons-2.sol](contracts/codex/codex-items-weapons-2.sol)
   - [codex-items-weapons-masterwork.sol](contracts/codex/codex-items-weapons-masterwork.sol)
 - core/
-  - [rarity_adventure-2.sol](contracts/core/rarity_adventure-2.sol)
+  - [rarity_adventure_2.sol](contracts/core/rarity_adventure_2.sol)
   - [rarity_crafting-materials-2.sol](contracts/core/rarity_crafting-materials-2.sol)
   - [rarity_crafting_common_wrapper.sol](contracts/core/rarity_crafting_common_wrapper.sol)
   - [rarity_crafting_masterwork.sol](contracts/core/rarity_crafting_masterwork.sol)
@@ -393,11 +393,11 @@ function summoner_combatant(uint token, uint summoner) internal returns(Combat.C
   (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
   emit RollInitiative(msg.sender, token, initiative_roll, initiative_score);
 
-  Combat.EquipmentSlot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
-  Combat.EquipmentSlot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
-  Combat.EquipmentSlot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
+  Equipment.Slot memory weapon_slot = equipment_slots[token][EQUIPMENT_TYPE_WEAPON];
+  Equipment.Slot memory armor_slot = equipment_slots[token][EQUIPMENT_TYPE_ARMOR];
+  Equipment.Slot memory shield_slot = equipment_slots[token][EQUIPMENT_TYPE_SHIELD];
 
-  combatant.origin = address(RARITY);
+  combatant.mint = address(RARITY);
   combatant.token = summoner;
   combatant.initiative_roll = initiative_roll;
   combatant.initiative_score = initiative_score;
@@ -415,7 +415,7 @@ function monster_combatant(Monster.MonsterCodex memory monster_codex) internal r
     monster_codex.initiative_bonus
   );
 
-  combatant.origin = address(this);
+  combatant.mint = address(this);
   combatant.token = next_monster;
   combatant.initiative_roll = initiative_roll;
   combatant.initiative_score = initiative_score;
@@ -447,7 +447,7 @@ Back to the masterwork longsword. If you want to compute the correct attack bonu
 - Call `masterwork.attack_bonus(longswordToken)` directly and add some branching logic for common longswords
 - Use the common item contract wrapper so that you can call `IEffects` functions on either contract
 
-Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure-2.sol) is implemented. For example, consider the contract's `preview` function:
+Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure_2.sol) is implemented. For example, consider the contract's `preview` function:
 ```solidity
 function preview(
   uint summoner, 
@@ -458,11 +458,11 @@ function preview(
   uint shield, 
   address shield_contract
 ) public view returns (Combat.Combatant memory result) {
-  Combat.EquipmentSlot memory weapon_slot = Combat.EquipmentSlot(weapon_contract, weapon);
-  Combat.EquipmentSlot memory armor_slot = Combat.EquipmentSlot(armor_contract, armor);
-  Combat.EquipmentSlot memory shield_slot = Combat.EquipmentSlot(shield_contract, shield);
+  Equipment.Slot memory weapon_slot = Equipment.Slot(weapon_contract, weapon);
+  Equipment.Slot memory armor_slot = Equipment.Slot(armor_contract, armor);
+  Equipment.Slot memory shield_slot = Equipment.Slot(shield_contract, shield);
   result.token = summoner;
-  result.origin = address(RARITY);
+  result.mint = address(RARITY);
   result.hit_points = int16(uint16(Summoner.hit_points(summoner)));
   result.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
   result.attacks = Summoner.attacks(summoner, weapon_slot, armor_slot, shield_slot);

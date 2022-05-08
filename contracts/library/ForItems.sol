@@ -4,10 +4,10 @@ pragma solidity 0.8.7;
 import "./Crafting.sol";
 
 contract ForItems {
-  modifier approvedForItem(uint item, address item_contract) {
+  modifier approvedForItem(uint token, address mint) {
     if (
-      (item_contract == address(0))
-      || Crafting.isApprovedOrOwnerOfItem(item, item_contract)
+      (mint == address(0))
+      || Crafting.isApprovedOrOwnerOfItem(token, mint)
     ) {
       _;
     } else {

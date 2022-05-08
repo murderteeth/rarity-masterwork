@@ -18,12 +18,12 @@ library Monster {
     string name;
   }
 
-  function standard_hit_points(MonsterCodex memory monster) internal pure returns (int16) {
+  function standard_hit_points(MonsterCodex memory monster) public pure returns (int16) {
     return int16(uint16((monster.hit_dice_count * monster.hit_dice_sides - monster.hit_dice_count) / 2 + monster.hit_dice_count))
     + monster.hit_dice_modifier;
   }
 
-  function roll_hit_points(MonsterCodex memory monster, uint token) internal view returns (int16) {
+  function roll_hit_points(MonsterCodex memory monster, uint token) public view returns (int16) {
     int16 roll = int16(uint16(Random.dn(
       9409069218745053777, 
       token, 
@@ -33,7 +33,23 @@ library Monster {
     return roll + monster.hit_dice_modifier;
   }
 
-  function monster_by_id(uint8 id) internal pure returns (MonsterCodex memory monster) {
+  function monster_combatant(uint token, address mint, Monster.MonsterCodex memory monster_codex) public view returns(Combat.Combatant memory combatant) {
+    (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(
+      token, 
+      Attributes.compute_modifier(monster_codex.abilities[1]), 
+      monster_codex.initiative_bonus
+    );
+
+    combatant.mint = mint;
+    combatant.token = token;
+    combatant.initiative_roll = initiative_roll;
+    combatant.initiative_score = initiative_score;
+    combatant.hit_points = standard_hit_points(monster_codex);
+    combatant.armor_class = monster_codex.armor_class;
+    combatant.attacks = monster_codex.attacks;
+  }
+
+  function monster_by_id(uint8 id) public pure returns (MonsterCodex memory monster) {
     if (id == 1) {
       return kobold();
     } else if (id == 2) {
@@ -63,7 +79,7 @@ library Monster {
     }
   }
 
-  function kobold() internal pure returns (MonsterCodex memory monster) {
+  function kobold() public pure returns (MonsterCodex memory monster) {
     monster.id = 1;
     monster.challenge_rating = 25; // CR 1/4
     monster.hit_dice_count = 1;
@@ -76,7 +92,7 @@ library Monster {
     monster.name = "Kobold";
   }
 
-  function dire_rat() internal pure returns (MonsterCodex memory monster) {
+  function dire_rat() public pure returns (MonsterCodex memory monster) {
     monster.id = 2;
     monster.challenge_rating = 33; // CR 1/3
     monster.hit_dice_count = 1;
@@ -89,7 +105,7 @@ library Monster {
     monster.name = "Dire Rat";
   }
 
-  function goblin() internal pure returns (MonsterCodex memory monster) {
+  function goblin() public pure returns (MonsterCodex memory monster) {
     monster.id = 3;
     monster.challenge_rating = 33; // CR 1/3
     monster.hit_dice_count = 1;
@@ -102,7 +118,7 @@ library Monster {
     monster.name = "Goblin";
   }
 
-  function gnoll() internal pure returns (MonsterCodex memory monster) {
+  function gnoll() public pure returns (MonsterCodex memory monster) {
     monster.id = 4;
     monster.challenge_rating = 100; // CR 1
     monster.hit_dice_count = 2;
@@ -115,7 +131,7 @@ library Monster {
     monster.name = "Gnoll";
   }
 
-  function grimlock() internal pure returns (MonsterCodex memory monster) {
+  function grimlock() public pure returns (MonsterCodex memory monster) {
     monster.id = 5;
     monster.challenge_rating = 100; // CR 1
     monster.hit_dice_count = 2;
@@ -128,7 +144,7 @@ library Monster {
     monster.name = "Grimlock";
   }
 
-  function black_bear() internal pure returns (MonsterCodex memory monster) {
+  function black_bear() public pure returns (MonsterCodex memory monster) {
     monster.id = 6;
     monster.challenge_rating = 200; // CR 2
     monster.hit_dice_count = 3;
@@ -143,7 +159,7 @@ library Monster {
     monster.name = "Black Bear";
   }
 
-  function ogre() internal pure returns (MonsterCodex memory monster) {
+  function ogre() public pure returns (MonsterCodex memory monster) {
     monster.id = 7;
     monster.challenge_rating = 300; // CR 3
     monster.hit_dice_count = 4;
@@ -156,7 +172,7 @@ library Monster {
     monster.name = "Ogre";
   }
 
-  function dire_boar() internal pure returns (MonsterCodex memory monster) {
+  function dire_boar() public pure returns (MonsterCodex memory monster) {
     monster.id = 8;
     monster.challenge_rating = 400; // CR 4
     monster.hit_dice_count = 7;
@@ -169,7 +185,7 @@ library Monster {
     monster.name = "Dire Boar";
   }
 
-  function dire_wolverine() internal pure returns (MonsterCodex memory monster) {
+  function dire_wolverine() public pure returns (MonsterCodex memory monster) {
     monster.id = 9;
     monster.challenge_rating = 400; // CR 4
     monster.hit_dice_count = 5;
@@ -184,7 +200,7 @@ library Monster {
     monster.name = "Dire Wolverine";
   }
 
-  function troll() internal pure returns (MonsterCodex memory monster) {
+  function troll() public pure returns (MonsterCodex memory monster) {
     monster.id = 10;
     monster.challenge_rating = 500; // CR 5
     monster.hit_dice_count = 6;
@@ -199,7 +215,7 @@ library Monster {
     monster.name = "Troll";
   }
 
-  function ettin() internal pure returns (MonsterCodex memory monster) {
+  function ettin() public pure returns (MonsterCodex memory monster) {
     monster.id = 11;
     monster.challenge_rating = 600; // CR 6
     monster.hit_dice_count = 10;
@@ -213,7 +229,7 @@ library Monster {
     monster.name = "Ettin";
   }
 
-  function hill_giant() internal pure returns (MonsterCodex memory monster) {
+  function hill_giant() public pure returns (MonsterCodex memory monster) {
     monster.id = 12;
     monster.challenge_rating = 700; // CR 7
     monster.hit_dice_count = 12;
@@ -227,7 +243,7 @@ library Monster {
     monster.name = "Hill Giant";
   }
 
-  function stone_giant() internal pure returns (MonsterCodex memory monster) {
+  function stone_giant() public pure returns (MonsterCodex memory monster) {
     monster.id = 13;
     monster.challenge_rating = 800; // CR 8
     monster.hit_dice_count = 14;

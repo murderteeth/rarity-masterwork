@@ -28,10 +28,24 @@ export function isNumber(value: string | number): boolean
     && !isNaN(Number(value.toString())))
 }
 
-export const equipmentType = {
-  weapon: 0,
+export const equipmentSlot = {
+  weapon1: 0,
   armor: 1,
-  shield: 2
+  shield: 2,
+  weapon2: 3,
+  hands: 4,
+  ring1: 5,
+  ring2: 6,
+  head: 7,
+  headband: 8,
+  eyes: 9,
+  neck: 10,
+  shoulders: 11,
+  chest: 12,
+  belt: 13,
+  body: 14,
+  arms: 15,
+  feet: 16
 }
 
 export const enumberance = {

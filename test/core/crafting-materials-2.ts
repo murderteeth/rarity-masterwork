@@ -13,7 +13,7 @@ describe('Core: Crafting Materials II', function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
     this.rarity = await fakeRarity()
-    this.adventure = await smock.fake<RarityAdventure2>('contracts/core/rarity_adventure-2.sol:rarity_adventure_2')
+    this.adventure = await smock.fake<RarityAdventure2>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2')
     this.mats = await(await smock.mock<RarityCraftingMaterials2__factory>('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')).deploy()
     await this.mats.setVariable('ADVENTURE_2', this.adventure.address)
   })

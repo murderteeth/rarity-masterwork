@@ -145,7 +145,7 @@ async function main() {
   await core_rarity_crafting_common_wrapper.deployed()
   console.log('🤺 deploy core/rarity_crafting_common_wrapper.sol', core_rarity_crafting_common_wrapper.address);
 
-  const core_rarity_adventure_2 = await (await ethers.getContractFactory('contracts/core/rarity_adventure-2.sol:rarity_adventure_2', {
+  const core_rarity_adventure_2 = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
     libraries: {
       Attributes: library_attributes.address,
       Crafting: library_crafting.address,
@@ -157,7 +157,7 @@ async function main() {
     }
   })).deploy()
   await core_rarity_adventure_2.deployed()
-  console.log('🤺 deploy core/rarity_adventure-2.sol', core_rarity_adventure_2.address);
+  console.log('🤺 deploy core/rarity_adventure_2.sol', core_rarity_adventure_2.address);
 
 
 
