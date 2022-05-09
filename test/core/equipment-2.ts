@@ -92,7 +92,10 @@ describe('Core: Equipment II', function () {
 
   it('equips weapons', async function() {
     const weapon = fakeLongsword(this.crafting.common, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, weapon)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, weapon))
+    .to.emit(this.equipment, 'Equip')
+    .withArgs(this.signer.address, this.summoner, equipmentSlot.weapon1, this.crafting.common.address, weapon)
+
     expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
@@ -106,7 +109,10 @@ describe('Core: Equipment II', function () {
 
   it('equips armor', async function() {
     const armor = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, armor)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, armor))
+    .to.emit(this.equipment, 'Equip')
+    .withArgs(this.signer.address, this.summoner, equipmentSlot.armor, this.crafting.common.address, armor)
+
     expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
@@ -120,7 +126,10 @@ describe('Core: Equipment II', function () {
 
   it('equips shields', async function() {
     const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield))
+    .to.emit(this.equipment, 'Equip')
+    .withArgs(this.signer.address, this.summoner, equipmentSlot.shield, this.crafting.common.address, shield)
+
     expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
@@ -153,7 +162,10 @@ describe('Core: Equipment II', function () {
   it('unequips slots', async function() {
     const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
     await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword)
-    await this.equipment.unequip(this.summoner, equipmentSlot.weapon1)
+    await expect(this.equipment.unequip(this.summoner, equipmentSlot.weapon1))
+    .to.emit(this.equipment, 'Unequip')
+    .withArgs(this.signer.address, this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword)
+
     expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.equipment.address,
       this.signer.address,

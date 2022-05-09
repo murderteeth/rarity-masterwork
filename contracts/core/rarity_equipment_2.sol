@@ -15,10 +15,13 @@ import "../library/Proficiency.sol";
 contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForItems {
   address[2] public MINT_WHITELIST;
 
-  mapping(uint => mapping(uint => Equipment.Slot)) public slots;
+  mapping(uint => mapping(uint8 => Equipment.Slot)) public slots;
   mapping(uint => uint) public encumberance;
   mapping(address => mapping(uint => address)) public codexes;
-  mapping(address => mapping(uint => mapping(uint => mapping(uint => Equipment.Slot)))) public snapshots;
+  mapping(address => mapping(uint => mapping(uint => mapping(uint8 => Equipment.Slot)))) public snapshots;
+
+  event Equip(address indexed owner, uint indexed summoner, uint8 slot_type, address mint, uint token);
+  event Unequip(address indexed owner, uint indexed summoner, uint8 slot_type, address mint, uint token);
 
   function set_mint_whitelist(
     address common, 
@@ -45,8 +48,8 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
   }
 
   function equip(
-    uint summoner, 
-    uint slot_type, 
+    uint summoner,
+    uint8 slot_type,
     address mint, 
     uint token
   ) public 
@@ -84,6 +87,8 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     slots[summoner][slot_type] = Equipment.Slot(mint, token);
     encumberance[summoner] += weigh(mint, base_type, item_type);
 
+    emit Equip(msg.sender, summoner, slot_type, mint, token);
+
     IERC721(mint).safeTransferFrom(msg.sender, address(this), token);
     // approve
     // IERC721(mint).approve(msg.sender, item);
@@ -91,7 +96,7 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
 
   function unequip(
     uint summoner,
-    uint slot_type
+    uint8 slot_type
   ) public 
     nonReentrant()
     approvedForSummoner(summoner)
@@ -102,6 +107,8 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     (uint8 base_type, uint8 item_type,,) = ICrafting(slot.mint).items(slot.token);
     encumberance[summoner] -= weigh(slot.mint, base_type, item_type);
     delete slots[summoner][slot_type];
+
+    emit Unequip(msg.sender, summoner, slot_type, slot.mint, slot.token);
 
     IERC721(slot.mint).safeTransferFrom(address(this), msg.sender, slot.token);
   }
