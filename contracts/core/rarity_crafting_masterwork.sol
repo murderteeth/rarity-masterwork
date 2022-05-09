@@ -56,20 +56,22 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
   }
 
   function start(
-    uint coinmaster,
+    uint crafter,
     uint8 base_type,
     uint8 item_type,
     uint tools
   ) public 
-    approvedForSummoner(coinmaster)
+    approvedForSummoner(crafter)
   {
     require(tools == 0 || Crafting.isApprovedOrOwnerOfItem(tools, address(this)), "!approvedForItem");
     require(valid_item_type(base_type, item_type), "!valid_item_type");
+    require(eligible(crafter), "!eligible");
 
     MasterworkUri.Project storage project = projects[next_token];
     project.base_type = base_type;
     project.item_type = item_type;
     project.started = uint64(block.timestamp);
+    project.crafter = crafter;
 
     uint cost = raw_materials_cost(base_type, item_type);
 
@@ -84,7 +86,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
       cost += COMMON_ARTISANS_TOOLS_RENTAL;
     }
 
-    require(GOLD.transferFrom(APPRENTICE, coinmaster, APPRENTICE, cost), "!gold");
+    require(GOLD.transferFrom(APPRENTICE, crafter, APPRENTICE, cost), "!gold");
 
     _safeMint(msg.sender, next_token);
     next_token += 1;
@@ -92,18 +94,16 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
 
   function craft(
     uint token, 
-    uint crafter,
     uint bonus_mats
   ) public 
     approvedForItem(token, address(this)) 
-    approvedForSummoner(crafter) 
   {
-    require(eligible(crafter), "!eligible");
     MasterworkUri.Project storage project = projects[token];
     require(!project.done_crafting, "done_crafting");
+    require(Rarity.isApprovedOrOwnerOfSummoner(project.crafter), "!approvedForSummoner");
 
     (uint8 roll, int8 score) = Roll.craft(
-      crafter, 
+      project.crafter, 
       CraftingSkills.get_specialization(project.base_type, project.item_type)
     );
 
@@ -116,33 +116,28 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     uint cost_in_silver = item_cost_in_silver(project.base_type, project.item_type);
 
     if(!success) {
-      RARITY.spend_xp(crafter, XP_PER_DAY);
+      RARITY.spend_xp(project.crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
+      emit Craft(msg.sender, token, project.crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
       return;
     }
 
     if(project.progress < cost_in_silver) {
-      RARITY.spend_xp(crafter, XP_PER_DAY);
+      RARITY.spend_xp(project.crafter, XP_PER_DAY);
       project.xp += XP_PER_DAY;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
+      emit Craft(msg.sender, token, project.crafter, bonus_mats, roll, score, XP_PER_DAY, project.progress, cost_in_silver);
     } else {
       uint prorate_xp = XP_PER_DAY * (cost_in_silver - (project.progress - uint(score * int(dc) * 1e18))) / uint(score * int(dc) * 1e18);
-      if(prorate_xp > 0) RARITY.spend_xp(crafter, prorate_xp);
+      if(prorate_xp > 0) RARITY.spend_xp(project.crafter, prorate_xp);
       project.xp += prorate_xp;
       project.done_crafting = true;
-      emit Craft(msg.sender, token, crafter, bonus_mats, roll, score, prorate_xp, project.progress, cost_in_silver);
+      emit Craft(msg.sender, token, project.crafter, bonus_mats, roll, score, prorate_xp, project.progress, cost_in_silver);
     }
   }
 
-  function complete(
-    uint token,
-    uint crafter
-  ) public 
-    approvedForItem(token, address(this))
-    approvedForSummoner(crafter)
-  {
+  function complete(uint token) public approvedForItem(token, address(this)) {
     MasterworkUri.Project storage project = projects[token];
+    require(Rarity.isApprovedOrOwnerOfSummoner(project.crafter), "!approvedForSummoner");
     require(project.done_crafting, "!done_crafting");
     require(!project.complete, "complete");
 
@@ -150,9 +145,9 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     item.base_type = project.base_type;
     item.item_type = project.item_type;
     item.crafted = uint64(block.timestamp);
-    item.crafter = crafter;
+    item.crafter = project.crafter;
 
-    emit Crafted(msg.sender, token, crafter, item.base_type, item.item_type);
+    emit Crafted(msg.sender, token, project.crafter, item.base_type, item.item_type);
 
     project.complete = true;
     if(project.tools != 0) {

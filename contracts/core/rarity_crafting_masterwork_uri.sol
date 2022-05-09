@@ -17,6 +17,7 @@ library MasterworkUri {
     uint8 base_type;
     uint8 item_type;
     uint64 started;
+    uint crafter;
     uint progress;
     uint tools;
     uint xp;
@@ -45,6 +46,7 @@ library MasterworkUri {
     string memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'category ', base_type_name(project.base_type), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'item ', item_name(project.base_type, project.item_type), '</text>'));
+    y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'crafter ', StringUtil.toString(project.crafter), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'status ', status_string(project), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'tools ', tools_string(project), '</text>'));
     y += 20; svg = string(abi.encodePacked(svg, '<text x="10" y="', StringUtil.toString(y), '" class="base">', 'progress ', progress_string(m, n), '</text>'));

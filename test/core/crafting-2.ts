@@ -253,7 +253,7 @@ describe('Core: Crafting II - Masterwork', function () {
   it('burns bonus mats when crafting', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
-    await this.masterwork.craft(token, this.crafter, ethers.utils.parseEther('80'))
+    await this.masterwork.craft(token, ethers.utils.parseEther('80'))
     expect(this.mats.burn).to.have.been.calledWith(this.signer.address, ethers.utils.parseEther('80'))
   })
 
@@ -328,7 +328,7 @@ describe('Core: Crafting II - Masterwork', function () {
     this.codex.random.dn.returns(20)
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
-    await expect(this.masterwork.craft(token, this.crafter, 0))
+    await expect(this.masterwork.craft(token, 0))
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
       this.signer.address, token, this.crafter, 0, 
@@ -342,7 +342,7 @@ describe('Core: Crafting II - Masterwork', function () {
     this.codex.random.dn.returns(1)
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.nunchaku, 0)
-    await expect(this.masterwork.craft(token, this.crafter, 0))
+    await expect(this.masterwork.craft(token, 0))
     .to.emit(this.masterwork, 'Craft')
     .withArgs(
       this.signer.address, token, this.crafter, 0, 
@@ -364,7 +364,7 @@ describe('Core: Crafting II - Masterwork', function () {
     }})
 
     this.codex.random.dn.returns(20)
-    await this.masterwork.craft(token, this.crafter, 0)
+    await this.masterwork.craft(token, 0)
 
     project = await this.masterwork.projects(token)
     expect(project.done_crafting).to.be.true
@@ -389,7 +389,7 @@ describe('Core: Crafting II - Masterwork', function () {
       }})
     }
 
-    await expect(this.masterwork.craft(token, this.crafter, 0))
+    await expect(this.masterwork.craft(token, 0))
     .to.be.revertedWith('done_crafting')
   })
 
@@ -403,7 +403,7 @@ describe('Core: Crafting II - Masterwork', function () {
       ...clean({...project}), done_crafting: true
     }})
 
-    await expect(this.masterwork.complete(token, this.crafter))
+    await expect(this.masterwork.complete(token))
     .to.emit(this.masterwork, 'Crafted')
     .withArgs(this.signer.address, token, this.crafter, baseType.weapon, weaponType.longsword)
 
@@ -426,14 +426,14 @@ describe('Core: Crafting II - Masterwork', function () {
     await this.masterwork.setVariable('projects', { [token]: {
       ...clean({...project}), done_crafting: true, complete: true
     }})
-    await expect(this.masterwork.complete(token, this.crafter))
+    await expect(this.masterwork.complete(token))
     .to.be.revertedWith('complete')
   })
 
   it('can\'t complete projects if crafting isn\'t done', async function() {
     const token = await this.masterwork.next_token()
     await this.masterwork.start(this.crafter, baseType.weapon, weaponType.longsword, 0)
-    await expect(this.masterwork.complete(token, this.crafter))
+    await expect(this.masterwork.complete(token))
     .to.be.revertedWith('!done_crafting')
   })
 
