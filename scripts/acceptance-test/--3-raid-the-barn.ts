@@ -6,14 +6,14 @@ async function main() {
   const contracts = await getContracts()
 
   const equipmentApprovals = async function() {
-    await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.longsword)
-    await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.greatsword)
-    await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.armor)
-    await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, party.equipment.common.shield)
+    await contracts.crafting.common.approve(contracts.equipment2.address, party.equipment.common.longsword)
+    await contracts.crafting.common.approve(contracts.equipment2.address, party.equipment.common.greatsword)
+    await contracts.crafting.common.approve(contracts.equipment2.address, party.equipment.common.armor)
+    await contracts.crafting.common.approve(contracts.equipment2.address, party.equipment.common.shield)
   }
 
-  await winRates(contracts, equipmentApprovals, party.equipment.common, contracts.crafting.commonWrapper.address)
-  // await logAdventures(contracts, equipmentApprovals, party.equipment.common, contracts.crafting.commonWrapper.address)
+  await winRates(contracts, equipmentApprovals, party.equipment.common, contracts.crafting.common.address)
+  // await logAdventures(contracts, equipmentApprovals, party.equipment.common, contracts.crafting.common.address)
 }
 
 main().catch((error) => {

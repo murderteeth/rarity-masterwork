@@ -4,7 +4,7 @@
     "test": "npx hardhat test",
     "test-fast": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "report-gas": "REPORT_GAS=true npx hardhat test",
-    "start-fork": "npx hardhat node --hostname 0.0.0.0 --fork https://rpc.ftm.tools",
+    "start-fork": "npx hardhat node --hostname 0.0.0.0 --fork https://rpc.ankr.com/fantom",
     "random-uint256": "npx ts-node scripts/randomUint256.ts",
     "size-contracts": "npx hardhat size-contracts"
   },
@@ -35,7 +35,6 @@
     "ethers": "^5.6.1",
     "glob": "^7.2.0",
     "glob-promise": "^4.2.2",
-    "hardhat": "^2.9.3",
     "hardhat-abi-exporter": "^2.8.0",
     "hardhat-gas-reporter": "^1.0.8",
     "prettier": "^2.6.0",
@@ -48,8 +47,12 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "hardhat": "2.9.1",
     "hardhat-contract-sizer": "^2.5.1",
     "is-svg": "^4.3.2",
     "replace-in-file": "^6.3.2"
+  },
+  "resolutions": {
+    "hardhat/**/@ethereumjs/tx": "3.5.0"
   }
 }

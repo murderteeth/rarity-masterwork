@@ -90,8 +90,6 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     emit Equip(msg.sender, summoner, slot_type, mint, token);
 
     IERC721(mint).safeTransferFrom(msg.sender, address(this), token);
-    // approve
-    // IERC721(mint).approve(msg.sender, item);
   }
 
   function unequip(

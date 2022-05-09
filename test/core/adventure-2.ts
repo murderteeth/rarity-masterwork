@@ -13,7 +13,7 @@ import { Summoner__factory } from '../../typechain/library/factories/Summoner__f
 import { classes } from '../../util/classes'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { BigNumber } from 'ethers'
-import devAddresses from '../../dev-addresses.json'
+import devAddresses from '../../addresses.dev.json'
 import { armorType, weaponType } from '../../util/crafting'
 import { armors, weapons } from '../../util/equipment'
 
@@ -162,12 +162,6 @@ describe('Core: Adventure II', function () {
       this.adventure.address,
       summoner
     )
-    // approve
-    // expect(this.core.rarity.approve)
-    // .to.have.been.calledWith(
-    //   this.signer.address,
-    //   summoner
-    // )
   })
 
   it('can\'t start more than one active adventure per summoner', async function () {
@@ -639,18 +633,6 @@ describe('Core: Adventure II', function () {
     await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
     await network.provider.send("evm_mine");
     await expect(this.adventure.start(summoner)).to.not.be.reverted
-  })
-
-  it.skip('transfers summoner approval with token', async function () {
-    const rando = this.signers[1]
-    const summoner = fakeSummoner(this.core.rarity, this.signer)
-    const token = await this.adventure.next_token()
-    await this.adventure.start(summoner)
-    await this.adventure.transferFrom(this.signer.address, rando.address, token)
-    expect(this.core.rarity['approve(address,uint256)']).to.have.been.calledWith(
-      rando.address,
-      summoner
-    )
   })
 
   it('makes valid token uris', async function() {

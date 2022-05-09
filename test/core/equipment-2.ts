@@ -5,7 +5,7 @@ import { fakeCommonCrafting, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossb
 import { RarityEquipment2__factory } from '../../typechain/core'
 import { Crafting__factory, Feats__factory, Proficiency__factory, Rarity__factory } from '../../typechain/library'
 import { equipmentSlot, randomId } from '../../util'
-import devAddresses from '../../dev-addresses.json'
+import devAddresses from '../../addresses.dev.json'
 import { armorType, baseType, weaponType } from '../../util/crafting'
 import { armors, weapons } from '../../util/equipment'
 

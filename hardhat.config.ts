@@ -82,6 +82,7 @@ task('rarity-interfaces', 'Generates interfaces for Rarity contracts').setAction
   makeInterface('core', 'rarity_crafting_masterwork.sol/rarity_masterwork.json', 'IRarityMasterworkCrafting')
   makeInterface('core', 'rarity_crafting-materials-1.sol/rarity_crafting_materials.json', 'IRarityCraftingMaterials')
   makeInterface('core', 'rarity_crafting-materials-2.sol/rarity_crafting_materials_2.json', 'IRarityCraftingMaterials2')
+  makeInterface('core', 'rarity_equipment_2.sol/rarity_equipment_2.json', 'IRarityEquipment2')
   makeInterface('core', 'rarity_adventure_2.sol/rarity_adventure_2.json', 'IRarityAdventure2')
   makeInterface('core', 'rarity.sol/rarity.json', 'IRarity')
   makeInterface('core', 'skills.sol/rarity_skills.json', 'IRaritySkills')
@@ -130,11 +131,11 @@ const config: HardhatUserConfig = {
       loggingEnabled: false,
       allowUnlimitedContractSize: true,
       forking: {
-        url: process.env.FTMRPC || "https://rpc.ftm.tools"
+        url: process.env.FTMRPC || "https://rpc.ankr.com/fantom"
       }
     },
     mainnet: {
-      url: "https://rpc.ftm.tools",
+      url: "https://rpc.ankr.com/fantom",
       accounts: [process.env.PRIVATE_KEY || ""]
     }
   },

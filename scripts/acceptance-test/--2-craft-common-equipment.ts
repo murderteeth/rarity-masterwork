@@ -21,23 +21,18 @@ async function craft(contracts: any, baseType: number, itemType: number) {
 async function main() {
   const contracts = await getContracts()
   await contracts.rarity.approve(contracts.crafting.common.address, party.crafters[0])
-  await contracts.crafting.common.setApprovalForAll(contracts.crafting.commonWrapper.address, true)
 
   console.log('⚔ craft longsword')
   const longsword = (await craft(contracts, baseType.weapon, weaponType.longsword)).toString()
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, longsword)
 
   console.log('⚔ craft greatsword')
   const greatsword = (await craft(contracts, baseType.weapon, weaponType.greatsword)).toString()
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, greatsword)
 
   console.log('🛡 craft full plate armor')
   const armor = (await craft(contracts, baseType.armor, armorType.fullPlate)).toString()
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, armor)
 
   console.log('🛡 craft big wood shield')
   const shield = (await craft(contracts, baseType.armor, armorType.heavyWoodShield)).toString()
-  await contracts.crafting.commonWrapper.approve(contracts.adventure2.address, shield)
 
   console.log('write party.json')
   await fs.writeFile('./scripts/acceptance-test/party.json', JSON.stringify({

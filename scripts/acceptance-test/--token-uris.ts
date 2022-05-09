@@ -29,10 +29,10 @@ async function craft(contracts: any, crafter: any, baseType: number, itemType: n
   while(1) {
     process.stdout.write('🔨')
     await contracts.mats2.approve(contracts.crafting.masterwork.address, ethers.utils.parseEther('20'))
-    const tx = await(await contracts.crafting.masterwork.craft(token, crafter, ethers.utils.parseEther('20'))).wait()
+    const tx = await(await contracts.crafting.masterwork.craft(token, ethers.utils.parseEther('20'))).wait()
     const craftEvent = tx.events.find((e: any) => e.event === 'Craft')
     if(craftEvent.args['m'].gte(craftEvent.args['n'])) {
-      await contracts.crafting.masterwork.complete(token, crafter)
+      await contracts.crafting.masterwork.complete(token)
       process.stdout.write('\n')
       return token
     }

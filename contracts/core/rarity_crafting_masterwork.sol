@@ -1,7 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../interfaces/core/IRarity.sol";
@@ -17,7 +18,7 @@ import "../library/Roll.sol";
 import "../library/Skills.sol";
 import "./rarity_crafting_masterwork_uri.sol";
 
-contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, ForItems {
+contract rarity_masterwork is ERC721Enumerable, ERC721Holder, ReentrancyGuard, ForSummoners, ForItems {
   uint public next_token = 1;
 
   uint8 constant MASTERWORK_COMPONENT_DC = 20;
@@ -45,16 +46,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
   mapping(uint => MasterworkUri.Project) public projects;
   mapping(uint => MasterworkUri.Item) public items;
 
-  function onERC721Received(
-    address operator,
-    address from,
-    uint tokenId,
-    bytes calldata data
-  ) external pure override returns (bytes4) {
-    operator; from; tokenId; data; // lint silencio!
-    return this.onERC721Received.selector;
-  }
-
   function start(
     uint crafter,
     uint8 base_type,
@@ -80,8 +71,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
       require(toolsitem.base_type == 4 && toolsitem.item_type == 2, "!Artisan's tools");
       project.tools = tools;
       safeTransferFrom(msg.sender, address(this), tools);
-      IERC721Enumerable(address(this))
-      .approve(msg.sender, tools);
     } else {
       cost += COMMON_ARTISANS_TOOLS_RENTAL;
     }
@@ -151,7 +140,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
 
     project.complete = true;
     if(project.tools != 0) {
-      safeTransferFrom(address(this), msg.sender, project.tools);
+      this.safeTransferFrom(address(this), msg.sender, project.tools);
     }
   }
 
@@ -162,7 +151,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     delete projects[token];
     _burn(token);
     if(tools != 0) {
-      safeTransferFrom(address(this), msg.sender, tools);
+      this.safeTransferFrom(address(this), msg.sender, tools);
     }
   }
 
@@ -293,14 +282,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
 
   function raw_materials_cost(uint8 base_type, uint8 item_type) public pure returns (uint) {
     return item_cost(base_type, item_type) / 3;
-  }
-
-  function _transfer(address from, address to, uint token) internal override {
-    MasterworkUri.Project memory project = projects[token];
-    if(project.tools != 0 && ownerOf(project.tools) == address(this)) {
-      IERC721Enumerable(address(this)).approve(to, project.tools);
-    }
-    super._transfer(from, to, token);
   }
 
   function tokenURI(uint token) public view virtual override returns (string memory uri) {

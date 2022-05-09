@@ -82,8 +82,6 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
     adventures[next_token].started = uint64(block.timestamp);
     latest_adventures[summoner] = next_token;
     RARITY.safeTransferFrom(msg.sender, address(this), summoner);
-    // approve
-    // RARITY.approve(msg.sender, summoner);
     EQUIPMENT.snapshot(next_token, summoner);
     _safeMint(msg.sender, next_token);
     next_token += 1;
@@ -349,13 +347,6 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
     } else {
       revert("!approvedForAdventure");
     }
-  }
-
-  function _transfer(address from, address to, uint token) internal override {
-    // AdventureUri.Adventure memory adventure = adventures[token];
-    // approve
-    // RARITY.approve(to, adventure.summoner);
-    super._transfer(from, to, token);
   }
 
   function tokenURI(uint token) public view virtual override returns (string memory) {

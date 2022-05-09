@@ -1,5 +1,5 @@
 import hre, { ethers, network } from 'hardhat'
-import deployAddresses from '../deploy-addresses.json'
+import deployAddresses from '../addresses.mainnet.json'
 
 async function main() {
   if(network.name !== 'mainnet') throw('not mainnet!')
@@ -7,12 +7,12 @@ async function main() {
   const signer = signers[0]
   console.log('signer', signer.address, ethers.utils.formatEther(await signer.getBalance()), 'FTM')
 
-  // const entries = Object.entries(deployAddresses)
-  // for(let i = 0; i < entries.length; i++) {
-  //   const [contract, address] = entries[i]
-  //   console.log('✔ verify', contract, '@', address)
-  //   await hre.run("verify:verify", { address });
-  // }
+  const entries = Object.entries(deployAddresses)
+  for(let i = 0; i < entries.length; i++) {
+    const [contract, address] = entries[i]
+    console.log('✔ verify', contract, '@', address)
+    await hre.run("verify:verify", { address });
+  }
 }
 
 main()

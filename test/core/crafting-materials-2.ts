@@ -5,7 +5,7 @@ import { RarityCraftingMaterials2__factory } from '../../typechain/core/factorie
 import { RarityAdventure2 } from '../../typechain/core'
 import { randomId } from '../../util'
 import { fakeRarity } from '../../util/fakes'
-import devAddresses from '../../dev-addresses.json'
+import devAddresses from '../../addresses.dev.json'
 
 chai.use(smock.matchers)
 

@@ -7,7 +7,7 @@ import { ethers } from 'hardhat'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { Attributes__factory, CraftingSkills__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { classes } from '../../util/classes'
-import devAddresses from '../../dev-addresses.json'
+import devAddresses from '../../addresses.dev.json'
 import { armors, weapons } from '../../util/equipment'
 
 describe('Library: Summoner', function () {

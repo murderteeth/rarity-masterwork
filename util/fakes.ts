@@ -5,7 +5,7 @@ import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityE
 import { IRarityCodexBaseRandom2 } from '../typechain/interfaces/codex'
 import { IRarityCodexCraftingSkills } from '../typechain/interfaces/codex/IRarityCodexCraftingSkills'
 import { armorType, baseType, weaponType } from './crafting'
-import devAddresses from '../dev-addresses.json'
+import devAddresses from '../addresses.dev.json'
 
 export async function fakeRarity() {
   return await smock.fake<Rarity>('contracts/core/rarity.sol:rarity', { 

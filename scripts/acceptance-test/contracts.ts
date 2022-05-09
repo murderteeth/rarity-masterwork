@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
-import deployAddresses from '../../deploy-addresses.json'
+import deployAddresses from '../../addresses.localhost.json'
 
 export default async function getContracts(signer?: SignerWithAddress) {
   return {
@@ -35,17 +35,17 @@ export default async function getContracts(signer?: SignerWithAddress) {
         '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC',
         signer
       ),
-      commonWrapper: await ethers.getContractAt(
-        'contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper', 
-        deployAddresses.core_rarity_crafting_common_wrapper,
-        signer
-      ),
       masterwork: await ethers.getContractAt(
         'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', 
         deployAddresses.core_rarity_crafting_masterwork,
         signer
       )
     },
+    equipment2: await ethers.getContractAt(
+      'contracts/core/rarity_equipment_2.sol:rarity_equipment_2', 
+      deployAddresses.core_rarity_equipment_2,
+      signer
+    ),
     adventure2: await ethers.getContractAt(
       'contracts/core/rarity_adventure_2.sol:rarity_adventure_2', 
       deployAddresses.core_rarity_adventure_2,
@@ -53,7 +53,7 @@ export default async function getContracts(signer?: SignerWithAddress) {
     ),
     mats2: await ethers.getContractAt(
       'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
-      deployAddresses.core_crafting_mats_2,
+      deployAddresses.core_rarity_crafting_mats_2,
       signer
     ),
     craftingSkills: await ethers.getContractAt(
@@ -64,7 +64,12 @@ export default async function getContracts(signer?: SignerWithAddress) {
     library: {
       random: await ethers.getContractAt(
         'contracts/library/Random.sol:Random',
-        '0x1c85638e118b37167e9298c2268758e058DdfDA0',
+        deployAddresses.library_random,
+        signer
+      ),
+      summoner: await ethers.getContractAt(
+        'contracts/library/Summoner.sol:Summoner',
+        deployAddresses.library_summoner,
         signer
       )
     }

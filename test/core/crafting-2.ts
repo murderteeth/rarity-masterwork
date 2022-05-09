@@ -12,7 +12,7 @@ import { skills, skillsArray } from '../../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { armors, weapons } from '../../util/equipment'
-import devAddresses from '../../dev-addresses.json'
+import devAddresses from '../../addresses.dev.json'
 import { MasterworkUri__factory } from '../../typechain/core'
 
 chai.use(smock.matchers)
@@ -23,7 +23,7 @@ describe('Core: Crafting II - Masterwork', function () {
     this.signer = this.signers[0]
     this.mats = await smock.fake<RarityCraftingMaterials2>(
       'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
-      { address: devAddresses.core_crafting_mats_2 }
+      { address: devAddresses.core_rarity_crafting_mats_2 }
     )
 
     this.core = {
@@ -146,7 +146,6 @@ describe('Core: Crafting II - Masterwork', function () {
     .withArgs(ethers.constants.AddressZero, this.signer.address, token)
 
     expect(await this.masterwork.ownerOf(tools)).to.eq(this.masterwork.address)
-    expect(await this.masterwork.getApproved(tools)).to.eq(this.signer.address)
 
     expect(this.core.gold.transferFrom)
     .to.have.been.calledWith(apprentice, this.crafter, apprentice, cost)
