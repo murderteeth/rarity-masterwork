@@ -5,6 +5,7 @@ import { RarityCraftingMaterials2__factory } from '../../typechain/core/factorie
 import { RarityAdventure2 } from '../../typechain/core'
 import { randomId } from '../../util'
 import { fakeRarity } from '../../util/fakes'
+import devAddresses from '../../dev-addresses.json'
 
 chai.use(smock.matchers)
 
@@ -13,9 +14,11 @@ describe('Core: Crafting Materials II', function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
     this.rarity = await fakeRarity()
-    this.adventure = await smock.fake<RarityAdventure2>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2')
+    this.adventure = await smock.fake<RarityAdventure2>(
+      'contracts/core/rarity_adventure_2.sol:rarity_adventure_2', 
+      { address: devAddresses.core_adventure_2 }
+    )
     this.mats = await(await smock.mock<RarityCraftingMaterials2__factory>('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')).deploy()
-    await this.mats.setVariable('ADVENTURE_2', this.adventure.address)
   })
 
   beforeEach(async function() {

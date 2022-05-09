@@ -5,10 +5,8 @@ import "../interfaces/codex/IRarityCodexSkills.sol";
 import "../interfaces/core/IRaritySkills.sol";
 
 library Skills {
-  IRarityCodexSkills private constant CODEX
-    = IRarityCodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
-  IRaritySkills private constant SKILLS 
-    = IRaritySkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
+  IRarityCodexSkills constant CODEX = IRarityCodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
+  IRaritySkills constant SKILLS = IRaritySkills(0x51C0B29A1d84611373BA301706c6B4b72283C80F);
 
   function appraise(uint summoner) public view returns (uint8 ranks) {
     (uint id,,,,,,,) = CODEX.appraise();

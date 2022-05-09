@@ -5,7 +5,7 @@ import "../interfaces/core/IRarity.sol";
 import "./Attributes.sol";
 
 library Rarity {
-  IRarity public constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+  IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
 
   function level(uint summoner) public view returns (uint) {
     return RARITY.level(summoner);

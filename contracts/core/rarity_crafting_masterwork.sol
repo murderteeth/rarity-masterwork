@@ -28,11 +28,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
   IRarity constant RARITY = IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityGold constant GOLD = IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
   IRarityCommonCrafting constant COMMON_CRAFTING = IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-  ICodexTools COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000002);
-  IRarityCraftingMaterials2 BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000008);
-  ICodexWeapon WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
-  ICodexArmor ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000005);
-  ICodexTools TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000006);
+  ICodexTools constant COMMON_TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000002);
+  IRarityCraftingMaterials2 constant BONUS_MATS = IRarityCraftingMaterials2(0x0000000000000000000000000000000000000008);
+  ICodexWeapon constant WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
+  ICodexArmor constant ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000005);
+  ICodexTools constant TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000006);
 
   event Craft(address indexed owner, uint indexed token, uint crafter, uint bonus_mats, uint8 roll, int8 score, uint xp, uint m, uint n);
   event Crafted(address indexed owner, uint indexed token, uint crafter, uint8 base_type, uint8 item_type);
@@ -215,7 +215,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     }
   }
 
-  function standard_component_dc(uint8 base_type, uint8 item_type) public view returns (uint8 result) {
+  function standard_component_dc(uint8 base_type, uint8 item_type) public pure returns (uint8 result) {
     if(base_type == 2) {
       result = 10 + ARMOR_CODEX.item_by_id(item_type).armor_bonus;
     } else if(base_type == 3) {
@@ -225,7 +225,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     }
   }
 
-  function standard_component_cost_in_silver(uint8 base_type, uint8 item_type) public view returns (uint result) {
+  function standard_component_cost_in_silver(uint8 base_type, uint8 item_type) public pure returns (uint result) {
     if(base_type == 2 || base_type == 3) {
       result = COMMON_CRAFTING.get_item_cost(base_type, item_type) * 10;
     } else if(base_type == 4) {
@@ -238,7 +238,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     return get_dc(project);
   }
 
-  function get_dc(MasterworkUri.Project memory project) public view returns (uint8) {
+  function get_dc(MasterworkUri.Project memory project) public pure returns (uint8) {
     return (project.progress >= standard_component_cost_in_silver(project.base_type, project.item_type))
     ? MASTERWORK_COMPONENT_DC
     : standard_component_dc(project.base_type, project.item_type);
@@ -249,7 +249,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     return progress(project);
   }
 
-  function progress(MasterworkUri.Project memory project) public view returns (uint, uint) {
+  function progress(MasterworkUri.Project memory project) public pure returns (uint, uint) {
     if(project.done_crafting) return(1, 1);
     return(project.progress, item_cost_in_silver(project.base_type, project.item_type));
   }
@@ -276,11 +276,11 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     return XP_PER_DAY * silver / ((average_score_uint**2)*1e18);
   }
 
-  function item_cost_in_silver(uint8 base_type, uint8 item_type) public view returns (uint cost) {
+  function item_cost_in_silver(uint8 base_type, uint8 item_type) public pure returns (uint cost) {
     return item_cost(base_type, item_type) * 10;
   }
 
-  function item_cost(uint8 base_type, uint8 item_type) public view returns (uint cost) {
+  function item_cost(uint8 base_type, uint8 item_type) public pure returns (uint cost) {
     if(base_type == 2) {
       cost = ARMOR_CODEX.item_by_id(item_type).cost;
     } else if(base_type == 3) {
@@ -296,7 +296,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, F
     if(project.tools == 0) result += COMMON_ARTISANS_TOOLS_RENTAL;
   }
 
-  function raw_materials_cost(uint8 base_type, uint8 item_type) public view returns (uint) {
+  function raw_materials_cost(uint8 base_type, uint8 item_type) public pure returns (uint) {
     return item_cost(base_type, item_type) / 3;
   }
 

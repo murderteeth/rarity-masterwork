@@ -6,12 +6,9 @@ import "../interfaces/codex/IRarityCodexFeats2.sol";
 import "../interfaces/core/IRarityFeats.sol";
 
 library Feats {
-  IRarityCodexFeats1 private constant CODEX1 
-  = IRarityCodexFeats1(0x88db734E9f64cA71a24d8e75986D964FFf7a1E10);
-  IRarityCodexFeats2 private constant CODEX2 
-  = IRarityCodexFeats2(0x7A4Ba2B077CD9f4B13D5853411EcAE12FADab89C);
-  IRarityFeats private constant FEATS 
-  = IRarityFeats(0x4F51ee975c01b0D6B29754657d7b3cC182f20d8a);
+  IRarityCodexFeats1 constant CODEX1 = IRarityCodexFeats1(0x88db734E9f64cA71a24d8e75986D964FFf7a1E10);
+  IRarityCodexFeats2 constant CODEX2 = IRarityCodexFeats2(0x7A4Ba2B077CD9f4B13D5853411EcAE12FADab89C);
+  IRarityFeats constant FEATS = IRarityFeats(0x4F51ee975c01b0D6B29754657d7b3cC182f20d8a);
 
   function has_feat(uint summoner, uint feat_id) internal view returns (bool) {
     bool[100] memory feats = FEATS.get_feats(summoner);

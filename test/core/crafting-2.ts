@@ -21,7 +21,10 @@ describe('Core: Crafting II - Masterwork', function () {
   before(async function () {
     this.signers = await ethers.getSigners()
     this.signer = this.signers[0]
-    this.mats = await smock.fake<RarityCraftingMaterials2>('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')
+    this.mats = await smock.fake<RarityCraftingMaterials2>(
+      'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
+      { address: devAddresses.core_crafting_mats_2 }
+    )
 
     this.core = {
       rarity: await fakeRarity(),
@@ -65,12 +68,6 @@ describe('Core: Crafting II - Masterwork', function () {
     })).deploy()
 
     this.core.gold.transferFrom.returns(true)
-
-    await this.masterwork.setVariable('COMMON_TOOLS_CODEX', this.codex.common.tools.address)
-    await this.masterwork.setVariable('BONUS_MATS', this.mats.address)
-    await this.masterwork.setVariable('ARMOR_CODEX', this.codex.masterwork.armor.address)
-    await this.masterwork.setVariable('TOOLS_CODEX', this.codex.masterwork.tools.address)
-    await this.masterwork.setVariable('WEAPONS_CODEX', this.codex.masterwork.weapons.address)
 
     this.core.crafting.get_item_cost
     .whenCalledWith(baseType.weapon, weaponType.longsword)
