@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
-import { fakeCommonCraftingWrapper, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity, fakeSummoner } from '../../util/fakes'
+import { fakeCommonCrafting, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity, fakeSummoner } from '../../util/fakes'
 import { RarityEquipment2__factory } from '../../typechain/core'
 import { Crafting__factory, Feats__factory, Proficiency__factory, Rarity__factory } from '../../typechain/library'
 import { equipmentSlot } from '../../util'
@@ -31,7 +31,7 @@ describe('Core: Equipment II', function () {
     }
 
     this.crafting = {
-      commonWrapper: await fakeCommonCraftingWrapper(),
+      common: await fakeCommonCrafting(),
       masterwork: await fakeMasterwork()
     }
 
@@ -67,7 +67,7 @@ describe('Core: Equipment II', function () {
 
     this.setWhitelist = async function (equipment: any) {
       await equipment.set_mint_whitelist(
-        this.crafting.commonWrapper.address,
+        this.crafting.common.address,
         this.codex.common.armor.address,
         this.codex.common.weapons.address,
         this.crafting.masterwork.address,
@@ -91,56 +91,56 @@ describe('Core: Equipment II', function () {
   })
 
   it('equips weapons', async function() {
-    const weapon = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, weapon)
-    expect(this.crafting.commonWrapper['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+    const weapon = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, weapon)
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
       weapon
     )
 
     const slot = await this.equipment.slots(this.summoner, equipmentSlot.weapon1)
-    expect(slot.mint).to.eq(this.crafting.commonWrapper.address)
+    expect(slot.mint).to.eq(this.crafting.common.address)
     expect(slot.token).to.eq(weapon)
   })
 
   it('equips armor', async function() {
-    const armor = fakeFullPlateArmor(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.commonWrapper.address, armor)
-    expect(this.crafting.commonWrapper['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+    const armor = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, armor)
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
       armor
     )
 
     const slot = await this.equipment.slots(this.summoner, equipmentSlot.armor)
-    expect(slot.mint).to.eq(this.crafting.commonWrapper.address)
+    expect(slot.mint).to.eq(this.crafting.common.address)
     expect(slot.token).to.eq(armor)
   })
 
   it('equips shields', async function() {
-    const shield = fakeHeavyWoodShield(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.commonWrapper.address, shield)
-    expect(this.crafting.commonWrapper['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+    const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield)
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.signer.address,
       this.equipment.address,
       shield
     )
 
     const slot = await this.equipment.slots(this.summoner, equipmentSlot.shield)
-    expect(slot.mint).to.eq(this.crafting.commonWrapper.address)
+    expect(slot.mint).to.eq(this.crafting.common.address)
     expect(slot.token).to.eq(shield)
   })
 
   it('tracks encumberance', async function() {
     expect(await this.equipment.encumberance(this.summoner)).to.eq(0)
 
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword)
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword)
     expect(await this.equipment.encumberance(this.summoner)).to.eq(4)
 
-    const fullplate = fakeFullPlateArmor(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.commonWrapper.address, fullplate)
+    const fullplate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, fullplate)
     expect(await this.equipment.encumberance(this.summoner)).to.eq(54)
 
     await this.equipment.unequip(this.summoner, equipmentSlot.armor)
@@ -151,10 +151,10 @@ describe('Core: Equipment II', function () {
   })
 
   it('unequips slots', async function() {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword)
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword)
     await this.equipment.unequip(this.summoner, equipmentSlot.weapon1)
-    expect(this.crafting.commonWrapper['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
+    expect(this.crafting.common['safeTransferFrom(address,address,uint256)']).to.have.been.calledWith(
       this.equipment.address,
       this.signer.address,
       longsword
@@ -166,68 +166,68 @@ describe('Core: Equipment II', function () {
   })
 
   it('can\'t equip items in the wrong slots', async function() {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.commonWrapper.address, longsword))
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, longsword))
     .to.be.revertedWith('!armor')
 
-    const fullplate = fakeFullPlateArmor(this.crafting.commonWrapper, this.summoner, this.signer)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, fullplate))
+    const fullplate = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, fullplate))
     .to.be.revertedWith('!weapon')
 
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.commonWrapper.address, fullplate))
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, fullplate))
     .to.be.revertedWith('!shield')
   })
 
   it('can\'t equip two-hand weapons and shields at the same time', async function() {
-    const greatsword = fakeGreatsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    const shield = fakeHeavyWoodShield(this.crafting.commonWrapper, this.summoner, this.signer)
+    const greatsword = fakeGreatsword(this.crafting.common, this.summoner, this.signer)
+    const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
 
-    this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, greatsword)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.commonWrapper.address, shield))
+    this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, greatsword)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield))
     .to.be.revertedWith('two-handed or ranged weapon equipped')
 
     this.equipment.unequip(this.summoner, equipmentSlot.weapon1)
-    this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.commonWrapper.address, shield)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, greatsword))
+    this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, greatsword))
     .to.be.revertedWith('shield equipped')
   })
 
   it('can\'t equip ranged weapons', async function() {
-    const crossbow = fakeHeavyCrossbow(this.crafting.commonWrapper, this.summoner, this.signer)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, crossbow))
+    const crossbow = fakeHeavyCrossbow(this.crafting.common, this.summoner, this.signer)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, crossbow))
     .to.be.revertedWith('ranged weapon')
   })
 
   it('doesn\'t support slots greater than shield', async function() {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon2, this.crafting.commonWrapper.address, longsword))
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon2, this.crafting.common.address, longsword))
     .to.be.revertedWith('!supported')
   })
 
   it('equips items only once', async function() {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword)
-    this.crafting.commonWrapper.ownerOf
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword)
+    this.crafting.common.ownerOf
     .whenCalledWith(longsword)
     .returns(this.equipment.address)
 
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword))
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword))
     .to.be.revertedWith('!approvedForItem')
   })
 
   it('equips slots only once', async function() {
-    const longsword1 = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    const longsword2 = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword1)
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.commonWrapper.address, longsword2))
+    const longsword1 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    const longsword2 = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword1)
+    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, longsword2))
     .to.be.revertedWith('!slotAvailable')
   })
 
   it('only supports whitelisted mints', async function() {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
+    const longsword = fakeLongsword(this.crafting.common, this.summoner, this.signer)
 
     const randocraftinc = await smock.fake(
-      'contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper'
+      'contracts/core/rarity_crafting_common.sol:rarity_crafting'
     )
 
     randocraftinc.ownerOf
@@ -236,25 +236,5 @@ describe('Core: Equipment II', function () {
 
     await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, randocraftinc.address, longsword))
     .to.be.revertedWith('!whitelisted')
-  })
-
-  it('supports original common craftng contract', async function () {
-    const longsword = fakeLongsword(this.crafting.commonWrapper, this.summoner, this.signer)
-
-    const common = await smock.fake(
-      'contracts/core/rarity_crafting_common.sol:rarity_crafting', 
-      { address: '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC' }
-    )
-
-    common.items
-    .whenCalledWith(longsword)
-    .returns([baseType.weapon, weaponType.longsword, 0, 0])
-
-    common.ownerOf
-    .whenCalledWith(longsword)
-    .returns(this.signer.address)
-
-    await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, common.address, longsword))
-    .to.not.be.reverted
   })
 })

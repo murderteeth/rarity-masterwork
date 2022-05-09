@@ -16,15 +16,14 @@ interface IWeapon {
     string name;
     string description;
   }
-
-  function get_weapon(uint8 item_type) external view returns (Weapon memory);
 }
 
 interface ICodexWeapon {
   function item_by_id(uint id) external pure returns(IWeapon.Weapon memory);
-  function get_proficiency_by_id(uint id) external pure returns (string memory description);
-  function get_encumbrance_by_id(uint id) external pure returns (string memory description);
-  function get_damage_type_by_id(uint id) external pure returns (string memory description);
+  function get_proficiency_by_id(uint id) external pure returns (string memory);
+  function get_encumbrance_by_id(uint id) external pure returns (string memory);
+  function get_damage_type_by_id(uint id) external pure returns (string memory);
+  function get_attack_bonus(uint id) external pure returns (int8);
 }
 
 interface IArmor {
@@ -40,13 +39,12 @@ interface IArmor {
     string name;
     string description;
   }
-
-  function get_armor(uint8 item_type) external view returns (Armor memory);
 }
 
 interface ICodexArmor {
   function item_by_id(uint id) external pure returns(IArmor.Armor memory);
-  function get_proficiency_by_id(uint id) external pure returns (string memory description);
+  function get_proficiency_by_id(uint id) external pure returns (string memory);
+  function armor_check_bonus(uint id) external pure returns (int8);
 }
 
 interface ITools {
@@ -58,12 +56,11 @@ interface ITools {
     string description;
     int8[36] skill_bonus;
   }
-
-  function get_tools(uint8 item_type) external view returns (Tools memory);
 }
 
 interface ICodexTools {
   function item_by_id(uint id) external pure returns(ITools.Tools memory);
+  function get_skill_bonus(uint id, uint skill_id) external pure returns(int8);
 }
 
 interface ICodexSkills {

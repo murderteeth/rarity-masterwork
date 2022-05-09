@@ -19,6 +19,11 @@ contract codex {
     return COMMON_CODEX.get_proficiency_by_id(_id);
   }
 
+  function armor_check_bonus(uint id) public pure returns (int8) {
+    id; //shhh
+    return 1;
+  }
+
   function item_by_id(uint _id) public pure returns(IArmor.Armor memory armor) {
     (
       uint id, 
@@ -37,7 +42,7 @@ contract codex {
     armor.weight = uint8(weight);
     armor.armor_bonus = uint8(armor_bonus);
     armor.max_dex_bonus = uint8(max_dex_bonus);
-    armor.penalty = int8(penalty + 1);
+    armor.penalty = int8(penalty + armor_check_bonus(id));
     armor.spell_failure = uint8(spell_failure);
     armor.cost = cost + 150e18;
     armor.name = string(abi.encodePacked("Masterwork ", name));

@@ -34,6 +34,11 @@ contract codex {
     return COMMON_CODEX.get_damage_type_by_id(id);
   }
 
+  function get_attack_bonus(uint id) public pure returns (int8) {
+    id; //shhh
+    return 1;
+  }
+
   function item_by_id(uint id)
     public
     pure

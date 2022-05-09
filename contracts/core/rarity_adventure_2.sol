@@ -319,9 +319,9 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
 
   function loadout(uint token) internal view returns (Equipment.Slot[3] memory result) {
     uint summoner = adventures[token].summoner;
-    result[Equipment.SLOT_TYPE_WEAPON_1] = EQUIPMENT.slots(summoner, Equipment.SLOT_TYPE_WEAPON_1);
-    result[Equipment.SLOT_TYPE_ARMOR] = EQUIPMENT.slots(summoner, Equipment.SLOT_TYPE_ARMOR);
-    result[Equipment.SLOT_TYPE_SHIELD] = EQUIPMENT.slots(summoner, Equipment.SLOT_TYPE_SHIELD);
+    result[0] = EQUIPMENT.slots(summoner, 0);
+    result[1] = EQUIPMENT.slots(summoner, 1);
+    result[2] = EQUIPMENT.slots(summoner, 2);
   }
 
   function monster_ids(Combat.Combatant[] memory turn_order, uint monster_count) internal view returns (uint8[] memory result) {

@@ -1,7 +1,7 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityCraftingWrapper, RarityEquipment2, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
+import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityEquipment2, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../typechain/interfaces/codex'
 import { IRarityCodexCraftingSkills } from '../typechain/interfaces/codex/IRarityCodexCraftingSkills'
 import { armorType, baseType, weaponType } from './crafting'
@@ -17,10 +17,6 @@ export async function fakeCommonCrafting() {
   return await smock.fake<RarityCrafting>('contracts/core/rarity_crafting_common.sol:rarity_crafting', { 
     address: '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC'
   })
-}
-
-export async function fakeCommonCraftingWrapper() {
-  return await smock.fake<RarityCraftingWrapper>('contracts/core/rarity_crafting_common_wrapper.sol:rarity_crafting_wrapper')
 }
 
 export async function fakeMasterwork() {
@@ -103,7 +99,7 @@ export function fakeSummoner(rarity: FakeContract<Rarity>, signer: SignerWithAdd
   return summoner
 }
 
-export function fakeCraft(crafting: FakeContract<RarityCraftingWrapper>, baseType: number, itemType: number, crafter: number, signer: SignerWithAddress) {
+export function fakeCraft(crafting: FakeContract<RarityCrafting>, baseType: number, itemType: number, crafter: number, signer: SignerWithAddress) {
   const id = randomId()
 
   crafting.items
@@ -117,26 +113,26 @@ export function fakeCraft(crafting: FakeContract<RarityCraftingWrapper>, baseTyp
   return id
 }
 
-export function fakeLongsword(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeLongsword(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.weapon, weaponType.longsword, crafter, signer)
 }
 
-export function fakeGreatsword(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeGreatsword(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.weapon, weaponType.greatsword, crafter, signer)
 }
 
-export function fakeHeavyCrossbow(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeHeavyCrossbow(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.weapon, weaponType.heavyCrossbow, crafter, signer)
 }
 
-export function fakeLeatherArmor(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeLeatherArmor(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.leather, crafter, signer)
 }
 
-export function fakeFullPlateArmor(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeFullPlateArmor(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.fullPlate, crafter, signer)
 }
 
-export function fakeHeavyWoodShield(crafting: FakeContract<RarityCraftingWrapper>, crafter: number, signer: SignerWithAddress) {
+export function fakeHeavyWoodShield(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.heavyWoodShield, crafter, signer)
 }

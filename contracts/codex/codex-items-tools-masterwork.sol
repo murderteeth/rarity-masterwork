@@ -8,6 +8,10 @@ contract codex {
   string constant public class = "Masterwork Tools";
   uint8 constant public base_type = 4;
 
+  function get_skill_bonus(uint id, uint skill_id) external pure returns(int8) {
+    return item_by_id(id).skill_bonus[skill_id - 1];
+  }
+
   function item_by_id(uint _id) public pure returns(ITools.Tools memory result) {
     if (_id == 2) {
       result = artisans_tools();

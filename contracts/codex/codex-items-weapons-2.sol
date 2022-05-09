@@ -41,6 +41,11 @@ contract codex {
     }
   }
 
+  function get_attack_bonus(uint id) public pure returns (int8) {
+    id; //shhh
+    return 0;
+  }
+
   function item_by_id(uint _id) public pure returns(IWeapon.Weapon memory weapon) {
     if (_id == 1) {
       return gauntlet();

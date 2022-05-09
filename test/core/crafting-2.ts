@@ -7,7 +7,7 @@ import { RarityCraftingMaterials2 } from '../../typechain/core/RarityCraftingMat
 import { RarityMasterwork__factory } from '../../typechain/core/factories/RarityMasterwork__factory'
 import { armorType, baseType, toolType, weaponType } from '../../util/crafting'
 import { Attributes__factory, Crafting__factory, Feats__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
-import { fakeAttributes, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeCraftingSkills, fakeCraftingSkillsCodex, fakeGold, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { skills, skillsArray } from '../../util/skills'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
@@ -27,6 +27,7 @@ describe('Core: Crafting II - Masterwork', function () {
       rarity: await fakeRarity(),
       attributes: await fakeAttributes(),
       skills: await fakeSkills(),
+      crafting: await fakeCommonCrafting(),
       craftingSkills: await fakeCraftingSkills(),
       gold: await fakeGold()
     }
@@ -71,30 +72,29 @@ describe('Core: Crafting II - Masterwork', function () {
     await this.masterwork.setVariable('TOOLS_CODEX', this.codex.masterwork.tools.address)
     await this.masterwork.setVariable('WEAPONS_CODEX', this.codex.masterwork.weapons.address)
 
+    this.core.crafting.get_item_cost
+    .whenCalledWith(baseType.weapon, weaponType.longsword)
+    .returns(ethers.utils.parseEther('15'))
+
+    this.codex.masterwork.weapons.item_by_id
+    .whenCalledWith(weaponType.dagger)
+    .returns({...weapons('dagger', true), id: weaponType.dagger})
     this.codex.masterwork.weapons.item_by_id
     .whenCalledWith(weaponType.longsword)
-    .returns([weaponType.longsword, 2, 3, 3, 4, 8, 2, -1, 0, ethers.utils.parseEther('315'), "Masterwork Longsword", ""])
-
+    .returns({...weapons('longsword', true), id: weaponType.longsword})
+    this.codex.masterwork.weapons.item_by_id
+    .whenCalledWith(weaponType.nunchaku)
+    .returns({...weapons('nunchaku', true), id: weaponType.nunchaku})
     this.codex.masterwork.armor.item_by_id
     .whenCalledWith(armorType.fullPlate)
-    .returns([armorType.fullPlate, 3, 50, 8, 1, -6, 35, ethers.utils.parseEther('1650'), "Masterwork Full plate", ""])
+    .returns({...armors('full plate', true), id: armorType.fullPlate})
 
     this.codex.masterwork.tools.item_by_id
     .whenCalledWith(toolType.artisanTools)
     .returns([toolType.artisanTools, 5, ethers.utils.parseEther('55'), "Masterwork Artisan's Tools", "", skillsArray({ index: skills.craft, ranks: 2})])
-
-    this.codex.masterwork.weapons.item_by_id
-    .whenCalledWith(weaponType.dagger)
-    .returns(weapons('dagger', true))
-    this.codex.masterwork.weapons.item_by_id
-    .whenCalledWith(weaponType.longsword)
-    .returns(weapons('longsword', true))
-    this.codex.masterwork.weapons.item_by_id
-    .whenCalledWith(weaponType.nunchaku)
-    .returns(weapons('nunchaku', true))
-    this.codex.masterwork.armor.item_by_id
-    .whenCalledWith(armorType.fullPlate)
-    .returns(armors('full plate', true))
+    this.codex.masterwork.tools.get_skill_bonus
+    .whenCalledWith(toolType.artisanTools, 6)
+    .returns(2)
   })
 
   this.beforeEach(async function() {

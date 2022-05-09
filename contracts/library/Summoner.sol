@@ -5,7 +5,6 @@ import "./Attributes.sol";
 import "./Codex.sol";
 import "./Combat.sol";
 import "./Crafting.sol";
-import "./Effects.sol";
 import "./Equipment.sol";
 import "./Proficiency.sol";
 import "./Rarity.sol";
@@ -16,9 +15,9 @@ library Summoner {
   function summoner_combatant(uint summoner, Equipment.Slot[3] memory loadout) public view returns(Combat.Combatant memory combatant) {
     (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
 
-    Equipment.Slot memory weapon_slot = loadout[Equipment.SLOT_TYPE_WEAPON_1];
-    Equipment.Slot memory armor_slot = loadout[Equipment.SLOT_TYPE_ARMOR];
-    Equipment.Slot memory shield_slot = loadout[Equipment.SLOT_TYPE_SHIELD];
+    Equipment.Slot memory weapon_slot = loadout[0];
+    Equipment.Slot memory armor_slot = loadout[1];
+    Equipment.Slot memory shield_slot = loadout[2];
 
     combatant.mint = address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
     combatant.token = summoner;
@@ -148,7 +147,7 @@ library Summoner {
   ) public view returns(
     int8[28] memory result
   ) {
-    IWeapon.Weapon memory weapon_codex = get_weapon_codex(weapon_slot);
+    (IWeapon.Weapon memory weapon_codex, int8 weapon_attack_bonus) = get_weapon_codex(weapon_slot);
 
     if(weapon_codex.id == 0 && Rarity.class(summoner) == 6) {
       uint level = Rarity.level(summoner);
@@ -162,7 +161,8 @@ library Summoner {
 
     int8 attack_modifier = weapon_attack_modifier(summoner, weapon_codex.encumbrance)
     + armor_check_penalty(summoner, armor_slot)
-    + armor_check_penalty(summoner, shield_slot);
+    + armor_check_penalty(summoner, shield_slot)
+    + weapon_attack_bonus;
 
     if(weapon_codex.id != 0
       && !Proficiency.is_proficient_with_weapon(summoner, weapon_codex.proficiency, weapon_codex.id)
@@ -171,10 +171,6 @@ library Summoner {
     }
 
     int8 damage_modifier = weapon_damage_modifier(summoner, weapon_codex.encumbrance);
-
-    if(weapon_slot.mint != address(0)) {
-      attack_modifier += IEffects(weapon_slot.mint).attack_bonus(weapon_slot.token);
-    }
 
     int8[4] memory attack_bonus = base_attack_bonus(summoner);
     for(uint i = 0; i < 4; i++) {
@@ -213,12 +209,13 @@ library Summoner {
     );
   }
 
-  function get_weapon_codex(Equipment.Slot memory weapon_slot) internal view returns (IWeapon.Weapon memory) {
+  function get_weapon_codex(Equipment.Slot memory weapon_slot) internal view returns (IWeapon.Weapon memory, int8 attack_bonus) {
     if(weapon_slot.mint == address(0)) {
-      return unarmed_strike_codex();
+      return (unarmed_strike_codex(), 0);
     } else {
+      ICodexWeapon codex = ICodexWeapon(EQUIPMENT.codexes(weapon_slot.mint, 3));
       (,uint8 item_type,,) = ICrafting(weapon_slot.mint).items(weapon_slot.token);
-      return ICodexWeapon(EQUIPMENT.codexes(weapon_slot.mint, 3)).item_by_id(item_type);
+      return (codex.item_by_id(item_type), codex.get_attack_bonus(item_type));
     }
   }
 

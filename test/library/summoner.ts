@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { enumberance, randomId, unpackAttacks } from '../../util'
 import { armorType, baseType, weaponType } from '../../util/crafting'
-import { fakeAttributes, fakeCommonCraftingWrapper, fakeEquipment, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity } from '../../util/fakes'
 import { ethers } from 'hardhat'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { Attributes__factory, CraftingSkills__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
@@ -20,7 +20,7 @@ describe('Library: Summoner', function () {
 
     this.rarity = await fakeRarity()
     this.attributes = await fakeAttributes()
-    this.commonCrafting = await fakeCommonCraftingWrapper()
+    this.commonCrafting = await fakeCommonCrafting()
     this.masterworkCrafting = await fakeMasterwork()
     this.equipment = await fakeEquipment()
 
@@ -86,14 +86,9 @@ describe('Library: Summoner', function () {
     this.codex.masterwork.weapons.item_by_id
     .whenCalledWith(weaponType.longsword)
     .returns({
-      ...weapons('longsword'), 
-      id: weaponType.longsword,
-      name: "Masterwork Longsword", 
-      cost: ethers.utils.parseEther('315')
+      ...weapons('longsword', true), 
+      id: weaponType.longsword
     })
-    this.masterworkCrafting.attack_bonus
-    .whenCalledWith(this.longsword)
-    .returns(1)
 
     this.masterworkCrafting.items
     .whenCalledWith(this.fullPlate)
@@ -107,6 +102,9 @@ describe('Library: Summoner', function () {
       penalty: -5,
       cost: ethers.utils.parseEther('1650')
     })
+
+    this.codex.masterwork.weapons.get_attack_bonus
+    .returns(1)
 
     this.equipment.codexes
     .whenCalledWith(this.commonCrafting.address, 2)

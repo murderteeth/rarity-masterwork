@@ -11,6 +11,7 @@ import "../library/StringUtil.sol";
 
 library AdventureUri {
   address private constant RARITY = address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+  IRarityEquipment constant EQUIPMENT = IRarityEquipment(0x0000000000000000000000000000000000000011);
 
   struct Adventure {
     bool dungeon_entered;
@@ -114,9 +115,10 @@ library AdventureUri {
     result = string(abi.encodePacked('<text x="10" y="', StringUtil.toString(y), '" class="base">loadout</text>'));
     y += 20;
 
-    Equipment.Slot memory weapon_slot = loadout[Equipment.SLOT_TYPE_WEAPON_1];
-    Equipment.Slot memory armor_slot = loadout[Equipment.SLOT_TYPE_ARMOR];
-    Equipment.Slot memory shield_slot = loadout[Equipment.SLOT_TYPE_SHIELD];
+    Equipment.Slot memory weapon_slot = loadout[0];
+    Equipment.Slot memory armor_slot = loadout[1];
+    Equipment.Slot memory shield_slot = loadout[2];
+
     if(weapon_slot.mint == address(0)) {
       result = string(abi.encodePacked(result, '<text x="20" y="', StringUtil.toString(y), '" class="base">Unarmed</text>'));
       y += 20;
@@ -124,7 +126,7 @@ library AdventureUri {
       (,uint8 item_type,,) = ICrafting(weapon_slot.mint).items(weapon_slot.token);
       result = string(abi.encodePacked(
         result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
-        IWeapon(weapon_slot.mint).get_weapon(item_type).name,
+        ICodexWeapon(EQUIPMENT.codexes(weapon_slot.mint, 3)).item_by_id(item_type).name,
         '</text>'
       ));
       y += 20;
@@ -137,7 +139,7 @@ library AdventureUri {
         (,uint8 item_type,,) = ICrafting(armor_slot.mint).items(armor_slot.token);
         result = string(abi.encodePacked(
           result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
-          IArmor(armor_slot.mint).get_armor(item_type).name,
+          ICodexArmor(EQUIPMENT.codexes(armor_slot.mint, 2)).item_by_id(item_type).name,
           '</text>'
         ));
         y += 20;
@@ -146,7 +148,7 @@ library AdventureUri {
         (,uint8 item_type,,) = ICrafting(shield_slot.mint).items(shield_slot.token);
         result = string(abi.encodePacked(
           result, '<text x="20" y="', StringUtil.toString(y), '" class="base">', 
-          IArmor(shield_slot.mint).get_armor(item_type).name,
+          ICodexArmor(EQUIPMENT.codexes(shield_slot.mint, 2)).item_by_id(item_type).name,
           '</text>'
         ));
       }

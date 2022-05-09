@@ -3,7 +3,7 @@ import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import isSvg from 'is-svg'
 import { equipmentSlot, randomId } from '../../util'
-import { fakeAttributes, fakeCommonCraftingWrapper, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { Attributes__factory, Feats__factory, Monster__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { AdventureUri__factory } from '../../typechain/core'
@@ -14,6 +14,8 @@ import { classes } from '../../util/classes'
 import { CraftingSkills__factory } from '../../typechain/library/factories/CraftingSkills__factory'
 import { BigNumber } from 'ethers'
 import devAddresses from '../../dev-addresses.json'
+import { armorType, weaponType } from '../../util/crafting'
+import { armors, weapons } from '../../util/equipment'
 
 chai.use(smock.matchers)
 
@@ -38,9 +40,25 @@ describe('Core: Adventure II', function () {
     }
 
     this.crafting = {
-      common: await fakeCommonCraftingWrapper(),
+      common: await fakeCommonCrafting(),
       masterwork: await fakeMasterwork()
     }
+
+    this.codex.common.weapons.item_by_id
+    .whenCalledWith(weaponType.greatsword)
+    .returns(weapons('greatsword'))
+
+    this.codex.common.weapons.item_by_id
+    .whenCalledWith(weaponType.longsword)
+    .returns(weapons('longsword'))
+
+    this.codex.common.armor.item_by_id
+    .whenCalledWith(armorType.fullPlate)
+    .returns(armors('full plate'))
+
+    this.codex.common.armor.item_by_id
+    .whenCalledWith(armorType.heavyWoodShield)
+    .returns(armors('shield, heavy wooden'))
 
     this.equipment = await fakeEquipment()
     this.equipment.codexes
@@ -50,7 +68,6 @@ describe('Core: Adventure II', function () {
     this.equipment.codexes
     .whenCalledWith(this.crafting.common.address, 3)
     .returns(this.codex.common.weapons.address)
-
 
     this.adventureUri = await mockAdvenutreUri()
     this.adventure = await mockAdventure(this.adventureUri)

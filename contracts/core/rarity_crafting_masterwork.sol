@@ -11,14 +11,13 @@ import "../interfaces/core/IRarityGold.sol";
 import "../library/Codex.sol";
 import "../library/Crafting.sol";
 import "../library/CraftingSkills.sol";
-import "../library/Effects.sol";
 import "../library/ForSummoners.sol";
 import "../library/ForItems.sol";
 import "../library/Roll.sol";
 import "../library/Skills.sol";
 import "./rarity_crafting_masterwork_uri.sol";
 
-contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor, ITools, IEffects, ForSummoners, ForItems {
+contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, ForSummoners, ForItems {
   uint public next_token = 1;
 
   uint8 constant MASTERWORK_COMPONENT_DC = 20;
@@ -54,38 +53,6 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   ) external pure override returns (bytes4) {
     operator; from; tokenId; data; // lint silencio!
     return this.onERC721Received.selector;
-  }
-
-  // IWeapon
-  function get_weapon(uint8 item_type) override public view returns (IWeapon.Weapon memory) {
-    return WEAPONS_CODEX.item_by_id(item_type);
-  }
-
-  // IArmor
-  function get_armor(uint8 item_type) override public view returns (IArmor.Armor memory) {
-    return ARMOR_CODEX.item_by_id(item_type);
-  }
-
-  // ITools
-  function get_tools(uint8 item_type) override public view returns (ITools.Tools memory) {
-    return TOOLS_CODEX.item_by_id(item_type);
-  }
-
-  // IEffects
-  function armor_check_bonus(uint token) override external view returns (int8 result) {
-    if(items[token].base_type == 2) result = 1;
-  }
-
-  function attack_bonus(uint token) override external view returns (int8 result) {
-    if(items[token].base_type == 3) result = 1;
-  }
-
-  function skill_bonus(uint token, uint8 skill) override external view returns (int8 result) {
-    MasterworkUri.Item memory item = items[token];
-    if(item.base_type == 4) {
-      ITools.Tools memory tools = TOOLS_CODEX.item_by_id(item.item_type);
-      result = tools.skill_bonus[skill];
-    }
   }
 
   function start(
@@ -223,7 +190,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     MasterworkUri.Project memory project = projects[token];
     return (project.tools == 0)
     ? 127 * 20e18
-    : uint8(127 - this.skill_bonus(project.tools, 5)) * 20e18;
+    : uint8(127 - skill_bonus(project.tools, 6)) * 20e18;
   }
 
   function craft_bonus(uint token, uint bonus_mats) public view returns (int8 result) {
@@ -233,7 +200,7 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
   function craft_bonus(MasterworkUri.Project memory project, uint bonus_mats) internal view returns (int8 result) {
     result = (project.tools == 0)
     ? int8(0)
-    : this.skill_bonus(project.tools, 5);
+    : skill_bonus(project.tools, 6);
     if((bonus_mats / 20e18) > uint8(127 - result)) {
       return int8(127);
     } else {
@@ -241,11 +208,18 @@ contract rarity_masterwork is ERC721Enumerable, IERC721Receiver, IWeapon, IArmor
     }
   }
 
+  function skill_bonus(uint token, uint skill_id) internal view returns (int8 result) {
+    MasterworkUri.Item memory item = items[token];
+    if(item.base_type == 4) {
+      return TOOLS_CODEX.get_skill_bonus(item.item_type, skill_id);
+    }
+  }
+
   function standard_component_dc(uint8 base_type, uint8 item_type) public view returns (uint8 result) {
     if(base_type == 2) {
-      result = 10 + get_armor(item_type).armor_bonus;
+      result = 10 + ARMOR_CODEX.item_by_id(item_type).armor_bonus;
     } else if(base_type == 3) {
-      result = 12 + (get_weapon(item_type).proficiency - 1) * 3;
+      result = 12 + (WEAPONS_CODEX.item_by_id(item_type).proficiency - 1) * 3;
     } else if(base_type == 4) {
       result = 15;
     }
