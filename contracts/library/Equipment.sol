@@ -7,6 +7,8 @@ interface IRarityEquipment {
   function codexes(address mint, uint base_type) external view returns (address);
   function equip(uint summoner, uint slot_type, address mint, address codex, uint token) external;
   function unequip(uint summoner, uint slot_type) external;
+  function snapshot(uint token, uint summoner) external;
+  function snapshots(address encounter, uint token, uint summoner, uint slot_type) external view returns (Equipment.Slot memory);
 }
 
 library Equipment {

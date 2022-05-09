@@ -11,7 +11,6 @@ import "../library/Equipment.sol";
 import "../library/ForItems.sol";
 import "../library/ForSummoners.sol";
 import "../library/Proficiency.sol";
-import "hardhat/console.sol";
 
 contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForItems {
   address[2] public MINT_WHITELIST;
@@ -19,6 +18,13 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
   mapping(uint => mapping(uint => Equipment.Slot)) public slots;
   mapping(uint => uint) public encumberance;
   mapping(address => mapping(uint => address)) public codexes;
+  mapping(address => mapping(uint => mapping(uint => mapping(uint => Equipment.Slot)))) public snapshots;
+
+  function snapshot(uint token, uint summoner) public {
+    snapshots[msg.sender][token][summoner][0] = slots[summoner][0];
+    snapshots[msg.sender][token][summoner][1] = slots[summoner][1];
+    snapshots[msg.sender][token][summoner][2] = slots[summoner][2];
+  }
 
   function set_mint_whitelist(
     address common, 
@@ -85,6 +91,7 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     encumberance[summoner] += weigh(mint, base_type, item_type);
 
     IERC721(mint).safeTransferFrom(msg.sender, address(this), token);
+    // approve
     // IERC721(mint).approve(msg.sender, item);
   }
 

@@ -82,7 +82,9 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
     adventures[next_token].started = uint64(block.timestamp);
     latest_adventures[summoner] = next_token;
     RARITY.safeTransferFrom(msg.sender, address(this), summoner);
-    RARITY.approve(msg.sender, summoner);
+    // approve
+    // RARITY.approve(msg.sender, summoner);
+    EQUIPMENT.snapshot(next_token, summoner);
     _safeMint(msg.sender, next_token);
     next_token += 1;
   }
@@ -319,9 +321,9 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
 
   function loadout(uint token) internal view returns (Equipment.Slot[3] memory result) {
     uint summoner = adventures[token].summoner;
-    result[0] = EQUIPMENT.slots(summoner, 0);
-    result[1] = EQUIPMENT.slots(summoner, 1);
-    result[2] = EQUIPMENT.slots(summoner, 2);
+    result[0] = EQUIPMENT.snapshots(address(this), token, summoner, 0);
+    result[1] = EQUIPMENT.snapshots(address(this), token, summoner, 1);
+    result[2] = EQUIPMENT.snapshots(address(this), token, summoner, 2);
   }
 
   function monster_ids(Combat.Combatant[] memory turn_order, uint monster_count) internal view returns (uint8[] memory result) {
@@ -350,8 +352,9 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
   }
 
   function _transfer(address from, address to, uint token) internal override {
-    AdventureUri.Adventure memory adventure = adventures[token];
-    RARITY.approve(to, adventure.summoner);
+    // AdventureUri.Adventure memory adventure = adventures[token];
+    // approve
+    // RARITY.approve(to, adventure.summoner);
     super._transfer(from, to, token);
   }
 

@@ -39,9 +39,9 @@ describe('Core: Crafting II - Masterwork', function () {
         tools: await smock.fake('contracts/codex/codex-items-tools.sol:codex'),
       },
       masterwork: {
-        weapons: await smock.fake('contracts/codex/codex-items-weapons-masterwork.sol:codex', { address: devAddresses.codex_tools_masterwork }),
+        weapons: await smock.fake('contracts/codex/codex-items-weapons-masterwork.sol:codex', { address: devAddresses.codex_weapons_masterwork }),
         armor: await smock.fake('contracts/codex/codex-items-armor-masterwork.sol:codex', { address: devAddresses.codex_armor_masterwork }),
-        tools: await smock.fake('contracts/codex/codex-items-tools-masterwork.sol:codex', { address: devAddresses.codex_weapons_masterwork })
+        tools: await smock.fake('contracts/codex/codex-items-tools-masterwork.sol:codex', { address: devAddresses.codex_tools_masterwork })
       }
     }
 

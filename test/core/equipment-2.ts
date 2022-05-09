@@ -4,7 +4,7 @@ import { ethers } from 'hardhat'
 import { fakeCommonCrafting, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity, fakeSummoner } from '../../util/fakes'
 import { RarityEquipment2__factory } from '../../typechain/core'
 import { Crafting__factory, Feats__factory, Proficiency__factory, Rarity__factory } from '../../typechain/library'
-import { equipmentSlot } from '../../util'
+import { equipmentSlot, randomId } from '../../util'
 import devAddresses from '../../dev-addresses.json'
 import { armorType, baseType, weaponType } from '../../util/crafting'
 import { armors, weapons } from '../../util/equipment'
@@ -236,5 +236,30 @@ describe('Core: Equipment II', function () {
 
     await expect(this.equipment.equip(this.summoner, equipmentSlot.weapon1, randocraftinc.address, longsword))
     .to.be.revertedWith('!whitelisted')
+  })
+
+  it('takes snapshots', async function() {
+    const weapon = fakeLongsword(this.crafting.common, this.summoner, this.signer)
+    const armor = fakeFullPlateArmor(this.crafting.common, this.summoner, this.signer)
+    const shield = fakeHeavyWoodShield(this.crafting.common, this.summoner, this.signer)
+    await this.equipment.equip(this.summoner, equipmentSlot.weapon1, this.crafting.common.address, weapon)
+    await this.equipment.equip(this.summoner, equipmentSlot.armor, this.crafting.common.address, armor)
+    await this.equipment.equip(this.summoner, equipmentSlot.shield, this.crafting.common.address, shield)
+
+    const rando = (await ethers.getSigners())[1]
+    const token = randomId()
+    await(await this.equipment.connect(rando)).snapshot(token, this.summoner)
+
+    const weaponSlot = await this.equipment.snapshots(rando.address, token, this.summoner, equipmentSlot.weapon1)
+    expect(weaponSlot.mint).to.eq(this.crafting.common.address)
+    expect(weaponSlot.token).to.eq(weapon)
+
+    const armorSlot = await this.equipment.snapshots(rando.address, token, this.summoner, equipmentSlot.armor)
+    expect(armorSlot.mint).to.eq(this.crafting.common.address)
+    expect(armorSlot.token).to.eq(armor)
+
+    const shieldSlot = await this.equipment.snapshots(rando.address, token, this.summoner, equipmentSlot.shield)
+    expect(shieldSlot.mint).to.eq(this.crafting.common.address)
+    expect(shieldSlot.token).to.eq(shield)
   })
 })

@@ -6,10 +6,10 @@ import "../library/Codex.sol";
 import "../library/StringUtil.sol";
 
 library MasterworkUri {
-  ICodexSkills private constant SKILLS_CODEX = ICodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
-  ICodexWeapon private constant WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
-  ICodexArmor private constant ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000005);
-  ICodexTools private constant TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000006);
+  ICodexSkills public constant SKILLS_CODEX = ICodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
+  ICodexWeapon public constant WEAPONS_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000004);
+  ICodexArmor public constant ARMOR_CODEX = ICodexArmor(0x0000000000000000000000000000000000000005);
+  ICodexTools public constant TOOLS_CODEX = ICodexTools(0x0000000000000000000000000000000000000006);
 
   struct Project {
     bool done_crafting;
