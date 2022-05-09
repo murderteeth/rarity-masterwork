@@ -20,12 +20,6 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
   mapping(address => mapping(uint => address)) public codexes;
   mapping(address => mapping(uint => mapping(uint => mapping(uint => Equipment.Slot)))) public snapshots;
 
-  function snapshot(uint token, uint summoner) public {
-    snapshots[msg.sender][token][summoner][0] = slots[summoner][0];
-    snapshots[msg.sender][token][summoner][1] = slots[summoner][1];
-    snapshots[msg.sender][token][summoner][2] = slots[summoner][2];
-  }
-
   function set_mint_whitelist(
     address common, 
     address common_armor_codex,
@@ -60,26 +54,26 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     approvedForItem(token, mint)
   {
     require(whitelisted(mint), "!whitelisted");
-    require(slot_type < 3, "!supported");
+    require(slot_type < 4, "!supported");
     require(slots[summoner][slot_type].mint == address(0), "!slotAvailable");
 
     (uint8 base_type, uint8 item_type,,) = ICrafting(mint).items(token);
 
-    if(slot_type == 0) {
+    if(slot_type == 1) {
       require(base_type == 3, "!weapon");
       IWeapon.Weapon memory weapon = ICodexWeapon(codexes[mint][base_type]).item_by_id(item_type);
       if(weapon.encumbrance == 5) revert("ranged weapon");
       if(weapon.encumbrance == 4) {
-        Equipment.Slot memory shield_slot = slots[summoner][2];
+        Equipment.Slot memory shield_slot = slots[summoner][3];
         if(shield_slot.mint != address(0)) revert("shield equipped");
       }
 
-    } else if(slot_type == 1) {
+    } else if(slot_type == 2) {
       require(base_type == 2 && item_type < 13, "!armor");
 
-    } else if(slot_type == 2) {
+    } else if(slot_type == 3) {
       require(base_type == 2 && item_type > 12, "!shield");
-      Equipment.Slot memory weapon_slot = slots[summoner][0];
+      Equipment.Slot memory weapon_slot = slots[summoner][1];
       if(weapon_slot.mint != address(0)) {
         (,uint8 weapon_type,,) = ICrafting(weapon_slot.mint).items(weapon_slot.token);
         IWeapon.Weapon memory equipped_weapon = ICodexWeapon(codexes[weapon_slot.mint][3]).item_by_id(weapon_type);
@@ -110,6 +104,12 @@ contract rarity_equipment_2 is ERC721Holder, ReentrancyGuard, ForSummoners, ForI
     delete slots[summoner][slot_type];
 
     IERC721(slot.mint).safeTransferFrom(address(this), msg.sender, slot.token);
+  }
+
+  function snapshot(uint token, uint summoner) public {
+    snapshots[msg.sender][token][summoner][1] = slots[summoner][1];
+    snapshots[msg.sender][token][summoner][2] = slots[summoner][2];
+    snapshots[msg.sender][token][summoner][3] = slots[summoner][3];
   }
 
   function weigh(address mint, uint base_type, uint8 item_type) internal view returns (uint weight) {

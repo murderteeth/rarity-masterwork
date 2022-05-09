@@ -8,8 +8,7 @@ contract codex {
   string public constant index = "Items";
   string public constant class = "Masterwork Armor";
 
-  IRarityCodexCommonArmor constant COMMON_CODEX =
-    IRarityCodexCommonArmor(0x0000000000000000000000000000000000000010);
+  IRarityCodexCommonArmor constant COMMON_CODEX = IRarityCodexCommonArmor(0x0000000000000000000000000000000000000010);
 
   function get_proficiency_by_id(uint256 _id)
     public

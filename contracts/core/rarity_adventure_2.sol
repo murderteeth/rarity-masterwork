@@ -321,9 +321,9 @@ contract rarity_adventure_2 is ERC721Enumerable, ERC721Holder, ReentrancyGuard, 
 
   function loadout(uint token) internal view returns (Equipment.Slot[3] memory result) {
     uint summoner = adventures[token].summoner;
-    result[0] = EQUIPMENT.snapshots(address(this), token, summoner, 0);
-    result[1] = EQUIPMENT.snapshots(address(this), token, summoner, 1);
-    result[2] = EQUIPMENT.snapshots(address(this), token, summoner, 2);
+    result[0] = EQUIPMENT.snapshots(address(this), token, summoner, 1);
+    result[1] = EQUIPMENT.snapshots(address(this), token, summoner, 2);
+    result[2] = EQUIPMENT.snapshots(address(this), token, summoner, 3);
   }
 
   function monster_ids(Combat.Combatant[] memory turn_order, uint monster_count) internal view returns (uint8[] memory result) {

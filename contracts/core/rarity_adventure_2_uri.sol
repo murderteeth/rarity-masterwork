@@ -10,7 +10,7 @@ import "../library/Monster.sol";
 import "../library/StringUtil.sol";
 
 library AdventureUri {
-  address private constant RARITY = address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+  address constant RARITY = address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   IRarityEquipment constant EQUIPMENT = IRarityEquipment(0x0000000000000000000000000000000000000011);
 
   struct Adventure {

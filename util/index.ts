@@ -29,23 +29,23 @@ export function isNumber(value: string | number): boolean
 }
 
 export const equipmentSlot = {
-  weapon1: 0,
-  armor: 1,
-  shield: 2,
-  weapon2: 3,
-  hands: 4,
-  ring1: 5,
-  ring2: 6,
-  head: 7,
-  headband: 8,
-  eyes: 9,
-  neck: 10,
-  shoulders: 11,
-  chest: 12,
-  belt: 13,
-  body: 14,
-  arms: 15,
-  feet: 16
+  weapon1: 1,
+  armor: 2,
+  shield: 3,
+  weapon2: 4,
+  hands: 5,
+  ring1: 6,
+  ring2: 7,
+  head: 8,
+  headband: 9,
+  eyes: 10,
+  neck: 11,
+  shoulders: 12,
+  chest: 13,
+  belt: 14,
+  body: 15,
+  arms: 16,
+  feet: 17
 }
 
 export const enumberance = {

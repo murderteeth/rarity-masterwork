@@ -39,15 +39,15 @@ library Summoner {
     uint max_dex_bonus = (2**128 - 1);
 
     if(armor_slot.mint != address(0)) {
-      IArmor.Armor memory armor_codex = get_armor_codex(armor_slot);
-      result += int8(uint8(armor_codex.armor_bonus));
-      if(armor_codex.max_dex_bonus < max_dex_bonus) max_dex_bonus = armor_codex.max_dex_bonus;
+      IArmor.Armor memory armor = get_armor(armor_slot);
+      result += int8(uint8(armor.armor_bonus));
+      if(armor.max_dex_bonus < max_dex_bonus) max_dex_bonus = armor.max_dex_bonus;
     }
 
     if(shield_slot.mint != address(0)) {
-      IArmor.Armor memory shield_codex = get_armor_codex(shield_slot);
-      result += int8(uint8(shield_codex.armor_bonus));
-      if(shield_codex.max_dex_bonus < max_dex_bonus) max_dex_bonus = shield_codex.max_dex_bonus;
+      IArmor.Armor memory shield = get_armor(shield_slot);
+      result += int8(uint8(shield.armor_bonus));
+      if(shield.max_dex_bonus < max_dex_bonus) max_dex_bonus = shield.max_dex_bonus;
     }
 
     if(armor_slot.mint == address(0) 
@@ -84,10 +84,10 @@ library Summoner {
   ) public view returns (int8) {
     if(armor_slot.mint == address(0)) return 0;
     (,uint item_type,,) = ICrafting(armor_slot.mint).items(armor_slot.token);
-    IArmor.Armor memory armor_codex = get_armor_codex(armor_slot);
-    return Proficiency.is_proficient_with_armor(summoner, armor_codex.proficiency, item_type)
+    IArmor.Armor memory armor = get_armor(armor_slot);
+    return Proficiency.is_proficient_with_armor(summoner, armor.proficiency, item_type)
     ? int8(0)
-    : int8(armor_codex.penalty);
+    : int8(armor.penalty);
   }
 
   // https://github.com/NomicFoundation/hardhat/issues/2592
@@ -99,7 +99,7 @@ library Summoner {
     return armor_check_penalty(summoner, Equipment.Slot(armor_mint, armor_token));
   }
 
-  function get_armor_codex(Equipment.Slot memory armor_slot) internal view returns (IArmor.Armor memory armor) {
+  function get_armor(Equipment.Slot memory armor_slot) internal view returns (IArmor.Armor memory armor) {
     if(armor_slot.mint != address(0)) {
       (,uint8 item_type,,) = ICrafting(armor_slot.mint).items(armor_slot.token);
       return ICodexArmor(EQUIPMENT.codexes(armor_slot.mint, 2)).item_by_id(item_type);
@@ -147,11 +147,11 @@ library Summoner {
   ) public view returns(
     int8[28] memory result
   ) {
-    (IWeapon.Weapon memory weapon_codex, int8 weapon_attack_bonus) = get_weapon_codex(weapon_slot);
+    (IWeapon.Weapon memory weapon, int8 weapon_attack_bonus) = get_weapon(weapon_slot);
 
-    if(weapon_codex.id == 0 && Rarity.class(summoner) == 6) {
+    if(weapon.id == 0 && Rarity.class(summoner) == 6) {
       uint level = Rarity.level(summoner);
-      weapon_codex.damage = level < 4 ? 6 
+      weapon.damage = level < 4 ? 6 
       : level < 8 ? 8 
       : level < 12 ? 10 
       : level < 16 ? 12
@@ -159,30 +159,30 @@ library Summoner {
       : 20;
     }
 
-    int8 attack_modifier = weapon_attack_modifier(summoner, weapon_codex.encumbrance)
+    int8 attack_modifier = weapon_attack_modifier(summoner, weapon.encumbrance)
     + armor_check_penalty(summoner, armor_slot)
     + armor_check_penalty(summoner, shield_slot)
     + weapon_attack_bonus;
 
-    if(weapon_codex.id != 0
-      && !Proficiency.is_proficient_with_weapon(summoner, weapon_codex.proficiency, weapon_codex.id)
+    if(weapon.id != 0
+      && !Proficiency.is_proficient_with_weapon(summoner, weapon.proficiency, weapon.id)
     ) {
       attack_modifier -= 4;
     }
 
-    int8 damage_modifier = weapon_damage_modifier(summoner, weapon_codex.encumbrance);
+    int8 damage_modifier = weapon_damage_modifier(summoner, weapon.encumbrance);
 
     int8[4] memory attack_bonus = base_attack_bonus(summoner);
     for(uint i = 0; i < 4; i++) {
       if(i == 0 || attack_bonus[i] > 0) {
         Combat.pack_attack(
           attack_bonus[i] + attack_modifier, 
-          int8(weapon_codex.critical_modifier), 
-          uint8(weapon_codex.critical),
+          int8(weapon.critical_modifier), 
+          uint8(weapon.critical),
           1, 
-          uint8(weapon_codex.damage), 
+          uint8(weapon.damage), 
           damage_modifier, 
-          uint8(weapon_codex.damage_type), 
+          uint8(weapon.damage_type), 
           i, 
           result
         );
@@ -209,7 +209,7 @@ library Summoner {
     );
   }
 
-  function get_weapon_codex(Equipment.Slot memory weapon_slot) internal view returns (IWeapon.Weapon memory, int8 attack_bonus) {
+  function get_weapon(Equipment.Slot memory weapon_slot) internal view returns (IWeapon.Weapon memory, int8 attack_bonus) {
     if(weapon_slot.mint == address(0)) {
       return (unarmed_strike_codex(), 0);
     } else {
