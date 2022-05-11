@@ -171,8 +171,8 @@ async function main() {
       Roll: library_roll.address,
     }
   })).deploy()
-  await library_summoner.deployed()
-  console.log('📚 deploy library/Summoner.sol', library_summoner.address)
+  await library_monster.deployed()
+  console.log('📚 deploy library/Monster.sol', library_monster.address)
 
   const core_rarity_adventure_2_uri = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2_uri.sol:AdventureUri', {
     libraries: {
@@ -192,8 +192,9 @@ async function main() {
       Random: library_random.address
     }
   })).deploy()
-  await core_rarity_adventure_2.deployed()
   console.log('🤺 deploy core/rarity_adventure_2.sol', core_rarity_adventure_2.address)
+  await core_rarity_adventure_2.deployed()
+
 
 
 
@@ -209,12 +210,11 @@ async function main() {
 
 
   const core_rarity_crafting_mats_2 = await (await ethers.getContractFactory('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')).deploy()
-  await core_rarity_crafting_mats_2.deployed()
   console.log('🤺 deploy core/rarity_crafting-materials-2.sol', core_rarity_crafting_mats_2.address)
+  await core_rarity_crafting_mats_2.deployed()
 
 
-
-  //////////////////////////////////////////////////
+  ////////////////////////////////////////////////
   console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
@@ -236,8 +236,8 @@ async function main() {
   await hre.run('compile')
 
   const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri')).deploy()
-  await core_rarity_crafting_masterwork_uri.deployed()
   console.log('🤺 deploy core/core_rarity_crafting_masterwork_uri.sol', core_rarity_crafting_masterwork_uri.address)
+  await core_rarity_crafting_masterwork_uri.deployed()
 
   const core_rarity_crafting_masterwork = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', {
     libraries: {
@@ -252,50 +252,165 @@ async function main() {
   await core_rarity_crafting_masterwork.deployed()
   console.log('🤺 deploy core/rarity_crafting_masterwork.sol', core_rarity_crafting_masterwork.address)
 
-  await(await core_rarity_equipment_2.set_mint_whitelist(
-    '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC',
-    codex_items_armor_2.address,
-    codex_items_weapons_2.address,
-    core_rarity_crafting_masterwork.address,
-    codex_items_armor_masterwork.address,
-    codex_items_weapons_masterwork.address
-  )).wait()
-  console.log('🏳  set adventure 2 whitelist')
+  {
+    console.log()
+    await(await core_rarity_equipment_2.set_mint_whitelist(
+      '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC',
+      codex_items_armor_2.address,
+      codex_items_weapons_2.address,
+      core_rarity_crafting_masterwork.address,
+      codex_items_armor_masterwork.address,
+      codex_items_weapons_masterwork.address
+    )).wait()
+    console.log('🏳  set adventure 2 whitelist')
+  }
+
 
   const addressFile = `./addresses.${network.name}.json`
 
   await fs.writeFile(addressFile, JSON.stringify({
-    codex_base_random_2: codex_base_random_2.address,
-    codex_crafting_skills: codex_crafting_skills.address,
-    codex_items_armor_2: codex_items_armor_2.address,
-    codex_items_armor_masterwork: codex_items_armor_masterwork.address,
-    codex_items_tools: codex_items_tools.address,
-    codex_items_tools_masterwork: codex_items_tools_masterwork.address,
-    codex_items_weapons_2: codex_items_weapons_2.address,
-    codex_items_weapons_masterwork: codex_items_weapons_masterwork.address,
-    library_attributes: library_attributes.address,
-    library_combat: library_combat.address,
-    library_crafting: library_crafting.address,
-    library_crafting_skills: library_crafting_skills.address,
-    library_feats: library_feats.address,
-    library_monster: library_monster.address,
-    library_proficiency: library_proficiency.address,
-    library_random: library_random.address,
-    library_rarity: library_rarity.address,
-    library_roll: library_roll.address,
-    library_skills: library_skills.address,
-    library_summoner: library_summoner.address,
-    core_rarity_adventure_2: core_rarity_adventure_2.address,
-    core_rarity_adventure_2_uri: core_rarity_adventure_2_uri.address,
-    core_rarity_crafting_masterwork_uri: core_rarity_crafting_masterwork_uri.address,
-    core_rarity_crafting_masterwork: core_rarity_crafting_masterwork.address,
-    core_rarity_crafting_mats_2: core_rarity_crafting_mats_2.address,
-    core_rarity_crafting_skills: core_rarity_crafting_skills.address,
-    core_rarity_equipment_2: core_rarity_equipment_2.address
+    codex_base_random_2: { 
+      address: codex_base_random_2.address,
+      contract: 'contracts/codex/codex-base-random-2.sol:codex',
+      verified: false
+    },
+    codex_crafting_skills: { 
+      address: codex_crafting_skills.address,
+      contract: 'contracts/codex/codex-crafting-skills.sol:codex',
+      verified: false
+    },
+    codex_items_armor_2: { 
+      address: codex_items_armor_2.address,
+      contract: 'contracts/codex/codex_items_armor_2:codex',
+      verified: false
+    },
+    codex_items_armor_masterwork: { 
+      address: codex_items_armor_masterwork.address,
+      contract: 'contracts/codex/codex-items-armor-masterwork.sol:codex',
+      verified: false
+    },
+    codex_items_tools: { 
+      address: codex_items_tools.address,
+      contract: 'contracts/codex/codex-items-tools.sol:codex',
+      verified: false
+    },
+    codex_items_tools_masterwork: { 
+      address: codex_items_tools_masterwork.address,
+      contract: 'contracts/codex/codex-items-tools-masterwork.sol:codex',
+      verified: false
+    },
+    codex_items_weapons_2: { 
+      address: codex_items_weapons_2.address,
+      contract: 'contracts/codex/codex-items-weapons-2:codex',
+      verified: false
+    },
+    codex_items_weapons_masterwork: { 
+      address: codex_items_weapons_masterwork.address,
+      contract: 'contracts/codex/codex-items-weapons-masterwork.sol:codex',
+      verified: false
+    },
+    library_attributes: { 
+      address: library_attributes.address,
+      contract: 'contracts/library/Attributes.sol:Attributes',
+      verified: false
+    },
+    library_combat: { 
+      address: library_combat.address,
+      contract: 'contracts/library/Combat.sol:Combat',
+      verified: false
+    },
+    library_crafting: { 
+      address: library_crafting.address,
+      contract: 'contracts/library/Crafting.sol:Crafting',
+      verified: false
+    },
+    library_crafting_skills: { 
+      address: library_crafting_skills.address,
+      contract: 'contracts/library/CraftingSkills.sol:CraftingSkills',
+      verified: false
+    },
+    library_feats: { 
+      address: library_feats.address,
+      contract: 'contracts/library/Feats.sol:Feats',
+      verified: false
+    },
+    library_proficiency: { 
+      address: library_proficiency.address,
+      contract: 'contracts/library/Proficiency.sol:Proficiency',
+      verified: false
+    },
+    library_random: { 
+      address: library_random.address,
+      contract: 'contracts/library/Random.sol:Random',
+      verified: false
+    },
+    library_rarity: { 
+      address: library_rarity.address,
+      contract: 'contracts/library/Rarity.sol:Rarity',
+      verified: false
+    },
+    library_roll: { 
+      address: library_roll.address,
+      contract: 'contracts/library/Roll.sol:Roll',
+      verified: false
+    },
+    library_skills: { 
+      address: library_skills.address,
+      contract: 'contracts/library/Skills.sol:Skills',
+      verified: false
+    },
+    library_summoner: { 
+      address: library_summoner.address,
+      contract: 'contracts/library/Summoner.sol:Summoner',
+      verified: false
+    },
+    core_rarity_crafting_skills: { 
+      address: core_rarity_crafting_skills.address,
+      contract: 'contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills',
+      verified: false
+    },
+    core_rarity_equipment_2: { 
+      address: core_rarity_equipment_2.address,
+      contract: 'contracts/core/rarity_equipment_2.sol:rarity_equipment_2',
+      verified: false
+    },
+    library_monster: { 
+      address: library_monster.address,
+      contract: 'contracts/library/Monster.sol:Monster',
+      verified: false
+    },
+    core_rarity_adventure_2: { 
+      address: core_rarity_adventure_2.address,
+      contract: 'contracts/core/rarity_adventure_2.sol:rarity_adventure_2',
+      verified: false
+    },
+    core_rarity_adventure_2_uri: { 
+      address: core_rarity_adventure_2_uri.address,
+      contract: 'contracts/core/rarity_adventure_2_uri.sol:AdventureUri',
+      verified: false
+    },
+    core_rarity_crafting_masterwork_uri: { 
+      address: core_rarity_crafting_masterwork_uri.address,
+      contract: 'contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri',
+      verified: false
+    },
+    core_rarity_crafting_masterwork: { 
+      address: core_rarity_crafting_masterwork.address,
+      contract: 'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork',
+      verified: false
+    },
+    core_rarity_crafting_mats_2: { 
+      address: core_rarity_crafting_mats_2.address,
+      contract: 'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
+      verified: false
+    }
   }, null, '\t'))
+
   console.log('📝 write deployed addresses to ', addressFile)
 
-  shell.exec('git checkout contracts/*')
+  if(network.name === 'localhost') {
+    shell.exec('git checkout contracts/*')
+  }
 
   console.log('\n\n💥 deployed!!\n\n')
 }
@@ -305,8 +420,10 @@ main()
 .catch((error) => {
   console.error(error)
   console.log()
-  console.log('reset contracts, git checkout contracts/*')
-  shell.exec('git checkout contracts/*')
+  if(network.name === 'localhost') {
+    console.log('reset contracts, git checkout contracts/*')
+    shell.exec('git checkout contracts/*')
+  }
   console.log()
   console.log()
   process.exit(1)
