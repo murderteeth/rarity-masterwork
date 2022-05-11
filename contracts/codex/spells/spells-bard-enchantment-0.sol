@@ -2,27 +2,31 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Spells";
-    string constant public class = "Bard";
-    string constant public school = "Enchantment";
-    uint constant public level = 0;
+    string public constant index = "Spells";
+    string public constant class = "Bard";
+    string public constant school = "Enchantment";
+    uint256 public constant level = 0;
 
-    function spell_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function spell_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         if (_id == 6) {
             return daze();
         } else if (_id == 7) {
@@ -30,22 +34,26 @@ contract codex {
         }
     }
 
-    function daze() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function daze()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 6;
         name = "Daze";
         verbal = true;
@@ -62,22 +70,26 @@ contract codex {
         description = "This enchantment clouds the mind of a humanoid creature with 4 or fewer Hit Dice so that it takes no actions. Humanoids of 5 or more HD are not affected. A dazed subject is not stunned, so attackers get no special advantage against it.";
     }
 
-    function lullaby() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function lullaby()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 7;
         name = "Lullaby";
         verbal = true;

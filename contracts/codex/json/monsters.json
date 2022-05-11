@@ -1472,10 +1472,7 @@
                   "p": {
                     "#text": "Each time a living creature first views a specific dream larva from a distance of 30 feet or less (or from a scrying effect), the subject sees the image of the most fearsome creature imaginable. This is not an illusion or phantasm; the dream larva truly becomes, for just that instant, the subject's worst nightmare. Even if simultaneously viewed by dozens of different creatures, the dream larva appears differently to each one of them. Creatures immune to fear or mind-affecting effects (or warded byorspells) are immune to worst nightmare; all others must make a Will save (DC 43) or die from the supernatural horror revealed. Survivors (and those resurrected) are immune to the effect from that individual dream larva in the future. The DC is Charisma-based.",
                     "b": "Worst Nightmare (Su):",
-                    "i": [
-                      "protection from evil",
-                      "death ward"
-                    ]
+                    "i": ["protection from evil", "death ward"]
                   }
                 },
                 {
@@ -1868,11 +1865,7 @@
                   "p": {
                     "#text": "At will-,,. Caster level 50th; save DC 17 + spell level. The DC is Charisma-based.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "greater magic weapon",
-                      "fly",
-                      "shield"
-                    ]
+                    "i": ["greater magic weapon", "fly", "shield"]
                   }
                 },
                 {
@@ -2116,10 +2109,7 @@
                     },
                     {
                       "#text": "Blinding Speed (x2), Epic Toughness, Epic Weapon Focus (bite), Epic Weapon Focus (claw), Tenacious Magic (), Tenacious Magic ()",
-                      "i": [
-                        "greater invisibility",
-                        "blur"
-                      ],
+                      "i": ["greater invisibility", "blur"],
                       "br": ""
                     }
                   ]
@@ -3071,10 +3061,7 @@
                   "p": {
                     "#text": "For every round of apparent time experienced by the phane, it automatically absorbs the 'future' from any creature it has successfully encapsulated in static time via its stasis touch (not its null time field), no matter the distance separating victim and phane, and no matter the number of victims. Of course, to the victim no time passes at all, but each apparent round experienced by the phane ages the victim 1d4 years, at the same time healing the phane of 20 hit points of damage. A victim who is not somehow released from static time by a friend who can cast,,  or some other likely spell, eventually ages to death. Victims killed in this manner automatically fall out of static time as desiccated husks that disintegrate to a fine dust with even the lightest touch. Victims who are released prior to death immediately apply the physical effects of aging, but not the mental effects.",
                     "b": "Time Leach (Su):",
-                    "i": [
-                      "dispel magic",
-                      "greater dispel magic"
-                    ]
+                    "i": ["dispel magic", "greater dispel magic"]
                   }
                 },
                 {
@@ -5642,10 +5629,7 @@
                     },
                     {
                       "#text": "Str 10, Dex 16 (with), Con -, Int 39 (with), Wis 24, Cha 20",
-                      "i": [
-                        "gloves",
-                        "headband"
-                      ],
+                      "i": ["gloves", "headband"],
                       "br": ""
                     }
                   ]
@@ -5829,11 +5813,7 @@
                     "p": {
                       "#text": "Demiliches are immune to all magical and supernatural effects, except as follows. Aspell affects a demilich as if it were a crystalline creature, but deals half the damage normally indicated. Aspell deals 3d6 points of damage (Fort save for half damage).spells affect demiliches normally.",
                       "b": "Magic Immunity (Ex):",
-                      "i": [
-                        "shatter",
-                        "dispel evil",
-                        "Holy smite"
-                      ]
+                      "i": ["shatter", "dispel evil", "Holy smite"]
                     }
                   },
                   {
@@ -5985,11 +5965,7 @@
                       "b": {
                         "i": "Magic Immunity (Ex):"
                       },
-                      "i": [
-                        "shatter",
-                        "dispel evil",
-                        "Holy smite"
-                      ]
+                      "i": ["shatter", "dispel evil", "Holy smite"]
                     }
                   },
                   {
@@ -8126,14 +8102,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -9448,20 +9418,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -9578,10 +9542,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -10064,14 +10025,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -11386,20 +11341,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -11516,10 +11465,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -12002,14 +11948,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -13324,20 +13264,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -13454,10 +13388,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -13941,14 +13872,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -15263,20 +15188,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -15393,10 +15312,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -15880,14 +15796,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -17202,20 +17112,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -17332,10 +17236,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -17585,10 +17486,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., blur, damage reduction 15/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 39, spells (caster level 18th),",
-                      "i": [
-                        "resilient sphere",
-                        "wall of force"
-                      ],
+                      "i": ["resilient sphere", "wall of force"],
                       "br": ""
                     }
                   ]
@@ -17822,14 +17720,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -19144,20 +19036,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -19274,10 +19160,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -19527,10 +19410,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., blur, damage reduction 20/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 42, spells (caster level 21st),",
-                      "i": [
-                        "resilient sphere",
-                        "wall of force"
-                      ],
+                      "i": ["resilient sphere", "wall of force"],
                       "br": ""
                     }
                   ]
@@ -19764,14 +19644,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -21086,20 +20960,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -21216,10 +21084,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -21469,11 +21334,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., blur, damage reduction 20/epic, darkvision 120 ft., displacement,, immunity to sleep and paralysis, keen senses,, spell resistance 45, spells (caster level 24th),",
-                      "i": [
-                        "forcecage",
-                        "resilient sphere",
-                        "wall of force"
-                      ],
+                      "i": ["forcecage", "resilient sphere", "wall of force"],
                       "br": ""
                     }
                   ]
@@ -21707,14 +21568,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -23029,20 +22884,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -23159,10 +23008,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -23412,11 +23258,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., blur, damage reduction 25/epic, darkvision 120 ft., displacement,, immunity to sleep and paralysis, keen senses,, spell resistance 48, spells (caster level 27th),",
-                      "i": [
-                        "forcecage",
-                        "resilient sphere",
-                        "wall of force"
-                      ],
+                      "i": ["forcecage", "resilient sphere", "wall of force"],
                       "br": ""
                     }
                   ]
@@ -23650,14 +23492,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -24972,20 +24808,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -25102,10 +24932,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -25594,14 +25421,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -26916,20 +26737,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -27046,10 +26861,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -27538,14 +27350,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -28860,20 +28666,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -28990,10 +28790,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -29483,14 +29280,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -30805,20 +30596,14 @@
                     "p": {
                       "#text": "An old force dragon's deflecting force bends light even more ex-tremely, giving the dragon the benefit of thespell (50% miss chance). This supersedes itsability.",
                       "b": "Displacement (Su):",
-                      "i": [
-                        "displacement",
-                        "blur"
-                      ]
+                      "i": ["displacement", "blur"]
                     }
                   },
                   {
                     "p": {
                       "#text": "A great wyrm force dragon is a creature of pure force, and is completely invisible (as though protected by). A creature that can see invisible creatures must still contend with the dragon'sability.",
                       "b": "Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "displacement"
-                      ]
+                      "i": ["greater invisibility", "displacement"]
                     }
                   },
                   {
@@ -30935,10 +30720,7 @@
                   {
                     "#text": "3/day-,. Caster level 18th; save DC 24 + spell level.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "resilient sphere",
-                      "wall of force"
-                    ]
+                    "i": ["resilient sphere", "wall of force"]
                   },
                   {
                     "#text": "Immune toand paralysis, immune to force effects.",
@@ -31422,14 +31204,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -33346,14 +33122,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -35270,14 +35040,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -37195,14 +36959,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -39120,14 +38878,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -40810,10 +40562,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., damage reduction 15/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 54, spells (caster level 20th),",
-                      "i": [
-                        "rainbow pattern",
-                        "sunbeam"
-                      ],
+                      "i": ["rainbow pattern", "sunbeam"],
                       "br": ""
                     }
                   ]
@@ -41048,14 +40797,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -42738,10 +42481,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., damage reduction 20/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 60, spells (caster level 23rd),",
-                      "i": [
-                        "rainbow pattern",
-                        "sunbeam"
-                      ],
+                      "i": ["rainbow pattern", "sunbeam"],
                       "br": ""
                     }
                   ]
@@ -42976,14 +42716,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -44666,11 +44400,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., damage reduction 20/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 66, spells (caster level 26th),,",
-                      "i": [
-                        "rainbow pattern",
-                        "sunbeam",
-                        "sunburst"
-                      ],
+                      "i": ["rainbow pattern", "sunbeam", "sunburst"],
                       "br": ""
                     }
                   ]
@@ -44905,14 +44635,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -46595,11 +46319,7 @@
                     },
                     {
                       "#text": "Blindsense 60 ft., damage reduction 25/epic, darkvision 120 ft., immunity to sleep and paralysis, keen senses,, spell resistance 68, spells (caster level 29th),,",
-                      "i": [
-                        "rainbow pattern",
-                        "sunbeam",
-                        "sunburst"
-                      ],
+                      "i": ["rainbow pattern", "sunbeam", "sunburst"],
                       "br": ""
                     }
                   ]
@@ -46834,14 +46554,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -48764,14 +48478,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -50694,14 +50402,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -52625,14 +52327,8 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Base Attack/",
-                            "Grapple"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Base Attack/", "Grapple"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Attack",
@@ -56175,10 +55871,7 @@
                   "p": {
                     "#text": "A genius loci can use the epic spellonce per round as a free action until it successfully enslaves a foe (Will DC 53 to resist). The DC is Charisma-based. Once it has a slave, it cannot enslave another until its current slave dies, is, or is otherwise incapaticiated. A slave becomes free if its genius loci master is slain. A genius loci forces its slave to remain with it, though it may send its slave off to temporarily visit nearby locations in order to draw in unsuspecting victims. In fact, the 'purposes' of the genius loci are to some degree influenced by the current slave. The genius loci has no Intelligence score of its own; thus, its emulation of its slave's intelligence sometimes transfers attitudes and goals. However, a slave can only go so far in influencing its mobile master, and cannot knowingly attempt to free itself from the genius loci that keeps it close.",
                     "b": "Enslave (Su):",
-                    "i": [
-                      "enslave",
-                      "imprisoned"
-                    ]
+                    "i": ["enslave", "imprisoned"]
                   }
                 },
                 {
@@ -56969,10 +56662,7 @@
                     {
                       "#text": "At will-; 3/day-. Caster level 20th; save DC 20 + spell level.  The DC is Charisma-based.",
                       "b": "Spell-Like Abilities:",
-                      "i": [
-                        "shadow walk",
-                        "true strike"
-                      ]
+                      "i": ["shadow walk", "true strike"]
                     },
                     ""
                   ]
@@ -57090,14 +56780,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+27/+49",
@@ -57300,12 +56984,7 @@
                         "p": {
                           "#text": "A mithral golem is immune to all magical and supernatural effects, except as follows. Aspell negates its alacrity for 1d4 rounds, while aspell restores 1d6 hit points per level of the caster (maximum 10d6) or restores its alacrity, if previously negated by aspell. Multiplespells simply extend the duration of the effect.",
                           "b": "Magic Immunity (Ex):",
-                          "i": [
-                            "slow",
-                            "haste",
-                            "slow",
-                            "slow"
-                          ]
+                          "i": ["slow", "haste", "slow", "slow"]
                         }
                       }
                     ]
@@ -57488,14 +57167,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+40/+68",
@@ -57698,12 +57371,7 @@
                         "p": {
                           "#text": "A mithral golem is immune to all magical and supernatural effects, except as follows. Aspell negates its alacrity for 1d4 rounds, while aspell restores 1d6 hit points per level of the caster (maximum 10d6) or restores its alacrity, if previously negated by aspell. Multiplespells simply extend the duration of the effect.",
                           "b": "Magic Immunity (Ex):",
-                          "i": [
-                            "slow",
-                            "haste",
-                            "slow",
-                            "slow"
-                          ]
+                          "i": ["slow", "haste", "slow", "slow"]
                         }
                       }
                     ]
@@ -58601,14 +58269,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+23/+37",
@@ -58624,10 +58286,7 @@
                     },
                     {
                       "#text": "+46 (1d8+27/17-20 plus 1d6 plus) melee",
-                      "i": [
-                        "+6 keen longsword of binding",
-                        "binding"
-                      ],
+                      "i": ["+6 keen longsword of binding", "binding"],
                       "br": ""
                     }
                   ]
@@ -58640,10 +58299,7 @@
                     },
                     {
                       "#text": "+46/+41/+36/+31 (1d8+27/17-20 plus 1d6 plus) melee",
-                      "i": [
-                        "+6 keen longsword of binding",
-                        "binding"
-                      ],
+                      "i": ["+6 keen longsword of binding", "binding"],
                       "br": ""
                     }
                   ]
@@ -58965,14 +58621,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+12/+22",
@@ -60059,14 +59709,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+15/+32",
@@ -60422,14 +60066,8 @@
                 {
                   "td": [
                     {
-                      "b": [
-                        "Base Attack/",
-                        "Grapple:"
-                      ],
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "b": ["Base Attack/", "Grapple:"],
+                      "br": ["", ""]
                     },
                     {
                       "#text": "+19/+34",
@@ -61358,11 +60996,7 @@
                       "#text": "(Sp):",
                       "i": "imprisonment"
                     },
-                    "i": [
-                      "imprisonment",
-                      "freedom",
-                      "imprisonment"
-                    ]
+                    "i": ["imprisonment", "freedom", "imprisonment"]
                   }
                 },
                 {
@@ -61408,10 +61042,7 @@
                     {
                       "#text": "A living vault is immune to all magical and supernatural effects, except as follows. Aspell cast on it causes it to defer the use of its ownpower for 10 rounds.",
                       "b": "Magic Immunity (Ex):",
-                      "i": [
-                        "freedom",
-                        "imprisonment"
-                      ]
+                      "i": ["freedom", "imprisonment"]
                     },
                     ""
                   ]
@@ -62461,10 +62092,7 @@
                   "p": {
                     "#text": "The long, whiplike tentacles that frame either side of a brain collector's face can deliver a dangerous touch attack that, if successful, causes the target to dehydrate and wither (2d10 points of desiccation Damage). In addition, each successful tentacle attack drains 1 point of Strength, 1 point of Dexterity, and 1 point of Constitution. This is permanent ability drain and may only be reversed by spells such asand. It can bring all ten tentacles to bear on a single target facing it or divide its attacks against up to ten targets that it threatens.",
                     "b": "Head-Tentacles (Ex):",
-                    "i": [
-                      "restoration",
-                      "greater restoration"
-                    ]
+                    "i": ["restoration", "greater restoration"]
                   }
                 },
                 {
@@ -62484,11 +62112,7 @@
                       "#text": "(Sp):",
                       "i": "Dimensional Travel"
                     },
-                    "i": [
-                      "dimension door",
-                      "greater teleport",
-                      "plane shift"
-                    ]
+                    "i": ["dimension door", "greater teleport", "plane shift"]
                   }
                 },
                 {
@@ -63218,12 +62842,7 @@
                     "p": {
                       "#text": "At will-,,,. Caster level 20th; save DC 8 + spell level. The DC is Charisma-based.",
                       "b": "Spell-Like Abilities:",
-                      "i": [
-                        "blur",
-                        "dimension door",
-                        "shield",
-                        "unhallow"
-                      ]
+                      "i": ["blur", "dimension door", "shield", "unhallow"]
                     }
                   },
                   {
@@ -63315,12 +62934,7 @@
                     "p": {
                       "#text": "At will-,,,. Caster level 20th.  The DCs are Charisma-based.",
                       "b": "Spell-Like Abilities:",
-                      "i": [
-                        "blur",
-                        "dimension door",
-                        "shield",
-                        "unhallow"
-                      ]
+                      "i": ["blur", "dimension door", "shield", "unhallow"]
                     }
                   },
                   {
@@ -64268,10 +63882,7 @@
                   "p": {
                     "#text": "3/day-,. Caster level 24th; save DC 20 + spell level. The save DC is Charisma-based.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "deeper darkness",
-                      "freezing sphere"
-                    ]
+                    "i": ["deeper darkness", "freezing sphere"]
                   }
                 },
                 {
@@ -64643,10 +64254,7 @@
                   "p": {
                     "#text": "3/day-,. Caster level 24th; save DC 20 + spell level. The save DC is Charisma-based.",
                     "b": "Spell-Like Abilities:",
-                    "i": [
-                      "fire storm",
-                      "incendiary cloud"
-                    ]
+                    "i": ["fire storm", "incendiary cloud"]
                   }
                 },
                 {

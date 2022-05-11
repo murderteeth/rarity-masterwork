@@ -3199,10 +3199,7 @@
             },
             {
               "#text": "You can make a masterwork item-a weapon, suit of armor, shield, or tool that conveys a bonus on its use through its exceptional craftsmanship, not through being magical. To create a masterwork item, you create the masterwork component as if it were a separate item in addition to the standard item. The masterwork component has its own price (300 gp for a weapon or 150 gp for a suit of armor or a shield) and a Craft DC of 20. Once both the standard component and the masterwork component are completed, the masterwork item is finished.The cost you pay for the masterwork component is one-third of the given amount, just as it is for the cost in raw materials.",
-              "i": [
-                "Creating Masterwork Items:",
-                "Note:"
-              ]
+              "i": ["Creating Masterwork Items:", "Note:"]
             },
             {
               "#text": "Generally, you can repair an item by making checks against the same DC that it took to make the item in the first place. The cost of repairing an item is one-fifth of the item's price.",
@@ -3581,10 +3578,7 @@
                     ]
                   },
                   {
-                    "td": [
-                      "",
-                      ""
-                    ]
+                    "td": ["", ""]
                   }
                 ]
               }
@@ -3745,10 +3739,7 @@
                   },
                   {
                     "#text": "You can make a masterwork item-a weapon, suit of armor, shield, or tool that conveys a bonus on its use through its exceptional craftsmanship, not through being magical. To create a masterwork item, you create the masterwork component as if it were a separate item in addition to the standard item. The masterwork component has its own price (300 gp for a weapon or 150 gp for a suit of armor or a shield) and a Craft DC of 20. Once both the standard component and the masterwork component are completed, the masterwork item is finished.The cost you pay for the masterwork component is one-third of the given amount, just as it is for the cost in raw materials.",
-                    "i": [
-                      "Creating Masterwork Items:",
-                      "Note:"
-                    ]
+                    "i": ["Creating Masterwork Items:", "Note:"]
                   },
                   {
                     "#text": "Generally, you can repair an item by making checks against the same DC that it took to make the item in the first place. The cost of repairing an item is one-fifth of the item's price.",
@@ -4157,10 +4148,7 @@
                           ]
                         },
                         {
-                          "td": [
-                            "",
-                            ""
-                          ]
+                          "td": ["", ""]
                         }
                       ]
                     }
@@ -4302,11 +4290,7 @@
         "special": "A character with the Diligent feat gets a +2 bonus on Decipher Script checks.",
         "synergy": "If you have 5 or more ranks in Decipher Script, you get a +2 bonus on Use Magic Device checks involving scrolls.",
         "epic_use": {
-          "p": [
-            "The character can decipher magic scrolls.",
-            "",
-            ""
-          ],
+          "p": ["The character can decipher magic scrolls.", "", ""],
           "table": {
             "tr": [
               {
@@ -5285,10 +5269,7 @@
                       {
                         "#text": "helps here. Someone who succeeds on a caster level check against the level of the trap's creator suppresses the trap for 1d4 rounds. This works only with a targeted,  not the area version (see the spell description).",
                         "b": "Magic Traps:",
-                        "i": [
-                          "Dispel magic",
-                          "dispel magic"
-                        ]
+                        "i": ["Dispel magic", "dispel magic"]
                       },
                       ""
                     ]
@@ -5985,10 +5966,7 @@
                     "#text": "Pass through",
                     "i": "Wall of Force"
                   },
-                  "i": [
-                    ":",
-                    "wall of force"
-                  ]
+                  "i": [":", "wall of force"]
                 },
                 "",
                 ""
@@ -6230,10 +6208,7 @@
                           "#text": "Pass through",
                           "i": "Wall of Force"
                         },
-                        "i": [
-                          ":",
-                          "wall of force"
-                        ]
+                        "i": [":", "wall of force"]
                       },
                       "",
                       ""
@@ -7709,10 +7684,7 @@
             },
             {
               "#text": "A creature wounded by aorspell must succeed on a Reflex save or take injuries that reduce his speed by one-third. Another character can remove this penalty by taking 10 minutes to dress the victim's injuries and succeeding on a Heal check against the spell's save DC.",
-              "i": [
-                "spike growth",
-                "spike stones"
-              ]
+              "i": ["spike growth", "spike stones"]
             },
             {
               "#text": "To treat poison means to tend a single character who has been poisoned and who is going to take more damage from the poison (or suffer some other effect). Every time the poisoned character makes a saving throw against the poison, you make a Heal check. The poisoned character uses your check result or his or her saving throw, whichever is higher.",
@@ -7765,10 +7737,7 @@
                 "td": [
                   {
                     "#text": "Treat wound from caltrop,,  or",
-                    "i": [
-                      "spike growth",
-                      "spike stones"
-                    ],
+                    "i": ["spike growth", "spike stones"],
                     "br": ""
                   },
                   {
@@ -7898,10 +7867,7 @@
                   },
                   {
                     "#text": "A creature wounded by aorspell must succeed on a Reflex save or take injuries that reduce his speed by one-third. Another character can remove this penalty by taking 10 minutes to dress the victim's injuries and succeeding on a Heal check against the spell's save DC.",
-                    "i": [
-                      "spike growth",
-                      "spike stones"
-                    ]
+                    "i": ["spike growth", "spike stones"]
                   },
                   {
                     "#text": "To treat poison means to tend a single character who has been poisoned and who is going to take more damage from the poison (or suffer some other effect). Every time the poisoned character makes a saving throw against the poison, you make a Heal check. The poisoned character uses your check result or his or her saving throw, whichever is higher.",
@@ -7954,10 +7920,7 @@
                       "td": [
                         {
                           "#text": "Treat wound from caltrop,,  or",
-                          "i": [
-                            "spike growth",
-                            "spike stones"
-                          ],
+                          "i": ["spike growth", "spike stones"],
                           "br": ""
                         },
                         {
@@ -7997,10 +7960,7 @@
                 "p": {
                   "#text": "Providing first aid, treating a wound, or treating poison is a standard action. Treating a disease or tending a creature wounded by aorspell takes 10 minutes of work. Providing long-term care requires 8 hours of light activity.",
                   "b": "Action:",
-                  "i": [
-                    "spike growth",
-                    "spike stones"
-                  ]
+                  "i": ["spike growth", "spike stones"]
                 }
               },
               {
@@ -12422,10 +12382,7 @@
                   {
                     "#text": "While anyone can use Search to find a trap whose DC is 20 or lower, only a rogue can use Search to locate traps with higher DCs. (The spelltemporarily enables a cleric to use the Search skill as if he were a rogue.)",
                     "b": "Restriction:",
-                    "i": [
-                      "Exception:",
-                      "find traps"
-                    ]
+                    "i": ["Exception:", "find traps"]
                   },
                   "A dwarf, even one who is not a rogue, can use the Search skill to find a difficult trap (one with a DC higher than 20) if the trap is built into or out of stone. He gains a +2 racial bonus on the Search check from his stonecunning ability."
                 ]
@@ -12498,10 +12455,7 @@
             },
             {
               "#text": "You can tell that someone's behavior is being influenced by an enchantment effect (by definition, a mind-affecting effect), even if that person isn't aware of it. The usual DC is 25, but if the target is dominated (see), the DC is only 15 because of the limited range of the target's activities.",
-              "i": [
-                "Sense Enchantment:",
-                "dominate person"
-              ]
+              "i": ["Sense Enchantment:", "dominate person"]
             },
             {
               "#text": "You may use Sense Motive to detect that a hidden message is being transmitted via the Bluff skill. In this case, your Sense Motive check is opposed by the Bluff check of the character transmitting the message. For each piece of information relating to the message that you are missing, you take a -2 penalty on your Sense Motive check. If you succeed by 4 or less, you know that something hidden is being communicated, but you can't learn anything specific about its content. If you beat the DC by 5 or more, you intercept and understand the message. If you fail by 4 or less, you don't detect any hidden communication. If you fail by 5 or more, you infer some false information.",
@@ -12662,10 +12616,7 @@
                   },
                   {
                     "#text": "You can tell that someone's behavior is being influenced by an enchantment effect (by definition, a mind-affecting effect), even if that person isn't aware of it. The usual DC is 25, but if the target is dominated (see), the DC is only 15 because of the limited range of the target's activities.",
-                    "i": [
-                      "Sense Enchantment:",
-                      "dominate person"
-                    ]
+                    "i": ["Sense Enchantment:", "dominate person"]
                   },
                   {
                     "#text": "You may use Sense Motive to detect that a hidden message is being transmitted via the Bluff skill. In this case, your Sense Motive check is opposed by the Bluff check of the character transmitting the message. For each piece of information relating to the message that you are missing, you take a -2 penalty on your Sense Motive check. If you succeed by 4 or less, you know that something hidden is being communicated, but you can't learn anything specific about its content. If you beat the DC by 5 or more, you intercept and understand the message. If you fail by 4 or less, you don't detect any hidden communication. If you fail by 5 or more, you infer some false information.",
@@ -13886,10 +13837,7 @@
                   },
                   {
                     "#text": "When using,  identify a. No action required.",
-                    "i": [
-                      "read magic",
-                      "glyph of warding"
-                    ],
+                    "i": ["read magic", "glyph of warding"],
                     "br": ""
                   }
                 ]
@@ -13951,10 +13899,7 @@
                   },
                   {
                     "#text": "When using,  identify a. No action required.",
-                    "i": [
-                      "read magic",
-                      "symbol"
-                    ],
+                    "i": ["read magic", "symbol"],
                     "br": ""
                   }
                 ]
@@ -14029,10 +13974,7 @@
                   },
                   {
                     "#text": "Draw a diagram to allowto be cast on aspell. Requires 10 minutes. No retry. This check is made secretly so you do not know the result.",
-                    "i": [
-                      "dimensional anchor",
-                      "magic circle"
-                    ],
+                    "i": ["dimensional anchor", "magic circle"],
                     "br": ""
                   }
                 ]
@@ -14173,10 +14115,7 @@
                         },
                         {
                           "#text": "When using,  identify a. No action required.",
-                          "i": [
-                            "read magic",
-                            "glyph of warding"
-                          ],
+                          "i": ["read magic", "glyph of warding"],
                           "br": ""
                         }
                       ]
@@ -14238,10 +14177,7 @@
                         },
                         {
                           "#text": "When using,  identify a. No action required.",
-                          "i": [
-                            "read magic",
-                            "symbol"
-                          ],
+                          "i": ["read magic", "symbol"],
                           "br": ""
                         }
                       ]
@@ -14316,10 +14252,7 @@
                         },
                         {
                           "#text": "Draw a diagram to allowto be cast on aspell. Requires 10 minutes. No retry. This check is made secretly so you do not know the result.",
-                          "i": [
-                            "dimensional anchor",
-                            "magic circle"
-                          ],
+                          "i": ["dimensional anchor", "magic circle"],
                           "br": ""
                         }
                       ]
@@ -15791,10 +15724,7 @@
                     },
                     {
                       "#text": "Tumble at one-half speed as part of normal movement, provoking no attacks of opportunity while doing so. Failure means you provoke attacks of opportunity normally. Check separately for each opponent you move past, in the order in which you pass them (player's choice of order in case of a tie).Each additional enemy after the first adds +2 to the Tumble DC.",
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "br": ["", ""]
                     }
                   ]
                 },
@@ -15806,10 +15736,7 @@
                     },
                     {
                       "#text": "Tumble at one-half speed through an area occupied by an enemy (over, under, or around the opponent) as part of normal movement, provoking no attacks of opportunity while doing so. Failure means you stop before entering the enemy-occupied area and provoke an attack of opportunity from that enemy.Check separately for each opponent. Each additional enemy after the first adds +2 to the Tumble DC.",
-                      "br": [
-                        "",
-                        ""
-                      ]
+                      "br": ["", ""]
                     }
                   ]
                 }
@@ -16078,10 +16005,7 @@
                           },
                           {
                             "#text": "Tumble at one-half speed as part of normal movement, provoking no attacks of opportunity while doing so. Failure means you provoke attacks of opportunity normally. Check separately for each opponent you move past, in the order in which you pass them (player's choice of order in case of a tie).Each additional enemy after the first adds +2 to the Tumble DC.",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -16093,10 +16017,7 @@
                           },
                           {
                             "#text": "Tumble at one-half speed through an area occupied by an enemy (over, under, or around the opponent) as part of normal movement, provoking no attacks of opportunity while doing so. Failure means you stop before entering the enemy-occupied area and provoke an attack of opportunity from that enemy.Check separately for each opponent. Each additional enemy after the first adds +2 to the Tumble DC.",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       }
@@ -16764,10 +16685,7 @@
             },
             {
               "#text": "Normally, to manifest a power from a power stone, you must have the power stone's power on your class power list. This use of the skill allows you to use a power stone as if you had a particular power on your class power list. The DC is equal to 20 + the manifester level of the power you are trying to manifest from the power stone.Before you use a power stone, you must first have addressed it to determine what powers it contains. In addition, manifesting a power from a power stone requires a minimum score (10 + power level) in the appropriate ability. If you don't have a high enough score, you must emulate the ability score with a separate check (see above). This use of the skill applies to other power completion psionic items.",
-              "i": [
-                "Use a Power Stone:",
-                "Note:"
-              ]
+              "i": ["Use a Power Stone:", "Note:"]
             }
           ],
           "table": {
@@ -16935,10 +16853,7 @@
                   },
                   {
                     "#text": "Normally, to manifest a power from a power stone, you must have the power stone's power on your class power list. This use of the skill allows you to use a power stone as if you had a particular power on your class power list. The DC is equal to 20 + the manifester level of the power you are trying to manifest from the power stone.Before you use a power stone, you must first have addressed it to determine what powers it contains. In addition, manifesting a power from a power stone requires a minimum score (10 + power level) in the appropriate ability. If you don't have a high enough score, you must emulate the ability score with a separate check (see above). This use of the skill applies to other power completion psionic items.",
-                    "i": [
-                      "Use a Power Stone:",
-                      "Note:"
-                    ]
+                    "i": ["Use a Power Stone:", "Note:"]
                   }
                 ],
                 "table": {

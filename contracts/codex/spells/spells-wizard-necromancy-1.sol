@@ -2,27 +2,31 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Spells";
-    string constant public class = "Wizard";
-    string constant public school = "Necromancy";
-    uint constant public level = 1;
+    string public constant index = "Spells";
+    string public constant class = "Wizard";
+    string public constant school = "Necromancy";
+    uint256 public constant level = 1;
 
-    function spell_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function spell_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         if (_id == 44) {
             return cause_fear();
         } else if (_id == 45) {
@@ -32,22 +36,26 @@ contract codex {
         }
     }
 
-    function cause_fear() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function cause_fear()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 44;
         name = "Cause Fear";
         verbal = true;
@@ -64,22 +72,26 @@ contract codex {
         description = "The affected creature becomes frightened. Creatures with 6 or more Hit Dice are immune to this effect.";
     }
 
-    function chill_touch() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function chill_touch()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 45;
         name = "Chill Touch";
         verbal = true;
@@ -96,23 +108,26 @@ contract codex {
         description = "A touch from your hand, which glows with blue energy, disrupts the life force of living creatures. Each touch channels negative energy that deals 1d6 points of damage.";
     }
 
-
-    function ray_of_enfeeblement() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function ray_of_enfeeblement()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 46;
         name = "Ray of Enfeeblement";
         verbal = true;

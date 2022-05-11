@@ -4,47 +4,48 @@ pragma solidity 0.8.7;
 import "../library/Codex.sol";
 
 contract codex {
-  string public constant index = "Items";
-  string public constant class = "Masterwork Weapons";
+    string public constant index = "Items";
+    string public constant class = "Masterwork Weapons";
 
-  ICodexWeapon constant COMMON_CODEX = ICodexWeapon(0x0000000000000000000000000000000000000003);
+    ICodexWeapon constant COMMON_CODEX =
+        ICodexWeapon(0x0000000000000000000000000000000000000003);
 
-  function get_proficiency_by_id(uint id)
-    public
-    pure
-    returns (string memory description)
-  {
-    return COMMON_CODEX.get_proficiency_by_id(id);
-  }
+    function get_proficiency_by_id(uint256 id)
+        public
+        pure
+        returns (string memory description)
+    {
+        return COMMON_CODEX.get_proficiency_by_id(id);
+    }
 
-  function get_encumbrance_by_id(uint id)
-    public
-    pure
-    returns (string memory description)
-  {
-    return COMMON_CODEX.get_encumbrance_by_id(id);
-  }
+    function get_encumbrance_by_id(uint256 id)
+        public
+        pure
+        returns (string memory description)
+    {
+        return COMMON_CODEX.get_encumbrance_by_id(id);
+    }
 
-  function get_damage_type_by_id(uint id)
-    public
-    pure
-    returns (string memory description)
-  {
-    return COMMON_CODEX.get_damage_type_by_id(id);
-  }
+    function get_damage_type_by_id(uint256 id)
+        public
+        pure
+        returns (string memory description)
+    {
+        return COMMON_CODEX.get_damage_type_by_id(id);
+    }
 
-  function get_attack_bonus(uint id) public pure returns (int8) {
-    id; //shhh
-    return 1;
-  }
+    function get_attack_bonus(uint256 id) public pure returns (int8) {
+        id; //shhh
+        return 1;
+    }
 
-  function item_by_id(uint id)
-    public
-    pure
-    returns (IWeapon.Weapon memory weapon)
-  {
-    weapon = COMMON_CODEX.item_by_id(id);
-    weapon.cost = weapon.cost + 300e18;
-    weapon.name = string(abi.encodePacked("Masterwork ", weapon.name));
-  }
+    function item_by_id(uint256 id)
+        public
+        pure
+        returns (IWeapon.Weapon memory weapon)
+    {
+        weapon = COMMON_CODEX.item_by_id(id);
+        weapon.cost = weapon.cost + 300e18;
+        weapon.name = string(abi.encodePacked("Masterwork ", weapon.name));
+    }
 }

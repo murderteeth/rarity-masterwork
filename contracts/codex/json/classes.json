@@ -203,10 +203,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          1,
-          1
-        ],
+        "level": [1, 1],
         "base_attack_bonus": 0,
         "fort_save": 0,
         "ref_save": 2,
@@ -218,10 +215,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          2,
-          2
-        ],
+        "level": [2, 2],
         "base_attack_bonus": 1,
         "fort_save": 0,
         "ref_save": 3,
@@ -234,10 +228,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          3,
-          3
-        ],
+        "level": [3, 3],
         "base_attack_bonus": 2,
         "fort_save": 1,
         "ref_save": 3,
@@ -251,10 +242,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          4,
-          4
-        ],
+        "level": [4, 4],
         "base_attack_bonus": 3,
         "fort_save": 1,
         "ref_save": 4,
@@ -269,10 +257,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          5,
-          5
-        ],
+        "level": [5, 5],
         "base_attack_bonus": 3,
         "fort_save": 1,
         "ref_save": 4,
@@ -287,10 +272,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          6,
-          6
-        ],
+        "level": [6, 6],
         "base_attack_bonus": 4,
         "fort_save": 2,
         "ref_save": 5,
@@ -306,10 +288,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          7,
-          7
-        ],
+        "level": [7, 7],
         "base_attack_bonus": 5,
         "fort_save": 2,
         "ref_save": 5,
@@ -326,10 +305,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          8,
-          8
-        ],
+        "level": [8, 8],
         "base_attack_bonus": "+6/+1",
         "fort_save": 2,
         "ref_save": 6,
@@ -347,10 +323,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          9,
-          9
-        ],
+        "level": [9, 9],
         "base_attack_bonus": "+6/+1",
         "fort_save": 3,
         "ref_save": 6,
@@ -368,10 +341,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          10,
-          10
-        ],
+        "level": [10, 10],
         "base_attack_bonus": "+7/+2",
         "fort_save": 3,
         "ref_save": 7,
@@ -390,10 +360,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          11,
-          11
-        ],
+        "level": [11, 11],
         "base_attack_bonus": "+8/+3",
         "fort_save": 3,
         "ref_save": 7,
@@ -412,10 +379,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          12,
-          12
-        ],
+        "level": [12, 12],
         "base_attack_bonus": "+9/+4",
         "fort_save": 4,
         "ref_save": 8,
@@ -435,10 +399,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          13,
-          13
-        ],
+        "level": [13, 13],
         "base_attack_bonus": "+9/+4",
         "fort_save": 4,
         "ref_save": 8,
@@ -459,10 +420,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          14,
-          14
-        ],
+        "level": [14, 14],
         "base_attack_bonus": "+10/+5",
         "fort_save": 4,
         "ref_save": 9,
@@ -484,10 +442,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          15,
-          15
-        ],
+        "level": [15, 15],
         "base_attack_bonus": "+11/+6/+1",
         "fort_save": 5,
         "ref_save": 9,
@@ -509,10 +464,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          16,
-          16
-        ],
+        "level": [16, 16],
         "base_attack_bonus": "+12/+7/+2",
         "fort_save": 5,
         "ref_save": 10,
@@ -535,10 +487,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          17,
-          17
-        ],
+        "level": [17, 17],
         "base_attack_bonus": "+12/+7/+2",
         "fort_save": 5,
         "ref_save": 10,
@@ -561,10 +510,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          18,
-          18
-        ],
+        "level": [18, 18],
         "base_attack_bonus": "+13/+8/+3",
         "fort_save": 6,
         "ref_save": 11,
@@ -588,10 +534,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          19,
-          19
-        ],
+        "level": [19, 19],
         "base_attack_bonus": "+14/+9/+4",
         "fort_save": 6,
         "ref_save": 11,
@@ -614,10 +557,7 @@
       },
       {
         "name": "Bard",
-        "level": [
-          20,
-          20
-        ],
+        "level": [20, 20],
         "base_attack_bonus": "+15/+10/+5",
         "fort_save": 6,
         "ref_save": 12,
@@ -2426,10 +2366,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          1,
-          1
-        ],
+        "level": [1, 1],
         "base_attack_bonus": 0,
         "fort_save": 0,
         "ref_save": 0,
@@ -2443,10 +2380,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          2,
-          2
-        ],
+        "level": [2, 2],
         "base_attack_bonus": 1,
         "fort_save": 0,
         "ref_save": 0,
@@ -2459,10 +2393,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          3,
-          3
-        ],
+        "level": [3, 3],
         "base_attack_bonus": 1,
         "fort_save": 1,
         "ref_save": 1,
@@ -2475,10 +2406,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          4,
-          4
-        ],
+        "level": [4, 4],
         "base_attack_bonus": 2,
         "fort_save": 1,
         "ref_save": 1,
@@ -2493,10 +2421,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          5,
-          5
-        ],
+        "level": [5, 5],
         "base_attack_bonus": 2,
         "fort_save": 1,
         "ref_save": 1,
@@ -2511,10 +2436,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          6,
-          6
-        ],
+        "level": [6, 6],
         "base_attack_bonus": 3,
         "fort_save": 2,
         "ref_save": 2,
@@ -2531,10 +2453,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          7,
-          7
-        ],
+        "level": [7, 7],
         "base_attack_bonus": 3,
         "fort_save": 2,
         "ref_save": 2,
@@ -2551,10 +2470,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          8,
-          8
-        ],
+        "level": [8, 8],
         "base_attack_bonus": 4,
         "fort_save": 2,
         "ref_save": 2,
@@ -2573,10 +2489,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          9,
-          9
-        ],
+        "level": [9, 9],
         "base_attack_bonus": 4,
         "fort_save": 3,
         "ref_save": 3,
@@ -2595,10 +2508,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          10,
-          10
-        ],
+        "level": [10, 10],
         "base_attack_bonus": 5,
         "fort_save": 3,
         "ref_save": 3,
@@ -2619,10 +2529,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          11,
-          11
-        ],
+        "level": [11, 11],
         "base_attack_bonus": 5,
         "fort_save": 3,
         "ref_save": 3,
@@ -2643,10 +2550,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          12,
-          12
-        ],
+        "level": [12, 12],
         "base_attack_bonus": "+6/+1",
         "fort_save": 4,
         "ref_save": 4,
@@ -2669,10 +2573,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          13,
-          13
-        ],
+        "level": [13, 13],
         "base_attack_bonus": "+6/+1",
         "fort_save": 4,
         "ref_save": 4,
@@ -2695,10 +2596,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          14,
-          14
-        ],
+        "level": [14, 14],
         "base_attack_bonus": "+7/+2",
         "fort_save": 4,
         "ref_save": 4,
@@ -2723,10 +2621,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          15,
-          15
-        ],
+        "level": [15, 15],
         "base_attack_bonus": "+7/+2",
         "fort_save": 5,
         "ref_save": 5,
@@ -2751,10 +2646,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          16,
-          16
-        ],
+        "level": [16, 16],
         "base_attack_bonus": "+8/+3",
         "fort_save": 5,
         "ref_save": 5,
@@ -2781,10 +2673,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          17,
-          17
-        ],
+        "level": [17, 17],
         "base_attack_bonus": "+8/+3",
         "fort_save": 5,
         "ref_save": 5,
@@ -2811,10 +2700,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          18,
-          18
-        ],
+        "level": [18, 18],
         "base_attack_bonus": "+9/+4",
         "fort_save": 6,
         "ref_save": 6,
@@ -2843,10 +2729,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          19,
-          19
-        ],
+        "level": [19, 19],
         "base_attack_bonus": "+9/+4",
         "fort_save": 6,
         "ref_save": 6,
@@ -2875,10 +2758,7 @@
       },
       {
         "name": "Sorcerer",
-        "level": [
-          20,
-          20
-        ],
+        "level": [20, 20],
         "base_attack_bonus": "+10/+5",
         "fort_save": 6,
         "ref_save": 6,
@@ -6548,10 +6428,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          1,
-          1
-        ],
+        "level": [1, 1],
         "base_attack_bonus": 0,
         "fort_save": 0,
         "ref_save": 2,
@@ -6563,10 +6440,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          2,
-          2
-        ],
+        "level": [2, 2],
         "base_attack_bonus": 1,
         "fort_save": 0,
         "ref_save": 3,
@@ -6578,10 +6452,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          3,
-          3
-        ],
+        "level": [3, 3],
         "base_attack_bonus": 2,
         "fort_save": 1,
         "ref_save": 3,
@@ -6595,10 +6466,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          4,
-          4
-        ],
+        "level": [4, 4],
         "base_attack_bonus": 3,
         "fort_save": 1,
         "ref_save": 4,
@@ -6612,10 +6480,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          5,
-          5
-        ],
+        "level": [5, 5],
         "base_attack_bonus": 3,
         "fort_save": 1,
         "ref_save": 4,
@@ -6631,10 +6496,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          6,
-          6
-        ],
+        "level": [6, 6],
         "base_attack_bonus": 4,
         "fort_save": 2,
         "ref_save": 5,
@@ -6650,10 +6512,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          7,
-          7
-        ],
+        "level": [7, 7],
         "base_attack_bonus": 5,
         "fort_save": 2,
         "ref_save": 5,
@@ -6671,10 +6530,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          8,
-          8
-        ],
+        "level": [8, 8],
         "base_attack_bonus": 6,
         "fort_save": 2,
         "ref_save": 6,
@@ -6692,10 +6548,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          9,
-          9
-        ],
+        "level": [9, 9],
         "base_attack_bonus": 6,
         "fort_save": 3,
         "ref_save": 6,
@@ -6713,10 +6566,7 @@
       },
       {
         "name": "Assassin",
-        "level": [
-          10,
-          10
-        ],
+        "level": [10, 10],
         "base_attack_bonus": 7,
         "fort_save": 3,
         "ref_save": 7,

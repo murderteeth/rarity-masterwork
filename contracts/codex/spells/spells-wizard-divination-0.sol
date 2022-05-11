@@ -2,27 +2,31 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Spells";
-    string constant public class = "Wizard";
-    string constant public school = "Divination";
-    uint constant public level = 0;
+    string public constant index = "Spells";
+    string public constant class = "Wizard";
+    string public constant school = "Divination";
+    uint256 public constant level = 0;
 
-    function spell_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function spell_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         if (_id == 3) {
             return detect_poison();
         } else if (_id == 4) {
@@ -32,22 +36,26 @@ contract codex {
         }
     }
 
-    function detect_poison() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function detect_poison()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 3;
         name = "Detect Poison";
         verbal = true;
@@ -64,22 +72,26 @@ contract codex {
         description = "You determine whether a creature, object, or area has been poisoned or is poisonous. You can determine the exact type of poison with a DC 20 Wisdom check. A character with the Craft (alchemy) skill may try a DC 20 Craft (alchemy) check if the Wisdom check fails, or may try the Craft (alchemy) check prior to the Wisdom check. The spell can penetrate barriers, but 1 foot of stone, 1 inch of common metal, a thin sheet of lead, or 3 feet of wood or dirt blocks it.";
     }
 
-    function detect_magic() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function detect_magic()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 4;
         name = "Detect Magic";
         verbal = true;
@@ -96,22 +108,26 @@ contract codex {
         description = "You detect magical auras. The amount of information revealed depends on how long you study a particular area or subject.";
     }
 
-    function read_magic() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function read_magic()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 5;
         name = "Read Magic";
         verbal = true;

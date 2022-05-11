@@ -4,9 +4,13 @@ pragma solidity 0.8.7;
 contract codex {
     string constant index = "Base";
     string constant class = "Generic";
-    uint constant level = 0;
-    
-    function classes(uint id) external pure returns (string memory description) {
+    uint256 constant level = 0;
+
+    function classes(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {
@@ -73,8 +77,12 @@ contract codex {
             return "Warrior";
         }
     }
-    
-    function school(uint id) external pure returns (string memory description) {
+
+    function school(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "Abjuration";
         } else if (id == 1) {
@@ -95,8 +103,12 @@ contract codex {
             return "Universal";
         }
     }
-    
-    function casting_time(uint id) external pure returns (string memory description) {
+
+    function casting_time(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "1 free action";
         } else if (id == 1) {
@@ -107,8 +119,12 @@ contract codex {
             return "10 full-round actions";
         }
     }
-    
-    function range(uint id) external pure returns (string memory description) {
+
+    function range(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "Personal";
         } else if (id == 1) {
@@ -123,7 +139,12 @@ contract codex {
             return "Unlimited";
         }
     }
-    function saving_throw_type(uint id) external pure returns (string memory description) {
+
+    function saving_throw_type(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {
@@ -134,8 +155,12 @@ contract codex {
             return "Will";
         }
     }
-    
-    function saving_throw_effect(uint id) external pure returns (string memory description) {
+
+    function saving_throw_effect(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {

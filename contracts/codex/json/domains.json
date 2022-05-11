@@ -778,10 +778,7 @@
                 "p": {
                   "#text": "The character may use aonce per day. Theis a spell-like ability that is a death effect. The character must succeed at a melee touch attack against a living creature (using the rules for touch spells). When the character touches, roll 1d6 per his or her cleric level. If the total at least equals the creature's current hit points, it dies.",
                   "b": "Granted Power:",
-                  "i": [
-                    "death touch",
-                    "death touch"
-                  ]
+                  "i": ["death touch", "death touch"]
                 }
               },
               {
@@ -2607,10 +2604,7 @@
                 "p": {
                   "#text": "You can generate aas a supernatural ability. Grant someone you touch a resistance bonus equal to your cleric level on his or her next saving throw. Activating this power is a standard action. Theis an abjuration effect with a duration of 1 hour that is usable once per day.",
                   "b": "Granted Power:",
-                  "i": [
-                    "protective ward",
-                    "protective ward"
-                  ]
+                  "i": ["protective ward", "protective ward"]
                 }
               },
               {

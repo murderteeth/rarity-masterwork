@@ -3,14 +3,8 @@
     "equipment": [
       {
         "cost": "1 cp",
-        "full_text": [
-          "",
-          ""
-        ],
-        "reference": [
-          "SRD 3.5 Equipment",
-          "SRD 3.5 Equipment"
-        ],
+        "full_text": ["", ""],
+        "reference": ["SRD 3.5 Equipment", "SRD 3.5 Equipment"],
         "name": "One pound of wheat",
         "family": "Trade Goods",
         "category": "Item"

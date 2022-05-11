@@ -4,10 +4,10 @@ pragma solidity 0.8.7;
 library rl {
     struct _base {
         string name;
-        uint xp;
-        uint log;
-        uint class;
-        uint level;
+        uint256 xp;
+        uint256 log;
+        uint256 class;
+        uint256 level;
     }
 
     struct _ability_scores {
@@ -31,27 +31,27 @@ library rl {
     struct _ability_scores_full {
         _ability_scores attributes;
         _ability_modifiers modifiers;
-        uint total_points;
-        uint spent_points;
+        uint256 total_points;
+        uint256 spent_points;
         bool created;
     }
 
     struct _skills {
         uint8[36] skills;
         bool[36] class_skills;
-        uint total_points;
-        uint spent_points;
+        uint256 total_points;
+        uint256 spent_points;
     }
 
     struct _gold {
-        uint balance;
-        uint claimed;
-        uint claimable;
+        uint256 balance;
+        uint256 claimed;
+        uint256 claimable;
     }
 
     struct _material {
-        uint balance;
-        uint scout;
+        uint256 balance;
+        uint256 scout;
     }
 
     struct _summoner {
@@ -66,7 +66,6 @@ library rl {
         uint8 base_type;
         uint8 item_type;
         uint32 crafted;
-        uint crafter;
+        uint256 crafter;
     }
-
 }

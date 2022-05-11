@@ -75,10 +75,7 @@
                     {
                       "td": [
                         {
-                          "b": [
-                            "Barbarian",
-                            "Level"
-                          ],
+                          "b": ["Barbarian", "Level"],
                           "br": ""
                         },
                         {
@@ -3334,11 +3331,7 @@
                       },
                       {
                         "#text": "Making adoesn't count against a bard's daily limit on bardic music performances. A Will saving throw (DC 10 + 1/2 bard's level + bard's Cha modifier) negates the effect. This ability affects only a single creature (but see, below).is an enchantment (compulsion), mind-affecting, language dependent ability.",
-                        "i": [
-                          "Suggestion",
-                          "mass suggestion",
-                          "Suggestion"
-                        ]
+                        "i": ["Suggestion", "mass suggestion", "Suggestion"]
                       },
                       {
                         "#text": "A bard of 9th level or higher with 12 or more ranks in a Perform skill can use music or poetics to inspire greatness in himself or a single willing ally within 30 feet, granting him or her extra fighting capability. For every three levels a bard attains beyond 9th, he can target one additional ally with a single use of this ability (two at 12th level, three at 15th, four at 18th). To inspire greatness, a bard must sing and an ally must hear him sing. The effect lasts for as long as the ally hears the bard sing and for 5 rounds thereafter. A creature inspired with greatness gains 2 bonus Hit Dice (d10s), the commensurate number of temporary hit points (apply the target's Constitution modifier, if any, to these bonus Hit Dice), a +2 competence bonus on attack rolls, and a +1 competence bonus on Fortitude saves. The bonus Hit Dice count as regular Hit Dice for determining the effect of spells that are Hit Dice dependant. Inspire greatness is a mind-affecting ability.",
@@ -3660,11 +3653,7 @@
                             "",
                             "",
                             {
-                              "b": [
-                                "-------- Spells per Day",
-                                1,
-                                "--------"
-                              ],
+                              "b": ["-------- Spells per Day", 1, "--------"],
                               "br": ""
                             }
                           ]
@@ -5043,10 +5032,7 @@
                         {
                           "td": {
                             "#text": "1 In addition to the stated number of spells per day for 1st- through 9th-level spells, a cleric gets a domain spell for each spell level, starting at 1st.The '+1' in the entries on this table represents that spell. Domain spells are in addition to any bonus spells the cleric may receive for having a high Wisdom score.",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         }
                       ]
@@ -5107,25 +5093,15 @@
                       {
                         "#text": "A good cleric (or a neutral cleric of a good deity) can channel stored spell energy into healing spells that the cleric did not prepare ahead of time. The cleric can 'lose' any prepared spell that is not a domain spell in order to cast anyspell of the same spell level or lower (aspell is any spell with 'cure' in its name).",
                         "b": "Spontaneous Casting:",
-                        "i": [
-                          "cure",
-                          "cure"
-                        ]
+                        "i": ["cure", "cure"]
                       },
                       {
                         "#text": "An evil cleric (or a neutral cleric of an evil deity), can't convert prepared spells tospells but can convert them tospells (anspell is one with 'inflict' in its name).",
-                        "i": [
-                          "cure",
-                          "inflict",
-                          "inflict"
-                        ]
+                        "i": ["cure", "inflict", "inflict"]
                       },
                       {
                         "#text": "A cleric who is neither good nor evil and whose deity is neither good nor evil can convert spells to eitherspells orspells (player's choice). Once the player makes this choice, it cannot be reversed. This choice also determines whether the cleric turns or commands undead (see below).",
-                        "i": [
-                          "cure",
-                          "inflict"
-                        ]
+                        "i": ["cure", "inflict"]
                       }
                     ]
                   },
@@ -5143,10 +5119,7 @@
                       },
                       {
                         "#text": "A good cleric (or a neutral cleric who worships a good deity) can turn or destroy undead creatures. An evil cleric (or a neutral cleric who worships an evil deity) instead rebukes or commands such creatures. A neutral cleric of a neutral deity must choose whether his turning ability functions as that of a good cleric or an evil cleric. Once this choice is made, it cannot be reversed. This decision also determines whether the cleric can cast spontaneousorspells (see above).",
-                        "i": [
-                          "cure",
-                          "inflict"
-                        ]
+                        "i": ["cure", "inflict"]
                       },
                       "A cleric may attempt to turn undead a number of times per day equal to 3 + his Charisma modifier. A cleric with 5 or more ranks in Knowledge (religion) gets a +2 bonus on turning checks against undead."
                     ]
@@ -6905,10 +6878,7 @@
                       },
                       {
                         "#text": "Druids are proficient with light and medium armor but are prohibited from wearing metal armor; thus, they may wear only padded, leather, or hide armor. (A druid may also wear wooden armor that has been altered by thespell so that it functions as though it were steel. See thespell description) Druids are proficient with shields (except tower shields) but must use only wooden ones.",
-                        "i": [
-                          "ironwood",
-                          "ironwood"
-                        ]
+                        "i": ["ironwood", "ironwood"]
                       },
                       "A druid who wears prohibited armor or carries a prohibited shield is unable to cast druid spells or use any of her supernatural or spell-like class abilities while doing so and for 24 hours thereafter."
                     ]
@@ -7349,10 +7319,7 @@
                     }
                   },
                   {
-                    "p": [
-                      "Ape (animal)",
-                      "Bear, black (animal)"
-                    ]
+                    "p": ["Ape (animal)", "Bear, black (animal)"]
                   },
                   {
                     "p": "Bison (animal)"
@@ -7387,10 +7354,7 @@
                     "p": "Snake, Large viper (animal)"
                   },
                   {
-                    "p": [
-                      "Wolverine (animal)",
-                      ""
-                    ]
+                    "p": ["Wolverine (animal)", ""]
                   },
                   {
                     "p": [
@@ -7424,10 +7388,7 @@
                     "p": "Snake, Huge viper (animal)"
                   },
                   {
-                    "p": [
-                      "Tiger (animal)",
-                      ""
-                    ]
+                    "p": ["Tiger (animal)", ""]
                   },
                   {
                     "p": [
@@ -8450,10 +8411,7 @@
                   },
                   {
                     "#text": "Armor Skin, Blinding Speed, Damage Reduction, Energy Resistance, Epic Prowess, Epic Speed, Epic Toughness, Exceptional Deflection, Fast Healing, Improved Combat Reflexes, ImprovedStrike, Improved Spell Resistance, Improved Stunning Fist, Infinite Deflection, Keen Strike, Legendary Climber, Legendary Wrestler, Reflect Arrows, Righteous Strike, Self-Concealment, Shattering Strike, Vorpal Strike.",
-                    "i": [
-                      "Epic Monk Bonus Feat List:",
-                      "ki"
-                    ]
+                    "i": ["Epic Monk Bonus Feat List:", "ki"]
                   }
                 ]
               },
@@ -8924,10 +8882,7 @@
                             {
                               "#text": "strike (magic),slow fall 20 ft.",
                               "i": "Ki",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+1/+1",
@@ -9015,10 +8970,7 @@
                             },
                             {
                               "#text": "Bonus feat,slow fall 30 ft.",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+3/+3",
@@ -9195,10 +9147,7 @@
                             {
                               "#text": "strike (lawful),slow fall 50 ft.",
                               "i": "Ki",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+7/+7/+2",
@@ -9242,10 +9191,7 @@
                             },
                             {
                               "#text": "Diamond body,greater flurry",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+8/+8/+8/+3",
@@ -9289,10 +9235,7 @@
                             },
                             {
                               "#text": "Abundant step,slow fall 60 ft.",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+9/+9/+9/+4",
@@ -9645,10 +9588,7 @@
                             },
                             {
                               "#text": "Perfect self,slow fall any distance",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "+15/+15/+15/+10/+5",
@@ -9747,24 +9687,12 @@
                             },
                             {
                               "#text": "(",
-                              "b": [
-                                "Damage",
-                                "Small Monk)"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Damage", "Small Monk)"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Damage",
-                                "(Large Monk)"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Damage", "(Large Monk)"],
+                              "br": ["", ""]
                             }
                           ]
                         },
@@ -9898,10 +9826,7 @@
                         "#text": "Strike (Su):",
                         "i": "Ki"
                       },
-                      "i": [
-                        "ki",
-                        "Ki"
-                      ]
+                      "i": ["ki", "Ki"]
                     }
                   },
                   {
@@ -10037,10 +9962,7 @@
                   "#text": "Each day a paladin can cure a total number of hit points equal to his or her Charisma bonus (if any) times his or her class level, as normal",
                   "b": {
                     "#text": "(Su)",
-                    "i": [
-                      "Lay on Hands",
-                      ":"
-                    ]
+                    "i": ["Lay on Hands", ":"]
                   }
                 }
               },
@@ -10072,10 +9994,7 @@
                     "#text": "The epic paladin can useone additional time per week for every three levels higher than 18th.",
                     "b": {
                       "#text": "(Sp)",
-                      "i": [
-                        "Remove Disease",
-                        ":"
-                      ]
+                      "i": ["Remove Disease", ":"]
                     },
                     "i": "remove disease"
                   }
@@ -10382,10 +10301,7 @@
                             {
                               "#text": "Aura of good,,smite evil 1/day",
                               "i": "detect evil",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "-",
@@ -10990,10 +10906,7 @@
                             {
                               "#text": "4/week,smite evil 4/day",
                               "i": "Remove Disease",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "2",
@@ -11586,10 +11499,7 @@
                     },
                     {
                       "#text": "Once per day per two paladin levels of its master, a mount can use this ability to command other any normal animal of approximately the same kind as itself (for warhorses and warponies, this category includes donkeys, mules, and ponies), as long as the target creature has fewer Hit Dice than the mount. This ability functions like thespell, but the mount must make a DC 21 Concentration check to succeed if it's being ridden at the time. If the check fails, the ability does not work that time, but it still counts against the mount's daily uses. Each target may attempt a Will save (DC 10 + 1/2 paladin's level + paladin's Cha modifier) to negate the effect.",
-                      "i": [
-                        "Command (Sp):",
-                        "Command"
-                      ]
+                      "i": ["Command (Sp):", "Command"]
                     },
                     {
                       "#text": "A mount's spell resistance equals its master's paladin level + 5. To affect the mount with a spell, a spellcaster must get a result on a caster level check (1d20 + caster level) that equals or exceeds the mount's spell resistance.",
@@ -13431,34 +13341,16 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             },
                             {
                               "b": "Special",
@@ -14430,44 +14322,20 @@
                                 "br": ""
                               },
                               {
-                                "b": [
-                                  "Base Attack",
-                                  "Bonus"
-                                ],
-                                "br": [
-                                  "",
-                                  ""
-                                ]
+                                "b": ["Base Attack", "Bonus"],
+                                "br": ["", ""]
                               },
                               {
-                                "b": [
-                                  "Fort",
-                                  "Save"
-                                ],
-                                "br": [
-                                  "",
-                                  ""
-                                ]
+                                "b": ["Fort", "Save"],
+                                "br": ["", ""]
                               },
                               {
-                                "b": [
-                                  "Ref",
-                                  "Save"
-                                ],
-                                "br": [
-                                  "",
-                                  ""
-                                ]
+                                "b": ["Ref", "Save"],
+                                "br": ["", ""]
                               },
                               {
-                                "b": [
-                                  "Will",
-                                  "Save"
-                                ],
-                                "br": [
-                                  "",
-                                  ""
-                                ]
+                                "b": ["Will", "Save"],
+                                "br": ["", ""]
                               },
                               {
                                 "b": "Special",
@@ -17420,44 +17288,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             },
                             {
                               "b": "Special",
@@ -17529,10 +17373,7 @@
                             },
                             {
                               "#text": "Summon familiar,Scribe Scroll",
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "br": ["", ""]
                             },
                             {
                               "#text": "3",
@@ -19186,10 +19027,7 @@
                       },
                       {
                         "#text": "If the master is 13th level or higher, he may scry on his familiar (as if casting thespell) once per day.",
-                        "i": [
-                          "Scry on Familiar (Sp):",
-                          "scrying"
-                        ]
+                        "i": ["Scry on Familiar (Sp):", "scrying"]
                       },
                       "",
                       ""
@@ -19740,10 +19578,7 @@
                         "#text": "(Sp):",
                         "i": "uncanny location"
                       },
-                      "i": [
-                        "discern location",
-                        "uncanny location"
-                      ]
+                      "i": ["discern location", "uncanny location"]
                     }
                   },
                   {
@@ -19862,11 +19697,7 @@
                     "p": {
                       "#text": "Ability to castplus anyorspell.",
                       "b": "Spells:",
-                      "i": [
-                        "gate",
-                        "planar ally",
-                        "planar binding"
-                      ]
+                      "i": ["gate", "planar ally", "planar binding"]
                     }
                   },
                   {
@@ -20117,10 +19948,7 @@
                     "p": {
                       "#text": "Starting at 3rd level, as a full-round action, the cosmic descryer can make any casting of thespell remain for a full day, rather than disappearing after 1 round per caster level. Every three levels thereafter, the cosmic descryer can increase the duration ofby one additional day.",
                       "b": "Enduring Gate (Su):",
-                      "i": [
-                        "gate",
-                        "gate"
-                      ]
+                      "i": ["gate", "gate"]
                     }
                   },
                   {
@@ -20954,10 +20782,7 @@
                             },
                             {
                               "#text": "1/day,2/day",
-                              "i": [
-                                "Call Back",
-                                "Protective Aura"
-                              ],
+                              "i": ["Call Back", "Protective Aura"],
                               "br": ""
                             }
                           ]
@@ -21400,10 +21225,7 @@
                       },
                       {
                         "#text": "Enraptured audience members act as though affected by a, changing alignment as appropriate and otherwise functioning according to thespell. The high proselytizer can inspire the crowd to take any of a number of actions, depending on his or her alignment. Any suicidal suggestion grants audience members a new saving throw to break the rapture (with the exception of low-level followers of the same deity, who never got a save in the first place). This rapture lasts for 10 minutes plus an additional 5 minutes per high proselytizer level.",
-                        "i": [
-                          "symbol of persuasion",
-                          "charm person"
-                        ]
+                        "i": ["symbol of persuasion", "charm person"]
                       },
                       "At 3rd level, the high proselytizer's proselytize ability includes deific touch once per day, plus one additional time per day per ten levels thereafter. During his or her speech, the high proselytizer can move among the enraptured, shaking hands, caressing brows, and otherwise making contact with audience members. Anyone so touched is healed of 1d4 points of damage and cured of any natural disease or poison. Up to six individuals per round can be so affected. An audience member can only benefit from deific touch once per proselytize session. The high proselytizer can use deific touch as long as his or her proselytize ability lasts.",
                       {
@@ -22038,10 +21860,7 @@
                     "p": {
                       "#text": "Starting at 1st level, the perfect wight gains the benefit ofonce per day, plus one additional time per day every five levels thereafter. Theis as the spell cast by a 20th-level caster.",
                       "b": "Greater Invisibility (Su):",
-                      "i": [
-                        "greater invisibility",
-                        "greater invisibility"
-                      ]
+                      "i": ["greater invisibility", "greater invisibility"]
                     }
                   },
                   {
@@ -22200,10 +22019,7 @@
                             },
                             {
                               "#text": "1/day,1/day",
-                              "i": [
-                                "sending",
-                                "shield of law"
-                              ],
+                              "i": ["sending", "shield of law"],
                               "br": ""
                             }
                           ]
@@ -22216,10 +22032,7 @@
                             },
                             {
                               "#text": "1/day,1/day",
-                              "i": [
-                                "Freedom",
-                                "knock"
-                              ],
+                              "i": ["Freedom", "knock"],
                               "br": ""
                             }
                           ]
@@ -22271,10 +22084,7 @@
                             },
                             {
                               "#text": "2/day,2/day",
-                              "i": [
-                                "Dimensional anchor",
-                                "knock"
-                              ],
+                              "i": ["Dimensional anchor", "knock"],
                               "br": ""
                             }
                           ]
@@ -22287,10 +22097,7 @@
                             },
                             {
                               "#text": "1/day,3/day",
-                              "i": [
-                                "imprisonment",
-                                "shield of law"
-                              ],
+                              "i": ["imprisonment", "shield of law"],
                               "br": ""
                             }
                           ]
@@ -22303,10 +22110,7 @@
                             },
                             {
                               "#text": "2/day,2/day",
-                              "i": [
-                                "Freedom",
-                                "sending"
-                              ],
+                              "i": ["Freedom", "sending"],
                               "br": ""
                             }
                           ]
@@ -22332,10 +22136,7 @@
                             },
                             {
                               "#text": "3/day,2/day, portal guardian 2/day, shield of law 4/day",
-                              "i": [
-                                "knock",
-                                "forcecage"
-                              ],
+                              "i": ["knock", "forcecage"],
                               "br": ""
                             }
                           ]
@@ -22415,10 +22216,7 @@
                     "p": {
                       "#text": "A 4th-level Union Sentinel can become a portal guardian once per day, plus one additional time per day every six levels thereafter. The Union Sentinel must position him or herself within 5 feet of a portal or, and while he or she remains, the portal cannot be activated from either side by any means. The Union Sentinel can defend him or herself and use any of his or her other abilities normally, as long as he or she remains adjacent to the blocked portal. This ability only functions against portals and thespell, not against creatures with other spell-like or supernatural interplanar traveling abilities.",
                       "b": "Portal Guardian (Su):",
-                      "i": [
-                        "gate",
-                        "gate"
-                      ]
+                      "i": ["gate", "gate"]
                     }
                   },
                   {
@@ -22533,44 +22331,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             },
                             {
                               "b": "Special",
@@ -23611,10 +23385,7 @@
                       {
                         "#text": "An adept casts divine spells which are drawn from the adept spell list (see below). Like a cleric, an adept must choose and prepare her spells in advance. Unlike a cleric, an adept cannot spontaneously castorspells.",
                         "b": "Spells:",
-                        "i": [
-                          "cure",
-                          "inflict"
-                        ]
+                        "i": ["cure", "inflict"]
                       },
                       "To prepare or cast a spell, an adept must have a Wisdom score equal to at least 10 + the spell level. The Difficulty Class for a saving throw against an adept's spell is 10 + the spell level + the adept's Wisdom modifier.",
                       "Adepts, unlike wizards, do not acquire their spells from books or scrolls, nor do they prepare them through study. Instead, they meditate or pray for their spells, receiving them as divine inspiration or through their own strength of faith. Each adept must choose a time each day at which she must spend an hour in quiet contemplation or supplication to regain her daily allotment of spells. Time spent resting has no effect on whether an adept can prepare spells.",
@@ -23808,44 +23579,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             }
                           ]
                         },
@@ -24419,44 +24166,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             }
                           ]
                         },
@@ -25030,44 +24753,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             }
                           ]
                         },
@@ -25641,44 +25340,20 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Base Attack",
-                                "Bonus"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Base Attack", "Bonus"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Fort",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Fort", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Ref",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Ref", "Save"],
+                              "br": ["", ""]
                             },
                             {
-                              "b": [
-                                "Will",
-                                "Save"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Will", "Save"],
+                              "br": ["", ""]
                             }
                           ]
                         },
@@ -26479,46 +26154,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -27195,46 +26844,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -27715,46 +27338,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -28327,46 +27924,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -29610,46 +29181,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -30139,10 +29684,7 @@
                         "#text": "(Sp):",
                         "i": "Detect Good"
                       },
-                      "i": [
-                        "Detect Good",
-                        "Detect Good"
-                      ]
+                      "i": ["Detect Good", "Detect Good"]
                     }
                   },
                   {
@@ -30165,10 +29707,7 @@
                       },
                       {
                         "#text": "Blackguard bonus spells are based on Wisdom, and saving throws against these spells have a DC of 10 + spell level + the blackguard's Wisdom modifier. When the blackguard gets 0 spells per day of a given spell level he gains only the bonus spells he would be entitled to based on his Wisdom score for that spell level. The blackguard's spell list appears below. A blackguard has access to any spell on the list and can freely choose which to prepare, just as a cleric. A blackguard prepares and casts spells just as a cleric does (though a blackguard cannot spontaneously castorspells).",
-                        "i": [
-                          "cure",
-                          "inflict"
-                        ]
+                        "i": ["cure", "inflict"]
                       }
                     ]
                   },
@@ -30268,11 +29807,7 @@
                   },
                   {
                     "#text": "Blackguards have access to a special spell,,  which is the opposing counterpart of the paladin spell. Instead of improving a weapon's effectiveness against evil foesmakes a weapon more effective against good foes.",
-                    "i": [
-                      "corrupt weapon",
-                      "bless weapon",
-                      "corrupt weapon"
-                    ]
+                    "i": ["corrupt weapon", "bless weapon", "corrupt weapon"]
                   },
                   ""
                 ]
@@ -30342,36 +29877,18 @@
                           "br": ""
                         },
                         {
-                          "b": [
-                            "Bonus",
-                            "HD"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Bonus", "HD"],
+                          "br": ["", ""]
                         },
                         {
                           "#text": ".",
-                          "b": [
-                            "Natural",
-                            "Armor Adj"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Natural", "Armor Adj"],
+                          "br": ["", ""]
                         },
                         {
                           "#text": ".",
-                          "b": [
-                            "Str",
-                            "Adj"
-                          ],
-                          "br": [
-                            "",
-                            ""
-                          ]
+                          "b": ["Str", "Adj"],
+                          "br": ["", ""]
                         },
                         {
                           "b": "Int",
@@ -30850,46 +30367,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -31810,46 +31301,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -32510,46 +31975,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "AC Bonus",
@@ -33227,46 +32666,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -33684,46 +33097,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -34353,46 +33740,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -35116,46 +34477,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -35543,10 +34878,7 @@
                       {
                         "#text": "At 10th level, once per day a loremaster can use her knowledge to gain the effect of aspell or anspell.",
                         "b": "True Lore (Ex):",
-                        "i": [
-                          "legend lore",
-                          "analyze dweomer"
-                        ]
+                        "i": ["legend lore", "analyze dweomer"]
                       },
                       "",
                       ""
@@ -35562,14 +34894,8 @@
                         {
                           "td": [
                             {
-                              "b": [
-                                "Level +",
-                                "Int Modifier"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Level +", "Int Modifier"],
+                              "br": ["", ""]
                             },
                             {
                               "b": "Secret",
@@ -36024,46 +35350,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Spells per Day",
@@ -36095,10 +35395,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36126,10 +35423,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36157,10 +35451,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36188,10 +35479,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36219,10 +35507,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36250,10 +35535,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36281,10 +35563,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36312,10 +35591,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36343,10 +35619,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       },
@@ -36374,10 +35647,7 @@
                           },
                           {
                             "#text": "+1 level of existing arcane spellcasting class/+1 level of existing divine spellcasting class",
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "br": ["", ""]
                           }
                         ]
                       }
@@ -36690,46 +35960,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -37211,46 +36455,20 @@
                             "br": ""
                           },
                           {
-                            "b": [
-                              "Base",
-                              "Attack",
-                              "Bonus"
-                            ],
-                            "br": [
-                              "",
-                              "",
-                              ""
-                            ]
+                            "b": ["Base", "Attack", "Bonus"],
+                            "br": ["", "", ""]
                           },
                           {
-                            "b": [
-                              "Fort",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Fort", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Ref",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Ref", "Save"],
+                            "br": ["", ""]
                           },
                           {
-                            "b": [
-                              "Will",
-                              "Save"
-                            ],
-                            "br": [
-                              "",
-                              ""
-                            ]
+                            "b": ["Will", "Save"],
+                            "br": ["", ""]
                           },
                           {
                             "b": "Special",
@@ -37456,11 +36674,7 @@
                       {
                         "#text": "When a thaumaturgist casts aspell (including theandversions), he makes a Diplomacy check to convince the creature to aid him for a reduced payment. If the thaumaturgist's Diplomacy check adjusts the creature's attitude to helpful the creature will work for 50% of the standard fee, as long as the task is one that is not against its nature.",
                         "b": "Improved Ally:",
-                        "i": [
-                          "planar ally",
-                          "lesser",
-                          "greater"
-                        ]
+                        "i": ["planar ally", "lesser", "greater"]
                       },
                       "The thaumaturgist's improved ally class feature only works when the planar ally shares at least one aspect of alignment with the thaumaturgist.",
                       "A thaumaturgist can have only one such ally at a time, but he may bargain for tasks from other planar allies normally."
@@ -37717,11 +36931,7 @@
                   "tr": [
                     {
                       "td": {
-                        "b": [
-                          "Table:",
-                          "Epic",
-                          "Psicrystal Special Abilities"
-                        ],
+                        "b": ["Table:", "Epic", "Psicrystal Special Abilities"],
                         "br": ""
                       }
                     },
@@ -38055,14 +37265,8 @@
                               "br": ""
                             },
                             {
-                              "b": [
-                                "Power Points/",
-                                "Day"
-                              ],
-                              "br": [
-                                "",
-                                ""
-                              ]
+                              "b": ["Power Points/", "Day"],
+                              "br": ["", ""]
                             },
                             {
                               "b": "Powers Known",
@@ -39293,10 +38497,7 @@
                       },
                       {
                         "#text": "The owner has a telepathic link with his psicrystal out to a distance of up to 1 mile. The owner cannot see through the psicrystal's senses, but the two of them can communicate telepathically as if the psicrystal were the target of apower manifested by the owner. For instance, a psicrystal placed in a distant room could relay the activities occurring in that room.",
-                        "i": [
-                          "Telepathic Link (Su):",
-                          "mindlink"
-                        ]
+                        "i": ["Telepathic Link (Su):", "mindlink"]
                       },
                       "Because of the telepathic link between a psicrystal and its owner, the owner has the same connection to an item or place that the psicrystal does. For instance, if his psicrystal has seen a room, the owner can teleport into that room as if he has seen it too.",
                       {
@@ -39317,10 +38518,7 @@
                       },
                       {
                         "#text": "If the owner is 13th level or higher, the character can remote view the psicrystal (as if manifesting thepower) once per day.",
-                        "i": [
-                          "Sight Link (Sp):",
-                          "remote view"
-                        ]
+                        "i": ["Sight Link (Sp):", "remote view"]
                       },
                       {
                         "#text": "If the owner is 15th level or higher, he can manifest powers through the psicrystal to a distance of up to 1 mile. The psicrystal is treated as the power's originator, and all ranges are calculated from its location.",
@@ -40900,10 +40098,7 @@
                         },
                         {
                           "#text": "7",
-                          "i": [
-                            "+",
-                            "mind blade"
-                          ],
+                          "i": ["+", "mind blade"],
                           "br": ""
                         }
                       ]
@@ -44041,10 +43236,7 @@
                       {
                         "#text": "At 6th level, an elocater learns bothand. These powers are in addition to any powers the elocater normally learns by advancing a level.",
                         "b": "Transporter (Ex):",
-                        "i": [
-                          "psionic teleport",
-                          "psionic plane shift"
-                        ]
+                        "i": ["psionic teleport", "psionic plane shift"]
                       },
                       "The elocater treats these powers as if they were 3rd-level powers on her class list. This means, among other things, that manifesting these powers costs 5 power points. (If the character does not have a high enough manifester level to manifest 3rd-level powers the character cannot manifest these powers until she has attained the required manifester level.)"
                     ]
@@ -44066,10 +43258,7 @@
                       {
                         "#text": "When she attains 10th level, an elocater can accelerate herself and thereby take more actions than normal. An elocater can accelerate herself for a total of 5 rounds per day. She can choose to parcel out her accelerated actions in 1-round increments. (This effect is not cumulative with similar effects that provide additional actions, such asor aspell-and in fact an elocater can't take an accelerated action if affected by these or similar effects.)",
                         "b": "Accelerated Action (Su):",
-                        "i": [
-                          "schism",
-                          "haste"
-                        ]
+                        "i": ["schism", "haste"]
                       },
                       "If she makes a full attack while accelerated, an elocater can make one extra attack with any weapon she is holding. The attack is made using her full base attack bonus, plus any modifiers appropriate to the situation. If the elocater uses her accelerated action to move, she gains an enhancement bonus to her speed of +30 feet. The elocater can use her accelerated action to manifest a power, as long as she has not already manifested a power in the current round and the one she wants to manifest has a manifesting time of 1 standard action or shorter. While accelerated, she gains a +2 dodge bonus on attack rolls and Reflex saves and a +2 dodge bonus to Armor Class. Any condition that makes her lose her Dexterity bonus to Armor Class (if any) also makes her lose these dodge bonuses.",
                       ""
@@ -45240,11 +44429,7 @@
                       {
                         "#text": "At 10th level, if a slayer makes her saving throw when attacked with,  therebounds upon the attacker. Only the original attacker is targeted in the rebound effect. If the original attacker fails a Will saving throw (DC equal to that of the original attack), the attacker is affected normally by the.",
                         "b": "Blast Feedback (Su):",
-                        "i": [
-                          "mind blast",
-                          "mind blast",
-                          "mind blast"
-                        ]
+                        "i": ["mind blast", "mind blast", "mind blast"]
                       },
                       ""
                     ]
@@ -46262,10 +45447,7 @@
                       "At 6th level and higher, a psion uncarnate can shed his body twice per day for up to 1 minute each time.",
                       {
                         "#text": "An incorporeal psion uncarnate has no physical body. He can be harmed only by other incorporeal creatures, magic weapons or creatures that strike as magic weapons, and spells, spell-like abilities, or supernatural abilities. He is immune to all nonmagical attack forms. Even when hit by spells or magic weapons, he has a 50% chance to ignore any damage from a corporeal source (except for positive energy, negative energy, force effects,  or attacks made withweapons).",
-                        "i": [
-                          "Incorporeal Subtype:",
-                          "ghost touch"
-                        ]
+                        "i": ["Incorporeal Subtype:", "ghost touch"]
                       },
                       "An incorporeal psion uncarnate has no natural armor bonus-and, unlike other incorporeal creatures, does not gain a deflection bonus from his Charisma modifier. An incorporeal psion uncarnate can enter or pass through solid objects (subject to the restrictions described in the shed body and assume equipment abilities), but must remain adjacent to the object's exterior, and so cannot pass entirely through an object whose space is larger than his own. He can sense the presence of creatures or objects within a square adjacent to his current location, but enemies have total concealment (50% miss chance) from an incorporeal psion uncarnate that is inside an object. To see farther from the object he is in and attack normally, the incorporeal psion uncarnate must emerge. An incorporeal psion uncarnate inside an object has total cover, but when he attacks a creature outside the object he only has cover, so a creature outside with a readied action could strike at him as he attacks. An incorporeal psion uncarnate cannot pass through a force effect.",
                       "An incorporeal psion uncarnate's attacks pass through (ignore) natural armor, armor, and shields, although deflection bonuses and force effects work normally against him. He can pass through and operate in water as easily as he does in air. An incorporeal psion uncarnate cannot fall or take falling damage. He cannot make trip or grapple attacks, nor can he be tripped or grappled. In fact, he cannot take any physical action that would move or manipulate an opponent or its equipment, nor is he subject to such actions.",
@@ -48283,11 +47465,7 @@
                     "p": {
                       "#text": "At 3rd level, a thrallherd addsto her powers known (if she doesn't already know it). Once per day, she can manifestat a reduced power point cost. The cost ofis reduced by the thrallherd's level, to a minimum of 1 power point. The effect of this power is still restricted by the thrallherd's manifester level.",
                       "b": "Psionic Charm (Ex):",
-                      "i": [
-                        "psionic charm",
-                        "psionic charm",
-                        "psionic charm"
-                      ]
+                      "i": ["psionic charm", "psionic charm", "psionic charm"]
                     }
                   },
                   {

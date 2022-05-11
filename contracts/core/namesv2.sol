@@ -1,12 +1,10 @@
 /**
  *Submitted for verification at FtmScan.com on 2021-09-12
-*/
+ */
 
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.7;
-
-
 
 // Part: Address
 
@@ -60,10 +58,16 @@ library Address {
      * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
      */
     function sendValue(address payable recipient, uint256 amount) internal {
-        require(address(this).balance >= amount, "Address: insufficient balance");
+        require(
+            address(this).balance >= amount,
+            "Address: insufficient balance"
+        );
 
         (bool success, ) = recipient.call{value: amount}("");
-        require(success, "Address: unable to send value, recipient may have reverted");
+        require(
+            success,
+            "Address: unable to send value, recipient may have reverted"
+        );
     }
 
     /**
@@ -84,7 +88,10 @@ library Address {
      *
      * _Available since v3.1._
      */
-    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
+    function functionCall(address target, bytes memory data)
+        internal
+        returns (bytes memory)
+    {
         return functionCall(target, data, "Address: low-level call failed");
     }
 
@@ -118,7 +125,13 @@ library Address {
         bytes memory data,
         uint256 value
     ) internal returns (bytes memory) {
-        return functionCallWithValue(target, data, value, "Address: low-level call with value failed");
+        return
+            functionCallWithValue(
+                target,
+                data,
+                value,
+                "Address: low-level call with value failed"
+            );
     }
 
     /**
@@ -133,10 +146,15 @@ library Address {
         uint256 value,
         string memory errorMessage
     ) internal returns (bytes memory) {
-        require(address(this).balance >= value, "Address: insufficient balance for call");
+        require(
+            address(this).balance >= value,
+            "Address: insufficient balance for call"
+        );
         require(isContract(target), "Address: call to non-contract");
 
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        (bool success, bytes memory returndata) = target.call{value: value}(
+            data
+        );
         return verifyCallResult(success, returndata, errorMessage);
     }
 
@@ -146,8 +164,17 @@ library Address {
      *
      * _Available since v3.3._
      */
-    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {
-        return functionStaticCall(target, data, "Address: low-level static call failed");
+    function functionStaticCall(address target, bytes memory data)
+        internal
+        view
+        returns (bytes memory)
+    {
+        return
+            functionStaticCall(
+                target,
+                data,
+                "Address: low-level static call failed"
+            );
     }
 
     /**
@@ -173,8 +200,16 @@ library Address {
      *
      * _Available since v3.4._
      */
-    function functionDelegateCall(address target, bytes memory data) internal returns (bytes memory) {
-        return functionDelegateCall(target, data, "Address: low-level delegate call failed");
+    function functionDelegateCall(address target, bytes memory data)
+        internal
+        returns (bytes memory)
+    {
+        return
+            functionDelegateCall(
+                target,
+                data,
+                "Address: low-level delegate call failed"
+            );
     }
 
     /**
@@ -230,7 +265,8 @@ library Address {
 /// @notice Provides a function for encoding some bytes in base64
 /// @author Brecht Devos <brecht@loopring.org>
 library Base64 {
-    bytes internal constant TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    bytes internal constant TABLE =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     /// @notice Encodes some bytes to the base64 representation
     function encode(bytes memory data) internal pure returns (string memory) {
@@ -259,11 +295,20 @@ library Base64 {
 
                 let out := mload(add(tablePtr, and(shr(18, input), 0x3F)))
                 out := shl(8, out)
-                out := add(out, and(mload(add(tablePtr, and(shr(12, input), 0x3F))), 0xFF))
+                out := add(
+                    out,
+                    and(mload(add(tablePtr, and(shr(12, input), 0x3F))), 0xFF)
+                )
                 out := shl(8, out)
-                out := add(out, and(mload(add(tablePtr, and(shr(6, input), 0x3F))), 0xFF))
+                out := add(
+                    out,
+                    and(mload(add(tablePtr, and(shr(6, input), 0x3F))), 0xFF)
+                )
                 out := shl(8, out)
-                out := add(out, and(mload(add(tablePtr, and(input, 0x3F))), 0xFF))
+                out := add(
+                    out,
+                    and(mload(add(tablePtr, and(input, 0x3F))), 0xFF)
+                )
                 out := shl(224, out)
 
                 mstore(resultPtr, out)
@@ -408,7 +453,11 @@ library Strings {
     /**
      * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
      */
-    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
+    function toHexString(uint256 value, uint256 length)
+        internal
+        pure
+        returns (string memory)
+    {
         bytes memory buffer = new bytes(2 * length + 2);
         buffer[0] = "0";
         buffer[1] = "x";
@@ -424,17 +473,26 @@ library Strings {
 // Part: rarity_gold
 
 interface rarity_gold {
-    function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
+    function transferFrom(
+        uint256 executor,
+        uint256 from,
+        uint256 to,
+        uint256 amount
+    ) external returns (bool);
 }
 
 // Part: rarity_manifested
 
 interface rarity_manifested {
-    function getApproved(uint) external view returns (address);
-    function ownerOf(uint) external view returns (address);
-    function level(uint) external view returns (uint);
-    function class(uint) external view returns (uint);
-    function classes(uint id) external pure returns (string memory);
+    function getApproved(uint256) external view returns (address);
+
+    function ownerOf(uint256) external view returns (address);
+
+    function level(uint256) external view returns (uint256);
+
+    function class(uint256) external view returns (uint256);
+
+    function classes(uint256 id) external pure returns (string memory);
 }
 
 // Part: ERC165
@@ -457,7 +515,13 @@ abstract contract ERC165 is IERC165 {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return interfaceId == type(IERC165).interfaceId;
     }
 }
@@ -471,17 +535,29 @@ interface IERC721 is IERC165 {
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
-    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
 
     /**
      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
      */
-    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+    event Approval(
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
+    );
 
     /**
      * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
      */
-    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
@@ -559,7 +635,10 @@ interface IERC721 is IERC165 {
      *
      * - `tokenId` must exist.
      */
-    function getApproved(uint256 tokenId) external view returns (address operator);
+    function getApproved(uint256 tokenId)
+        external
+        view
+        returns (address operator);
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -578,7 +657,10 @@ interface IERC721 is IERC165 {
      *
      * See {setApprovalForAll}
      */
-    function isApprovedForAll(address owner, address operator) external view returns (bool);
+    function isApprovedForAll(address owner, address operator)
+        external
+        view
+        returns (bool);
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`.
@@ -617,7 +699,10 @@ interface IERC721Enumerable is IERC721 {
      * @dev Returns a token ID owned by `owner` at a given `index` of its token list.
      * Use along with {balanceOf} to enumerate all of ``owner``'s tokens.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index) external view returns (uint256 tokenId);
+    function tokenOfOwnerByIndex(address owner, uint256 index)
+        external
+        view
+        returns (uint256 tokenId);
 
     /**
      * @dev Returns a token ID at a given `index` of all the tokens stored by the contract.
@@ -689,27 +774,51 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
         return
-        interfaceId == type(IERC721).interfaceId ||
-        interfaceId == type(IERC721Metadata).interfaceId ||
-        super.supportsInterface(interfaceId);
+            interfaceId == type(IERC721).interfaceId ||
+            interfaceId == type(IERC721Metadata).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) public view virtual override returns (uint256) {
-        require(owner != address(0), "ERC721: balance query for the zero address");
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            owner != address(0),
+            "ERC721: balance query for the zero address"
+        );
         return _balances[owner];
     }
 
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         address owner = _owners[tokenId];
-        require(owner != address(0), "ERC721: owner query for nonexistent token");
+        require(
+            owner != address(0),
+            "ERC721: owner query for nonexistent token"
+        );
         return owner;
     }
 
@@ -730,11 +839,23 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
 
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                : "";
     }
 
     /**
@@ -764,8 +885,17 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(uint256 tokenId) public view virtual override returns (address) {
-        require(_exists(tokenId), "ERC721: approved query for nonexistent token");
+    function getApproved(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721: approved query for nonexistent token"
+        );
 
         return _tokenApprovals[tokenId];
     }
@@ -773,7 +903,11 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved) public virtual override {
+    function setApprovalForAll(address operator, bool approved)
+        public
+        virtual
+        override
+    {
         require(operator != _msgSender(), "ERC721: approve to caller");
 
         _operatorApprovals[_msgSender()][operator] = approved;
@@ -783,7 +917,13 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _operatorApprovals[owner][operator];
     }
 
@@ -796,7 +936,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId
     ) public virtual override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
 
         _transfer(from, to, tokenId);
     }
@@ -821,7 +964,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId,
         bytes memory _data
     ) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
         _safeTransfer(from, to, tokenId, _data);
     }
 
@@ -850,7 +996,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         bytes memory _data
     ) internal virtual {
         _transfer(from, to, tokenId);
-        require(_checkOnERC721Received(from, to, tokenId, _data), "ERC721: transfer to non ERC721Receiver implementer");
+        require(
+            _checkOnERC721Received(from, to, tokenId, _data),
+            "ERC721: transfer to non ERC721Receiver implementer"
+        );
     }
 
     /**
@@ -872,10 +1021,20 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
-        require(_exists(tokenId), "ERC721: operator query for nonexistent token");
+    function _isApprovedOrOwner(address spender, uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721: operator query for nonexistent token"
+        );
         address owner = ERC721.ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
+        return (spender == owner ||
+            getApproved(tokenId) == spender ||
+            isApprovedForAll(owner, spender));
     }
 
     /**
@@ -972,7 +1131,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(
+            ERC721.ownerOf(tokenId) == from,
+            "ERC721: transfer of token that is not own"
+        );
         require(to != address(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
@@ -1014,11 +1176,20 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         bytes memory _data
     ) private returns (bool) {
         if (to.isContract()) {
-            try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
+            try
+                IERC721Receiver(to).onERC721Received(
+                    _msgSender(),
+                    from,
+                    tokenId,
+                    _data
+                )
+            returns (bytes4 retval) {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("ERC721: transfer to non ERC721Receiver implementer");
+                    revert(
+                        "ERC721: transfer to non ERC721Receiver implementer"
+                    );
                 } else {
                     assembly {
                         revert(add(32, reason), mload(reason))
@@ -1074,15 +1245,32 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
-        return interfaceId == type(IERC721Enumerable).interfaceId || super.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC721)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC721Enumerable).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 
     /**
      * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view virtual override returns (uint256) {
-        require(index < ERC721.balanceOf(owner), "ERC721Enumerable: owner index out of bounds");
+    function tokenOfOwnerByIndex(address owner, uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            index < ERC721.balanceOf(owner),
+            "ERC721Enumerable: owner index out of bounds"
+        );
         return _ownedTokens[owner][index];
     }
 
@@ -1096,8 +1284,17 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
-        require(index < ERC721Enumerable.totalSupply(), "ERC721Enumerable: global index out of bounds");
+    function tokenByIndex(uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            index < ERC721Enumerable.totalSupply(),
+            "ERC721Enumerable: global index out of bounds"
+        );
         return _allTokens[index];
     }
 
@@ -1163,7 +1360,9 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
      * @param from address representing the previous owner of the given token ID
      * @param tokenId uint256 ID of the token to be removed from the tokens list of the given address
      */
-    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId) private {
+    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId)
+        private
+    {
         // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
         // then delete the last slot (swap and pop).
 
@@ -1212,45 +1411,76 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 // File: rarity_names.sol
 
 contract rarity_names is ERC721Enumerable {
-    uint private next_name = 1;
+    uint256 private next_name = 1;
 
-    rarity_manifested constant _rm = rarity_manifested(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
-    rarity_gold constant _gold = rarity_gold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
+    rarity_manifested constant _rm =
+        rarity_manifested(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
+    rarity_gold constant _gold =
+        rarity_gold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
 
-    uint public immutable NAME_AUTHORITY = 1672924;
-    uint public immutable KEEPER = 1672965;
-    uint public immutable NAME_GOLD_PRICE = 200e18;
+    uint256 public immutable NAME_AUTHORITY = 1672924;
+    uint256 public immutable KEEPER = 1672965;
+    uint256 public immutable NAME_GOLD_PRICE = 200e18;
 
-    mapping(uint => string) public names;  // token => name
-    mapping(uint => uint) public summoner_to_name_id; // summoner => token
-    mapping(uint => uint) public name_id_to_summoner; // token => summoner
+    mapping(uint256 => string) public names; // token => name
+    mapping(uint256 => uint256) public summoner_to_name_id; // summoner => token
+    mapping(uint256 => uint256) public name_id_to_summoner; // token => summoner
     mapping(string => bool) private _is_name_claimed;
 
-    event NameClaimed(address indexed owner, uint indexed summoner, string name, uint name_id);
-    event NameUpdated(uint indexed name_id, string old_name, string new_name);
-    event NameAssigned(uint indexed name_id, uint indexed previous_summoner, uint indexed new_summoner);
+    event NameClaimed(
+        address indexed owner,
+        uint256 indexed summoner,
+        string name,
+        uint256 name_id
+    );
+    event NameUpdated(
+        uint256 indexed name_id,
+        string old_name,
+        string new_name
+    );
+    event NameAssigned(
+        uint256 indexed name_id,
+        uint256 indexed previous_summoner,
+        uint256 indexed new_summoner
+    );
 
-    constructor() ERC721("Rarity Names", "names") {
+    constructor() ERC721("Rarity Names", "names") {}
+
+    function _isApprovedOrOwner(uint256 _summoner)
+        internal
+        view
+        returns (bool)
+    {
+        return
+            _rm.getApproved(_summoner) == msg.sender ||
+            _rm.ownerOf(_summoner) == msg.sender;
     }
 
-    function _isApprovedOrOwner(uint _summoner) internal view returns (bool) {
-        return _rm.getApproved(_summoner) == msg.sender || _rm.ownerOf(_summoner) == msg.sender;
-    }
-
-    function summoner_name(uint summoner) public view returns (string memory name){
+    function summoner_name(uint256 summoner)
+        public
+        view
+        returns (string memory name)
+    {
         name = names[summoner_to_name_id[summoner]];
     }
 
-    function is_name_claimed(string memory name) external view returns(bool is_claimed) {
+    function is_name_claimed(string memory name)
+        external
+        view
+        returns (bool is_claimed)
+    {
         is_claimed = _is_name_claimed[to_lower(name)];
     }
 
     // @dev Claim a name for a summoner. Summoner must hold the required gold.
-    function claim(string memory name, uint summoner) public returns (uint name_id){
-        require(_isApprovedOrOwner(summoner), '!owner');
-        require(validate_name(name), 'invalid name');
+    function claim(string memory name, uint256 summoner)
+        public
+        returns (uint256 name_id)
+    {
+        require(_isApprovedOrOwner(summoner), "!owner");
+        require(validate_name(name), "invalid name");
         string memory lower_name = to_lower(name);
-        require(!_is_name_claimed[lower_name], 'name taken');
+        require(!_is_name_claimed[lower_name], "name taken");
         _gold.transferFrom(NAME_AUTHORITY, summoner, KEEPER, NAME_GOLD_PRICE);
         _mint(msg.sender, next_name);
         name_id = next_name;
@@ -1262,12 +1492,15 @@ contract rarity_names is ERC721Enumerable {
     }
 
     // @dev Move a name to a (new) summoner
-    function assign_name(uint name_id, uint to) public {
+    function assign_name(uint256 name_id, uint256 to) public {
         require(to > 0, "sorry summoner 0");
-        require(_isApprovedOrOwner(msg.sender, name_id), "!owner or approved name");
+        require(
+            _isApprovedOrOwner(msg.sender, name_id),
+            "!owner or approved name"
+        );
         require(_isApprovedOrOwner(to), "!owner or approved to");
         require(summoner_to_name_id[to] == 0, "to already named");
-        uint from = name_id_to_summoner[name_id];
+        uint256 from = name_id_to_summoner[name_id];
         if (from > 0) {
             summoner_to_name_id[from] = 0;
         }
@@ -1278,9 +1511,13 @@ contract rarity_names is ERC721Enumerable {
 
     // @dev Unlink a name from a summoner without transferring it.
     //      Use move_name to reassign the name.
-    function clear_summoner_name(uint summoner) public {
-        uint name_id = summoner_to_name_id[summoner];
-        require(_isApprovedOrOwner(summoner) || _isApprovedOrOwner(msg.sender, name_id), "!owner or approved");
+    function clear_summoner_name(uint256 summoner) public {
+        uint256 name_id = summoner_to_name_id[summoner];
+        require(
+            _isApprovedOrOwner(summoner) ||
+                _isApprovedOrOwner(msg.sender, name_id),
+            "!owner or approved"
+        );
         summoner_to_name_id[summoner] = 0;
         name_id_to_summoner[name_id] = 0;
         emit NameAssigned(name_id, summoner, 0);
@@ -1288,37 +1525,45 @@ contract rarity_names is ERC721Enumerable {
 
     // @dev Change the capitalization (as it is unique).
     //      Can't change the name.
-    function update_capitalization(uint name_id, string memory new_name) public {
-        require(_isApprovedOrOwner(msg.sender, name_id), "!owner or approved name");
-        require(validate_name(new_name), 'invalid name');
+    function update_capitalization(uint256 name_id, string memory new_name)
+        public
+    {
+        require(
+            _isApprovedOrOwner(msg.sender, name_id),
+            "!owner or approved name"
+        );
+        require(validate_name(new_name), "invalid name");
         string memory name = names[name_id];
-        require(keccak256(abi.encodePacked(to_lower(name))) == keccak256(abi.encodePacked(to_lower(new_name))), 'name different');
+        require(
+            keccak256(abi.encodePacked(to_lower(name))) ==
+                keccak256(abi.encodePacked(to_lower(new_name))),
+            "name different"
+        );
         names[name_id] = new_name;
         emit NameUpdated(name_id, name, new_name);
     }
 
     // @dev Check if the name string is valid (Alphanumeric and spaces without leading or trailing space)
-    function validate_name(string memory str) public pure returns (bool){
+    function validate_name(string memory str) public pure returns (bool) {
         bytes memory b = bytes(str);
-        if(b.length < 1) return false;
-        if(b.length > 25) return false; // Cannot be longer than 25 characters
-        if(b[0] == 0x20) return false; // Leading space
+        if (b.length < 1) return false;
+        if (b.length > 25) return false; // Cannot be longer than 25 characters
+        if (b[0] == 0x20) return false; // Leading space
         if (b[b.length - 1] == 0x20) return false; // Trailing space
 
         bytes1 last_char = b[0];
 
-        for(uint i; i<b.length; i++){
+        for (uint256 i; i < b.length; i++) {
             bytes1 char = b[i];
 
             if (char == 0x20 && last_char == 0x20) return false; // Cannot contain continous spaces
 
-            if(
+            if (
                 !(char >= 0x30 && char <= 0x39) && //9-0
-            !(char >= 0x41 && char <= 0x5A) && //A-Z
-            !(char >= 0x61 && char <= 0x7A) && //a-z
-            !(char == 0x20) //space
-            )
-                return false;
+                !(char >= 0x41 && char <= 0x5A) && //A-Z
+                !(char >= 0x61 && char <= 0x7A) && //a-z
+                !(char == 0x20) //space
+            ) return false;
 
             last_char = char;
         }
@@ -1327,10 +1572,10 @@ contract rarity_names is ERC721Enumerable {
     }
 
     // @dev Converts the string to lowercase
-    function to_lower(string memory str) public pure returns (string memory){
+    function to_lower(string memory str) public pure returns (string memory) {
         bytes memory b_str = bytes(str);
         bytes memory b_lower = new bytes(b_str.length);
-        for (uint i = 0; i < b_str.length; i++) {
+        for (uint256 i = 0; i < b_str.length; i++) {
             // Uppercase character
             if ((uint8(b_str[i]) >= 65) && (uint8(b_str[i]) <= 90)) {
                 b_lower[i] = bytes1(uint8(b_str[i]) + 32);
@@ -1341,23 +1586,56 @@ contract rarity_names is ERC721Enumerable {
         return string(b_lower);
     }
 
-    function tokenURI(uint name_id) public override view returns (string memory output) {
-        uint summoner = name_id_to_summoner[name_id];
+    function tokenURI(uint256 name_id)
+        public
+        view
+        override
+        returns (string memory output)
+    {
+        uint256 summoner = name_id_to_summoner[name_id];
         output = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
         if (summoner > 0) {
-            output = string(abi.encodePacked(output, "Level ", toString(_rm.level(summoner)), ' ', _rm.classes(_rm.class(summoner)), '</text><text x="10" y="40" class="base">'));
+            output = string(
+                abi.encodePacked(
+                    output,
+                    "Level ",
+                    toString(_rm.level(summoner)),
+                    " ",
+                    _rm.classes(_rm.class(summoner)),
+                    '</text><text x="10" y="40" class="base">'
+                )
+            );
         }
-        output = string(abi.encodePacked(output, names[name_id], '</text></svg>'));
-        output = string(abi.encodePacked('data:application/json;base64,', Base64.encode(bytes(string(abi.encodePacked('{"name": "', names[name_id], '", "description": "Rarity ERC721 names for summoners.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))))));
+        output = string(
+            abi.encodePacked(output, names[name_id], "</text></svg>")
+        );
+        output = string(
+            abi.encodePacked(
+                "data:application/json;base64,",
+                Base64.encode(
+                    bytes(
+                        string(
+                            abi.encodePacked(
+                                '{"name": "',
+                                names[name_id],
+                                '", "description": "Rarity ERC721 names for summoners.", "image": "data:image/svg+xml;base64,',
+                                Base64.encode(bytes(output)),
+                                '"}'
+                            )
+                        )
+                    )
+                )
+            )
+        );
     }
 
-    function toString(int value) internal pure returns (string memory) {
-        string memory _string = '';
+    function toString(int256 value) internal pure returns (string memory) {
+        string memory _string = "";
         if (value < 0) {
-            _string = '-';
+            _string = "-";
             value = value * -1;
         }
-        return string(abi.encodePacked(_string, toString(uint(value))));
+        return string(abi.encodePacked(_string, toString(uint256(value))));
     }
 
     function toString(uint256 value) internal pure returns (string memory) {
@@ -1381,5 +1659,4 @@ contract rarity_names is ERC721Enumerable {
         }
         return string(buffer);
     }
-
 }

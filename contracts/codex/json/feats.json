@@ -13,10 +13,7 @@
               {
                 "#text": "Using senses such as acute hearing and sensitivity to vibrations, you detect the location of opponents who are no more than 5 feet away from you.andare irrelevant, though it you discern incorporeal beings.",
                 "b": "Benefit:",
-                "i": [
-                  "Invisibility",
-                  "darkness"
-                ]
+                "i": ["Invisibility", "darkness"]
               },
               ""
             ]
@@ -39,10 +36,7 @@
                   {
                     "#text": "Using senses such as acute hearing and sensitivity to vibrations, you detect the location of opponents who are no more than 5 feet away from you.andare irrelevant, though it you discern incorporeal beings.",
                     "b": "Benefit:",
-                    "i": [
-                      "Invisibility",
-                      "darkness"
-                    ]
+                    "i": ["Invisibility", "darkness"]
                   },
                   ""
                 ]
@@ -524,10 +518,7 @@
               {
                 "#text": "A persistent spell has a duration of 24 hours. The persistent spell must have a personal range or a fixed range. Spells of instantaneous duration cannot be affected by this feat, nor can spells whose effects are discharged.  You need not concentrate on spells such asorto be aware of the mere presence of absence of the things detected, but you must still concentrate to gain additional information as normal.  Concentration on such a spell is a standard action that does not provoke an attack of opportunity.  A persistent spell uses up a spell slot six levels higher than the spell's actual level.",
                 "b": "Benefit:",
-                "i": [
-                  "detect magic",
-                  "detect thoughts"
-                ]
+                "i": ["detect magic", "detect thoughts"]
               },
               ""
             ]
@@ -550,10 +541,7 @@
                   {
                     "#text": "A persistent spell has a duration of 24 hours. The persistent spell must have a personal range or a fixed range. Spells of instantaneous duration cannot be affected by this feat, nor can spells whose effects are discharged.  You need not concentrate on spells such asorto be aware of the mere presence of absence of the things detected, but you must still concentrate to gain additional information as normal.  Concentration on such a spell is a standard action that does not provoke an attack of opportunity.  A persistent spell uses up a spell slot six levels higher than the spell's actual level.",
                     "b": "Benefit:",
-                    "i": [
-                      "detect magic",
-                      "detect thoughts"
-                    ]
+                    "i": ["detect magic", "detect thoughts"]
                   },
                   ""
                 ]
@@ -1482,10 +1470,7 @@
                 "p": {
                   "#text": "The ability tointo a Gargantuan creatur.",
                   "b": "Prerequisite:",
-                  "i": [
-                    "wild shape",
-                    "e"
-                  ]
+                  "i": ["wild shape", "e"]
                 }
               },
               {
@@ -5949,10 +5934,7 @@
                 "p": {
                   "#text": "Ability tointo a Diminutive creatur.",
                   "b": "Prerequisite:",
-                  "i": [
-                    "wild shape",
-                    "e"
-                  ]
+                  "i": ["wild shape", "e"]
                 }
               },
               {
@@ -6902,10 +6884,7 @@
             "p": {
               "#text": "The character's ability tointo an elemental is expanded to include all elemental creatures (not just air, earth, fire, and water elementals) of any size that the character can take when usingto become an animal. The character gains all extraordinary and supernatural abilities of the elemental whose form he or she takes.",
               "b": "Benefit:",
-              "i": [
-                "wild shape",
-                "wild shape"
-              ]
+              "i": ["wild shape", "wild shape"]
             }
           }
         },
@@ -6927,10 +6906,7 @@
                 "p": {
                   "#text": "The character's ability tointo an elemental is expanded to include all elemental creatures (not just air, earth, fire, and water elementals) of any size that the character can take when usingto become an animal. The character gains all extraordinary and supernatural abilities of the elemental whose form he or she takes.",
                   "b": "Benefit:",
-                  "i": [
-                    "wild shape",
-                    "wild shape"
-                  ]
+                  "i": ["wild shape", "wild shape"]
                 }
               },
               {
@@ -25285,10 +25261,7 @@
               },
               {
                 "#text": "The strength and thickness of the barrier determine your chance of success. To successfully bypass the barrier with your power, you make a Psicraft check against a DC equal to 10 + the hardness of the barrier + 1 per foot of thickness (minimum 1). Assign a hardness of 20 to barriers without a hardness rating, such as force effects (or a). Force walls orare assumed to have less than 1 foot of thickness unless noted otherwise.",
-                "i": [
-                  "wall of ectoplasm",
-                  "walls of ectoplasm"
-                ]
+                "i": ["wall of ectoplasm", "walls of ectoplasm"]
               },
               {
                 "#text": "If a power requires line of sight (which includes most powers that affect a target or targets instead of an area), you cannot manifest it as a burrowing power unless you can somehow see the target, such as with. Using this feat increases the power point cost of the power by 2. The power's total cost cannot exceed your manifester level.",
@@ -25314,10 +25287,7 @@
                 },
                 {
                   "#text": "The strength and thickness of the barrier determine your chance of success. To successfully bypass the barrier with your power, you make a Psicraft check against a DC equal to 10 + the hardness of the barrier + 1 per foot of thickness (minimum 1). Assign a hardness of 20 to barriers without a hardness rating, such as force effects (or a). Force walls orare assumed to have less than 1 foot of thickness unless noted otherwise.",
-                  "i": [
-                    "wall of ectoplasm",
-                    "walls of ectoplasm"
-                  ]
+                  "i": ["wall of ectoplasm", "walls of ectoplasm"]
                 },
                 {
                   "#text": "If a power requires line of sight (which includes most powers that affect a target or targets instead of an area), you cannot manifest it as a burrowing power unless you can somehow see the target, such as with. Using this feat increases the power point cost of the power by 2. The power's total cost cannot exceed your manifester level.",

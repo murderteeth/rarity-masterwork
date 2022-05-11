@@ -2,19 +2,23 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Skills";
-    string constant public class = "Any";
+    string public constant index = "Skills";
+    string public constant class = "Any";
 
-    function skill_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function skill_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         if (_id == 1) {
             return appraise();
         } else if (_id == 2) {
@@ -90,7 +94,11 @@ contract codex {
         }
     }
 
-    function get_attribute(uint id) external pure returns (string memory attribute) {
+    function get_attribute(uint256 id)
+        external
+        pure
+        returns (string memory attribute)
+    {
         if (id == 1) {
             return "Strength";
         } else if (id == 2) {
@@ -106,16 +114,20 @@ contract codex {
         }
     }
 
-    function appraise() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function appraise()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 1;
         name = "Appraise";
         attribute_id = 4;
@@ -126,16 +138,20 @@ contract codex {
         action = "Appraising an item takes 1 minute (ten consecutive full-round actions).";
     }
 
-    function balance() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function balance()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 2;
         name = "Balance";
         attribute_id = 2;
@@ -146,16 +162,20 @@ contract codex {
         action = "None. A Balance check doesnt require an action; it is made as part of another action or as a reaction to a situation.";
     }
 
-    function bluff() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function bluff()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 3;
         name = "Bluff";
         attribute_id = 6;
@@ -166,16 +186,20 @@ contract codex {
         action = "Varies. A Bluff check made as part of general interaction always takes at least 1 round (and is at least a full-round action), but it can take much longer if you try something elaborate.";
     }
 
-    function climb() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function climb()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 4;
         name = "Climb";
         attribute_id = 1;
@@ -186,16 +210,20 @@ contract codex {
         action = "Climbing is part of movement, so its generally part of a move action (and may be combined with other types of movement in a move action).";
     }
 
-    function concentration() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function concentration()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 5;
         name = "Concentration";
         attribute_id = 3;
@@ -206,16 +234,20 @@ contract codex {
         action = "None. Making a Concentration check doesnt take an action; it is either a free action (when attempted reactively) or part of another action (when attempted actively).";
     }
 
-    function craft() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function craft()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 6;
         name = "Craft";
         attribute_id = 4;
@@ -226,16 +258,20 @@ contract codex {
         action = "Does not apply. Craft checks are made by the day or week (see above).";
     }
 
-    function decipher_script() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function decipher_script()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 7;
         name = "Decipher Script";
         attribute_id = 4;
@@ -246,16 +282,20 @@ contract codex {
         action = "Deciphering the equivalent of a single page of script takes 1 minute (ten consecutive full-round actions).";
     }
 
-    function diplomacy() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function diplomacy()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 8;
         name = "Diplomacy";
         attribute_id = 6;
@@ -266,16 +306,20 @@ contract codex {
         action = "Changing others attitudes with Diplomacy generally takes at least 1 full minute (10 consecutive full-round actions). In some situations, this time requirement may greatly increase. A rushed Diplomacy check can be made as a full-round action, but you take a -10 penalty on the check.";
     }
 
-    function disable_device() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function disable_device()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 9;
         name = "Disable Device";
         attribute_id = 4;
@@ -286,16 +330,20 @@ contract codex {
         action = "The amount of time needed to make a Disable Device check depends on the task, as noted above. Disabling a simple device takes 1 round and is a full-round action. An intricate or complex device requires 1d4 or 2d4 rounds.";
     }
 
-    function disguise() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function disguise()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 10;
         name = "Disguise";
         attribute_id = 6;
@@ -306,16 +354,20 @@ contract codex {
         action = "Creating a disguise requires 1d3*10 minutes of work.";
     }
 
-    function escape_artist() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function escape_artist()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 11;
         name = "Escape Artist";
         attribute_id = 2;
@@ -326,16 +378,20 @@ contract codex {
         action = "Making an Escape Artist check to escape from rope bindings, manacles, or other restraints (except a grappler) requires 1 minute of work. Escaping from a net or an animate rope, command plants, control plants, or entangle spell is a full-round action. Escaping from a grapple or pin is a standard action. Squeezing through a tight space takes at least 1 minute, maybe longer, depending on how long the space is.";
     }
 
-    function forgery() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function forgery()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 12;
         name = "Forgery";
         attribute_id = 4;
@@ -346,16 +402,20 @@ contract codex {
         action = "Forging a very short and simple document takes about 1 minute. A longer or more complex document takes 1d4 minutes per page.";
     }
 
-    function gather_information() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function gather_information()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 13;
         name = "Gather Information";
         attribute_id = 6;
@@ -366,16 +426,20 @@ contract codex {
         action = "A typical Gather Information check takes 1d4+1 hours.";
     }
 
-    function handle_animal() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function handle_animal()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 14;
         name = "Handle Animal";
         attribute_id = 6;
@@ -386,16 +450,20 @@ contract codex {
         action = "Varies. Handling an animal is a move action.";
     }
 
-    function heal() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function heal()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 15;
         name = "Heal";
         attribute_id = 5;
@@ -406,16 +474,20 @@ contract codex {
         action = "Providing first aid, treating a wound, or treating poison is a standard action.";
     }
 
-    function hide() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function hide()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 16;
         name = "Hide";
         attribute_id = 2;
@@ -426,16 +498,20 @@ contract codex {
         action = "Usually none. Normally, you make a Hide check as part of movement, so it doesnt take a separate action.";
     }
 
-    function intimidate() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function intimidate()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 17;
         name = "Intimidate";
         attribute_id = 6;
@@ -446,16 +522,20 @@ contract codex {
         action = "Varies. Changing anothers behavior requires 1 minute of interaction. Intimidating an opponent in combat is a standard action.";
     }
 
-    function jump() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function jump()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 18;
         name = "Jump";
         attribute_id = 1;
@@ -466,16 +546,20 @@ contract codex {
         action = "None. A Jump check is included in your movement, so it is part of a move action.";
     }
 
-    function knowledge() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function knowledge()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 19;
         name = "Knowledge";
         attribute_id = 4;
@@ -486,16 +570,20 @@ contract codex {
         action = "Usually none. In most cases, making a Knowledge check doesnt take an action-you simply know the answer or you dont.";
     }
 
-    function listen() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function listen()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 20;
         name = "Listen";
         attribute_id = 5;
@@ -506,16 +594,20 @@ contract codex {
         action = "Varies. Every time you have a chance to hear something in a reactive manner (such as when someone makes a noise or you move into a new area), you can make a Listen check without using an action. Trying to hear something you failed to hear previously is a move action.";
     }
 
-    function move_silently() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function move_silently()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 21;
         name = "Move Silently";
         attribute_id = 2;
@@ -526,16 +618,20 @@ contract codex {
         action = "None. A Move Silently check is included in your movement or other activity, so it is part of another action.";
     }
 
-    function open_lock() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function open_lock()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 22;
         name = "Open Lock";
         attribute_id = 2;
@@ -546,16 +642,20 @@ contract codex {
         action = "Opening a lock is a full-round action.";
     }
 
-    function perform() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function perform()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 23;
         name = "Perform";
         attribute_id = 6;
@@ -566,16 +666,20 @@ contract codex {
         action = "Varies. Trying to earn money by playing in public requires anywhere from an evenings work to a full days performance.";
     }
 
-    function profession() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function profession()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 24;
         name = "Profession";
         attribute_id = 5;
@@ -586,16 +690,20 @@ contract codex {
         action = "Not applicable. A single check generally represents a week of work.";
     }
 
-    function ride() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function ride()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 25;
         name = "Ride";
         attribute_id = 2;
@@ -606,16 +714,20 @@ contract codex {
         action = "Varies. Mounting or dismounting normally is a move action. Other checks are a move action, a free action, or no action at all, as noted above.";
     }
 
-    function search() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function search()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 26;
         name = "Search";
         attribute_id = 4;
@@ -626,16 +738,20 @@ contract codex {
         action = "It takes a full-round action to search a 5-foot-by-5-foot area or a volume of goods 5 feet on a side.";
     }
 
-    function sense_motive() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function sense_motive()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 27;
         name = "Sense Motive";
         attribute_id = 5;
@@ -646,16 +762,20 @@ contract codex {
         action = "Trying to gain information with Sense Motive generally takes at least 1 minute, and you could spend a whole evening trying to get a sense of the people around you.";
     }
 
-    function sleight_of_hand() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function sleight_of_hand()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 28;
         name = "Sleight Of Hand";
         attribute_id = 2;
@@ -666,16 +786,20 @@ contract codex {
         action = "Any Sleight of Hand check normally is a standard action. However, you may perform a Sleight of Hand check as a free action by taking a -20 penalty on the check.";
     }
 
-    function speak_language() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function speak_language()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 29;
         name = "Speak Language";
         attribute_id = 0;
@@ -686,16 +810,20 @@ contract codex {
         action = "Not applicable.";
     }
 
-    function spellcraft() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function spellcraft()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 30;
         name = "Spellcraft";
         attribute_id = 4;
@@ -706,16 +834,20 @@ contract codex {
         action = "Varies.";
     }
 
-    function spot() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function spot()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 31;
         name = "Spot";
         attribute_id = 5;
@@ -726,16 +858,20 @@ contract codex {
         action = "Varies. Every time you have a chance to spot something in a reactive manner you can make a Spot check without using an action.";
     }
 
-    function survival() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function survival()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 32;
         name = "Survival";
         attribute_id = 5;
@@ -746,16 +882,20 @@ contract codex {
         action = "Varies. For getting along in the wild or for gaining the Fortitude save bonus noted in the table above, you make a Survival check once every 24 hours.";
     }
 
-    function swim() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function swim()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 33;
         name = "Swim";
         attribute_id = 1;
@@ -766,16 +906,20 @@ contract codex {
         action = "A successful Swim check allows you to swim one-quarter of your speed as a move action or one-half your speed as a full-round action.";
     }
 
-    function tumble() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function tumble()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 34;
         name = "Tumble";
         attribute_id = 2;
@@ -786,16 +930,20 @@ contract codex {
         action = "Not applicable. Tumbling is part of movement, so a Tumble check is part of a move action.";
     }
 
-    function use_magic_device() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function use_magic_device()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 35;
         name = "Use Magic Device";
         attribute_id = 6;
@@ -806,16 +954,20 @@ contract codex {
         action = "None. The Use Magic Device check is made as part of the action (if any) required to activate the magic item.";
     }
 
-    function use_rope() public pure returns (
-        uint id,
-        string memory name,
-        uint attribute_id,
-        uint synergy,
-        bool retry,
-        bool armor_check_penalty,
-        string memory check,
-        string memory action
-    ) {
+    function use_rope()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 attribute_id,
+            uint256 synergy,
+            bool retry,
+            bool armor_check_penalty,
+            string memory check,
+            string memory action
+        )
+    {
         id = 36;
         name = "Use Rope";
         attribute_id = 2;

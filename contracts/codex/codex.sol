@@ -4,28 +4,36 @@ pragma solidity 0.8.7;
 contract codex {
     string constant index = "Spells";
     string constant class = "Wizard";
-    
-    mapping(uint => mapping(uint => address)) public pages;
+
+    mapping(uint256 => mapping(uint256 => address)) public pages;
     address public loremaster;
-    
+
     constructor() {
         loremaster = msg.sender;
     }
-    
+
     modifier lm() {
         require(msg.sender == loremaster);
         _;
     }
-    
+
     function setLoremaster(address _loremaster) external lm {
         loremaster = _loremaster;
     }
-    
-    function addPage(uint _school, uint _level, address _page) external lm {
+
+    function addPage(
+        uint256 _school,
+        uint256 _level,
+        address _page
+    ) external lm {
         pages[_school][_level] = _page;
     }
-    
-    function school(uint id) external pure returns (string memory description) {
+
+    function school(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "Abjuration";
         } else if (id == 1) {
@@ -46,8 +54,12 @@ contract codex {
             return "Universal";
         }
     }
-    
-    function casting_time(uint id) external pure returns (string memory description) {
+
+    function casting_time(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "1 free action";
         } else if (id == 1) {
@@ -58,8 +70,12 @@ contract codex {
             return "10 full-round actions";
         }
     }
-    
-    function range(uint id) external pure returns (string memory description) {
+
+    function range(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "Personal";
         } else if (id == 1) {
@@ -74,7 +90,12 @@ contract codex {
             return "Unlimited";
         }
     }
-    function saving_throw_type(uint id) external pure returns (string memory description) {
+
+    function saving_throw_type(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {
@@ -85,8 +106,12 @@ contract codex {
             return "Will";
         }
     }
-    
-    function saving_throw_effect(uint id) external pure returns (string memory description) {
+
+    function saving_throw_effect(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {
@@ -98,7 +123,11 @@ contract codex {
         }
     }
 
-    function spell_effect(uint id) external pure returns (string memory description) {
+    function spell_effect(uint256 id)
+        external
+        pure
+        returns (string memory description)
+    {
         if (id == 0) {
             return "None";
         } else if (id == 1) {
@@ -118,13 +147,11 @@ contract codex {
         } else if (id == 8) {
             return "Charisma";
         } else if (id == 9) {
-            return "Time";	// e.g. slow
-	} else if (id == 10) {
-            return "Space"; 	// e.g. summons (items/monsters), duplicates, curses/enchantments, illusions
-	} else if (id == 11) {
+            return "Time"; // e.g. slow
+        } else if (id == 10) {
+            return "Space"; // e.g. summons (items/monsters), duplicates, curses/enchantments, illusions
+        } else if (id == 11) {
             return "Condition"; // listed in conditions.sol
-	}
+        }
     }
-
-
 }

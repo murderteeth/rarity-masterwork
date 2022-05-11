@@ -2,10 +2,18 @@
 pragma solidity 0.8.7;
 
 contract gambits {
-    string constant public index = "Gambits";
-    string constant public class = "Any";
+    string public constant index = "Gambits";
+    string public constant class = "Any";
 
-    function gambit_by_id(uint _id) external pure returns (uint id, uint8 target, string memory description) {
+    function gambit_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            uint8 target,
+            string memory description
+        )
+    {
         if (_id == 1) {
             return (_id, 0, "Ally: lowest HP");
         } else if (_id == 2) {
@@ -174,5 +182,4 @@ contract gambits {
             return (_id, 2, "Self: Status: HP Critical");
         }
     }
-
 }

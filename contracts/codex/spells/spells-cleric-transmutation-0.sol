@@ -2,27 +2,31 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Spells";
-    string constant public class = "Cleric";
-    string constant public school = "Transmutation";
-    uint constant public level = 0;
+    string public constant index = "Spells";
+    string public constant class = "Cleric";
+    string public constant school = "Transmutation";
+    uint256 public constant level = 0;
 
-    function spell_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function spell_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         if (_id == 10) {
             return mending();
         } else if (_id == 11) {
@@ -32,22 +36,26 @@ contract codex {
         }
     }
 
-    function mending() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function mending()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 10;
         name = "Mending";
         verbal = true;
@@ -64,22 +72,26 @@ contract codex {
         description = "Mending repairs small breaks or tears in objects (but not warps, such as might be caused by a warp wood spell). It will weld broken metallic objects such as a ring, a chain link, a medallion, or a slender dagger, providing but one break exists. Ceramic or wooden objects with multiple breaks can be invisibly rejoined to be as strong as new. A hole in a leather sack or a wineskin is completely healed over by mending. The spell can repair a magic item, but the items magical abilities are not restored. The spell cannot mend broken magic rods, staffs, or wands, nor does it affect creatures (including constructs).";
     }
 
-    function purify_food_and_drink() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function purify_food_and_drink()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 11;
         name = "Purify Food and Drink";
         verbal = true;
@@ -96,22 +108,26 @@ contract codex {
         description = "This spell makes spoiled, rotten, poisonous, or otherwise contaminated food and water pure and suitable for eating and drinking. This spell does not prevent subsequent natural decay or spoilage. Unholy water and similar food and drink of significance is spoiled by purify food and drink, but the spell has no effect on creatures of any type nor upon magic potions. Note: Water weighs about 8 pounds per gallon. One cubic foot of water contains roughly 8 gallons and weighs about 60 pounds.";
     }
 
-    function virtue() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function virtue()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 12;
         name = "Virtue";
         verbal = true;

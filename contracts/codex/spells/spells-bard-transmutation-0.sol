@@ -2,27 +2,31 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Spells";
-    string constant public class = "Bard";
-    string constant public school = "Transmutation";
-    uint constant public level = 0;
+    string public constant index = "Spells";
+    string public constant class = "Bard";
+    string public constant school = "Transmutation";
+    uint256 public constant level = 0;
 
-    function spell_by_id(uint _id) external pure returns(
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function spell_by_id(uint256 _id)
+        external
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         if (_id == 12) {
             return mage_hand();
         } else if (_id == 13) {
@@ -34,22 +38,26 @@ contract codex {
         }
     }
 
-    function mage_hand() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function mage_hand()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 12;
         name = "Mage Hand";
         verbal = true;
@@ -66,22 +74,26 @@ contract codex {
         description = "You point your finger at an object and can lift it and move it at will from a distance. As a move action, you can propel the object as far as 15 feet in any direction, though the spell ends if the distance between you and the object ever exceeds the spells range.";
     }
 
-    function mending() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function mending()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 13;
         name = "Mending";
         verbal = true;
@@ -98,22 +110,26 @@ contract codex {
         description = "Mending repairs small breaks or tears in objects (but not warps, such as might be caused by a warp wood spell). It will weld broken metallic objects such as a ring, a chain link, a medallion, or a slender dagger, providing but one break exists. Ceramic or wooden objects with multiple breaks can be invisibly rejoined to be as strong as new. A hole in a leather sack or a wineskin is completely healed over by mending. The spell can repair a magic item, but the items magical abilities are not restored. The spell cannot mend broken magic rods, staffs, or wands, nor does it affect creatures (including constructs).";
     }
 
-    function message() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function message()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 14;
         name = "Message";
         verbal = true;
@@ -130,22 +146,26 @@ contract codex {
         description = "You can whisper messages and receive whispered replies with little chance of being overheard. You point your finger at each creature you want to receive the message. When you whisper, the whispered message is audible to all targeted creatures within range. Magical silence, 1 foot of stone, 1 inch of common metal (or a thin sheet of lead), or 3 feet of wood or dirt blocks the spell. The message does not have to travel in a straight line. It can circumvent a barrier if there is an open path between you and the subject, and the paths entire length lies within the spells range. The creatures that receive the message can whisper a reply that you hear. The spell transmits sound, not meaning. It doesnt transcend language barriers. Note: To speak a message, you must mouth the words and whisper, possibly allowing observers the opportunity to read your lips.";
     }
 
-    function open_close() public pure returns (
-        uint id,
-        string memory name,
-        bool verbal,
-        bool somatic,
-        bool focus,
-        bool divine_focus,
-        uint xp_cost,
-        uint time,
-        uint range,
-        uint duration,
-        uint saving_throw_type,
-        uint saving_throw_effect,
-        bool spell_resistance,
-        string memory description
-    ) {
+    function open_close()
+        public
+        pure
+        returns (
+            uint256 id,
+            string memory name,
+            bool verbal,
+            bool somatic,
+            bool focus,
+            bool divine_focus,
+            uint256 xp_cost,
+            uint256 time,
+            uint256 range,
+            uint256 duration,
+            uint256 saving_throw_type,
+            uint256 saving_throw_effect,
+            bool spell_resistance,
+            string memory description
+        )
+    {
         id = 15;
         name = "Open/Close";
         verbal = true;

@@ -2,10 +2,14 @@
 pragma solidity 0.8.7;
 
 contract codex {
-    string constant public index = "Items";
-    string constant public class = "Armor";
+    string public constant index = "Items";
+    string public constant class = "Armor";
 
-    function get_proficiency_by_id(uint _id) public pure returns (string memory description) {
+    function get_proficiency_by_id(uint256 _id)
+        public
+        pure
+        returns (string memory description)
+    {
         if (_id == 1) {
             return "Light";
         } else if (_id == 2) {
@@ -17,18 +21,22 @@ contract codex {
         }
     }
 
-    function item_by_id(uint _id) public pure returns(
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function item_by_id(uint256 _id)
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         if (_id == 1) {
             return padded();
         } else if (_id == 2) {
@@ -68,18 +76,22 @@ contract codex {
         }
     }
 
-    function padded() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function padded()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 1;
         name = "Padded";
         cost = 5e18;
@@ -92,18 +104,22 @@ contract codex {
         description = "";
     }
 
-    function leather() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function leather()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 2;
         name = "Leather";
         cost = 10e18;
@@ -116,18 +132,22 @@ contract codex {
         description = "";
     }
 
-    function studded_leather() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function studded_leather()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 3;
         name = "Studded leather";
         cost = 25e18;
@@ -140,18 +160,22 @@ contract codex {
         description = "";
     }
 
-    function chain_shirt() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function chain_shirt()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 4;
         name = "Chain shirt";
         cost = 100e18;
@@ -164,18 +188,22 @@ contract codex {
         description = "A chain shirt comes with a steel cap.";
     }
 
-    function hide() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function hide()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 5;
         name = "Hide";
         cost = 15e18;
@@ -188,18 +216,22 @@ contract codex {
         description = "";
     }
 
-    function scale_mail() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function scale_mail()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 6;
         name = "Scale mail";
         cost = 50e18;
@@ -212,18 +244,22 @@ contract codex {
         description = "The suit includes gauntlets.";
     }
 
-    function chainmail() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function chainmail()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 7;
         name = "Chainmail";
         cost = 150e18;
@@ -236,18 +272,22 @@ contract codex {
         description = "The suit includes gauntlets";
     }
 
-    function breastplate() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function breastplate()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 8;
         name = "Breastplate";
         cost = 200e18;
@@ -260,18 +300,22 @@ contract codex {
         description = "It comes with a helmet and greaves.";
     }
 
-    function splint_mail() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function splint_mail()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 9;
         name = "Splint mail";
         cost = 200e18;
@@ -284,18 +328,22 @@ contract codex {
         description = "The suit includes gauntlets.";
     }
 
-    function banded_mail() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function banded_mail()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 10;
         name = "Banded mail";
         cost = 250e18;
@@ -308,18 +356,22 @@ contract codex {
         description = "The suit includes gauntlets.";
     }
 
-    function half_plate() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function half_plate()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 11;
         name = "Half-plate";
         cost = 600e18;
@@ -332,18 +384,22 @@ contract codex {
         description = "The suit includes gauntlets.";
     }
 
-    function full_plate() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function full_plate()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 12;
         name = "Full plate";
         cost = 1500e18;
@@ -356,18 +412,22 @@ contract codex {
         description = "The suit includes gauntlets, heavy leather boots, a visored helmet, and a thick layer of padding that is worn underneath the armor. Each suit of full plate must be individually fitted to its owner by a master armorsmith, although a captured suit can be resized to fit a new owner at a cost of 200 to 800 (2d4x100) gold pieces.";
     }
 
-    function buckler() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function buckler()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 13;
         name = "Buckler";
         cost = 15e18;
@@ -380,18 +440,22 @@ contract codex {
         description = "This small metal shield is worn strapped to your forearm. You can use a bow or crossbow without penalty while carrying it. You can also use your shield arm to wield a weapon (whether you are using an off-hand weapon or using your off hand to help wield a two-handed weapon), but you take a -1 penalty on attack rolls while doing so. This penalty stacks with those that may apply for fighting with your off hand and for fighting with two weapons. In any case, if you use a weapon in your off hand, you dont get the bucklers AC bonus for the rest of the round.";
     }
 
-    function shield_light_wooden() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function shield_light_wooden()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 14;
         name = "Shield, light wooden";
         cost = 3e18;
@@ -404,18 +468,22 @@ contract codex {
         description = "Wooden and steel shields offer the same basic protection, though they respond differently to special attacks";
     }
 
-    function shield_light_steel() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function shield_light_steel()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 15;
         name = "Shield, light steel";
         cost = 9e18;
@@ -428,18 +496,22 @@ contract codex {
         description = "Wooden and steel shields offer the same basic protection, though they respond differently to special attacks";
     }
 
-    function shield_heavy_wooden() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function shield_heavy_wooden()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 16;
         name = "Shield, heavy wooden";
         cost = 7e18;
@@ -452,18 +524,22 @@ contract codex {
         description = "Wooden and steel shields offer the same basic protection, though they respond differently to special attacks.";
     }
 
-    function shield_heavy_steel() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function shield_heavy_steel()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 17;
         name = "Shield, heavy steel";
         cost = 20e18;
@@ -476,18 +552,22 @@ contract codex {
         description = "Wooden and steel shields offer the same basic protection, though they respond differently to special attacks.";
     }
 
-    function shield_tower() public pure returns (
-        uint id,
-        uint cost,
-        uint proficiency,
-        uint weight,
-        uint armor_bonus,
-        uint max_dex_bonus,
-        int penalty,
-        uint spell_failure,
-        string memory name,
-        string memory description
-    ) {
+    function shield_tower()
+        public
+        pure
+        returns (
+            uint256 id,
+            uint256 cost,
+            uint256 proficiency,
+            uint256 weight,
+            uint256 armor_bonus,
+            uint256 max_dex_bonus,
+            int256 penalty,
+            uint256 spell_failure,
+            string memory name,
+            string memory description
+        )
+    {
         id = 18;
         name = "Shield, tower";
         cost = 30e18;
