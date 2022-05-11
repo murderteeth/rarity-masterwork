@@ -82,7 +82,7 @@ export async function fakeGold() {
 
 export async function fakeRandom() {
   const result = await smock.fake<IRarityCodexBaseRandom2>('contracts/codex/codex-base-random-2.sol:codex', { 
-    address: '0x1380be70F96D8Ce37f522bDd8214BFCc1FeC8E18'
+    address: '0x0000000000000000000000000000000000000012'
   })
   result.dn.returns(1)
   return result

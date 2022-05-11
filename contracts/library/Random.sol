@@ -4,7 +4,7 @@ pragma solidity 0.8.7;
 import "../interfaces/codex/IRarityCodexBaseRandom2.sol";
 
 library Random {
-  IRarityCodexBaseRandom2 constant RANDOM = IRarityCodexBaseRandom2(0x1380be70F96D8Ce37f522bDd8214BFCc1FeC8E18);
+  IRarityCodexBaseRandom2 constant RANDOM = IRarityCodexBaseRandom2(0x0000000000000000000000000000000000000012);
 
   function dn(
     uint seed_a,

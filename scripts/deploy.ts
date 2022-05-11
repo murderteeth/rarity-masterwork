@@ -8,6 +8,9 @@ async function main() {
   // await hre.run('clean')
   // await hre.run('compile')
 
+  const codex_base_random_2 = await (await ethers.getContractFactory('contracts/codex/codex-base-random-2.sol:codex')).deploy()
+  await codex_base_random_2.deployed()
+  console.log('📐 deploy codex/codex-base-random-2.sol', codex_base_random_2.address)
 
   const codex_crafting_skills = await (await ethers.getContractFactory('contracts/codex/codex-crafting-skills.sol:codex')).deploy()
   await codex_crafting_skills.deployed()
@@ -36,10 +39,12 @@ async function main() {
   await replace.replaceInFile({
     files: 'contracts/**/*.sol',
     from: [
+      new RegExp(devAddresses.codex_random_2, 'g'), 
       new RegExp(devAddresses.codex_weapons_2, 'g'), 
       new RegExp(devAddresses.codex_armor_2, 'g')
     ],
     to: [
+      codex_base_random_2.address, 
       codex_items_weapons_2.address, 
       codex_items_armor_2.address
     ]
@@ -260,6 +265,7 @@ async function main() {
   const addressFile = `./addresses.${network.name}.json`
 
   await fs.writeFile(addressFile, JSON.stringify({
+    codex_base_random_2: codex_base_random_2.address,
     codex_crafting_skills: codex_crafting_skills.address,
     codex_items_armor_2: codex_items_armor_2.address,
     codex_items_armor_masterwork: codex_items_armor_masterwork.address,
@@ -289,11 +295,7 @@ async function main() {
   }, null, '\t'))
   console.log('📝 write deployed addresses to ', addressFile)
 
-  if(network.name === 'mainnet') {
-    shell.exec('git commit -a -m "💥 Deploy mainnet"')
-  } else {
-    shell.exec('git checkout contracts/*')
-  }
+  shell.exec('git checkout contracts/*')
 
   console.log('\n\n💥 deployed!!\n\n')
 }
