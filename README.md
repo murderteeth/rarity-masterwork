@@ -2,7 +2,50 @@
 
 Masterwork is a new crafting level for Rarity players and builders. Like Rarity's first crafting level, masterwork contains a crafting station and a dungeon. Use the masterwork crafting station to create masterwork weapons, armor, and tools. Defeat monsters in the dungeon for loot that speeds up crafting at the crafting station.
 
-Masterwork is an expansion of the original Rarity core created by Andre Cronje, et al in September 2021. It continues the vision of a free-to-mint, permissionless, d20 implementation in solidity.
+Masterwork is an expansion of the original Rarity core created by Andre Cronje, et al in September 2021. It continues the vision of an open, free-to-mint, d20 implementation in solidity.
+
+
+#### masterwork addresses
+| Name         | Address                                                                                                              |
+| :----------- | :------------------------------------------------------------------------------------------------------------------- |
+| rarity_adventure_2 | [0x5aBCE96F636fd95F38AC018Af920343E612c4B6f](https://ftmscan.com/address/0x5aBCE96F636fd95F38AC018Af920343E612c4B6f) |
+| AdventureUri | [0xc80f24c8e6be1a8f861e7185e88C0b686A403ad2](https://ftmscan.com/address/0xc80f24c8e6be1a8f861e7185e88C0b686A403ad2) |
+| rarity_crafting_masterwork | [0xd079F3e5c8c9384F7d35e8e74917ba5619423d23](https://ftmscan.com/address/0xd079F3e5c8c9384F7d35e8e74917ba5619423d23) |
+| MasterworkUri | [0x0B492b5f1A0fe8443e55C01D9B6814007CE7B374](https://ftmscan.com/address/0x0B492b5f1A0fe8443e55C01D9B6814007CE7B374) |
+| rarity_crafting_materials_2 | [0xc043EdfDcE0B695F22f5A8a6C1f12B121E008c9a](https://ftmscan.com/address/0xc043EdfDcE0B695F22f5A8a6C1f12B121E008c9a) |
+| rarity_crafting_skills | [0xf78c4A6e4F5fFE7b73d1c68B025540eBe5aE5743](https://ftmscan.com/address/0xf78c4A6e4F5fFE7b73d1c68B025540eBe5aE5743) |
+| rarity_equipment_2 | [0x8aB109B94e4CDB189a88bE307Dc7315b3ac63420](https://ftmscan.com/address/0x8aB109B94e4CDB189a88bE307Dc7315b3ac63420) |
+
+
+#### library addresses
+| Name         | Address                                                                                                              |
+| :----------- | :------------------------------------------------------------------------------------------------------------------- |
+| Attributes | [0x6d1Da43409B3034a2cCE965C4EC0a73a0cB3EA50](https://ftmscan.com/address/0x6d1Da43409B3034a2cCE965C4EC0a73a0cB3EA50) |
+| Combat | [0x08281c577d6feC452Bd51E12f1488Ed6E151B154](https://ftmscan.com/address/0x08281c577d6feC452Bd51E12f1488Ed6E151B154) |
+| Crafting | [0x0b122858e3F88F6f77347b3845EB7f4eb2336cC0](https://ftmscan.com/address/0x0b122858e3F88F6f77347b3845EB7f4eb2336cC0) |
+| CraftingSkills | [0xAc20f3940EE492ec18eD32eF203Bc105dD54b4B4](https://ftmscan.com/address/0xAc20f3940EE492ec18eD32eF203Bc105dD54b4B4) |
+| Feats | [0xDFAA97Dc6d9a7fE5f5e23F514f2f9B3C27056FdD](https://ftmscan.com/address/0xDFAA97Dc6d9a7fE5f5e23F514f2f9B3C27056FdD) |
+| Monster | [0x57ceC704399d0A0f7abd766FE4Bd25cf93ab3f4d](https://ftmscan.com/address/0x57ceC704399d0A0f7abd766FE4Bd25cf93ab3f4d) |
+| Proficiency | [0xd9342F5e77560feab98DA19166E1743749b0Bd6A](https://ftmscan.com/address/0xd9342F5e77560feab98DA19166E1743749b0Bd6A) |
+| Random | [0xBA8061587A867C7b41b130E3d79f725Fd668D7E0](https://ftmscan.com/address/0xBA8061587A867C7b41b130E3d79f725Fd668D7E0) |
+| Rarity | [0x7dd4D96A6c2236114eC5e2aADc8706ea39304746](https://ftmscan.com/address/0x7dd4D96A6c2236114eC5e2aADc8706ea39304746) |
+| Roll | [0xd530308acc247FFA4ad9dc2A1a8d235d4c3c31ec](https://ftmscan.com/address/0xd530308acc247FFA4ad9dc2A1a8d235d4c3c31ec) |
+| Skills | [0x3f9B837247cE11824b8cb4275483949319bBD748](https://ftmscan.com/address/0x3f9B837247cE11824b8cb4275483949319bBD748) |
+| Summoner | [0x234b19Fe7421a4D54D07ef26cdbcDbEc7286970d](https://ftmscan.com/address/0x234b19Fe7421a4D54D07ef26cdbcDbEc7286970d) |
+
+
+#### codex addresses
+| Name         | Address                                                                                                              |
+| :----------- | :------------------------------------------------------------------------------------------------------------------- |
+| base_random_2 | [0xCdf408Fc20f8Ea1AE841e3F68917e1eb06Aa1e3f](https://ftmscan.com/address/0xCdf408Fc20f8Ea1AE841e3F68917e1eb06Aa1e3f) |
+| crafting_skills | [0x808a03077aFc92B193fFb0b801956E416CCb2211](https://ftmscan.com/address/0x808a03077aFc92B193fFb0b801956E416CCb2211) |
+| items_armor_2 | [0x687A67129e33A7356748CbeeBe5Edf499ca4CEa2](https://ftmscan.com/address/0x687A67129e33A7356748CbeeBe5Edf499ca4CEa2) |
+| items_armor_masterwork | [0x6e142110a670ee481945CBeD1D2E28a9F1fea48f](https://ftmscan.com/address/0x6e142110a670ee481945CBeD1D2E28a9F1fea48f) |
+| items_tools | [0x990e4b2538CF58FF6031cf04738eC99D46Ca3649](https://ftmscan.com/address/0x990e4b2538CF58FF6031cf04738eC99D46Ca3649) |
+| items_tools_masterwork | [0x5ac39ce62ADe96825011240d3Ff5e869F0391D26](https://ftmscan.com/address/0x5ac39ce62ADe96825011240d3Ff5e869F0391D26) |
+| items_weapons_2 | [0xE333649CC2E9e122F83B77Dc367D3eF02a85eDaF](https://ftmscan.com/address/0xE333649CC2E9e122F83B77Dc367D3eF02a85eDaF) |
+| items_weapons_masterwork | [0xa0aBe56589d80B7A6D88702948c60cb901D8A27b](https://ftmscan.com/address/0xa0aBe56589d80B7A6D88702948c60cb901D8A27b) |
+
 
 ### So what?
 
@@ -22,12 +65,11 @@ Masterwork items are exceptional. They are made so well that you get a bonus whe
 
 ### Now what?
 
-This git repo contains all the source code and tooling used to build and test Masterwork. Use it as a reference or template for integrating masterwork and other d20 mechanics with your game.
+This repo contains all source code and tooling used to build and test Masterwork. Use it as a reference or template for integrating masterwork and other d20 mechanics with your game.
 
 ## Contents
 
 - [Get started](#get-started)
-- [Additions to Rarity Core](#additions-to-rarity-core)
 - [Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools](#rarity-crafting-2---masterwork-weapons-armor-and-tools)
 - [Rarity Adventure 2 - Monsters in the Barn](#rarity-adventure-2---monsters-in-the-barn)
 - [Rarity Core Library](#rarity-core-library)
@@ -48,31 +90,6 @@ npx hardhat compile
 yarn test
 ```
 
-## Additions to Rarity Core
-
-contracts/
-
-- codex/
-  - [codex-crafting-skills.sol](contracts/codex/codex-crafting-skills.sol)
-  - [codex-items-armor-2.sol](contracts/codex/codex-items-armor-2.sol)
-  - [codex-items-armor-masterwork.sol](contracts/codex/codex-items-armor-masterwork.sol)
-  - [codex-items-tools.sol](contracts/codex/codex-items-tools.sol)
-  - [codex-items-tools-masterwork.sol](contracts/codex/codex-items-tools-masterwork.sol)
-  - [codex-items-weapons-2.sol](contracts/codex/codex-items-weapons-2.sol)
-  - [codex-items-weapons-masterwork.sol](contracts/codex/codex-items-weapons-masterwork.sol)
-- core/
-  - [rarity_adventure_2.sol](contracts/core/rarity_adventure_2.sol)
-  - [rarity_crafting-materials-2.sol](contracts/core/rarity_crafting-materials-2.sol)
-  - [rarity_crafting_common_wrapper.sol](contracts/core/rarity_crafting_common_wrapper.sol)
-  - [rarity_crafting_masterwork.sol](contracts/core/rarity_crafting_masterwork.sol)
-  - [rarity_crafting_skills.sol](contracts/core/rarity_crafting_skills.sol)
-- [interfaces/\*](contracts/interfaces/)
-- [library/\*](contracts/library/)
-
-### codex-items-weapons-2 and codex-items-armor-2
-
-The original weapons and armor codexes were missing several item descriptions. The new versions have descriptions for every item. In addition, the weapons codex was upgraded to use a Weapon struct.
-
 ## Rarity Crafting 2 - Masterwork Weapons, Armor, and Tools
 
 Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Create masterwork items like this:
@@ -80,8 +97,6 @@ Masterwork items, like common items, are minted to your wallet as standard ERC72
 - Start a masterwork project
 - Make craft checks until the item is finished
 - Complete the project
-
-The mechanic allows multiple summoners to participate in the crafting of the same item. For example, you can have one summoner pay for the project's raw materials, have many different summoners make craft checks, then choose a totally different summoner to complete the project and have the new item minted in their name.
 
 ### Walkthrough
 
@@ -106,7 +121,7 @@ cost += await masterwork.COMMON_ARTISANS_TOOLS_RENTAL();
 await gold.approve(summoner, await masterwork.APPRENTICE(), cost);
 ```
 
-2. Once your gold is approved start a new project like this:
+2. Next, start a new project:
 
 ```ts
 await masterwork.start(summoner, baseType.weapon, weaponType.longsword, 0);
@@ -121,22 +136,22 @@ await masterwork.start(summoner, baseType.weapon, weaponType.longsword, <masterw
 Calling `start` does this
 
 - Transfer appropriate project costs, in gold, from `summoner` to `masterwork.APPRENTICE()`
-- If supplied, transfer your masterwork artisan's tools to the contract
-- Mints a new masterwork ERC721 token to your wallet representing the project and, eventually, the masterwork item
+- Transfer your masterwork artisan's tools to the contract (optional)
+- Mints a new masterwork ERC721 token to your wallet representing the project
 
-Get current project details like this:
+Get project status like this:
 
 ```ts
 const project = await this.masterwork.projects(masterworkToken);
 ```
 
-At anytime, before the masterwork item is complete, you can cancel a project and reclaim your masterwork artisan's tools (if supplied):
+At anytime, before the masterwork item is complete, you can cancel a project and reclaim your masterwork artisan's tools:
 
 ```ts
 await masterwork.cancel(masterworkToken);
 ```
 
-3. After the project is started, select summoners and make craft checks:
+3. Start crafting:
 
 ```ts
 await masterwork.craft(masterworkToken, summoner, 0);
@@ -159,8 +174,8 @@ Calling `craft` does this
   - add `summoner` intelligence modifier
   - add `summoner` specialty crafting ranks appropriate for weapons or armor
   - or if crafting masterwork tools, add `summoner` base crafting skill ranks (no specialty required)
-- If the score is equal or higher the item's DC (difficulty class), the check succeeds and the score is added to the project's total progress in exchange for `summoner`'s experience points. If your score is high enough to complete the project, `summoner` pays a prorated amount of XP. The XP cost of making a craft check is otherwise one day's XP, or 250 XP.
-- If the craft check score is less than the item's DC, the check fails, no progress is made, and one day's XP is burned (250 XP)
+- If the score is equal or higher the item's DC (difficulty class), the check succeeds and the score is added to the project's total progress in exchange for `summoner`'s experience points. If your score is high enough to complete the project, `summoner` pays a prorated amount of XP. The XP cost of making a craft check is otherwise one day's work, or 250 XP.
+- If the craft check score is less than the item's DC, the check fails, no progress is made, and one day's XP is spent
 
 Check the progress of a project:
 
@@ -182,7 +197,7 @@ const estimate = await masterwork.estimate_remaining_xp_cost(
 console.log("estimate", ethers.utils.formatEther(estimate));
 ```
 
-Get a summoner's odds of succeeding the current craft check:
+Get a summoner's odds of succeeding the next craft check:
 
 ```ts
 const [average_score, dc] = await masterwork.get_craft_check_odds(
@@ -193,21 +208,21 @@ const [average_score, dc] = await masterwork.get_craft_check_odds(
 const odds = average_score / dc;
 ```
 
-4. When crafting is done ,`project.done_crafting`, complete the project:
+4. When crafting is done,`project.done_crafting`, complete the project:
 
 ```ts
-await masterwork.complete(masterworkToken, summoner);
+await masterwork.complete(masterworkToken);
 ```
 
 Calling `complete` does this
 
 - Configures your token's masterwork item properties making the item useable in rarity games
-- Transfer your masterwork artisan's tools back to your wallet (if specified during project start)
+- Transfer your masterwork artisan's tools back to your wallet (if specified at project start)
 - Marks the project complete
 
 ### Tracking craft events
 
-Each craft attempt emits a `Craft` event containing the craft check result, spent mats, spent xp, and crafting progress. Handy for showing a crafting log.
+Each craft attempt emits a `Craft` event containing the craft check result, spent mats, spent xp, and crafting progress. 
 
 ### Crafting Specializations
 
@@ -219,7 +234,7 @@ Masterwork weapons and armor require summoner's to take up specialized crafting 
 - Trapmaking (for future expansion)
 - Weaponsmithing
 
-Specialized skills are managed with the `rarity_crafting_skills` contract which works just like the existing core skills contract. For example, raise a summoner's weaponsmithing specialization like this:
+Specialized skills are managed with the `rarity_crafting_skills` contract which works like the existing core skills contract. For example, raise a summoner's weaponsmithing specialization like this:
 
 ```ts
 const craftingSkills = await craftingSkills.get_skills(summoner);
@@ -241,7 +256,7 @@ You can also craft the following masterwork tools, found in the [masterwork tool
 
 **Masterwork Multitool** - This well-made item is the perfect tool for the job. It grants a +2 circumstance bonus on a related skill check (if any). Bonuses provided by multiple masterwork items used toward the same skill check do not stack.
 
-A codex for common tools, [codex-items-tools.sol](/contracts/codex/codex-items-tools.sol) has also been provided for future expansion.
+A codex a common tools, [codex-items-tools.sol](/contracts/codex/codex-items-tools.sol), is also available for future expansion.
 
 ### Crafting difficulty class
 
@@ -255,10 +270,11 @@ Most projects will require more than one craft check. As you make craft checks e
 
 - S<sub>t</sub> = total score
 - C<sub>s</sub> = the cost of a common version of the item being crafted, priced in silver
+- score = current craft score
 - DC<sub>s</sub> = the difficulty class of the item being crafted (aka, the standard component)
 - DC<sub>m</sub> = the difficulty class of the item's masterwork component (always 20)
 
-Progress is then computed as the ratio of your total score to the cost of the masterwork item, priced in silver:
+Progress is then computed as the ratio of your total score to the cost of the masterwork item priced in silver:
 
 ![image](https://user-images.githubusercontent.com/89237203/164949319-35010474-17e8-4bf2-a2c2-010115d76f8e.png)
 
@@ -293,7 +309,31 @@ Monsters in the Barn is designed to be challenging for summoners level 1 through
 
 ### Walkthrough
 
-1. Start a new Monsters in the Barn adventure by selecting a summoner and calling `start`:
+1. These monsters will be tough. Send strong summoners, equip them well. Masterwork includes the `rarity_equipment_2` contract for equipping both common and masterwork weapons and armor. Equipment2 was adapted from (Rarity Extended's equipment system)[https://github.com/Rarity-Extended/rarity_extended_lib/blob/main/contracts/extensions/rarity_extended_equipement/RARITYEXTENDEDEQUIPEMENT.md], but only supports one weapon, armor, and a shield. Use it like this:
+
+```ts
+// first, approve the equipment contract to transfer your items
+await masterwork.approve(equipment2.address, masterworkLongswordId)
+await masterwork.approve(equipment2.address, masterworkFullPlateArmorId)
+await masterwork.approve(equipment2.address, masterworkShieldId)
+
+// equip each item, 1 = weapon, 2 = armor, 3 = shield
+await equipment2.equip(summoner, 1, masterwork.address, masterworkLongswordId)
+await equipment2.equip(summoner, 2, masterwork.address, masterworkFullPlateArmorId)
+await equipment2.equip(summoner, 3, masterwork.address, masterworkShieldId)
+```
+
+Equipping an item transfers it into the equipment contract. When the item is unequipped, the item is returned to your wallet:
+
+```ts
+await equipment2.unequip(summoner, 1)
+await equipment2.unequip(summoner, 2)
+await equipment2.unequip(summoner, 3)
+```
+
+Players may also choose to fight unarmed and/or unarmored. This is only recommended for Monks, however, who receive attack and armor bonuses [per d20](https://www.d20srd.org/srd/classes/monk.htm).
+
+2. Start a new Monsters in the Barn adventure by calling `start`:
 
 ```ts
 await barnAdventure.start(summoner);
@@ -304,7 +344,7 @@ Calling `start` does this
 - Transfer `summoner` to the adventure contract
 - Mints a new ERC721 token to your wallet representing the adventure
 
-Get current adventure status like this:
+Get adventure status like this:
 
 ```ts
 const adventure = await barnAdventure.adventures(adventureToken);
@@ -315,34 +355,6 @@ At anytime you can end the adventure and reclaim your summoner:
 ```ts
 await barnAdventure.end(adventureToken);
 ```
-
-2. Your summoner is now standing outside the barn. Before they enter, equip them with weapons and armor like this:
-
-```ts
-// equipment slots: 0 = weapons, 1 = armor, 2 = shields
-await barnAdventure.equip(
-  adventureToken,
-  0,
-  longswordToken,
-  longswordContractAddress
-);
-await barnAdventure.equip(adventureToken, 1, armorToken, armorContractAddress);
-await barnAdventure.equip(
-  adventureToken,
-  2,
-  shieldToken,
-  shieldContractAddress
-);
-```
-
-Note that the last parameter is the address of the crafting contract that issues a given item token. Monsters in the Barn accepts weapons and armor from these two contracts:
-
-- [common items wrapper](contracts/core/rarity_crafting_common_wrapper.sol)
-- [masterwork items](contracts/core/rarity_crafting_masterwork.sol)
-
-The common items wrapper makes it easy for the adventure contract to handle common and masterwork items through the same interfaces.
-
-Players may also choose to fight unarmed and/or unarmored. This is only recommended for Monks, however, who receive attack and armor bonuses [per d20](https://www.d20srd.org/srd/classes/monk.htm).
 
 3. Enter the barn..
 
@@ -363,7 +375,7 @@ Get the current turn order like this:
 const turnOrder = await barnAdventure.turn_orders(adventureToken);
 ```
 
-Where `turnOrder` is an array containing tokenIds for summoners and monsters. Monster tokenIds are internal to the adventure contract.
+Where `turnOrder` is an array containing tokenIds for summoners and monsters. Monster tokens are intrinsic to your adventure and cannot be transferred individually.
 
 Get the combat's current turn index like this:
 
@@ -411,7 +423,7 @@ await barnAdventure.is_combat_over(adventureToken);
 await barnAdventure.flee(adventureToken);
 ```
 
-Fleeing doesn't do anything special beside set the combat to over. It's provided more for narrative "flavor". You can also simply `end` the entire adventure whenever you like.
+Fleeing doesn't do anything special beside set the combat to over. But it's provided for narrative flavor and is reflected in the adventure token's URI. You can also simply `end` the entire adventure whenever you like.
 
 6. Victory !!
    To win the dungeon your summoner must defeat all the monsters. If you are victorious, run an optional search check for a loot bonus on the monsters' salvage:
@@ -439,7 +451,7 @@ Claim barn salvage mats for victory in the barn. These mats are redeemable at 10
 
 ### Tracking combat events
 
-Each attack emits an `Attack` event containing attacker, defender, and attack results. Handy for showing a combat log.
+Each attack emits an `Attack` event containing attacker, defender, and attack results.
 
 ### Combat mechanics
 
@@ -463,7 +475,7 @@ The following d20 monsters were chosen for both their CRs and their simple attac
 
 Masterwork's crafting and dungeon mechanics are complex. For sanity's sake we started a [rarity core solidity library](https://github.com/murderteeth/rarity-masterwork/tree/main/contracts/library) to abstract everything a builder needs to create their own d20 adventures.
 
-Consider the library's combat system. The combat system lets any character attack any other character using d20 rules to compute the outcome. It does this by requiring that each fighter be adapted to a standard `Combatant` struct. This allows the combat system to run d20 combat rules against a common interface and enables summoner vs monster and summoner vs summoner combat.. it also enables monster vs monster and, in theory, general nft vs nft.
+Consider the library's combat system. The combat system lets any character attack any other character using d20 rules to compute the outcome. It does this by requiring that each fighter be adapted to a standard `Combatant` struct. This allows the combat system to run d20 combat rules against a common interface and enables summoner vs monster and summoner vs summoner combat.. it also enables monster vs monster and, in theory, any nft vs any nft.
 
 Check out the `Combatant` stuct:
 
@@ -502,67 +514,56 @@ Helper functions for packing and unpacking the `attacks` array live in the [Comb
 Monsters in the Barn implements summoner vs monster combat. To adapt summoners and monsters to the `Combatant` struct it uses these two functions:
 
 ```solidity
-function summoner_combatant(uint256 token, uint256 summoner)
-  internal
-  returns (Combat.Combatant memory combatant)
-{
-  (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(summoner);
-  emit RollInitiative(msg.sender, token, initiative_roll, initiative_score);
+function summoner_combatant(
+  uint256 summoner,
+  Equipment.Slot[3] memory loadout
+) public view returns (Combat.Combatant memory combatant) {
+  (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(
+    summoner
+  );
 
-  Equipment.Slot memory weapon_slot = equipment_slots[token][
-    EQUIPMENT_TYPE_WEAPON
-  ];
-  Equipment.Slot memory armor_slot = equipment_slots[token][
-    EQUIPMENT_TYPE_ARMOR
-  ];
-  Equipment.Slot memory shield_slot = equipment_slots[token][
-    EQUIPMENT_TYPE_SHIELD
-  ];
+  Equipment.Slot memory weapon_slot = loadout[0];
+  Equipment.Slot memory armor_slot = loadout[1];
+  Equipment.Slot memory shield_slot = loadout[2];
 
-  combatant.mint = address(RARITY);
+  combatant.mint = address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
   combatant.token = summoner;
   combatant.initiative_roll = initiative_roll;
   combatant.initiative_score = initiative_score;
-  combatant.hit_points = int16(uint16(Summoner.hit_points(summoner)));
-  combatant.armor_class = Summoner.armor_class(
-    summoner,
-    armor_slot,
-    shield_slot
-  );
-  combatant.attacks = Summoner.attacks(
+  combatant.hit_points = int16(uint16(hit_points(summoner)));
+  combatant.armor_class = armor_class(summoner, armor_slot, shield_slot);
+  combatant.attacks = attacks(
     summoner,
     weapon_slot,
     armor_slot,
     shield_slot
   );
 }
+```
 
-function monster_combatant(Monster.MonsterCodex memory monster_codex)
-  internal
-  returns (Combat.Combatant memory combatant)
-{
-  monster_spawn[next_monster] = monster_codex.id;
-
+```solidity
+function monster_combatant(
+  uint256 token,
+  address mint,
+  Monster.MonsterCodex memory monster_codex
+) public view returns (Combat.Combatant memory combatant) {
   (uint8 initiative_roll, int8 initiative_score) = Roll.initiative(
-    next_monster,
+    token,
     Attributes.compute_modifier(monster_codex.abilities[1]),
     monster_codex.initiative_bonus
   );
 
-  combatant.mint = address(this);
-  combatant.token = next_monster;
+  combatant.mint = mint;
+  combatant.token = token;
   combatant.initiative_roll = initiative_roll;
   combatant.initiative_score = initiative_score;
-  combatant.hit_points = Monster.hit_points(monster_codex, next_monster);
+  combatant.hit_points = standard_hit_points(monster_codex);
   combatant.armor_class = monster_codex.armor_class;
   combatant.attacks = monster_codex.attacks;
-
-  next_monster += 1;
 }
-
 ```
 
-Note the use of another struct from the `Combat` library, `EquipmentSlot`, and several functions from the `Roll`, `Summoner`, and `Monster` libraries to make adapting the Combatant struct easy. With those adapters in place Monsters in the Barn can run an attack like this:
+Note the use of the `Equipment.Slot` stuct and several functions from the `Roll`, `Summoner`, and `Monster` libraries to make adapting the Combatant struct easy. With those adapters in place Monsters in the Barn can run an attack like this:
 
 ```solidity
 (bool hit, uint8 roll, int8 score, uint8 critical_confirmation, uint8 damage, uint8 damage_type)
@@ -571,52 +572,56 @@ Note the use of another struct from the `Combat` library, `EquipmentSlot`, and s
 
 ## How to use masterwork items in your game
 
-The key feature of a masterwork longsword is the +1 attack bonus it grants its wielder. The masterwork contract exposes these special features through the `IEffects` interface found in the [Effects library](contracts/library/Effects.sol). In the case of a longsword, you can simply query its attack bonus like this:
+The key feature of a masterwork longsword is the +1 attack bonus it grants its wielder. Masterwork introduces a series of extensions to the original Rarity codexes that include these bonuses. In the simplest case, you can query an item's codex directly for a bonus like this:
 
 ```solidity
-int8 attack_bonus = masterwork.attack_bonus(longswordToken);
+int8 longsword_attack_bonus = masterwork_weapons_codex.get_attack_bonus(longswordToken);
 ```
 
-In your game you probably want to support masterwork and common items side-by-side. But the common items contract doesn't support `IEffects` and reverts if you try to call any IEffects functions. You could use branching logic, but that won't scale as you consider new item contracts in the future. Monsters in the Barn had this problem. So the library was updated to use both common and masterwork items by talking to the common items contract through a [wrapper contract](contracts/core/rarity_crafting_common_wrapper.sol) that implements the same `IEffects` interface used by masterwork.
+Another option is to let the core library do it for you by using the `Equipment.Slot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure_2.sol) is implemented. 
 
-Back to the masterwork longsword. If you want to compute the correct attack bonus for your summoner you now have two options:
-
-- Call `masterwork.attack_bonus(longswordToken)` directly and add some branching logic for common longswords
-- Use the common item contract wrapper so that you can call `IEffects` functions on either contract
-
-Another option is to let the library do it for you by using the `EquipmentSlot` and `Combatant` structs. This is how [Monsters in the Barn](contracts/core/rarity_adventure_2.sol) is implemented. For example, consider the contract's `preview` function:
+For example, consider the Summoner library's `preview` function:
 
 ```solidity
 function preview(
   uint256 summoner,
-  uint256 weapon,
-  address weapon_contract,
-  uint256 armor,
-  address armor_contract,
-  uint256 shield,
-  address shield_contract
+  address weapon_mint,
+  uint256 weapon_token,
+  address armor_mint,
+  uint256 armor_token,
+  address shield_mint,
+  uint256 shield_token
 ) public view returns (Combat.Combatant memory result) {
-  Equipment.Slot memory weapon_slot = Equipment.Slot(weapon_contract, weapon);
-  Equipment.Slot memory armor_slot = Equipment.Slot(armor_contract, armor);
-  Equipment.Slot memory shield_slot = Equipment.Slot(shield_contract, shield);
+  Equipment.Slot memory weapon_slot = Equipment.Slot(
+    weapon_mint,
+    weapon_token
+  );
+  Equipment.Slot memory armor_slot = Equipment.Slot(
+    armor_mint,
+    armor_token
+  );
+  Equipment.Slot memory shield_slot = Equipment.Slot(
+    shield_mint,
+    shield_token
+  );
+
   result.token = summoner;
-  result.mint = address(RARITY);
-  result.hit_points = int16(uint16(Summoner.hit_points(summoner)));
-  result.armor_class = Summoner.armor_class(summoner, armor_slot, shield_slot);
-  result.attacks = Summoner.attacks(
+  result.mint = address(Rarity.RARITY);
+  result.hit_points = int16(uint16(hit_points(summoner)));
+  result.armor_class = armor_class(summoner, armor_slot, shield_slot);
+  result.attacks = attacks(
     summoner,
     weapon_slot,
     armor_slot,
     shield_slot
   );
 }
-
 ```
 
 The preview function can be used by a client to see the effects of equipping an item before actually equipping it. Clients can call preview like this:
 
 ```ts
-const preview = await this.adventure.preview(
+const preview = await summonerLibrary.preview(
   fighter,
   longsword,
   crafting.masterwork.address,
@@ -629,6 +634,10 @@ const fullPrimaryAttackBonus = unpackAttacks(preview.attacks)[0].attack_bonus;
 ```
 
 `unpackAttacks` is a utility provided [here](test/util/index.ts).
+
+### codex-items-weapons-2 and codex-items-armor-2
+
+Masterwork extends the original weapons and armor codexes to expose bonus effects. Several missing item descriptions were also filled in. And the "axe" in the original codex has been clarified, making it clear it's a throwing axe.
 
 ## Testing
 
@@ -691,16 +700,20 @@ Please join me and say thanks to these great folks:
 
 ### Hrunting
 
-Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity. Hrunting gave critical input on the design of Monsters in the Barn and was first to point out that Rarity needs masterwork crafting before magic crafting.
+Hrunting is a table-top DM guru and has been advising on how to adapt d20 to solidity. Hrunting gave critical input on the design of Monsters in the Barn and was first to point out that Rarity needs a masterwork crafting level.
 
 ### [zgohr](https://github.com/zgohr), creator of [Rarity Homestead](https://rarityhomestead.com/)
 
-Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing direction and insights in addition to code.
+Homestead wrote the first draft of the masterwork dungeon and core library. This was a challenging task and Homestead delivered, contributing many insights in addition to code.
+
+### [Patrician](https://twitter.com/SAlgotrader), of [CryptoShuraba](https://www.metaland.game/) and [RarityFoundation](https://twitter.com/RarityNonProfit)
+Patrician reviewed masterwork, challenged all the questionable choices, and provided actionable insights from a DM's perspective. He's also been great at raising awareness of both masterwork and Rarity as a whole.
 
 ### [RarityExtended](https://rarityextended.com/)
 
-The Extended team kindly reviewed and gave feedback on masterwork. Masterwork also borrows some great ideas from Extended's [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib).
+Masterwork borrows some great ideas from Extended's [Rarity Extended Lib](https://github.com/Rarity-Extended/rarity_extended_lib). The Extended team also reviewed masterwork and has been providing invaluable guidance since Rarity started last year.
+
 
 ### [CryptoShuraba](https://www.metaland.game/)
 
-The Shuraba team also gave a review and great feedback on masterwork. In addtion, they generously granted the project 1300 MST.
+The Shuraba team also gave a review to masterwork. In addtion, they generously granted the project 1300 MST, no strings.
