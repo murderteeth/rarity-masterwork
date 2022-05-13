@@ -1,0 +1,137 @@
+{
+  "codex_base_random_2": { 
+    "address": "0xCdf408Fc20f8Ea1AE841e3F68917e1eb06Aa1e3f",
+    "contract": "contracts/codex/codex-base-random-2.sol:codex",
+    "verified": true
+  },
+  "codex_crafting_skills": { 
+    "address": "0x808a03077aFc92B193fFb0b801956E416CCb2211",
+    "contract": "contracts/codex/codex-crafting-skills.sol:codex",
+    "verified": true
+  },
+  "codex_items_armor_2": { 
+    "address": "0x687A67129e33A7356748CbeeBe5Edf499ca4CEa2",
+    "contract": "contracts/codex/codex_items_armor_2:codex",
+    "verified": true
+  },
+  "codex_items_armor_masterwork": { 
+    "address": "0x6e142110a670ee481945CBeD1D2E28a9F1fea48f",
+    "contract": "contracts/codex/codex-items-armor-masterwork.sol:codex",
+    "verified": true
+  },
+  "codex_items_tools": { 
+    "address": "0x990e4b2538CF58FF6031cf04738eC99D46Ca3649",
+    "contract": "contracts/codex-items-tools.sol:codex",
+    "verified": true
+  },
+  "codex_items_tools_masterwork": { 
+    "address": "0x5ac39ce62ADe96825011240d3Ff5e869F0391D26",
+    "contract": "contracts/codex/codex-items-tools-masterwork.sol:codex",
+    "verified": true
+  },
+  "codex_items_weapons_2": { 
+    "address": "0xE333649CC2E9e122F83B77Dc367D3eF02a85eDaF",
+    "contract": "contracts/codex/codex-items-weapons-2:codex",
+    "verified": true
+  },
+  "codex_items_weapons_masterwork": { 
+    "address": "0xa0aBe56589d80B7A6D88702948c60cb901D8A27b",
+    "contract": "contracts/codex/codex-items-weapons-masterwork.sol:codex",
+    "verified": true
+  },
+  "library_attributes": { 
+    "address": "0x6d1Da43409B3034a2cCE965C4EC0a73a0cB3EA50",
+    "contract": "contracts/library/Attributes.sol:Attributes",
+    "verified": true
+  },
+  "library_combat": { 
+    "address": "0x08281c577d6feC452Bd51E12f1488Ed6E151B154",
+    "contract": "contracts/library/Combat.sol:Combat",
+    "verified": true
+  },
+  "library_crafting": { 
+    "address": "0x0b122858e3F88F6f77347b3845EB7f4eb2336cC0",
+    "contract": "contracts/library/Crafting.sol:Crafting",
+    "verified": true
+  },
+  "library_crafting_skills": { 
+    "address": "0xAc20f3940EE492ec18eD32eF203Bc105dD54b4B4",
+    "contract": "contracts/library/CraftingSkills.sol:CraftingSkills",
+    "verified": true
+  },
+  "library_feats": { 
+    "address": "0xDFAA97Dc6d9a7fE5f5e23F514f2f9B3C27056FdD",
+    "contract": "contracts/library/Feats.sol:Feats",
+    "verified": true
+  },
+  "library_proficiency": { 
+    "address": "0xd9342F5e77560feab98DA19166E1743749b0Bd6A",
+    "contract": "contracts/library/Proficiency.sol:Proficiency",
+    "verified": true
+  },
+  "library_random": { 
+    "address": "0xBA8061587A867C7b41b130E3d79f725Fd668D7E0",
+    "contract": "contracts/library/Random.sol:Random",
+    "verified": true
+  },
+  "library_rarity": { 
+    "address": "0x7dd4D96A6c2236114eC5e2aADc8706ea39304746",
+    "contract": "contracts/library/Rarity.sol:Rarity",
+    "verified": true
+  },
+  "library_roll": { 
+    "address": "0xd530308acc247FFA4ad9dc2A1a8d235d4c3c31ec",
+    "contract": "contracts/library/Roll.sol:Roll",
+    "verified": true
+  },
+  "library_skills": { 
+    "address": "0x3f9B837247cE11824b8cb4275483949319bBD748",
+    "contract": "contracts/library/Skills.sol:Skills",
+    "verified": true
+  },
+  "library_summoner": { 
+    "address": "0x234b19Fe7421a4D54D07ef26cdbcDbEc7286970d",
+    "contract": "contracts/library/Summoner.sol:Summoner",
+    "verified": true
+  },
+  "core_rarity_crafting_skills": { 
+    "address": "0xf78c4A6e4F5fFE7b73d1c68B025540eBe5aE5743",
+    "contract": "contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills",
+    "verified": true
+  },
+  "core_rarity_equipment_2": { 
+    "address": "0x8aB109B94e4CDB189a88bE307Dc7315b3ac63420",
+    "contract": "contracts/core/rarity_equipment_2.sol:rarity_equipment_2",
+    "verified": true
+  },
+  "library_monster": { 
+    "address": "0x57ceC704399d0A0f7abd766FE4Bd25cf93ab3f4d",
+    "contract": "contracts/library/Monster.sol:Monster",
+    "verified": true
+  },
+  "core_rarity_adventure_2": { 
+    "address": "0x5aBCE96F636fd95F38AC018Af920343E612c4B6f",
+    "contract": "contracts/core/rarity_adventure_2.sol:rarity_adventure_2",
+    "verified": true
+  },
+  "core_rarity_adventure_2_uri": { 
+    "address": "0xc80f24c8e6be1a8f861e7185e88C0b686A403ad2",
+    "contract": "contracts/core/rarity_adventure_2_uri.sol:AdventureUri",
+    "verified": true
+  },
+  "core_rarity_crafting_masterwork_uri": { 
+    "address": "0x0B492b5f1A0fe8443e55C01D9B6814007CE7B374",
+    "contract": "contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri",
+    "verified": true
+  },
+  "core_rarity_crafting_masterwork": { 
+    "address": "0xd079F3e5c8c9384F7d35e8e74917ba5619423d23",
+    "contract": "contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork",
+    "verified": true
+  },
+  "core_rarity_crafting_mats_2": { 
+    "address": "0xc043EdfDcE0B695F22f5A8a6C1f12B121E008c9a",
+    "contract": "contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2",
+    "verified": true
+  }
+}
