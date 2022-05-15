@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import { equipmentSlot, getDamageType } from '../../util'
-import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeMasterwork, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeGreatsword, fakeMasterworkProjects, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { Attributes__factory, Feats__factory, Monster__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
@@ -12,7 +12,7 @@ import { armors, weapons } from '../../util/equipment'
 import monsterCodex from '../../util/monster-codex.json'
 import { jumpOneDay, jumpOneMinute } from '../../util/jump'
 import devAddresses from '../../addresses.dev.json'
-import { AdventureUri__factory } from '../../typechain/core'
+import { adventure_uri__factory } from '../../typechain/core'
 
 async function getTurnOrder(fixture: any, adventureToken: any) {
   const turnOrder = []
@@ -79,7 +79,7 @@ async function logAttacks(fixture: any, adventureToken: any, tx: any) {
 }
 
 async function mockAdvenutreUri() {
-  return await(await smock.mock<AdventureUri__factory>('contracts/core/rarity_adventure_2_uri.sol:AdventureUri', {
+  return await(await smock.mock<adventure_uri__factory>('contracts/core/rarity_adventure_2_uri.sol:adventure_uri', {
     libraries: {
       Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
         libraries: {
@@ -100,10 +100,10 @@ async function mockAdvenutreUri() {
   })).deploy()
 }
 
-async function mockAdventure(adventureUri: any) {
+async function mockAdventure(adventure_uri: any) {
   return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
     libraries: {
-      AdventureUri: adventureUri.address,
+      adventure_uri: adventure_uri.address,
       Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
         libraries: {
           Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,
@@ -217,7 +217,7 @@ async function main() {
 
   const crafting = {
     common: await fakeCommonCrafting(),
-    masterwork: await fakeMasterwork()
+    masterwork: await fakeMasterworkProjects()
   }
 
   const equipment = await fakeEquipment()
@@ -247,8 +247,8 @@ async function main() {
   .whenCalledWith(armorType.heavyWoodShield)
   .returns(armors('shield, heavy wooden'))
 
-  const adventureUri = await mockAdvenutreUri()
-  const adventure = await mockAdventure(adventureUri)
+  const adventure_uri = await mockAdvenutreUri()
+  const adventure = await mockAdventure(adventure_uri)
 
   const summoner = fakeSummoner(core.rarity, signer)
 

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "../library/Codex.sol";
 import "../library/StringUtil.sol";
 
-library MasterworkUri {
+library masterwork_uri {
     ICodexSkills constant SKILLS_CODEX =
         ICodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
     ICodexWeapon constant WEAPONS_CODEX =
@@ -16,7 +16,6 @@ library MasterworkUri {
         ICodexTools(0x0000000000000000000000000000000000000006);
 
     struct Project {
-        bool done_crafting;
         bool complete;
         uint8 base_type;
         uint8 item_type;
@@ -51,7 +50,6 @@ library MasterworkUri {
     function project_uri(
         uint256 token,
         Project memory project,
-        Item memory item,
         uint256 m,
         uint256 n
     ) public pure returns (string memory) {
@@ -152,18 +150,6 @@ library MasterworkUri {
                 '" class="base">',
                 "started ",
                 StringUtil.toString(project.started),
-                "</text>"
-            )
-        );
-        y += 20;
-        svg = string(
-            abi.encodePacked(
-                svg,
-                '<text x="10" y="',
-                StringUtil.toString(y),
-                '" class="base">',
-                "ended ",
-                ended_string(project, item),
                 "</text>"
             )
         );
@@ -713,7 +699,6 @@ library MasterworkUri {
         returns (string memory)
     {
         if (project.complete) return "Complete";
-        if (project.done_crafting) return "Ready for completion";
         return "Crafting";
     }
 
@@ -733,18 +718,6 @@ library MasterworkUri {
     {
         return
             string(abi.encodePacked(StringUtil.toString((m * 100) / n), "%"));
-    }
-
-    function ended_string(Project memory project, Item memory item)
-        internal
-        pure
-        returns (string memory)
-    {
-        if (project.complete) {
-            return StringUtil.toString(item.crafted);
-        } else {
-            return "--";
-        }
     }
 
     function tools_bonus_svg_fragment(ITools.Tools memory tools, uint256 y)

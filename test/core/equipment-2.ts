@@ -1,9 +1,9 @@
 import chai, { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { ethers } from 'hardhat'
-import { fakeCommonCrafting, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity, fakeSummoner } from '../../util/fakes'
+import { fakeCommonCrafting, fakeFullPlateArmor, fakeGreatsword, fakeHeavyCrossbow, fakeHeavyWoodShield, fakeLongsword, fakeMasterworkItems, fakeRarity, fakeSummoner } from '../../util/fakes'
 import { RarityEquipment2__factory } from '../../typechain/core'
-import { Crafting__factory, Feats__factory, Proficiency__factory, Rarity__factory } from '../../typechain/library'
+import { Crafting__factory, Rarity__factory } from '../../typechain/library'
 import { equipmentSlot, randomId } from '../../util'
 import devAddresses from '../../addresses.dev.json'
 import { armorType, baseType, weaponType } from '../../util/crafting'
@@ -32,7 +32,7 @@ describe('Core: Equipment II', function () {
 
     this.crafting = {
       common: await fakeCommonCrafting(),
-      masterwork: await fakeMasterwork()
+      masterwork: await fakeMasterworkItems()
     }
 
     this.codex.common.weapons.item_by_id

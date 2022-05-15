@@ -9,7 +9,7 @@ import "../library/Equipment.sol";
 import "../library/Monster.sol";
 import "../library/StringUtil.sol";
 
-library AdventureUri {
+library adventure_uri {
     address constant RARITY =
         address(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
     IRarityEquipment constant EQUIPMENT =
@@ -356,7 +356,7 @@ library AdventureUri {
         new_y = y;
     }
 
-    function outside_dungeon(AdventureUri.Adventure memory adventure)
+    function outside_dungeon(adventure_uri.Adventure memory adventure)
         public
         pure
         returns (bool)
@@ -364,7 +364,7 @@ library AdventureUri {
         return !adventure.dungeon_entered && adventure.ended == 0;
     }
 
-    function en_combat(AdventureUri.Adventure memory adventure)
+    function en_combat(adventure_uri.Adventure memory adventure)
         public
         pure
         returns (bool)
@@ -375,7 +375,7 @@ library AdventureUri {
             adventure.ended == 0;
     }
 
-    function combat_over(AdventureUri.Adventure memory adventure)
+    function combat_over(adventure_uri.Adventure memory adventure)
         public
         pure
         returns (bool)
@@ -386,7 +386,7 @@ library AdventureUri {
             adventure.ended == 0;
     }
 
-    function ended(AdventureUri.Adventure memory adventure)
+    function ended(adventure_uri.Adventure memory adventure)
         public
         pure
         returns (bool)
@@ -394,7 +394,7 @@ library AdventureUri {
         return adventure.ended > 0;
     }
 
-    function victory(AdventureUri.Adventure memory adventure)
+    function victory(adventure_uri.Adventure memory adventure)
         public
         pure
         returns (bool)
@@ -403,7 +403,7 @@ library AdventureUri {
     }
 
     function fled(
-        AdventureUri.Adventure memory adventure,
+        adventure_uri.Adventure memory adventure,
         Combat.Combatant[] memory turn_order
     ) public pure returns (bool result) {
         if (
@@ -420,7 +420,7 @@ library AdventureUri {
     }
 
     function count_loot(
-        AdventureUri.Adventure memory adventure,
+        adventure_uri.Adventure memory adventure,
         Combat.Combatant[] memory turn_order,
         uint8[] memory monsters
     ) public view returns (uint256) {

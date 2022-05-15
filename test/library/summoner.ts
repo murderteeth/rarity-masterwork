@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { smock } from '@defi-wonderland/smock'
 import { enumberance, randomId, unpackAttacks } from '../../util'
 import { armorType, baseType, weaponType } from '../../util/crafting'
-import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRarity } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterworkItems, fakeMasterworkProjects, fakeRarity } from '../../util/fakes'
 import { ethers } from 'hardhat'
 import { Summoner__factory } from '../../typechain/library/factories/Summoner__factory'
 import { Attributes__factory, CraftingSkills__factory, Feats__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
@@ -21,7 +21,7 @@ describe('Library: Summoner', function () {
     this.rarity = await fakeRarity()
     this.attributes = await fakeAttributes()
     this.commonCrafting = await fakeCommonCrafting()
-    this.masterworkCrafting = await fakeMasterwork()
+    this.masterwork = { items: await fakeMasterworkItems() }
     this.equipment = await fakeEquipment()
 
     this.codex = {
@@ -80,7 +80,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(armorType.heavyWoodShield)
     .returns({...armors('shield, heavy wooden'), id: armorType.heavyWoodShield})
 
-    this.masterworkCrafting.items
+    this.masterwork.items.items
     .whenCalledWith(this.longsword)
     .returns([baseType.weapon, weaponType.longsword, 0, 0])
     this.codex.masterwork.weapons.item_by_id
@@ -90,7 +90,7 @@ describe('Library: Summoner', function () {
       id: weaponType.longsword
     })
 
-    this.masterworkCrafting.items
+    this.masterwork.items.items
     .whenCalledWith(this.fullPlate)
     .returns([baseType.armor, armorType.fullPlate, 0, 0])
     this.codex.masterwork.armor.item_by_id
@@ -115,11 +115,11 @@ describe('Library: Summoner', function () {
     .returns(this.codex.common.weapons.address)
 
     this.equipment.codexes
-    .whenCalledWith(this.masterworkCrafting.address, 2)
+    .whenCalledWith(this.masterwork.items.address, 2)
     .returns(this.codex.masterwork.armor.address)
 
     this.equipment.codexes
-    .whenCalledWith(this.masterworkCrafting.address, 3)
+    .whenCalledWith(this.masterwork.items.address, 3)
     .returns(this.codex.masterwork.weapons.address)
   })
 
@@ -223,7 +223,7 @@ describe('Library: Summoner', function () {
     .whenCalledWith(this.summoner)
     .returns(classes.bard)
 
-    const acp = await this.library.summoner._armor_check_penalty_wrapper(this.summoner, this.fullPlate, this.masterworkCrafting.address);
+    const acp = await this.library.summoner._armor_check_penalty_wrapper(this.summoner, this.fullPlate, this.masterwork.items.address);
     expect(acp).to.eq(-5)
   })
 
@@ -392,7 +392,7 @@ describe('Library: Summoner', function () {
 
     const attacksPack = await this.library.summoner._attacks_test_wrapper(
       this.summoner, 
-      this.longsword, this.masterworkCrafting.address,
+      this.longsword, this.masterwork.items.address,
       0, ethers.constants.AddressZero,
       0, ethers.constants.AddressZero
     )

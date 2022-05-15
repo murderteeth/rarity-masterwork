@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/core/IRarity.sol";
@@ -19,7 +19,7 @@ import "./rarity_adventure_2_uri.sol";
 import "./rarity_equipment_2.sol";
 
 contract rarity_adventure_2 is
-    ERC721Enumerable,
+    ERC721,
     ERC721Holder,
     ReentrancyGuard,
     ForSummoners,
@@ -84,7 +84,7 @@ contract rarity_adventure_2 is
         int8 score
     );
 
-    mapping(uint256 => AdventureUri.Adventure) public adventures;
+    mapping(uint256 => adventure_uri.Adventure) public adventures;
     mapping(uint256 => uint256) public latest_adventures;
     mapping(uint256 => uint8) public monster_spawn;
     mapping(uint256 => Combat.Combatant[]) public turn_orders;
@@ -99,7 +99,7 @@ contract rarity_adventure_2 is
     {
         uint256 latest_adventure_token = latest_adventures[summoner];
         if (latest_adventure_token != 0) {
-            AdventureUri.Adventure memory latest_adventure = adventures[
+            adventure_uri.Adventure memory latest_adventure = adventures[
                 latest_adventure_token
             ];
             uint256 next_adventure = latest_adventure.started + 1 days;
@@ -112,7 +112,7 @@ contract rarity_adventure_2 is
     function start(uint256 summoner) public approvedForSummoner(summoner) {
         uint256 latest_adventure_token = latest_adventures[summoner];
         if (latest_adventure_token != 0) {
-            AdventureUri.Adventure memory latest_adventure = adventures[
+            adventure_uri.Adventure memory latest_adventure = adventures[
                 latest_adventure_token
             ];
             require(latest_adventure.ended > 0, "!latest_adventure.ended");
@@ -134,8 +134,8 @@ contract rarity_adventure_2 is
     }
 
     function enter_dungeon(uint256 token) public approvedForAdventure(token) {
-        AdventureUri.Adventure storage adventure = adventures[token];
-        require(AdventureUri.outside_dungeon(adventure), "!outside_dungeon");
+        adventure_uri.Adventure storage adventure = adventures[token];
+        require(adventure_uri.outside_dungeon(adventure), "!outside_dungeon");
 
         adventure.dungeon_entered = true;
         (uint8 monster_count, uint8[3] memory monsters) = roll_monsters(
@@ -203,8 +203,8 @@ contract rarity_adventure_2 is
         public
         approvedForAdventure(token)
     {
-        AdventureUri.Adventure storage adventure = adventures[token];
-        require(AdventureUri.en_combat(adventure), "!en_combat");
+        adventure_uri.Adventure storage adventure = adventures[token];
+        require(adventure_uri.en_combat(adventure), "!en_combat");
 
         uint256 attack_counter = attack_counters[token];
 
@@ -254,16 +254,16 @@ contract rarity_adventure_2 is
     }
 
     function flee(uint256 token) public approvedForAdventure(token) {
-        AdventureUri.Adventure storage adventure = adventures[token];
-        require(AdventureUri.en_combat(adventure), "!en_combat");
+        adventure_uri.Adventure storage adventure = adventures[token];
+        require(adventure_uri.en_combat(adventure), "!en_combat");
         adventure.combat_ended = true;
     }
 
     function search(uint256 token) public approvedForAdventure(token) {
-        AdventureUri.Adventure storage adventure = adventures[token];
+        adventure_uri.Adventure storage adventure = adventures[token];
         require(!adventure.search_check_rolled, "search_check_rolled");
-        require(AdventureUri.victory(adventure), "!victory");
-        require(!AdventureUri.ended(adventure), "ended");
+        require(adventure_uri.victory(adventure), "!victory");
+        require(!adventure_uri.ended(adventure), "ended");
 
         (uint8 roll, int8 score) = Roll.search(adventure.summoner);
 
@@ -280,8 +280,8 @@ contract rarity_adventure_2 is
         nonReentrant
         approvedForAdventure(token)
     {
-        AdventureUri.Adventure storage adventure = adventures[token];
-        require(!AdventureUri.ended(adventure), "ended");
+        adventure_uri.Adventure storage adventure = adventures[token];
+        require(!adventure_uri.ended(adventure), "ended");
         adventure.ended = uint64(block.timestamp);
 
         RARITY.safeTransferFrom(address(this), msg.sender, adventure.summoner);
@@ -343,7 +343,7 @@ contract rarity_adventure_2 is
     }
 
     function combat_loop_until_summoners_next_turn(uint256 token) internal {
-        AdventureUri.Adventure storage adventure = adventures[token];
+        adventure_uri.Adventure storage adventure = adventures[token];
         uint256 summoners_turn = summoners_turns[token];
         uint256 current_turn = current_turns[token];
         if (current_turn == summoners_turn) return;
@@ -396,7 +396,7 @@ contract rarity_adventure_2 is
     }
 
     function next_turn(
-        AdventureUri.Adventure storage adventure,
+        adventure_uri.Adventure storage adventure,
         uint256 turn_count,
         uint256 current_turn
     ) internal returns (uint256) {
@@ -441,30 +441,30 @@ contract rarity_adventure_2 is
     }
 
     function is_outside_dungeon(uint256 token) external view returns (bool) {
-        return AdventureUri.outside_dungeon(adventures[token]);
+        return adventure_uri.outside_dungeon(adventures[token]);
     }
 
     function is_en_combat(uint256 token) external view returns (bool) {
-        return AdventureUri.en_combat(adventures[token]);
+        return adventure_uri.en_combat(adventures[token]);
     }
 
     function is_combat_over(uint256 token) external view returns (bool) {
-        return AdventureUri.combat_over(adventures[token]);
+        return adventure_uri.combat_over(adventures[token]);
     }
 
     function is_ended(uint256 token) external view returns (bool) {
-        return AdventureUri.ended(adventures[token]);
+        return adventure_uri.ended(adventures[token]);
     }
 
     function is_victory(uint256 token) external view returns (bool) {
-        return AdventureUri.victory(adventures[token]);
+        return adventure_uri.victory(adventures[token]);
     }
 
     function count_loot(uint256 token) public view returns (uint256) {
-        AdventureUri.Adventure memory adventure = adventures[token];
+        adventure_uri.Adventure memory adventure = adventures[token];
         Combat.Combatant[] memory turn_order = turn_orders[token];
         return
-            AdventureUri.count_loot(
+            adventure_uri.count_loot(
                 adventure,
                 turn_order,
                 monster_ids(turn_order, adventure.monster_count)
@@ -472,7 +472,7 @@ contract rarity_adventure_2 is
     }
 
     function was_fled(uint256 token) external view returns (bool) {
-        return AdventureUri.fled(adventures[token], turn_orders[token]);
+        return adventure_uri.fled(adventures[token], turn_orders[token]);
     }
 
     function loadout(uint256 token)
@@ -525,10 +525,10 @@ contract rarity_adventure_2 is
         override
         returns (string memory)
     {
-        AdventureUri.Adventure memory adventure = adventures[token];
+        adventure_uri.Adventure memory adventure = adventures[token];
         Combat.Combatant[] memory turn_order = turn_orders[token];
         return
-            AdventureUri.tokenURI(
+            adventure_uri.tokenURI(
                 token,
                 adventure,
                 turn_order,

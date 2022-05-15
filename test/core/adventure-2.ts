@@ -3,7 +3,7 @@ import { ethers, network } from 'hardhat'
 import { smock } from '@defi-wonderland/smock'
 import isSvg from 'is-svg'
 import { equipmentSlot, randomId } from '../../util'
-import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterwork, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
+import { fakeAttributes, fakeCommonCrafting, fakeEquipment, fakeFeats, fakeFullPlateArmor, fakeHeavyWoodShield, fakeLongsword, fakeMasterworkProjects, fakeRandom, fakeRarity, fakeSkills, fakeSummoner } from '../../util/fakes'
 import { Attributes__factory, Feats__factory, Monster__factory, Proficiency__factory, Random__factory, Rarity__factory, Roll__factory, Skills__factory } from '../../typechain/library'
 import { RarityAdventure2__factory } from '../../typechain/core/factories/RarityAdventure2__factory'
 import { AdventureUri__factory } from '../../typechain/core'
@@ -41,7 +41,7 @@ describe('Core: Adventure II', function () {
 
     this.crafting = {
       common: await fakeCommonCrafting(),
-      masterwork: await fakeMasterwork()
+      masterwork: await fakeMasterworkProjects()
     }
 
     this.codex.common.weapons.item_by_id
@@ -69,12 +69,12 @@ describe('Core: Adventure II', function () {
     .whenCalledWith(this.crafting.common.address, 3)
     .returns(this.codex.common.weapons.address)
 
-    this.adventureUri = await mockAdvenutreUri()
-    this.adventure = await mockAdventure(this.adventureUri)
+    this.adventure_uri = await mockAdvenutreUri()
+    this.adventure = await mockAdventure(this.adventure_uri)
   })
 
   async function mockAdvenutreUri() {
-    return await(await smock.mock<AdventureUri__factory>('contracts/core/rarity_adventure_2_uri.sol:AdventureUri', {
+    return await(await smock.mock<AdventureUri__factory>('contracts/core/rarity_adventure_2_uri.sol:adventure_uri', {
       libraries: {
         Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
           libraries: {
@@ -95,10 +95,10 @@ describe('Core: Adventure II', function () {
     })).deploy()
   }
 
-  async function mockAdventure(adventureUri: any) {
+  async function mockAdventure(adventure_uri: any) {
     return await(await smock.mock<RarityAdventure2__factory>('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
       libraries: {
-        AdventureUri: adventureUri.address,
+        adventure_uri: adventure_uri.address,
         Monster: (await(await smock.mock<Monster__factory>('contracts/library/Monster.sol:Monster', {
           libraries: {
             Random: (await (await smock.mock<Random__factory>('contracts/library/Random.sol:Random')).deploy()).address,

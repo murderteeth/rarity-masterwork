@@ -174,7 +174,7 @@ async function main() {
   await library_monster.deployed()
   console.log('📚 deploy library/Monster.sol', library_monster.address)
 
-  const core_rarity_adventure_2_uri = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2_uri.sol:AdventureUri', {
+  const core_rarity_adventure_2_uri = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2_uri.sol:adventure_uri', {
     libraries: {
       Monster: library_monster.address
     }
@@ -184,7 +184,7 @@ async function main() {
 
   const core_rarity_adventure_2 = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
     libraries: {
-      AdventureUri: core_rarity_adventure_2_uri.address,
+      adventure_uri: core_rarity_adventure_2_uri.address,
       Monster: library_monster.address,
       Rarity: library_rarity.address,
       Roll: library_roll.address,
@@ -235,7 +235,7 @@ async function main() {
   })
   await hre.run('compile')
 
-  const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri')).deploy()
+  const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri')).deploy()
   console.log('🤺 deploy core/core_rarity_crafting_masterwork_uri.sol', core_rarity_crafting_masterwork_uri.address)
   await core_rarity_crafting_masterwork_uri.deployed()
 
@@ -243,7 +243,7 @@ async function main() {
     libraries: {
       Crafting: library_crafting.address,
       CraftingSkills: library_crafting_skills.address,
-      MasterworkUri: core_rarity_crafting_masterwork_uri.address,
+      masterwork_uri: core_rarity_crafting_masterwork_uri.address,
       Rarity: library_rarity.address,
       Roll: library_roll.address,
       Skills: library_skills.address
@@ -386,12 +386,12 @@ async function main() {
     },
     core_rarity_adventure_2_uri: { 
       address: core_rarity_adventure_2_uri.address,
-      contract: 'contracts/core/rarity_adventure_2_uri.sol:AdventureUri',
+      contract: 'contracts/core/rarity_adventure_2_uri.sol:adventure_uri',
       verified: false
     },
     core_rarity_crafting_masterwork_uri: { 
       address: core_rarity_crafting_masterwork_uri.address,
-      contract: 'contracts/core/rarity_crafting_masterwork_uri.sol:MasterworkUri',
+      contract: 'contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri',
       verified: false
     },
     core_rarity_crafting_masterwork: { 

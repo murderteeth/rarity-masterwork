@@ -1,10 +1,10 @@
 import { FakeContract, smock } from '@defi-wonderland/smock'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomId } from '.'
-import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityEquipment2, RarityFeats, RarityGold, RarityMasterwork, RaritySkills } from '../typechain/core'
+import { Rarity, RarityAttributes, RarityCrafting, RarityCraftingSkills, RarityEquipment2, RarityFeats, RarityGold, RarityMasterworkItems, RarityMasterworkProjects, RaritySkills } from '../typechain/core'
 import { IRarityCodexBaseRandom2 } from '../typechain/interfaces/codex'
 import { IRarityCodexCraftingSkills } from '../typechain/interfaces/codex/IRarityCodexCraftingSkills'
-import { armorType, baseType, weaponType } from './crafting'
+import { armorType, baseType, toolType, weaponType } from './crafting'
 import devAddresses from '../addresses.dev.json'
 
 export async function fakeRarity() {
@@ -19,8 +19,12 @@ export async function fakeCommonCrafting() {
   })
 }
 
-export async function fakeMasterwork() {
-  return await smock.fake<RarityMasterwork>('contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork')
+export async function fakeMasterworkProjects() {
+  return await smock.fake<RarityMasterworkProjects>('contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects')
+}
+
+export async function fakeMasterworkItems() {
+  return await smock.fake<RarityMasterworkItems>('contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items', { address: devAddresses.core_masterwork_items })
 }
 
 export async function fakeEquipment() {
@@ -135,4 +139,22 @@ export function fakeFullPlateArmor(crafting: FakeContract<RarityCrafting>, craft
 
 export function fakeHeavyWoodShield(crafting: FakeContract<RarityCrafting>, crafter: number, signer: SignerWithAddress) {
   return fakeCraft(crafting, baseType.armor, armorType.heavyWoodShield, crafter, signer)
+}
+
+export function fakeMasterwork(crafting: FakeContract<RarityMasterworkItems>, baseType: number, itemType: number, crafter: number, signer: SignerWithAddress) {
+  const id = randomId()
+
+  crafting.items
+  .whenCalledWith(id)
+  .returns([baseType, itemType, 0, crafter])
+
+  crafting.ownerOf
+  .whenCalledWith(id)
+  .returns(signer.address)
+
+  return id
+}
+
+export function fakeMasterworkTools(crafting: FakeContract<RarityMasterworkItems>, crafter: number, signer: SignerWithAddress) {
+  return fakeMasterwork(crafting, baseType.tools, toolType.artisanTools, crafter, signer)
 }
