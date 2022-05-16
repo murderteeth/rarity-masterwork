@@ -18,7 +18,7 @@ async function main() {
         address: deployment.address 
       })
       deployment.verified = true
-      await fs.writeFile('../addresses.mainnet.json', JSON.stringify(deployments, null, '\t'))
+      await fs.writeFile('./addresses.mainnet.json', JSON.stringify(deployments, null, '\t'))
     }
   }
 }

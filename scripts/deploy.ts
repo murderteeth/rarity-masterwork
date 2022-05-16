@@ -208,7 +208,7 @@ async function main() {
     },
     codex_items_armor_2: { 
       address: codex_items_armor_2.address,
-      contract: 'contracts/codex/codex_items_armor_2:codex',
+      contract: 'contracts/codex/codex-items-armor-2.sol:codex',
       verified: false
     },
     codex_items_armor_masterwork: { 
@@ -228,7 +228,7 @@ async function main() {
     },
     codex_items_weapons_2: { 
       address: codex_items_weapons_2.address,
-      contract: 'contracts/codex/codex-items-weapons-2:codex',
+      contract: 'contracts/codex/codex-items-weapons-2.sol:codex',
       verified: false
     },
     codex_items_weapons_masterwork: { 
