@@ -4,6 +4,13 @@ import shell from 'shelljs'
 import {promises as fs} from 'fs'
 import devAddresses from '../addresses.dev.json'
 
+async function deploy(contract: string, options?: object) {
+  const deployment = await (await ethers.getContractFactory(contract, options)).deploy()
+  console.log('✨ deploy', contract, deployment.address)
+  await deployment.deployed()  
+  return deployment
+}
+
 async function updateRefsAndRecompile(replaceExpressions: RegExp[], withAddresses: string[] ) {
   console.log('\n🤖 update contract reference addresses and recompile')
   await replace.replaceInFile({
@@ -15,34 +22,15 @@ async function updateRefsAndRecompile(replaceExpressions: RegExp[], withAddresse
 }
 
 async function main() {
-  // await hre.run('clean')
-  // await hre.run('compile')
+  await hre.run('clean')
+  await hre.run('compile')
 
-  const codex_base_random_2 = await (await ethers.getContractFactory('contracts/codex/codex-base-random-2.sol:codex')).deploy()
-  await codex_base_random_2.deployed()
-  console.log('📐 deploy codex/codex-base-random-2.sol', codex_base_random_2.address)
-
-  const codex_crafting_skills = await (await ethers.getContractFactory('contracts/codex/codex-crafting-skills.sol:codex')).deploy()
-  await codex_crafting_skills.deployed()
-  console.log('📐 deploy codex/codex-crafting-skills.sol', codex_crafting_skills.address)
-
-  const codex_items_tools = await (await ethers.getContractFactory('contracts/codex/codex-items-tools.sol:codex')).deploy()
-  await codex_items_tools.deployed()
-  console.log('📐 deploy codex/codex-items-tools.sol', codex_items_tools.address)
-
-  const codex_items_tools_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-tools-masterwork.sol:codex')).deploy()
-  await codex_items_tools_masterwork.deployed()
-  console.log('📐 deploy codex/codex-items-tools-masterwork.sol', codex_items_tools_masterwork.address)
-
-  const codex_items_weapons_2 = await (await ethers.getContractFactory('contracts/codex/codex-items-weapons-2.sol:codex')).deploy()
-  await codex_items_weapons_2.deployed()
-  console.log('📐 deploy codex/codex-items-weapons-2', codex_items_weapons_2.address)
-
-  const codex_items_armor_2 = await (await ethers.getContractFactory('contracts/codex/codex-items-armor-2.sol:codex')).deploy()
-  await codex_items_armor_2.deployed()
-  console.log('📐 deploy codex/codex_items_armor_2', codex_items_armor_2.address)
-
-
+  const codex_base_random_2 = await deploy('contracts/codex/codex-base-random-2.sol:codex')
+  const codex_crafting_skills = await deploy('contracts/codex/codex-crafting-skills.sol:codex')
+  const codex_items_tools = await deploy('contracts/codex/codex-items-tools.sol:codex')
+  const codex_items_tools_masterwork = await deploy('contracts/codex/codex-items-tools-masterwork.sol:codex')
+  const codex_items_weapons_2 = await deploy('contracts/codex/codex-items-weapons-2.sol:codex')
+  const codex_items_armor_2 = await deploy('contracts/codex/codex-items-armor-2.sol:codex')
 
   await updateRefsAndRecompile(
     [
@@ -56,64 +44,31 @@ async function main() {
     ]
   )
 
-  
-
-  const codex_items_weapons_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-weapons-masterwork.sol:codex')).deploy()
-  await codex_items_weapons_masterwork.deployed()
-  console.log('📐 deploy codex/codex-items-weapons-masterwork.sol', codex_items_weapons_masterwork.address)
-
-  const codex_items_armor_masterwork = await (await ethers.getContractFactory('contracts/codex/codex-items-armor-masterwork.sol:codex')).deploy()
-  await codex_items_armor_masterwork.deployed()
-  console.log('📐 deploy codex/codex-items-armor-masterwork.sol', codex_items_armor_masterwork.address)
-
-  const library_rarity = await (await ethers.getContractFactory('contracts/library/Rarity.sol:Rarity')).deploy()
-  await library_rarity.deployed()
-  console.log('📚 deploy library/Rarity.sol', library_rarity.address)
-
-  const library_skills = await (await ethers.getContractFactory('contracts/library/Skills.sol:Skills')).deploy()
-  await library_skills.deployed()
-  console.log('📚 deploy library/Skills.sol', library_skills.address)
-
-  const library_attributes = await (await ethers.getContractFactory('contracts/library/Attributes.sol:Attributes')).deploy()
-  await library_attributes.deployed()
-  console.log('📚 deploy library/Attributes.sol', library_attributes.address)
-
-  const library_crafting = await (await ethers.getContractFactory('contracts/library/Crafting.sol:Crafting')).deploy()
-  await library_crafting.deployed()
-  console.log('📚 deploy library/Crafting.sol', library_crafting.address)
-
-  const library_feats = await (await ethers.getContractFactory('contracts/library/Feats.sol:Feats')).deploy()
-  await library_feats.deployed()
-  console.log('📚 deploy library/Feats.sol', library_feats.address)
-
-  const library_proficiency = await (await ethers.getContractFactory('contracts/library/Proficiency.sol:Proficiency', {
+  const codex_items_weapons_masterwork = await deploy('contracts/codex/codex-items-weapons-masterwork.sol:codex')
+  const codex_items_armor_masterwork = await deploy('contracts/codex/codex-items-armor-masterwork.sol:codex')
+  const library_rarity = await deploy('contracts/library/Rarity.sol:Rarity')
+  const library_skills = await deploy('contracts/library/Skills.sol:Skills')
+  const library_attributes = await deploy('contracts/library/Attributes.sol:Attributes')
+  const library_crafting = await deploy('contracts/library/Crafting.sol:Crafting')
+  const library_feats = await deploy('contracts/library/Feats.sol:Feats')
+  const library_proficiency = await deploy('contracts/library/Proficiency.sol:Proficiency', {
     libraries: {
       Rarity: library_rarity.address,
       Feats: library_feats.address
     }
-  })).deploy()
-  await library_proficiency.deployed()
-  console.log('📚 deploy library/Proficiency.sol', library_proficiency.address)
-
-  const core_rarity_crafting_skills = await (await ethers.getContractFactory('contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills', {
+  })
+  const core_rarity_crafting_skills = await deploy('contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills', {
     libraries: {
       Rarity: library_rarity.address,
       Skills: library_skills.address
     }
-  })).deploy()
-  await core_rarity_crafting_skills.deployed()
-  console.log('🤺 deploy core/rarity_crafting_skills.sol', core_rarity_crafting_skills.address)
-
-  const core_rarity_equipment_2 = await (await ethers.getContractFactory('contracts/core/rarity_equipment_2.sol:rarity_equipment_2', {
+  })
+  const core_rarity_equipment_2 = await deploy('contracts/core/rarity_equipment_2.sol:rarity_equipment_2', {
     libraries: {
       Rarity: library_rarity.address,
       Crafting: library_crafting.address
     }
-  })).deploy()
-  await core_rarity_equipment_2.deployed()
-  console.log('🤺 deploy core/rarity_equipment_2.sol', core_rarity_equipment_2.address)
-
-
+  })
 
   await updateRefsAndRecompile(
     [
@@ -127,17 +82,9 @@ async function main() {
     ]
   )
 
-
-
-  const library_crafting_skills = await (await ethers.getContractFactory('contracts/library/CraftingSkills.sol:CraftingSkills')).deploy()
-  await library_crafting_skills.deployed()
-  console.log('📚 deploy library/CraftingSkills.sol', library_crafting_skills.address)
-
-  const library_random = await (await ethers.getContractFactory('contracts/library/Random.sol:Random')).deploy()
-  await library_random.deployed()
-  console.log('📚 deploy library/Random.sol', library_random.address)
-
-  const library_roll = await (await ethers.getContractFactory('contracts/library/Roll.sol:Roll', {
+  const library_crafting_skills = await deploy('contracts/library/CraftingSkills.sol:CraftingSkills')
+  const library_random = await deploy('contracts/library/Random.sol:Random')
+  const library_roll = await deploy('contracts/library/Roll.sol:Roll', {
     libraries: {
       Attributes: library_attributes.address,
       CraftingSkills: library_crafting_skills.address,
@@ -145,44 +92,29 @@ async function main() {
       Random: library_random.address,
       Skills: library_skills.address
     }
-  })).deploy()
-  await library_roll.deployed()
-  console.log('📚 deploy library/Roll.sol', library_roll.address)
-
-  const library_combat = await (await ethers.getContractFactory('contracts/library/Combat.sol:Combat')).deploy()
-  await library_combat.deployed()
-  console.log('📚 deploy library/Combat.sol', library_combat.address)
-
-  const library_summoner = await (await ethers.getContractFactory('contracts/library/Summoner.sol:Summoner', {
+  })
+  const library_combat = await deploy('contracts/library/Combat.sol:Combat')
+  const library_summoner = await deploy('contracts/library/Summoner.sol:Summoner', {
     libraries: {
       Attributes: library_attributes.address,
       Proficiency: library_proficiency.address,
       Rarity: library_rarity.address,
       Roll: library_roll.address,
     }
-  })).deploy()
-  await library_summoner.deployed()
-  console.log('📚 deploy library/Summoner.sol', library_summoner.address)
-
-  const library_monster = await (await ethers.getContractFactory('contracts/library/Monster.sol:Monster', {
+  })
+  const library_monster = await deploy('contracts/library/Monster.sol:Monster', {
     libraries: {
       Attributes: library_attributes.address,
       Random: library_random.address,
       Roll: library_roll.address,
     }
-  })).deploy()
-  await library_monster.deployed()
-  console.log('📚 deploy library/Monster.sol', library_monster.address)
-
-  const core_rarity_adventure_2_uri = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2_uri.sol:adventure_uri', {
+  })
+  const core_rarity_adventure_2_uri = await deploy('contracts/core/rarity_adventure_2_uri.sol:adventure_uri', {
     libraries: {
       Monster: library_monster.address
     }
-  })).deploy()
-  await core_rarity_adventure_2_uri.deployed()
-  console.log('🤺 deploy core/rarity_adventure_2_uri.sol', core_rarity_adventure_2_uri.address)
-
-  const core_rarity_adventure_2 = await (await ethers.getContractFactory('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
+  })
+  const core_rarity_adventure_2 = await deploy('contracts/core/rarity_adventure_2.sol:rarity_adventure_2', {
     libraries: {
       adventure_uri: core_rarity_adventure_2_uri.address,
       Monster: library_monster.address,
@@ -191,24 +123,14 @@ async function main() {
       Summoner: library_summoner.address,
       Random: library_random.address
     }
-  })).deploy()
-  console.log('🤺 deploy core/rarity_adventure_2.sol', core_rarity_adventure_2.address)
-  await core_rarity_adventure_2.deployed()
-
-
+  })
 
   await updateRefsAndRecompile(
     [new RegExp(devAddresses.core_adventure_2, 'g')], 
     [core_rarity_adventure_2.address]
   )
 
-
-
-  const core_rarity_crafting_mats_2 = await (await ethers.getContractFactory('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')).deploy()
-  console.log('🤺 deploy core/rarity_crafting-materials-2.sol', core_rarity_crafting_mats_2.address)
-  await core_rarity_crafting_mats_2.deployed()
-
-
+  const core_rarity_crafting_mats_2 = await deploy('contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2')
 
   await updateRefsAndRecompile(
     [
@@ -226,32 +148,21 @@ async function main() {
     ]
   )
 
-
-
-  const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri')).deploy()
-  console.log('🤺 deploy core/core_rarity_crafting_masterwork_uri.sol', core_rarity_crafting_masterwork_uri.address)
-  await core_rarity_crafting_masterwork_uri.deployed()
-
-  const core_rarity_crafting_masterwork_items = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items', {
+  const core_rarity_crafting_masterwork_uri = await deploy('contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri')
+  const core_rarity_crafting_masterwork_items = await deploy('contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items', {
     libraries: {
       Crafting: library_crafting.address,
       masterwork_uri: core_rarity_crafting_masterwork_uri.address,
       Rarity: library_rarity.address
     }
-  })).deploy()
-  await core_rarity_crafting_masterwork_items.deployed()
-  console.log('🤺 deploy core/rarity_crafting_masterwork_items.sol', core_rarity_crafting_masterwork_items.address)
-
-
+  })
 
   await updateRefsAndRecompile(
     [new RegExp(devAddresses.core_masterwork_items, 'g'),], 
     [core_rarity_crafting_masterwork_items.address]
   )
 
-
-
-  const core_rarity_crafting_masterwork_projects = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects', {
+  const core_rarity_crafting_masterwork_projects = await deploy('contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects', {
     libraries: {
       Crafting: library_crafting.address,
       CraftingSkills: library_crafting_skills.address,
@@ -260,11 +171,7 @@ async function main() {
       Roll: library_roll.address,
       Skills: library_skills.address
     }
-  })).deploy()
-  await core_rarity_crafting_masterwork_projects.deployed()
-  console.log('🤺 deploy core/rarity_crafting_masterwork_projects.sol', core_rarity_crafting_masterwork_projects.address)
-
-
+  })
 
   {
     console.log()
@@ -285,8 +192,6 @@ async function main() {
 
     console.log()
   }
-
-
 
   const addressFile = `./addresses.${network.name}.json`
 
