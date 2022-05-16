@@ -4,6 +4,16 @@ import shell from 'shelljs'
 import {promises as fs} from 'fs'
 import devAddresses from '../addresses.dev.json'
 
+async function updateRefsAndRecompile(replaceExpressions: RegExp[], withAddresses: string[] ) {
+  console.log('\n🤖 update contract reference addresses and recompile')
+  await replace.replaceInFile({
+    files: 'contracts/**/*.sol',
+    from: replaceExpressions,
+    to: withAddresses
+  })
+  await hre.run('compile')
+}
+
 async function main() {
   // await hre.run('clean')
   // await hre.run('compile')
@@ -34,22 +44,17 @@ async function main() {
 
 
 
-  //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and recompile')
-  await replace.replaceInFile({
-    files: 'contracts/**/*.sol',
-    from: [
-      new RegExp(devAddresses.codex_random_2, 'g'), 
-      new RegExp(devAddresses.codex_weapons_2, 'g'), 
+  await updateRefsAndRecompile(
+    [
+      new RegExp(devAddresses.codex_random_2, 'g'),
+      new RegExp(devAddresses.codex_weapons_2, 'g'),
       new RegExp(devAddresses.codex_armor_2, 'g')
-    ],
-    to: [
+    ], [
       codex_base_random_2.address, 
       codex_items_weapons_2.address, 
       codex_items_armor_2.address
     ]
-  })
-  await hre.run('compile')
+  )
 
   
 
@@ -110,22 +115,17 @@ async function main() {
 
 
 
-  //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and recompile')
-  await replace.replaceInFile({
-    files: 'contracts/**/*.sol',
-    from: [
+  await updateRefsAndRecompile(
+    [
       new RegExp(devAddresses.codex_crafting_skills, 'g'), 
       new RegExp(devAddresses.core_crafting_skills, 'g'),
       new RegExp(devAddresses.core_rarity_equipment_2, 'g')
-    ],
-    to: [
+    ], [
       codex_crafting_skills.address,
       core_rarity_crafting_skills.address,
       core_rarity_equipment_2.address
     ]
-  })
-  await hre.run('compile')
+  )
 
 
 
@@ -197,15 +197,10 @@ async function main() {
 
 
 
-
-  //////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and recompile')
-  await replace.replaceInFile({
-    files: 'contracts/**/*.sol',
-    from: [new RegExp(devAddresses.core_adventure_2, 'g')],
-    to: [core_rarity_adventure_2.address]
-  })
-  await hre.run('compile')
+  await updateRefsAndRecompile(
+    [new RegExp(devAddresses.core_adventure_2, 'g')], 
+    [core_rarity_adventure_2.address]
+  )
 
 
 
@@ -214,32 +209,49 @@ async function main() {
   await core_rarity_crafting_mats_2.deployed()
 
 
-  ////////////////////////////////////////////////
-  console.log('\n🤖 update contract reference addresses and recompile')
-  await replace.replaceInFile({
-    files: 'contracts/**/*.sol',
-    from: [
+
+  await updateRefsAndRecompile(
+    [
       new RegExp(devAddresses.core_rarity_crafting_mats_2, 'g'),
       new RegExp(devAddresses.codex_common_tools, 'g'),
       new RegExp(devAddresses.codex_weapons_masterwork, 'g'),
       new RegExp(devAddresses.codex_armor_masterwork, 'g'),
       new RegExp(devAddresses.codex_tools_masterwork, 'g')
-    ],
-    to: [
+    ], [
       core_rarity_crafting_mats_2.address,
       codex_items_tools.address,
       codex_items_weapons_masterwork.address,
       codex_items_armor_masterwork.address,
       codex_items_tools_masterwork.address
     ]
-  })
-  await hre.run('compile')
+  )
+
+
 
   const core_rarity_crafting_masterwork_uri = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri')).deploy()
   console.log('🤺 deploy core/core_rarity_crafting_masterwork_uri.sol', core_rarity_crafting_masterwork_uri.address)
   await core_rarity_crafting_masterwork_uri.deployed()
 
-  const core_rarity_crafting_masterwork = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', {
+  const core_rarity_crafting_masterwork_items = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items', {
+    libraries: {
+      Crafting: library_crafting.address,
+      masterwork_uri: core_rarity_crafting_masterwork_uri.address,
+      Rarity: library_rarity.address
+    }
+  })).deploy()
+  await core_rarity_crafting_masterwork_items.deployed()
+  console.log('🤺 deploy core/rarity_crafting_masterwork_items.sol', core_rarity_crafting_masterwork_items.address)
+
+
+
+  await updateRefsAndRecompile(
+    [new RegExp(devAddresses.core_masterwork_items, 'g'),], 
+    [core_rarity_crafting_masterwork_items.address]
+  )
+
+
+
+  const core_rarity_crafting_masterwork_projects = await (await ethers.getContractFactory('contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects', {
     libraries: {
       Crafting: library_crafting.address,
       CraftingSkills: library_crafting_skills.address,
@@ -249,21 +261,31 @@ async function main() {
       Skills: library_skills.address
     }
   })).deploy()
-  await core_rarity_crafting_masterwork.deployed()
-  console.log('🤺 deploy core/rarity_crafting_masterwork.sol', core_rarity_crafting_masterwork.address)
+  await core_rarity_crafting_masterwork_projects.deployed()
+  console.log('🤺 deploy core/rarity_crafting_masterwork_projects.sol', core_rarity_crafting_masterwork_projects.address)
+
+
 
   {
     console.log()
+    await(await core_rarity_crafting_masterwork_items.set_project_mint(
+      core_rarity_crafting_masterwork_projects.address,
+    )).wait()
+    console.log('🏳  set masterwork project mint')
+
     await(await core_rarity_equipment_2.set_mint_whitelist(
       '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC',
       codex_items_armor_2.address,
       codex_items_weapons_2.address,
-      core_rarity_crafting_masterwork.address,
+      core_rarity_crafting_masterwork_items.address,
       codex_items_armor_masterwork.address,
       codex_items_weapons_masterwork.address
     )).wait()
-    console.log('🏳  set adventure 2 whitelist')
+    console.log('🏳  set equipment 2 whitelist')
+
+    console.log()
   }
+
 
 
   const addressFile = `./addresses.${network.name}.json`
@@ -394,9 +416,14 @@ async function main() {
       contract: 'contracts/core/rarity_crafting_masterwork_uri.sol:masterwork_uri',
       verified: false
     },
-    core_rarity_crafting_masterwork: { 
-      address: core_rarity_crafting_masterwork.address,
-      contract: 'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork',
+    core_rarity_crafting_masterwork_items: { 
+      address: core_rarity_crafting_masterwork_items.address,
+      contract: 'contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items',
+      verified: false
+    },
+    core_rarity_crafting_masterwork_projects: { 
+      address: core_rarity_crafting_masterwork_projects.address,
+      contract: 'contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects',
       verified: false
     },
     core_rarity_crafting_mats_2: { 
@@ -412,7 +439,7 @@ async function main() {
     shell.exec('git checkout contracts/*')
   }
 
-  console.log('\n\n💥 deployed!!\n\n')
+  console.log('\n\n🍻 deployed!!\n\n')
 }
 
 main()

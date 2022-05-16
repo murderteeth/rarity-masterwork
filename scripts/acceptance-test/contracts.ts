@@ -35,41 +35,46 @@ export default async function getContracts(signer?: SignerWithAddress) {
         '0xf41270836dF4Db1D28F7fd0935270e3A603e78cC',
         signer
       ),
-      masterwork: await ethers.getContractAt(
-        'contracts/core/rarity_crafting_masterwork.sol:rarity_masterwork', 
-        deployAddresses.core_rarity_crafting_masterwork,
+      masterworkItems: await ethers.getContractAt(
+        'contracts/core/rarity_crafting_masterwork_items.sol:rarity_masterwork_items', 
+        deployAddresses.core_rarity_crafting_masterwork_items.address,
+        signer
+      ),
+      masterworkProjects: await ethers.getContractAt(
+        'contracts/core/rarity_crafting_masterwork_projects.sol:rarity_masterwork_projects', 
+        deployAddresses.core_rarity_crafting_masterwork_projects.address,
         signer
       )
     },
     equipment2: await ethers.getContractAt(
       'contracts/core/rarity_equipment_2.sol:rarity_equipment_2', 
-      deployAddresses.core_rarity_equipment_2,
+      deployAddresses.core_rarity_equipment_2.address,
       signer
     ),
     adventure2: await ethers.getContractAt(
       'contracts/core/rarity_adventure_2.sol:rarity_adventure_2', 
-      deployAddresses.core_rarity_adventure_2,
+      deployAddresses.core_rarity_adventure_2.address,
       signer
     ),
     mats2: await ethers.getContractAt(
       'contracts/core/rarity_crafting-materials-2.sol:rarity_crafting_materials_2',
-      deployAddresses.core_rarity_crafting_mats_2,
+      deployAddresses.core_rarity_crafting_mats_2.address,
       signer
     ),
     craftingSkills: await ethers.getContractAt(
       'contracts/core/rarity_crafting_skills.sol:rarity_crafting_skills',
-      deployAddresses.core_rarity_crafting_skills,
+      deployAddresses.core_rarity_crafting_skills.address,
       signer
     ),
     library: {
       random: await ethers.getContractAt(
         'contracts/library/Random.sol:Random',
-        deployAddresses.library_random,
+        deployAddresses.library_random.address,
         signer
       ),
       summoner: await ethers.getContractAt(
         'contracts/library/Summoner.sol:Summoner',
-        deployAddresses.library_summoner,
+        deployAddresses.library_summoner.address,
         signer
       )
     }

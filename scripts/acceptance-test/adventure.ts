@@ -183,7 +183,7 @@ async function adventure(
 }
 
 function isMasterwork(contracts: any, address: any) {
-  return address === contracts.crafting.masterwork.address
+  return address === contracts.crafting.masterworkItems.address
 }
 
 export async function winRates(contracts: any, equipmentApprovals: any, equipment: any, equipmentMint: any) {

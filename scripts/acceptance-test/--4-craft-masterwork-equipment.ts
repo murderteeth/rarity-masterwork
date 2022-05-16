@@ -5,12 +5,12 @@ import { armorType, baseType, toolType, weaponType } from '../../util/crafting';
 import party from './party.json'
 
 async function craft(contracts: any, crafter: any, baseType: number, itemType: number, tools: number) {
-  let cost = await contracts.crafting.masterwork.raw_materials_cost(baseType, itemType)
-  if(!tools) cost = cost.add(await contracts.crafting.masterwork.COMMON_ARTISANS_TOOLS_RENTAL())
+  let cost = await contracts.crafting.masterworkProjects.raw_materials_cost(baseType, itemType)
+  if(!tools) cost = cost.add(await contracts.crafting.masterworkProjects.COMMON_ARTISANS_TOOLS_RENTAL())
 
-  await contracts.gold.approve(crafter, await contracts.crafting.masterwork.APPRENTICE(), cost)
+  await contracts.gold.approve(crafter, await contracts.crafting.masterworkProjects.APPRENTICE(), cost)
 
-  const startTx = await (await contracts.crafting.masterwork.start(
+  const startTx = await (await contracts.crafting.masterworkProjects.start(
     crafter, 
     baseType, 
     itemType, 
@@ -21,13 +21,15 @@ async function craft(contracts: any, crafter: any, baseType: number, itemType: n
   process.stdout.write('craft check ')
   while(1) {
     process.stdout.write('🔨')
-    await contracts.mats2.approve(contracts.crafting.masterwork.address, ethers.utils.parseEther('20'))
-    const tx = await(await contracts.crafting.masterwork.craft(token, ethers.utils.parseEther('20'))).wait()
+    await contracts.mats2.approve(contracts.crafting.masterworkProjects.address, ethers.utils.parseEther('20'))
+    const tx = await(await contracts.crafting.masterworkProjects.craft(token, ethers.utils.parseEther('20'))).wait()
     const craftEvent = tx.events.find((e: any) => e.event === 'Craft')
     if(craftEvent.args['m'].gte(craftEvent.args['n'])) {
-      await contracts.crafting.masterwork.complete(token)
+      if(tools) await contracts.crafting.masterworkProjects.reclaim_tools(token)
+      const claimTx = await(await contracts.crafting.masterworkItems.claim(token)).wait()
+      const itemToken = claimTx.events.filter((e: any) => e.event === 'Transfer').slice(-1)[0].args['tokenId']
       process.stdout.write('\n')
-      return token
+      return itemToken
     }
   }
 }
@@ -39,12 +41,12 @@ async function main() {
   console.log('barn salvage', ethers.utils.formatEther(salvage))
 
   const weaponsmith = party.crafters[0]
-  await contracts.rarity.approve(contracts.crafting.masterwork.address, weaponsmith)
+  await contracts.rarity.approve(contracts.crafting.masterworkProjects.address, weaponsmith)
   console.log('weaponsmith xp', ethers.utils.formatEther(await contracts.rarity.xp(weaponsmith)))
   console.log('weaponsmith gold', ethers.utils.formatEther(await contracts.gold.balanceOf(weaponsmith)))
 
   const armorsmith = party.crafters[1]
-  await contracts.rarity.approve(contracts.crafting.masterwork.address, armorsmith)
+  await contracts.rarity.approve(contracts.crafting.masterworkProjects.address, armorsmith)
   console.log('armorsmith xp', ethers.utils.formatEther(await contracts.rarity.xp(armorsmith)))
   console.log('armorsmith gold', ethers.utils.formatEther(await contracts.gold.balanceOf(armorsmith)))
 
@@ -52,19 +54,19 @@ async function main() {
   const artisansTools = (await craft(contracts, weaponsmith, baseType.tools, toolType.artisanTools, 0)).toString()
 
   console.log('⚔ craft masterwork longsword')
-  await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
+  await contracts.crafting.masterworkItems.approve(contracts.crafting.masterworkProjects.address, artisansTools)
   const longsword = (await craft(contracts, weaponsmith, baseType.weapon, weaponType.longsword, artisansTools)).toString()
 
   console.log('⚔ craft masterwork greatsword')
-  await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
+  await contracts.crafting.masterworkItems.approve(contracts.crafting.masterworkProjects.address, artisansTools)
   const greatsword = (await craft(contracts, weaponsmith, baseType.weapon, weaponType.greatsword, artisansTools)).toString()
 
   console.log('🛡 craft full plate armor')
-  await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
+  await contracts.crafting.masterworkItems.approve(contracts.crafting.masterworkProjects.address, artisansTools)
   const armor = (await craft(contracts, armorsmith, baseType.armor, armorType.fullPlate, artisansTools)).toString()
 
   console.log('🛡 craft big wood shield')
-  await contracts.crafting.masterwork.approve(contracts.crafting.masterwork.address, artisansTools)
+  await contracts.crafting.masterworkItems.approve(contracts.crafting.masterworkProjects.address, artisansTools)
   const shield = (await craft(contracts, armorsmith, baseType.armor, armorType.heavyWoodShield, artisansTools)).toString()
 
   console.log('write party.json')
