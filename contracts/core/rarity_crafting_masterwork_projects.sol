@@ -18,9 +18,15 @@ import "../library/Skills.sol";
 import "./rarity_crafting_masterwork_uri.sol";
 
 interface IRarityMasterworkItems {
-    function claims(uint token) external view returns (bool);
-    function items(uint token) external view returns (masterwork_uri.Item memory);
-    function ownerOf(uint token) external view returns (address);
+    function claims(uint256 token) external view returns (bool);
+
+    function items(uint256 token)
+        external
+        view
+        returns (masterwork_uri.Item memory);
+
+    function ownerOf(uint256 token) external view returns (address);
+
     function safeTransferFrom(
         address from,
         address to,
@@ -48,7 +54,7 @@ contract rarity_masterwork_projects is
         IRarityGold(0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2);
     IRarityCommonCrafting constant COMMON_CRAFTING =
         IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
-    IRarityMasterworkItems constant MASTERWORK_ITEMS = 
+    IRarityMasterworkItems constant MASTERWORK_ITEMS =
         IRarityMasterworkItems(0x0000000000000000000000000000000000000013);
     ICodexTools constant COMMON_TOOLS_CODEX =
         ICodexTools(0x0000000000000000000000000000000000000002);
@@ -88,7 +94,10 @@ contract rarity_masterwork_projects is
     ) public approvedForSummoner(crafter) {
         require(
             tools == 0 ||
-                Crafting.isApprovedOrOwnerOfItem(tools, address(MASTERWORK_ITEMS)),
+                Crafting.isApprovedOrOwnerOfItem(
+                    tools,
+                    address(MASTERWORK_ITEMS)
+                ),
             "!approvedForItem"
         );
         require(valid_item_type(base_type, item_type), "!valid_item_type");
@@ -103,7 +112,9 @@ contract rarity_masterwork_projects is
         uint256 cost = raw_materials_cost(base_type, item_type);
 
         if (tools != 0) {
-            masterwork_uri.Item memory tools_item = MASTERWORK_ITEMS.items(tools);
+            masterwork_uri.Item memory tools_item = MASTERWORK_ITEMS.items(
+                tools
+            );
             require(
                 tools_item.base_type == 4 && tools_item.item_type == 2,
                 "!Artisan's tools"
@@ -214,7 +225,11 @@ contract rarity_masterwork_projects is
         masterwork_uri.Project storage project = projects[token];
         require(project.complete, "!complete");
         require(project.tools != 0, "!tools");
-        MASTERWORK_ITEMS.safeTransferFrom(address(this), msg.sender, project.tools);
+        MASTERWORK_ITEMS.safeTransferFrom(
+            address(this),
+            msg.sender,
+            project.tools
+        );
     }
 
     function cancel(uint256 token)
@@ -223,7 +238,10 @@ contract rarity_masterwork_projects is
         approvedForItem(token, address(this))
     {
         masterwork_uri.Project storage project = projects[token];
-        require(!project.complete || MASTERWORK_ITEMS.claims(token), "!claimed");
+        require(
+            !project.complete || MASTERWORK_ITEMS.claims(token),
+            "!claimed"
+        );
 
         uint256 tools = project.tools;
         delete projects[token];
@@ -365,10 +383,11 @@ contract rarity_masterwork_projects is
         );
     }
 
-    function get_craft_check_odds(
-        uint256 token,
-        uint256 bonus_mats
-    ) public view returns (int8 average_score, uint8 dc) {
+    function get_craft_check_odds(uint256 token, uint256 bonus_mats)
+        public
+        view
+        returns (int8 average_score, uint8 dc)
+    {
         masterwork_uri.Project memory project = projects[token];
         (average_score, dc) = craft_check_odds(project, bonus_mats);
     }
@@ -392,19 +411,17 @@ contract rarity_masterwork_projects is
         dc = get_dc(project);
     }
 
-    function estimate_remaining_xp_cost(
-        uint256 token,
-        uint256 bonus_mats
-    ) public view returns (uint256 xp) {
+    function estimate_remaining_xp_cost(uint256 token, uint256 bonus_mats)
+        public
+        view
+        returns (uint256 xp)
+    {
         masterwork_uri.Project memory project = projects[token];
         uint256 silver = item_cost_in_silver(
             project.base_type,
             project.item_type
         );
-        (int8 average_score, ) = craft_check_odds(
-            project,
-            bonus_mats
-        );
+        (int8 average_score, ) = craft_check_odds(project, bonus_mats);
         uint256 average_score_uint = uint256(uint8(average_score));
         return (XP_PER_DAY * silver) / ((average_score_uint**2) * 1e18);
     }
