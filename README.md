@@ -8,43 +8,44 @@ Masterwork is an expansion of the original Rarity core created by Andre Cronje, 
 #### masterwork addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| rarity_adventure_2 | [0x5aBCE96F636fd95F38AC018Af920343E612c4B6f](https://ftmscan.com/address/0x5aBCE96F636fd95F38AC018Af920343E612c4B6f) |
-| AdventureUri | [0xc80f24c8e6be1a8f861e7185e88C0b686A403ad2](https://ftmscan.com/address/0xc80f24c8e6be1a8f861e7185e88C0b686A403ad2) |
-| rarity_crafting_masterwork | [0xd079F3e5c8c9384F7d35e8e74917ba5619423d23](https://ftmscan.com/address/0xd079F3e5c8c9384F7d35e8e74917ba5619423d23) |
-| MasterworkUri | [0x0B492b5f1A0fe8443e55C01D9B6814007CE7B374](https://ftmscan.com/address/0x0B492b5f1A0fe8443e55C01D9B6814007CE7B374) |
-| rarity_crafting_materials_2 | [0xc043EdfDcE0B695F22f5A8a6C1f12B121E008c9a](https://ftmscan.com/address/0xc043EdfDcE0B695F22f5A8a6C1f12B121E008c9a) |
-| rarity_crafting_skills | [0xf78c4A6e4F5fFE7b73d1c68B025540eBe5aE5743](https://ftmscan.com/address/0xf78c4A6e4F5fFE7b73d1c68B025540eBe5aE5743) |
-| rarity_equipment_2 | [0x8aB109B94e4CDB189a88bE307Dc7315b3ac63420](https://ftmscan.com/address/0x8aB109B94e4CDB189a88bE307Dc7315b3ac63420) |
+| rarity_adventure_2 | [](https://ftmscan.com/address/) |
+| rarity_adventure_2_uri | [](https://ftmscan.com/address/) |
+| rarity_masterwork_items | [](https://ftmscan.com/address/) |
+| rarity_masterwork_projects | [](https://ftmscan.com/address/) |
+| rarity_masterwork_uri | [](https://ftmscan.com/address/) |
+| rarity_crafting_materials_2 | [](https://ftmscan.com/address/) |
+| rarity_crafting_skills | [](https://ftmscan.com/address/) |
+| rarity_equipment_2 | [](https://ftmscan.com/address/) |
 
 
 #### library addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| Attributes | [0x6d1Da43409B3034a2cCE965C4EC0a73a0cB3EA50](https://ftmscan.com/address/0x6d1Da43409B3034a2cCE965C4EC0a73a0cB3EA50) |
-| Combat | [0x08281c577d6feC452Bd51E12f1488Ed6E151B154](https://ftmscan.com/address/0x08281c577d6feC452Bd51E12f1488Ed6E151B154) |
-| Crafting | [0x0b122858e3F88F6f77347b3845EB7f4eb2336cC0](https://ftmscan.com/address/0x0b122858e3F88F6f77347b3845EB7f4eb2336cC0) |
-| CraftingSkills | [0xAc20f3940EE492ec18eD32eF203Bc105dD54b4B4](https://ftmscan.com/address/0xAc20f3940EE492ec18eD32eF203Bc105dD54b4B4) |
-| Feats | [0xDFAA97Dc6d9a7fE5f5e23F514f2f9B3C27056FdD](https://ftmscan.com/address/0xDFAA97Dc6d9a7fE5f5e23F514f2f9B3C27056FdD) |
-| Monster | [0x57ceC704399d0A0f7abd766FE4Bd25cf93ab3f4d](https://ftmscan.com/address/0x57ceC704399d0A0f7abd766FE4Bd25cf93ab3f4d) |
-| Proficiency | [0xd9342F5e77560feab98DA19166E1743749b0Bd6A](https://ftmscan.com/address/0xd9342F5e77560feab98DA19166E1743749b0Bd6A) |
-| Random | [0xBA8061587A867C7b41b130E3d79f725Fd668D7E0](https://ftmscan.com/address/0xBA8061587A867C7b41b130E3d79f725Fd668D7E0) |
-| Rarity | [0x7dd4D96A6c2236114eC5e2aADc8706ea39304746](https://ftmscan.com/address/0x7dd4D96A6c2236114eC5e2aADc8706ea39304746) |
-| Roll | [0xd530308acc247FFA4ad9dc2A1a8d235d4c3c31ec](https://ftmscan.com/address/0xd530308acc247FFA4ad9dc2A1a8d235d4c3c31ec) |
-| Skills | [0x3f9B837247cE11824b8cb4275483949319bBD748](https://ftmscan.com/address/0x3f9B837247cE11824b8cb4275483949319bBD748) |
-| Summoner | [0x234b19Fe7421a4D54D07ef26cdbcDbEc7286970d](https://ftmscan.com/address/0x234b19Fe7421a4D54D07ef26cdbcDbEc7286970d) |
+| Attributes | [](https://ftmscan.com/address/) |
+| Combat | [](https://ftmscan.com/address/) |
+| Crafting | [](https://ftmscan.com/address/) |
+| CraftingSkills | [](https://ftmscan.com/address/) |
+| Feats | [](https://ftmscan.com/address/) |
+| Monster | [](https://ftmscan.com/address/) |
+| Proficiency | [](https://ftmscan.com/address/) |
+| Random | [](https://ftmscan.com/address/) |
+| Rarity | [](https://ftmscan.com/address/) |
+| Roll | [](https://ftmscan.com/address/) |
+| Skills | [](https://ftmscan.com/address/) |
+| Summoner | [](https://ftmscan.com/address/) |
 
 
 #### codex addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| base_random_2 | [0xCdf408Fc20f8Ea1AE841e3F68917e1eb06Aa1e3f](https://ftmscan.com/address/0xCdf408Fc20f8Ea1AE841e3F68917e1eb06Aa1e3f) |
-| crafting_skills | [0x808a03077aFc92B193fFb0b801956E416CCb2211](https://ftmscan.com/address/0x808a03077aFc92B193fFb0b801956E416CCb2211) |
-| items_armor_2 | [0x687A67129e33A7356748CbeeBe5Edf499ca4CEa2](https://ftmscan.com/address/0x687A67129e33A7356748CbeeBe5Edf499ca4CEa2) |
-| items_armor_masterwork | [0x6e142110a670ee481945CBeD1D2E28a9F1fea48f](https://ftmscan.com/address/0x6e142110a670ee481945CBeD1D2E28a9F1fea48f) |
-| items_tools | [0x990e4b2538CF58FF6031cf04738eC99D46Ca3649](https://ftmscan.com/address/0x990e4b2538CF58FF6031cf04738eC99D46Ca3649) |
-| items_tools_masterwork | [0x5ac39ce62ADe96825011240d3Ff5e869F0391D26](https://ftmscan.com/address/0x5ac39ce62ADe96825011240d3Ff5e869F0391D26) |
-| items_weapons_2 | [0xE333649CC2E9e122F83B77Dc367D3eF02a85eDaF](https://ftmscan.com/address/0xE333649CC2E9e122F83B77Dc367D3eF02a85eDaF) |
-| items_weapons_masterwork | [0xa0aBe56589d80B7A6D88702948c60cb901D8A27b](https://ftmscan.com/address/0xa0aBe56589d80B7A6D88702948c60cb901D8A27b) |
+| base_random_2 | [](https://ftmscan.com/address/) |
+| crafting_skills | [](https://ftmscan.com/address/) |
+| items_armor_2 | [](https://ftmscan.com/address/) |
+| items_armor_masterwork | [](https://ftmscan.com/address/) |
+| items_tools | [](https://ftmscan.com/address/) |
+| items_tools_masterwork | [](https://ftmscan.com/address/) |
+| items_weapons_2 | [](https://ftmscan.com/address/) |
+| items_weapons_masterwork | [](https://ftmscan.com/address/) |
 
 
 ### So what?
@@ -86,7 +87,7 @@ git clone git@github.com:murderteeth/rarity-masterwork.git
 cd rarity-masterwork
 # config local .env file
 yarn
-npx hardhat compile
+yarn hardhat compile
 yarn test
 ```
 
@@ -95,42 +96,44 @@ yarn test
 Masterwork items, like common items, are minted to your wallet as standard ERC721 tokens. Create masterwork items like this:
 
 - Start a masterwork project
-- Make craft checks until the item is finished
-- Complete the project
+- Make craft checks until the project is complete
+- Claim the masterwork item
 
 ### Walkthrough
 
 1. Starting a new masterwork project requires a payment in gold for raw materials. Approve the contract's apprentice to receive the fees like this:
 
 ```ts
-const cost = await masterwork.raw_materials_cost(
+const cost = await masterwork.projects.raw_materials_cost(
   baseType.weapon,
   weaponType.longsword
 );
-await gold.approve(summoner, await masterwork.APPRENTICE(), cost);
+await gold.approve(summoner, await masterwork.projects.APPRENTICE(), cost);
 ```
 
-Masterwork crafting also requires artisan's tools. You can use the masterwork crafting station to craft masterwork artisan's tools for a +2 bonus on craft checks. But until then, pay an extra 5gp to "rent" a set of common artisan tools:
+Masterwork crafting also requires artisan's tools. You can use the masterwork crafting station to craft masterwork artisan's tools for a +2 bonus on craft checks. Until then, pay an extra 5gp to "rent" a set of common artisan tools:
 
 ```ts
-let cost = await masterwork.raw_materials_cost(
+let cost = await masterwork.projects.raw_materials_cost(
   baseType.weapon,
   weaponType.longsword
 );
-cost += await masterwork.COMMON_ARTISANS_TOOLS_RENTAL();
-await gold.approve(summoner, await masterwork.APPRENTICE(), cost);
+cost += await masterwork.projects.COMMON_ARTISANS_TOOLS_RENTAL();
+await gold.approve(summoner, await masterwork.projects.APPRENTICE(), cost);
 ```
 
-2. Next, start a new project:
+2. Next, start a project:
 
 ```ts
-await masterwork.start(summoner, baseType.weapon, weaponType.longsword, 0);
+await masterwork.projects.start(summoner, baseType.weapon, weaponType.longsword, 0);
 ```
 
 Or if you have masterwork artisan's tools, like this:
 
 ```ts
-await masterwork.start(summoner, baseType.weapon, weaponType.longsword, <masterwork artisans tools tokenId>)
+// first, approve masterwork to manage your artisan's tools
+await masterwork.items.approve(masterwork.projects.address, toolsToken)
+await masterwork.projects.start(summoner, baseType.weapon, weaponType.longsword, toolsToken)
 ```
 
 Calling `start` does this
@@ -142,29 +145,28 @@ Calling `start` does this
 Get project status like this:
 
 ```ts
-const project = await this.masterwork.projects(masterworkToken);
+const project = await masterwork.projects.projects(projectToken);
 ```
 
-At anytime, before the masterwork item is complete, you can cancel a project and reclaim your masterwork artisan's tools:
+At anytime you can cancel a project and reclaim your masterwork artisan's tools:
 
 ```ts
-await masterwork.cancel(masterworkToken);
+await masterwork.projects.cancel(projectToken);
 ```
 
 3. Start crafting:
 
 ```ts
-await masterwork.craft(masterworkToken, summoner, 0);
+// first, approve masterwork to spend your summoner's xp
+await rarity.approve(masterwork.projects.address, summoner)
+await masterwork.projects.craft(projectToken, 0)
 ```
 
 To speed up crafting specify bonus materials. You get +1 to your craft score for every 20 mats:
 
 ```ts
-await masterwork.craft(
-  masterworkToken,
-  summoner,
-  ethers.utils.parseEther("80")
-); //for a +4 bonus
+// for a +4 bonus
+await masterwork.projects.craft(projectToken, ethers.utils.parseEther('80'))
 ```
 
 Calling `craft` does this
@@ -176,12 +178,13 @@ Calling `craft` does this
   - or if crafting masterwork tools, add `summoner` base crafting skill ranks (no specialty required)
 - If the score is equal or higher the item's DC (difficulty class), the check succeeds and the score is added to the project's total progress in exchange for `summoner`'s experience points. If your score is high enough to complete the project, `summoner` pays a prorated amount of XP. The XP cost of making a craft check is otherwise one day's work, or 250 XP.
 - If the craft check score is less than the item's DC, the check fails, no progress is made, and one day's XP is spent
+- Burn bonus mats
 
 Check the progress of a project:
 
 ```ts
-const [progress, masterworkItemCostInSilver] = await masterwork.get_progress(
-  masterworkToken
+const [progress, masterworkItemCostInSilver] = await masterwork.projects.get_progress(
+  projectToken
 );
 const percentDone = progress.div(masterworkItemCostInSilver);
 ```
@@ -189,9 +192,8 @@ const percentDone = progress.div(masterworkItemCostInSilver);
 Estimate a project's remaining XP cost:
 
 ```ts
-const estimate = await masterwork.estimate_remaining_xp_cost(
-  masterworkToken,
-  summoner,
+const estimate = await masterwork.projects.estimate_remaining_xp_cost(
+  projectToken,
   bonusMats
 );
 console.log("estimate", ethers.utils.formatEther(estimate));
@@ -200,25 +202,25 @@ console.log("estimate", ethers.utils.formatEther(estimate));
 Get a summoner's odds of succeeding the next craft check:
 
 ```ts
-const [average_score, dc] = await masterwork.get_craft_check_odds(
-  masterworkToken,
-  summoner,
+const [average_score, dc] = await masterwork.projects.get_craft_check_odds(
+  projectToken,
   bonusMats
 );
 const odds = average_score / dc;
 ```
 
-4. When crafting is done,`project.done_crafting`, complete the project:
+4. When crafting is complete,`project.complete`, claim your masterwork item:
 
 ```ts
-await masterwork.complete(masterworkToken);
+await masterwork.items.claim(projectToken)
 ```
 
-Calling `complete` does this
+5. Reclaim your artisan's tools:
 
-- Configures your token's masterwork item properties making the item useable in rarity games
-- Transfer your masterwork artisan's tools back to your wallet (if specified at project start)
-- Marks the project complete
+```ts
+await masterwork.projects.reclaim_tools(projectToken)
+```
+
 
 ### Tracking craft events
 
@@ -309,7 +311,7 @@ Monsters in the Barn is designed to be challenging for summoners level 1 through
 
 ### Walkthrough
 
-1. These monsters will be tough. Send strong summoners, equip them well. Masterwork includes the `rarity_equipment_2` contract for equipping both common and masterwork weapons and armor. Equipment2 was adapted from (Rarity Extended's equipment system)[https://github.com/Rarity-Extended/rarity_extended_lib/blob/main/contracts/extensions/rarity_extended_equipement/RARITYEXTENDEDEQUIPEMENT.md], but only supports one weapon, armor, and a shield. Use it like this:
+1. These monsters will be tough. Send strong summoners, equip them well. Masterwork includes the `rarity_equipment_2` contract for equipping both common and masterwork weapons and armor. Equipment2 was adapted from [Rarity Extended's equipment system](https://github.com/Rarity-Extended/rarity_extended_lib/blob/main/contracts/extensions/rarity_extended_equipement/RARITYEXTENDEDEQUIPEMENT.md), but only supports one weapon, armor, and a shield. Use it like this:
 
 ```ts
 // first, approve the equipment contract to transfer your items
@@ -336,7 +338,9 @@ Players may also choose to fight unarmed and/or unarmored. This is only recommen
 2. Start a new Monsters in the Barn adventure by calling `start`:
 
 ```ts
-await barnAdventure.start(summoner);
+// first, approve adventure to manage your summoner
+await rarity.approve(barnAdventure.address, summoner)
+await barnAdventure.start(summoner)
 ```
 
 Calling `start` does this
@@ -347,19 +351,19 @@ Calling `start` does this
 Get adventure status like this:
 
 ```ts
-const adventure = await barnAdventure.adventures(adventureToken);
+const adventure = await barnAdventure.adventures(adventureToken)
 ```
 
 At anytime you can end the adventure and reclaim your summoner:
 
 ```ts
-await barnAdventure.end(adventureToken);
+await barnAdventure.end(adventureToken)
 ```
 
 3. Enter the barn..
 
 ```ts
-await barnAdventure.enter_dungeon(adventureToken);
+await barnAdventure.enter_dungeon(adventureToken)
 ```
 
 Calling `enter_dungeon` does this
@@ -372,28 +376,28 @@ Calling `enter_dungeon` does this
 Get the current turn order like this:
 
 ```ts
-const turnOrder = await barnAdventure.turn_orders(adventureToken);
+const turnOrder = await barnAdventure.turn_orders(adventureToken)
 ```
 
-Where `turnOrder` is an array containing tokenIds for summoners and monsters. Monster tokens are intrinsic to your adventure and cannot be transferred individually.
+Where `turnOrder` is an array containing tokens for summoners and monsters. Monster tokens are properties of your adventure and cannot be transferred individually.
 
 Get the combat's current turn index like this:
 
 ```ts
-const currentTurn = await barnAdventure.current_turns(adventureToken);
+const currentTurn = await barnAdventure.current_turns(adventureToken)
 ```
 
 Get the summoner's turn order index like this:
 
 ```ts
-const summonersTurn = await barnAdventure.summoners_turns(adventureToken);
+const summonersTurn = await barnAdventure.summoners_turns(adventureToken)
 ```
 
 4. Attack! When it's your summoner's turn you can `attack` or `flee`. To attack, chose a target by their turn order index. For convenience, you can "auto target" monsters using a call to `next_able_monster`.
 
 ```ts
-const target = await barnAdventure.next_able_monster(adventureToken);
-await barnAdventure.attack(adventureToken, target);
+const target = await barnAdventure.next_able_monster(adventureToken)
+await barnAdventure.attack(adventureToken, target)
 ```
 
 Calling `attack` does this
@@ -408,19 +412,19 @@ Calling `attack` does this
 Some monsters get more than one attack per round. The good news. Barbarians, fighters, paladins, and rangers also get extra attacks per round starting at level 6! The adventure contract keeps track of these attacks for you. To get the current attack number:
 
 ```ts
-const attackCounter = await barnAdventure.attack_counters(adventureToken);
+const attackCounter = await barnAdventure.attack_counters(adventureToken)
 ```
 
 But generally, while combat is ongoing, it will always be the summoner's turn from the perspective of a contract client (as the monsters' moves are played automatically between summoner moves). So you can just call `attack` until combat is over:
 
 ```ts
-await barnAdventure.is_combat_over(adventureToken);
+await barnAdventure.is_combat_over(adventureToken)
 ```
 
 5. Ending combat - Combat ends automatically when either the summoner or all the monsters are below 0 hit points. Alternatively, you can also chose to flee:
 
 ```ts
-await barnAdventure.flee(adventureToken);
+await barnAdventure.flee(adventureToken)
 ```
 
 Fleeing doesn't do anything special beside set the combat to over. But it's provided for narrative flavor and is reflected in the adventure token's URI. You can also simply `end` the entire adventure whenever you like.
@@ -429,7 +433,7 @@ Fleeing doesn't do anything special beside set the combat to over. But it's prov
    To win the dungeon your summoner must defeat all the monsters. If you are victorious, run an optional search check for a loot bonus on the monsters' salvage:
 
 ```ts
-await barnAdventure.search(adventureToken);
+await barnAdventure.search(adventureToken)
 ```
 
 The search check goes like this
@@ -441,8 +445,8 @@ The search check goes like this
 If the score is higher than the adventure's search DC you get a 15% bonus. If you roll a natural 20, you get a 20% bonus. Nice! Now you can end the adventure and claim your loot:
 
 ```ts
-await barnAdventure.end(adventureToken);
-await crafingMaterials2.claim(adventureToken);
+await barnAdventure.end(adventureToken)
+await crafingMaterials2.claim(adventureToken)
 ```
 
 ### Rarity Crafting Materials 2 - Barn salvage
@@ -459,7 +463,7 @@ The mechanics of Monsters in the Barn follow d20 combat closely, but only cover 
 
 ### Tired of killing rats?? Meet the monsters of the barn
 
-The following d20 monsters were chosen for both their CRs and their simple attack and damage properties. An ad hoc [monster codex](contracts/library/Monster.sol) is available in the library.
+An ad hoc [monster codex](contracts/library/Monster.sol) is available in the library.
 
 - [**Kobold (CR 1/4)**](https://www.d20srd.org/srd/monsters/kobold.htm)
 - [**Goblin (CR 1/3)**](https://www.d20srd.org/srd/monsters/goblin.htm)
@@ -499,7 +503,7 @@ struct Combatant {
 - **token** - This combatant's underlying nft (eg, a Summoner Id)
 - **attacks** - An array containing all the combatant's attacks per round
 
-The current `attacks` array can contain up to 4 attacks. Each attack has these properties:
+The current `attacks` array can hold up to 4 attacks. Each attack has these properties:
 
 - attack_bonus
 - critical_modifier
@@ -637,7 +641,7 @@ const fullPrimaryAttackBonus = unpackAttacks(preview.attacks)[0].attack_bonus;
 
 ### codex-items-weapons-2 and codex-items-armor-2
 
-Masterwork extends the original weapons and armor codexes to expose bonus effects. Several missing item descriptions were also filled in. And the "axe" in the original codex has been clarified, making it clear it's a throwing axe.
+Masterwork extends the original weapons and armor codexes to expose bonus effects. Several missing item descriptions were also filled in. And the "axe" in the original codex has been upgraded to the throwing axe described in d20. (That seemed like the original intention)
 
 ## Testing
 
@@ -649,7 +653,7 @@ There's a few unit tests. Run them like this
 yarn test
 ```
 
-### Acceptance test (manual)
+### Acceptance test
 
 The acceptance test is designed to run against a local hardhat network. The Easiest way to run it, start a console and run this
 
@@ -660,12 +664,12 @@ yarn start-fork
 Then open another console and run these
 
 ```console
-npx hardhat run scripts/deploy.ts --network localhost
-npx hardhat run scripts/acceptance-test/--1-train-your-party.ts --network localhost
-npx hardhat run scripts/acceptance-test/--2-craft-common-equipment.ts --network localhost
-npx hardhat run scripts/acceptance-test/--3-raid-the-barn.ts --network localhost
-npx hardhat run scripts/acceptance-test/--4-craft-masterwork-equipment.ts --network localhost
-npx hardhat run scripts/acceptance-test/--5-raid-the-barn-again.ts --network localhost
+yarn hardhat run scripts/deploy.ts --network localhost
+yarn hardhat run scripts/acceptance-test/--1-train-your-party.ts --network localhost
+yarn hardhat run scripts/acceptance-test/--2-craft-common-equipment.ts --network localhost
+yarn hardhat run scripts/acceptance-test/--3-raid-the-barn.ts --network localhost
+yarn hardhat run scripts/acceptance-test/--4-craft-masterwork-equipment.ts --network localhost
+yarn hardhat run scripts/acceptance-test/--5-raid-the-barn-again.ts --network localhost
 ```
 
 ## Package commands
@@ -691,7 +695,7 @@ This project also uses [typechain](https://github.com/dethcrypto/TypeChain) to g
 This project also includes a custom hardhat task that generates full interfaces on all contracts. The results are saved [here](/contracts/interfaces). This can be run manually with:
 
 ```shell
-npx hardhat rarity-interfaces
+yarn hardhat rarity-interfaces
 ```
 
 # Thank You 👹🙏
