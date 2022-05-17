@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "../interfaces/core/IRarity.sol";
 import "../interfaces/core/IRarityCommonCrafting.sol";
@@ -35,7 +35,7 @@ interface IRarityMasterworkItems {
 }
 
 contract rarity_masterwork_projects is
-    ERC721,
+    ERC721Enumerable,
     ERC721Holder,
     ReentrancyGuard,
     ForSummoners,

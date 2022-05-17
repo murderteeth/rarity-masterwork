@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./rarity_crafting_masterwork_uri.sol";
 import "../library/Crafting.sol";
 import "../library/Rarity.sol";
@@ -13,7 +13,7 @@ interface masterwork_projects {
         returns (masterwork_uri.Project memory);
 }
 
-contract rarity_masterwork_items is ERC721 {
+contract rarity_masterwork_items is ERC721Enumerable {
     uint256 public next_token = 1;
 
     address public PROJECT_MINT;
