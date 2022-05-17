@@ -118,7 +118,7 @@ let cost = await masterwork.projects.raw_materials_cost(
   baseType.weapon,
   weaponType.longsword
 );
-cost += await masterwork.projects.COMMON_ARTISANS_TOOLS_RENTAL();
+cost = cost.add(await masterwork.projects.COMMON_ARTISANS_TOOLS_RENTAL());
 await gold.approve(summoner, await masterwork.projects.APPRENTICE(), cost);
 ```
 
