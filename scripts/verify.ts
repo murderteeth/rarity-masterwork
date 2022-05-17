@@ -8,17 +8,28 @@ async function main() {
   const signer = signers[0]
   console.log('signer', signer.address, ethers.utils.formatEther(await signer.getBalance()), 'FTM')
 
-  const deployments = Object.values(mainnetAddresses)
-  for(let i = 0; i < deployments.length; i++) {
-    const deployment = deployments[i]
+  const deployments = mainnetAddresses as { [key: string]: any }
+  const keys = Object.keys(mainnetAddresses)
+  for(let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    const deployment = deployments[key]
     if(!deployment.verified) {
       console.log('verify ', deployment.contract, '@', deployment.address)
-      await hre.run("verify:verify", { 
-        contract: deployment.contract, 
-        address: deployment.address 
-      })
-      deployment.verified = true
-      await fs.writeFile('./addresses.mainnet.json', JSON.stringify(deployments, null, '\t'))
+      try {
+        await hre.run("verify:verify", { 
+          contract: deployment.contract, 
+          address: deployment.address 
+        })
+        deployment.verified = true
+        await fs.writeFile('./addresses.mainnet.json', JSON.stringify(deployments, null, '\t'))
+      } catch(error) {
+        if((error as any).toString().includes('Already Verified')) {
+          deployment.verified = true
+          await fs.writeFile('./addresses.mainnet.json', JSON.stringify(deployments, null, '\t'))
+        } else {
+          throw error
+        }
+      }
     }
   }
 }
