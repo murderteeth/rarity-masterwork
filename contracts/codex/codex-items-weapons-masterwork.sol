@@ -8,7 +8,7 @@ contract codex {
     string public constant class = "Masterwork Weapons";
 
     ICodexWeapon constant COMMON_CODEX =
-        ICodexWeapon(0x0000000000000000000000000000000000000003);
+        ICodexWeapon(0x48F177ED0B38efab35D6150659eDAeCEE234E802);
 
     function get_proficiency_by_id(uint256 id)
         public

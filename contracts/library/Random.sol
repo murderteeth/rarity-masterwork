@@ -5,7 +5,7 @@ import "../interfaces/codex/IRarityCodexBaseRandom2.sol";
 
 library Random {
     IRarityCodexBaseRandom2 constant RANDOM =
-        IRarityCodexBaseRandom2(0x0000000000000000000000000000000000000012);
+        IRarityCodexBaseRandom2(0x165AD01B090BC91352AeA8cEF7513C63852797Ed);
 
     function dn(
         uint256 seed_a,

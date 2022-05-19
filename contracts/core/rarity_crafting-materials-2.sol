@@ -23,7 +23,7 @@ interface IRarityAdventure2 {
 
 contract rarity_crafting_materials_2 is ERC20 {
     IRarityAdventure2 constant ADVENTURE_2 =
-        IRarityAdventure2(0x0000000000000000000000000000000000000009);
+        IRarityAdventure2(0xCc60d735bc1cBE877E20212aD3A93F88Ef243c7B);
 
     constructor() ERC20("Rarity Crafting Materials (II)", "Craft (II)") {}
 

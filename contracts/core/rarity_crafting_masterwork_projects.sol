@@ -55,17 +55,17 @@ contract rarity_masterwork_projects is
     IRarityCommonCrafting constant COMMON_CRAFTING =
         IRarityCommonCrafting(0xf41270836dF4Db1D28F7fd0935270e3A603e78cC);
     IRarityMasterworkItems constant MASTERWORK_ITEMS =
-        IRarityMasterworkItems(0x0000000000000000000000000000000000000013);
+        IRarityMasterworkItems(0x0aF7EC3f3d17890072771e713F5DBD27D9bBc074);
     ICodexTools constant COMMON_TOOLS_CODEX =
-        ICodexTools(0x0000000000000000000000000000000000000002);
+        ICodexTools(0xC3F59C8b7041285000F21D74485f6c70b21B5E92);
     IRarityCraftingMaterials2 constant BONUS_MATS =
-        IRarityCraftingMaterials2(0x0000000000000000000000000000000000000008);
+        IRarityCraftingMaterials2(0x919a172339ffD5915686477e6Da5e0748DCf10ff);
     ICodexWeapon constant WEAPONS_CODEX =
-        ICodexWeapon(0x0000000000000000000000000000000000000004);
+        ICodexWeapon(0x8834c3C74026468AE5d151bb77c2097E0184377e);
     ICodexArmor constant ARMOR_CODEX =
-        ICodexArmor(0x0000000000000000000000000000000000000005);
+        ICodexArmor(0x763C2f6B31d0C695F7A6308a50E3f3107e65260c);
     ICodexTools constant TOOLS_CODEX =
-        ICodexTools(0x0000000000000000000000000000000000000006);
+        ICodexTools(0x291D890a0410Ac98512569330C2Ad4861dC6C822);
 
     event Craft(
         address indexed owner,

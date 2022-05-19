@@ -6,9 +6,9 @@ import "../interfaces/core/IRarityCraftingSkills.sol";
 
 library CraftingSkills {
     IRarityCodexCraftingSkills constant CODEX =
-        IRarityCodexCraftingSkills(0x0000000000000000000000000000000000000001);
+        IRarityCodexCraftingSkills(0xa0B2508A25dc28D20C537b8E1798543AC437F669);
     IRarityCraftingSkills constant SKILLS =
-        IRarityCraftingSkills(0x0000000000000000000000000000000000000007);
+        IRarityCraftingSkills(0xc84275A99C01D0b6C1A63bD94d589e4A44a85DeD);
 
     function ranks(uint256 summoner, uint8 specialization)
         public

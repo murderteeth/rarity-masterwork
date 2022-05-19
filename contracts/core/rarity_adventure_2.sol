@@ -48,7 +48,7 @@ contract rarity_adventure_2 is
     IRarity constant RARITY =
         IRarity(0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb);
     IRarityEquipment constant EQUIPMENT =
-        IRarityEquipment(0x0000000000000000000000000000000000000011);
+        IRarityEquipment(0xB6Ee6A99d474a30C9C407E7f32a88fF82071FDC0);
 
     constructor() ERC721("Rarity Adventure (II)", "Adventure (II)") {}
 

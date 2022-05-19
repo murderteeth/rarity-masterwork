@@ -11,7 +11,7 @@ import "./Rarity.sol";
 
 library Summoner {
     IRarityEquipment constant EQUIPMENT =
-        IRarityEquipment(0x0000000000000000000000000000000000000011);
+        IRarityEquipment(0xB6Ee6A99d474a30C9C407E7f32a88fF82071FDC0);
 
     function summoner_combatant(
         uint256 summoner,

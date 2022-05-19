@@ -9,11 +9,11 @@ library masterwork_uri {
     ICodexSkills constant SKILLS_CODEX =
         ICodexSkills(0x67ae39a2Ee91D7258a86CD901B17527e19E493B3);
     ICodexWeapon constant WEAPONS_CODEX =
-        ICodexWeapon(0x0000000000000000000000000000000000000004);
+        ICodexWeapon(0x8834c3C74026468AE5d151bb77c2097E0184377e);
     ICodexArmor constant ARMOR_CODEX =
-        ICodexArmor(0x0000000000000000000000000000000000000005);
+        ICodexArmor(0x763C2f6B31d0C695F7A6308a50E3f3107e65260c);
     ICodexTools constant TOOLS_CODEX =
-        ICodexTools(0x0000000000000000000000000000000000000006);
+        ICodexTools(0x291D890a0410Ac98512569330C2Ad4861dC6C822);
 
     struct Project {
         bool complete;
