@@ -19,7 +19,7 @@ library Feats {
         returns (bool)
     {
         bool[100] memory feats = FEATS.get_feats(summoner);
-        return feats[feat_id - 1];
+        return feats[feat_id];
     }
 
     function improved_initiative(uint256 summoner) public view returns (bool) {

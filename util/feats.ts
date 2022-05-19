@@ -1,7 +1,6 @@
-// id - 1
 export const feats = {
-  improved_initiative: 58,
-  diligent: 28,
-  investigator: 68,
-  negotiator: 79
+  improved_initiative: 59,
+  diligent: 29,
+  investigator: 69,
+  negotiator: 80
 }
