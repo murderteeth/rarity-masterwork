@@ -39,6 +39,7 @@ library adventure_uri {
         uint256 y = 0;
         string
             memory svg = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350" shape-rendering="crispEdges"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" />';
+
         y += 20;
         svg = string(
             abi.encodePacked(
@@ -51,6 +52,7 @@ library adventure_uri {
                 "</text>"
             )
         );
+
         y += 20;
         svg = string(
             abi.encodePacked(
@@ -78,7 +80,7 @@ library adventure_uri {
         ) = monsters_svg_fragment(turn_order, monsters, y);
         svg = string(abi.encodePacked(svg, monster_fragment));
 
-        y = y_after_monsters;
+        y = y_after_monsters + 20;
         svg = string(
             abi.encodePacked(
                 svg,
@@ -90,6 +92,7 @@ library adventure_uri {
                 "</text>"
             )
         );
+
         y += 20;
         svg = string(
             abi.encodePacked(
@@ -102,6 +105,7 @@ library adventure_uri {
                 "</text>"
             )
         );
+
         y += 20;
         if (adventure.ended > 0)
             svg = string(
@@ -220,9 +224,9 @@ library adventure_uri {
                 '" class="base">monsters</text>'
             )
         );
-        y += 20;
 
         if (monsters.length == 0) {
+            y += 20;
             result = string(
                 abi.encodePacked(
                     result,
@@ -236,6 +240,7 @@ library adventure_uri {
             uint256 turn_count = turn_order.length;
             for (uint256 i = 0; i < turn_count; i++) {
                 if (turn_order[i].mint != RARITY) {
+                    y += 20;
                     result = string(
                         abi.encodePacked(
                             result,
@@ -251,7 +256,6 @@ library adventure_uri {
                             "</text>"
                         )
                     );
-                    y += 20;
                 }
             }
         }
@@ -271,12 +275,12 @@ library adventure_uri {
                 '" class="base">loadout</text>'
             )
         );
-        y += 20;
 
         Equipment.Slot memory weapon_slot = loadout[0];
         Equipment.Slot memory armor_slot = loadout[1];
         Equipment.Slot memory shield_slot = loadout[2];
 
+        y += 20;
         if (weapon_slot.mint == address(0)) {
             result = string(
                 abi.encodePacked(
@@ -286,7 +290,6 @@ library adventure_uri {
                     '" class="base">Unarmed</text>'
                 )
             );
-            y += 20;
         } else {
             (, uint8 item_type, , ) = ICrafting(weapon_slot.mint).items(
                 weapon_slot.token
@@ -303,10 +306,10 @@ library adventure_uri {
                     "</text>"
                 )
             );
-            y += 20;
         }
 
         if (armor_slot.mint == address(0) && shield_slot.mint == address(0)) {
+            y += 20;
             result = string(
                 abi.encodePacked(
                     result,
@@ -320,6 +323,7 @@ library adventure_uri {
                 (, uint8 item_type, , ) = ICrafting(armor_slot.mint).items(
                     armor_slot.token
                 );
+                y += 20;
                 result = string(
                     abi.encodePacked(
                         result,
@@ -332,12 +336,12 @@ library adventure_uri {
                         "</text>"
                     )
                 );
-                y += 20;
             }
             if (shield_slot.mint != address(0)) {
                 (, uint8 item_type, , ) = ICrafting(shield_slot.mint).items(
                     shield_slot.token
                 );
+                y += 20;
                 result = string(
                     abi.encodePacked(
                         result,
