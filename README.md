@@ -373,18 +373,14 @@ Calling `enter_dungeon` does this
 - Orders the combatants by their initiative scores into a Turn Order
 - Starting at the top of the Turn Order, combatants take their turns until it's the summoner's turn
 
-Get the current turn order like this:
+Enumerate the turn order like this:
 
 ```ts
-const turnOrder = await barnAdventure.turn_orders(adventureToken)
-```
-
-Where `turnOrder` is an array containing tokens for summoners and monsters. Monster tokens are properties of your adventure and cannot be transferred individually.
-
-Get the combat's current turn index like this:
-
-```ts
-const currentTurn = await barnAdventure.current_turns(adventureToken)
+const combatants[]
+const combatantCount = await barnAdventure.adventures(token).monster_count + 1
+for(let i = 0; i < combatantCount; i++) {
+  combatants.push(await barnAdventure.turn_orders(adventureToken, i))
+}
 ```
 
 Get the summoner's turn order index like this:
@@ -442,7 +438,7 @@ The search check goes like this
 - Add `summoner` search skill ranks
 - +2 if the `summoner` has the investigator feat
 
-If the score is higher than the adventure's search DC you get a 15% bonus. If you roll a natural 20, you get a 20% bonus. Nice! Now you can end the adventure and claim your loot:
+If the score is greater or equal the adventure's search DC (20), you get a 15% bonus. If you roll a natural 20, you get a 20% bonus. Nice! Now you can end the adventure and claim your loot:
 
 ```ts
 await barnAdventure.end(adventureToken)
@@ -462,9 +458,6 @@ Each attack emits an `Attack` event containing attacker, defender, and attack re
 The mechanics of Monsters in the Barn follow d20 combat closely, but only cover the very basics. Future expansions will cover more advanced mechanics like movement, ranged weapons, spells, saving throws, conditions, and buffs. For more, check out [d20 Combat](https://www.d20srd.org/indexes/combat.htm).
 
 ### Tired of killing rats?? Meet the monsters of the barn
-
-An ad hoc [monster codex](contracts/library/Monster.sol) is available in the library.
-
 - [**Kobold (CR 1/4)**](https://www.d20srd.org/srd/monsters/kobold.htm)
 - [**Goblin (CR 1/3)**](https://www.d20srd.org/srd/monsters/goblin.htm)
 - [**Gnoll (CR 1)**](https://www.d20srd.org/srd/monsters/gnoll.htm)
@@ -474,6 +467,8 @@ An ad hoc [monster codex](contracts/library/Monster.sol) is available in the lib
 - [**Dire Wolverine (CR 4)**](https://www.d20srd.org/srd/monsters/direWolverine.htm)
 - [**Troll (CR 5)**](https://www.d20srd.org/srd/monsters/troll.htm)
 - [**Ettin (CR 6)**](https://www.d20srd.org/srd/monsters/ettin.htm)
+
+An ad hoc [monster codex](contracts/library/Monster.sol) is available in the library.
 
 ## Rarity Core Library
 

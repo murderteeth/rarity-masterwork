@@ -11,7 +11,7 @@
 	},
 	"codex_items_armor_2": {
 		"address": "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",
-		"contract": "contracts/codex/codex_items_armor_2:codex",
+		"contract": "contracts/codex/codex-items-armor-2.sol:codex",
 		"verified": false
 	},
 	"codex_items_armor_masterwork": {
@@ -31,7 +31,7 @@
 	},
 	"codex_items_weapons_2": {
 		"address": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
-		"contract": "contracts/codex/codex-items-weapons-2:codex",
+		"contract": "contracts/codex/codex-items-weapons-2.sol:codex",
 		"verified": false
 	},
 	"codex_items_weapons_masterwork": {
