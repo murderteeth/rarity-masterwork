@@ -8,44 +8,44 @@ Masterwork is an expansion of the original Rarity core created by Andre Cronje, 
 #### masterwork addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| rarity_adventure_2 | [0x60E0719d4370a0022b73EeE384a9ABd081020ad6](https://ftmscan.com/address/0x60E0719d4370a0022b73EeE384a9ABd081020ad6) |
-| rarity_adventure_2_uri | [0x7d4eD4342D959e77CF6bFDe74702f6557FC9B8fE](https://ftmscan.com/address/0x7d4eD4342D959e77CF6bFDe74702f6557FC9B8fE) |
-| rarity_masterwork_items | [0x1939801B0713F0587d98D6D0d4603C6390477735](https://ftmscan.com/address/0x1939801B0713F0587d98D6D0d4603C6390477735) |
-| rarity_masterwork_projects | [0xEb3B2373ef446DF619d1b0357d0b4F020EFdAE20](https://ftmscan.com/address/0xEb3B2373ef446DF619d1b0357d0b4F020EFdAE20) |
-| rarity_masterwork_uri | [0xC7bd0C406F3a009a2752f0336137A386C57AdF1A](https://ftmscan.com/address/0xC7bd0C406F3a009a2752f0336137A386C57AdF1A) |
-| rarity_crafting_materials_2 | [0x03d62a71718591c8847c6d5C334F0F2EeD81Bc46](https://ftmscan.com/address/0x03d62a71718591c8847c6d5C334F0F2EeD81Bc46) |
-| rarity_crafting_skills | [0xb798c0917E54DF68438fca73c06b6a95A2F28eaC](https://ftmscan.com/address/0xb798c0917E54DF68438fca73c06b6a95A2F28eaC) |
-| rarity_equipment_2 | [0xba224FBD37BF09a930573463C6a99d95016BB00f](https://ftmscan.com/address/0xba224FBD37BF09a930573463C6a99d95016BB00f) |
+| rarity_adventure_2 | [0xCc60d735bc1cBE877E20212aD3A93F88Ef243c7B](https://ftmscan.com/address/0xCc60d735bc1cBE877E20212aD3A93F88Ef243c7B) |
+| rarity_adventure_2_uri | [0x94C0FEe093Bd38e1ed5bf01aE89DBb12826aB9f4](https://ftmscan.com/address/0x94C0FEe093Bd38e1ed5bf01aE89DBb12826aB9f4) |
+| rarity_masterwork_items | [0x0aF7EC3f3d17890072771e713F5DBD27D9bBc074](https://ftmscan.com/address/0x0aF7EC3f3d17890072771e713F5DBD27D9bBc074) |
+| rarity_masterwork_projects | [0x969eB1901A205C3B9f299eAeB33861172f2e8165](https://ftmscan.com/address/0x969eB1901A205C3B9f299eAeB33861172f2e8165) |
+| rarity_masterwork_uri | [0x44500332e00E57C1ee98A7BFa3bCa0e87D3273DC](https://ftmscan.com/address/0x44500332e00E57C1ee98A7BFa3bCa0e87D3273DC) |
+| rarity_crafting_materials_2 | [0x919a172339ffD5915686477e6Da5e0748DCf10ff](https://ftmscan.com/address/0x919a172339ffD5915686477e6Da5e0748DCf10ff) |
+| rarity_crafting_skills | [0xc84275A99C01D0b6C1A63bD94d589e4A44a85DeD](https://ftmscan.com/address/0xc84275A99C01D0b6C1A63bD94d589e4A44a85DeD) |
+| rarity_equipment_2 | [0xB6Ee6A99d474a30C9C407E7f32a88fF82071FDC0](https://ftmscan.com/address/0xB6Ee6A99d474a30C9C407E7f32a88fF82071FDC0) |
 
 
 #### library addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| Attributes | [0x539eE544c2e7abC45593527319c33886f9631100](https://ftmscan.com/address/0x539eE544c2e7abC45593527319c33886f9631100) |
-| Combat | [0xc752143000251cc7d809142190ee715513C08547](https://ftmscan.com/address/0xc752143000251cc7d809142190ee715513C08547) |
-| Crafting | [0x747EB41f7Bd2FB08e747265CFA81370f389fBDd2](https://ftmscan.com/address/0x747EB41f7Bd2FB08e747265CFA81370f389fBDd2) |
-| CraftingSkills | [0x427656DF6886E79CDb917f001A564131aab8a9E3](https://ftmscan.com/address/0x427656DF6886E79CDb917f001A564131aab8a9E3) |
-| Feats | [0xB78556E8C4212afdbf0c8Ef32A0ED73590B45e72](https://ftmscan.com/address/0xB78556E8C4212afdbf0c8Ef32A0ED73590B45e72) |
-| Monster | [0x44c3fD42523A505d669bDd6D80940197d662fe98](https://ftmscan.com/address/0x44c3fD42523A505d669bDd6D80940197d662fe98) |
-| Proficiency | [0x44054E7a5EC27Dae3b369a350E1E98bbFd9F7a77](https://ftmscan.com/address/0x44054E7a5EC27Dae3b369a350E1E98bbFd9F7a77) |
-| Random | [0x910FA0857B4e2C965DDaC0016F7DAB4ddFC1Ecfa](https://ftmscan.com/address/0x910FA0857B4e2C965DDaC0016F7DAB4ddFC1Ecfa) |
-| Rarity | [0xb3B7229c78b02B8Cd39eA5e904293FB1A86fF64D](https://ftmscan.com/address/0xb3B7229c78b02B8Cd39eA5e904293FB1A86fF64D) |
-| Roll | [0x4E57664692696D35CA59026C62218b86C2277632](https://ftmscan.com/address/0x4E57664692696D35CA59026C62218b86C2277632) |
-| Skills | [0x69140354b070ba1C219C22A52f77B0b0442f9Bf8](https://ftmscan.com/address/0x69140354b070ba1C219C22A52f77B0b0442f9Bf8) |
-| Summoner | [0xA4f3235012B984E8d8aDCD473455aE5d484728af](https://ftmscan.com/address/0xA4f3235012B984E8d8aDCD473455aE5d484728af) |
+| Attributes | [0x6F222Fd2beC8105D0a843f5e0bbdc5dDD73a82b8](https://ftmscan.com/address/0x6F222Fd2beC8105D0a843f5e0bbdc5dDD73a82b8) |
+| Combat | [0xf6bDcA6D83567c3934d45c63Befa7F7A825A3F8f](https://ftmscan.com/address/0xf6bDcA6D83567c3934d45c63Befa7F7A825A3F8f) |
+| Crafting | [0x61e8FaF08f25C0154F4196D5AaC99e56fAB5Aed5](https://ftmscan.com/address/0x61e8FaF08f25C0154F4196D5AaC99e56fAB5Aed5) |
+| CraftingSkills | [0xd181F8bCb765A4CF7390b87d296d2955F58d101B](https://ftmscan.com/address/0xd181F8bCb765A4CF7390b87d296d2955F58d101B) |
+| Feats | [0xED9750904Fee2731a0ad78a084781B56865269Bf](https://ftmscan.com/address/0xED9750904Fee2731a0ad78a084781B56865269Bf) |
+| Monster | [0xca050C0E5bC83Df0e1D0A5De14d0cEb44B0Dd7C9](https://ftmscan.com/address/0xca050C0E5bC83Df0e1D0A5De14d0cEb44B0Dd7C9) |
+| Proficiency | [0x0b009e55Cbed833E0b29FCdfb0AD85765C1177C1](https://ftmscan.com/address/0x0b009e55Cbed833E0b29FCdfb0AD85765C1177C1) |
+| Random | [0x471a666dfcE27cbfa0895694858C3375828Dc35A](https://ftmscan.com/address/0x471a666dfcE27cbfa0895694858C3375828Dc35A) |
+| Rarity | [0x8628684cc1DF8E986f2A3650eb77700b3995Ff79](https://ftmscan.com/address/0x8628684cc1DF8E986f2A3650eb77700b3995Ff79) |
+| Roll | [0xbb20DEFd74e43667c2637fa39970f932c0d974f7](https://ftmscan.com/address/0xbb20DEFd74e43667c2637fa39970f932c0d974f7) |
+| Skills | [0xA749EF13D370F749c49295cD7E97f3aB5F2B024D](https://ftmscan.com/address/0xA749EF13D370F749c49295cD7E97f3aB5F2B024D) |
+| Summoner | [0xb21f4E0B4E3f6F348eBE662489cE860dd8Fd3986](https://ftmscan.com/address/0xb21f4E0B4E3f6F348eBE662489cE860dd8Fd3986) |
 
 
 #### codex addresses
 | Name         | Address                                                                                                              |
 | :----------- | :------------------------------------------------------------------------------------------------------------------- |
-| base_random_2 | [0x4fc05341EC96a691c236E50c676b7Df6292285EA](https://ftmscan.com/address/0x4fc05341EC96a691c236E50c676b7Df6292285EA) |
-| crafting_skills | [0xFD7153628f4f40d38d9F90fDbbf0A92a2Cd70Afc](https://ftmscan.com/address/0xFD7153628f4f40d38d9F90fDbbf0A92a2Cd70Afc) |
-| items_armor_2 | [0xfF7c0f1004bb2852F194EE02F72adA0Bc8CB6635](https://ftmscan.com/address/0xfF7c0f1004bb2852F194EE02F72adA0Bc8CB6635) |
-| items_armor_masterwork | [0x69ae248896f847e84A091C308cebFA6d81ab844e](https://ftmscan.com/address/0x69ae248896f847e84A091C308cebFA6d81ab844e) |
-| items_tools | [0x55e68Cd24378d292E8a7CA1043A7af3792775A9F](https://ftmscan.com/address/0x55e68Cd24378d292E8a7CA1043A7af3792775A9F) |
-| items_tools_masterwork | [0xaF1950810e950c34afcffb80BB38E1b4903b8846](https://ftmscan.com/address/0xaF1950810e950c34afcffb80BB38E1b4903b8846) |
-| items_weapons_2 | [0xed1578A7301e14Ab954B2b8ffA4135B6D0f65ABD](https://ftmscan.com/address/0xed1578A7301e14Ab954B2b8ffA4135B6D0f65ABD) |
-| items_weapons_masterwork | [0x471Eb28256Dc598655701bbf35c863F37cDA208b](https://ftmscan.com/address/0x471Eb28256Dc598655701bbf35c863F37cDA208b) |
+| base_random_2 | [0x165AD01B090BC91352AeA8cEF7513C63852797Ed](https://ftmscan.com/address/0x165AD01B090BC91352AeA8cEF7513C63852797Ed) |
+| crafting_skills | [0xa0B2508A25dc28D20C537b8E1798543AC437F669](https://ftmscan.com/address/0xa0B2508A25dc28D20C537b8E1798543AC437F669) |
+| items_armor_2 | [0xe2e659caC782EC2A1FF041A79185AAaAcdA336f2](https://ftmscan.com/address/0xe2e659caC782EC2A1FF041A79185AAaAcdA336f2) |
+| items_armor_masterwork | [0x763C2f6B31d0C695F7A6308a50E3f3107e65260c](https://ftmscan.com/address/0x763C2f6B31d0C695F7A6308a50E3f3107e65260c) |
+| items_tools | [0xC3F59C8b7041285000F21D74485f6c70b21B5E92](https://ftmscan.com/address/0xC3F59C8b7041285000F21D74485f6c70b21B5E92) |
+| items_tools_masterwork | [0x291D890a0410Ac98512569330C2Ad4861dC6C822](https://ftmscan.com/address/0x291D890a0410Ac98512569330C2Ad4861dC6C822) |
+| items_weapons_2 | [0x48F177ED0B38efab35D6150659eDAeCEE234E802](https://ftmscan.com/address/0x48F177ED0B38efab35D6150659eDAeCEE234E802) |
+| items_weapons_masterwork | [0x8834c3C74026468AE5d151bb77c2097E0184377e](https://ftmscan.com/address/0x8834c3C74026468AE5d151bb77c2097E0184377e) |
 
 
 ### So what?
